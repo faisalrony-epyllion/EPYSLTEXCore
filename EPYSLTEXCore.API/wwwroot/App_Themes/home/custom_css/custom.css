@@ -1,0 +1,45 @@
+﻿/*Imrez Khan Ratin*/
+
+.ikrTable {
+    width: 100%;
+    border: 1px solid #758BA2;
+    margin-top:10px !important;
+}
+
+    .ikrTable thead {
+    }
+
+    .ikrTable th {
+        color: #ffffff;
+        background-color: #1163B6;
+        text-align: center;
+        height: 40px;
+    }
+
+    .ikrTable td {
+        text-align: center;
+        height: 40px;
+    }
+
+    .ikrTable tr:nth-child(odd) {
+        background: #F4F4F4;
+    }
+
+        .ikrTable tr:nth-child(odd) input {
+            background: #F4F4F4;
+            cursor: text;
+        }
+
+    .ikrTable tr:nth-child(even) input {
+        background: #ecf0f5;
+        cursor: text;
+    }
+
+.ikrPagination .active {
+    background-color: #337ab7;
+}
+
+.ikrSelectBox {
+    width: 60px;
+    text-align-last: center;
+}

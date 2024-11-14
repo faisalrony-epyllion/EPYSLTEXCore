@@ -1,0 +1,113 @@
+﻿@{ 
+    var version = Guid.NewGuid().ToString();
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewBag.Title | Textile ERP</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+     <link href="~/Content/google-fonts-local.css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" rel="stylesheet" /> 
+    <link href="~/App_Themes/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/dashboard-bundle.min.css" rel="stylesheet" />
+
+   
+    <link href="~/App_Themes/plugins/syncfusion-ej2/material.css" rel="stylesheet" />
+
+    @RenderSection("styles", false)
+</head>
+
+<body class="hold-transition skin-grey sidebar-mini fixed">
+    <div class="wrapper">
+
+        <!-- Main Header -->
+        <header class="main-header">
+
+            <!-- Logo -->
+            <a href="#!" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b>E</b>PY</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+                    <img src="~/Images/logo.png" />
+                </span>
+            </a>
+
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-fixed-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li><a target="_blank" href="../../helpfile/Introduction.html"><i class="fa fa-question-circle-o text-aqua"></i> <span>Help</span></a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">My Account <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#!" data-controller-name="Account" data-action-name="Profile" onclick="clickAccountNavigation(event);"><i class="fa fa-user text-aqua"></i>&nbsp;Profile</a></li>
+                                <li><a href="#!" data-controller-name="Account" data-action-name="ChangePasswordPartial" onclick="clickAccountNavigation(event);"><i class="fa fa-user-secret text-aqua"></i>&nbsp;Change Password</a></li>
+                                <li><a role="button" onclick="logout()"><i class="fa fa-sign-out text-aqua"></i>&nbsp;Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel">
+                    <div class="pull-left image" style="min-height: 45px; max-height: 45px;">
+                        <img src="@ViewBag.ProfilePic" class="img-circle" alt="User Image">
+                    </div>
+                    <div class="pull-left info">
+                        <p>@ViewBag.EmployeeName</p>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <ul class="sidebar-menu" data-widget="tree"></ul>
+                <!-- /.sidebar-menu -->
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!--Hidden Fields-->
+            <input type="hidden" id="hidComboBoxSource" value="@ViewBag.hidComboBoxSource" />
+            <input type="hidden" id="versionNumer" value="@Guid.NewGuid()" />
+            <input type="hidden" id="isSuperUser" value="@ViewBag.IsSuperUser" />
+            <!--End of Hidden Fields-->
+            @RenderBody()
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Main Footer -->
+        <footer class="main-footer center">
+            <p class="text-center">
+                <strong>Copyright &copy; <a target="_blank" href="https://www.epylliongroup.com">Epyllion Group</a>.</strong> All rights reserved.
+            </p>
+        </footer>
+    </div>
+    <!-- ./wrapper -->
+    <script src="~/Scripts/dashboard-bundle.min.js"></script>
+    @*<script src="~/App_Themes/plugins/syncfusion-ej2/ej2.min.js"></script>*@
+    <script src="@Url.Action("CacheEj2MinJS", "Cache")"></script>
+    <script src="~/Scripts/common/common-helpers.js?version=@version"></script>
+    <script src="~/Scripts/common/app.js?version=@version"></script>
+    <script src="~/Scripts/common/common-methods.js?version=@version"></script>
+    <script src="~/Scripts/common/ikr.table2excel.js?version=@version"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>

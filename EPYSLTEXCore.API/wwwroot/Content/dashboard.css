@@ -1,0 +1,60 @@
+﻿.parent_div {
+    padding: 10px;
+}
+.divChartBlock {
+    display:none;
+    height:500px;
+}
+
+.db_card {
+    width: 100%;
+    background-color: #0076A3;
+    text-align: center;
+    color: #ffffff;
+    font-weight: bold;
+    height: 110px;
+    border-radius: 24px;
+    padding: 26px;
+}
+
+.db_card_text_1 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.db_card_text_2 {
+    font-size: 22px;
+}
+
+.db_column {
+    width: 100%;
+    padding: 0 10px;
+}
+
+.db_row {
+    margin: 0 -5px;
+}
+    .db_row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+.db_card_2 {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    text-align: center;
+    background-color: #f1f1f1;
+}
+
+.chartdiv650 {
+    width: 100%;
+    height: 400px;
+}
+.chartdiv400 {
+    width: 100%;
+    height: 400px;
+}
+.chartdiv200 {
+    width: 100%;
+    height: 200px;
+}

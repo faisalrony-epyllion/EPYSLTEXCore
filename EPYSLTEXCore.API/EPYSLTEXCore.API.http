@@ -1,0 +1,6 @@
+@EPYSLEMSCore.API_HostAddress = http://localhost:5299
+
+GET {{EPYSLEMSCore.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

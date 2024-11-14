@@ -1,0 +1,161 @@
+/*
+ * Skin: Grey
+ * -----------
+ */
+/* skin-grey navbar */
+.skin-grey .main-header {
+  -webkit-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05);
+}
+.skin-grey .main-header .navbar-toggle {
+  color: #ffffff;
+}
+.skin-grey .main-header .navbar-brand {
+  color: #ffffff;
+  border-right: 1px solid #eee;
+}
+.skin-grey .main-header .navbar {
+  background-color: #37474f;
+}
+.skin-grey .main-header .navbar .nav > li > a {
+    color: #ffffff;
+}
+.skin-grey .main-header .navbar .nav > li > a:hover,
+.skin-grey .main-header .navbar .nav > li > a:active,
+.skin-grey .main-header .navbar .nav > li > a:focus,
+.skin-grey .main-header .navbar .nav .open > a,
+.skin-grey .main-header .navbar .nav .open > a:hover,
+.skin-grey .main-header .navbar .nav .open > a:focus,
+.skin-grey .main-header .navbar .nav > .active > a {
+  background: #37474f;
+  color: #999999;
+}
+.skin-grey .main-header .navbar .sidebar-toggle {
+  color: #333333;
+}
+.skin-grey .main-header .navbar .sidebar-toggle:hover {
+  color: #999999;
+  background: #37474f;
+}
+.skin-grey .main-header .navbar > .sidebar-toggle {
+  color: #ffffff;
+  /*border-right: 1px solid #eee;*/
+}
+.skin-grey .main-header .navbar .navbar-nav > li > a {
+  /*border-right: 1px solid #eee;*/
+}
+.skin-grey .main-header .navbar .navbar-custom-menu .navbar-nav > li > a,
+.skin-grey .main-header .navbar .navbar-right > li > a {
+  /*border-left: 1px solid #eee;*/
+  border-right-width: 0;
+}
+    .skin-grey .main-header > .logo {
+        background-color: #37474f;
+        color: #ffffff;
+        border-bottom: 0 solid transparent;
+        border-right: 1px solid #263238;
+    }
+.skin-grey .main-header > .logo:hover {
+    background-color: #263238;
+}
+@media (max-width: 767px) {
+    .skin-grey .main-header > .logo {
+        background-color: #37474f;
+        color: #ffffff;
+        border-bottom: 0 solid transparent;
+        border-right: none;
+    }
+        .skin-grey .main-header > .logo:hover {
+            background-color: #263238;
+        }
+}
+.skin-grey .main-header li.user-header {
+  background-color: #222;
+}
+.skin-grey .content-header {
+  background: transparent;
+  box-shadow: none;
+}
+.skin-grey .wrapper,
+.skin-grey .main-sidebar,
+.skin-grey .left-side {
+  background-color: #222d32;
+}
+.skin-grey .user-panel > .info,
+.skin-grey .user-panel > .info > a {
+  color: #ffffff;
+}
+.skin-grey .sidebar-menu > li.header {
+  color: #4b646f;
+  background: #1a2226;
+}
+.skin-grey .sidebar-menu > li > a {
+  border-left: 3px solid transparent;
+}
+.skin-grey .sidebar-menu > li:hover > a,
+.skin-grey .sidebar-menu > li.active > a,
+.skin-grey .sidebar-menu > li.menu-open > a {
+  color: #ffffff;
+  background: #1e282c;
+}
+.skin-grey .sidebar-menu > li.active > a {
+  border-left-color: #ffffff;
+}
+.skin-grey .sidebar-menu > li > .treeview-menu {
+  margin: 0 1px;
+  background: #2c3b41;
+}
+.skin-grey .sidebar a {
+  color: #b8c7ce;
+}
+.skin-grey .sidebar a:hover {
+  text-decoration: none;
+}
+.skin-grey .sidebar-menu .treeview-menu > li > a {
+  color: #8aa4af;
+}
+.skin-grey .sidebar-menu .treeview-menu > li.active > a,
+.skin-grey .sidebar-menu .treeview-menu > li > a:hover {
+  color: #ffffff;
+}
+.skin-grey .sidebar-form {
+  border-radius: 3px;
+  border: 1px solid #374850;
+  margin: 10px 10px;
+}
+.skin-grey .sidebar-form input[type="text"],
+.skin-grey .sidebar-form .btn {
+  box-shadow: none;
+  background-color: #374850;
+  border: 1px solid transparent;
+  height: 35px;
+}
+.skin-grey .sidebar-form input[type="text"] {
+  color: #666;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 2px;
+}
+.skin-grey .sidebar-form input[type="text"]:focus,
+.skin-grey .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
+  background-color: #ffffff;
+  color: #666;
+}
+.skin-grey .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
+  border-left-color: #ffffff;
+}
+.skin-grey .sidebar-form .btn {
+  color: #999;
+  border-top-left-radius: 0;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 0;
+}
+.skin-grey .pace .pace-progress {
+  background: #222;
+}
+.skin-grey .pace .pace-activity {
+  border-top-color: #222;
+  border-left-color: #222;
+}

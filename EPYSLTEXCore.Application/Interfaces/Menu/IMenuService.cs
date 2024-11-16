@@ -1,6 +1,6 @@
-﻿using EPYSLEMSCore.Application.Entities;
-using EPYSLEMSCore.Application.Interfaces;
+﻿
 using EPYSLTEXCore.Application.DTO;
+using EPYSLTEXCore.Application.Entities;
 
 namespace EPYSLTEXCore.Application.Interfaces
 {

@@ -1,9 +1,7 @@
 ﻿using EPYSLTEXCore.API.Contollers.ReportAPI;
 using EPYSLTEXCore.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.Collections.Generic;
 
 namespace EPYSLTEXCore.API.Contollers.Menu
 {
@@ -23,7 +21,7 @@ namespace EPYSLTEXCore.API.Contollers.Menu
             this._cache = cache;
         }
 
-        [HttpGet("GetAllMenu")]
+        [HttpGet("GetAllMenu/{applicationId}")]
         public async Task<IActionResult> GetAllMenu(int applicationId)
         {
             var lst = _IMenuService.GetAllAsync();

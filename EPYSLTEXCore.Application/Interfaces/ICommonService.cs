@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EPYSLTEXCore.Application.Interfaces
-{    
+﻿namespace EPYSLTEXCore.Application.Interfaces
+{
     /// <summary>
     /// Generic interface for basic CRUD operations.
     /// </summary>

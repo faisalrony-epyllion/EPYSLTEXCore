@@ -1,7 +1,7 @@
 ﻿using Dapper;
-using EPYSLEMSCore.Application.DataAccess.Interfaces;
-using EPYSLEMSCore.Application.Entities;
+using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.DTO;
+using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using System.Configuration;
 using System.Data.SqlClient;

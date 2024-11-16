@@ -1,7 +1,7 @@
-﻿using EPYSLEMSCore.Application.Entities;
-using EPYSLEMSCore.Application.Interfaces;
+﻿
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.DTO;
+using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Application.Interfaces;
 
 namespace EPYSLTEXCore.Application.Services
@@ -27,19 +27,16 @@ namespace EPYSLTEXCore.Application.Services
             return _IMenuDAL.DeleteAsync(Id);
         }
 
-        public Task<IEnumerable<Menu>> GetAllAsync()
-        {
-            return _IMenuDAL.GetAllAsync();
-        }
+   
 
         public Task<Menu> GetByIdAsync(string Id)
         {
             return _IMenuDAL.GetByIdAsync(Id);
         }
 
-        public Task<List<MenuDTO>> GetMenusAsync(int userId, int applicationId, int companyId)
+        public Task<List<MenuDTO>> GetAllAsync(int userId, int applicationId, int companyId)
         {
-            throw new NotImplementedException();
+            return _IMenuDAL.GetAllAsync();
         }
 
         public Task<bool> UpdateAsync(long Id, Menu item)

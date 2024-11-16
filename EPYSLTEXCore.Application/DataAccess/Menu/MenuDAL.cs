@@ -1,19 +1,9 @@
-﻿using EPYSLTEXCore.Application.DataAccess.Interfaces;
-using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Interfaces;
-using EPYSLEMSCore.Application.DataAccess.Interfaces;
+﻿using EPYSLEMSCore.Application.DataAccess.Interfaces;
 using EPYSLEMSCore.Application.Entities;
-using EPYSLEMSCore.Application.Interfaces;
-using EPYSLEMSCore.Infrastructure.Static;
 using EPYSLTEXCore.Application.DTO;
-using System;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Static;
 using System.Configuration;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.DataAccess
 {

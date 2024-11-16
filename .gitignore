@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/EPYSLTEXCore/DesignTimeBuild
+/.vs/EPYSLTEXCore/FileContentIndex
+/.vs/EPYSLTEXCore/v17
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.API.dll
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.API.exe
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.API.pdb
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.API.staticwebassets.runtime.json
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.Application.dll
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.Application.pdb
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.Infrastructure.dll
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.Infrastructure.pdb

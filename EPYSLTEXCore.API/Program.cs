@@ -1,5 +1,10 @@
 #region Using
+using EPYSLEMSCore.Application.Interfaces;
+using EPYSLEMSCore.Application.Services;
+using EPYSLEMSCore.Infrastructure.Data;
 using EPYSLTEXCore.Application.DataAccess;
+using EPYSLTEXCore.Application.DataAccess.Interfaces;
+using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

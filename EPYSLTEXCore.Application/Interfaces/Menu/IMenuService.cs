@@ -1,11 +1,6 @@
-﻿using EPYSLTEXCore.Application.DataAccess;
-using EPYSLTEXCore.Application.Entities;
+﻿using EPYSLEMSCore.Application.Entities;
+using EPYSLEMSCore.Application.Interfaces;
 using EPYSLTEXCore.Application.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Interfaces
 {

@@ -1,14 +1,8 @@
-﻿using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EPYSLTEXCore.Application.Entities.ReportAPI;
-using EPYSLTEXCore.Infrastructure.Data;
+﻿using EPYSLEMSCore.Application.Entities;
+using EPYSLEMSCore.Application.Interfaces;
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.DTO;
+using EPYSLTEXCore.Application.Interfaces;
 
 namespace EPYSLTEXCore.Application.Services
 {
@@ -25,6 +19,8 @@ namespace EPYSLTEXCore.Application.Services
         {
            return _IMenuDAL.AddAsync(item);
         }
+
+      
 
         public Task<string> DeleteAsync(string Id)
         {
@@ -49,6 +45,18 @@ namespace EPYSLTEXCore.Application.Services
         public Task<bool> UpdateAsync(long Id, Menu item)
         {
             return _IMenuDAL.UpdateAsync(Id,item);
+        }
+
+   
+
+        Task<IEnumerable<Menu>> ICommonService<Menu>.GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<Menu> ICommonService<Menu>.GetByIdAsync(string Id)
+        {
+            throw new NotImplementedException();
         }
 
         Task<List<MenuDTO>> IMenuService.GetMenusAsync(int userId, int applicationId, int companyId)

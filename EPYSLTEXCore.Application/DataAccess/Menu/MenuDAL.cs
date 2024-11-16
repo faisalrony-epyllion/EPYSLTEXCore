@@ -1,4 +1,5 @@
-﻿using EPYSLEMSCore.Application.DataAccess.Interfaces;
+﻿using Dapper;
+using EPYSLEMSCore.Application.DataAccess.Interfaces;
 using EPYSLEMSCore.Application.Entities;
 using EPYSLTEXCore.Application.DTO;
 using EPYSLTEXCore.Infrastructure.Static;
@@ -52,10 +53,7 @@ namespace EPYSLTEXCore.Application.DataAccess
             throw new NotImplementedException();
         }
 
-        public Task<List<MenuDTO>> GetMenusAsync(int userId, int applicationId, int companyId)
-        {
-            throw new NotImplementedException();
-        }
+   
 
         public Task<bool> UpdateAsync(long Id, Menu item)
         {
@@ -66,5 +64,27 @@ namespace EPYSLTEXCore.Application.DataAccess
         {
             throw new NotImplementedException();
         }
+
+        private void PopulateMenus(ref List<MenuDTO> parentList, List<MenuDTO> menuList)
+        {
+            foreach (var parentMenu in parentList)
+            {
+                parentMenu.Childs = menuList.FindAll(x => x.MenuId != parentMenu.ParentId && x.ParentId == parentMenu.MenuId).OrderBy(x => x.SeqNo).ToList();
+
+                var subParents = parentMenu.Childs.FindAll(x => string.IsNullOrEmpty(x.PageName));
+                foreach (var item in subParents) item.Childs = PopulateChildMenu(menuList, item.MenuId);
+            }
+        }
+
+        private List<MenuDTO> PopulateChildMenu(List<MenuDTO> menuList, int parentId)
+        {
+            var childList = menuList.FindAll(x => x.ParentId == parentId).OrderBy(x => x.SeqNo).ToList();
+
+            var subParents = childList.FindAll(x => string.IsNullOrEmpty(x.PageName));
+            foreach (var childMenu in subParents) childMenu.Childs = PopulateChildMenu(menuList, childMenu.MenuId);
+
+            return childList;
+        }
+
     }
 }

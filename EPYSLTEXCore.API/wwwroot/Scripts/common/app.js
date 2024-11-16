@@ -442,40 +442,47 @@ function getCommonInterfaceMarkup(menuId, pageName, actionName, tabCaption) {
 function GetMenus(applicationId) {
     axios.get("/api/MenuAPI/GetAllMenu/" + applicationId)
         .then(function (response) {
+
             generateMenu(response.data);
             $(".sidebar-menu").append(template);
+
             $(".sidebar-menu").tree();
         })
         .catch(showResponseError);
 }
 
 function generateMenu(menuList) {
+
+  
     $.each(menuList, function (i, item) {
-        if (!item.Childs.length) {
-            if (!item.NavigateUrl) return true;
-            var navProperties = item.NavigateUrl.split('/');
+        if (!item.childs.length) {
+
+            if (!item.navigateUrl) return true;
+            var navProperties = item.navigateUrl.split('/');
             if (navProperties[1] == 'notfoundpartial') {
-                template += '<li><a href="#!" data-controller-name="' + navProperties[0] + '" data-action-name="' + item.PageName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="NF"><i class="fa fa-circle-o"></i> <span>' + item.MenuCaption + '</span></a></li>';
+                template += '<li><a href="#!" data-controller-name="' + navProperties[0] + '" data-action-name="' + item.pageName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="fa fa-circle-o"></i> <span>' + item.menuCaption + '</span></a></li>';
             }
-            else if (item.UseCommonInterface) {
-                template += '<li><a href="#!" data-controller-name="' + navProperties[0] + '" data-action-name="' + navProperties[1] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="CI"><i class="fa fa-circle-o"></i> <span>' + item.MenuCaption + '</span></a></li>';
+            else if (item.useCommonInterface) {
+                template += '<li><a href="#!" data-controller-name="' + navProperties[0] + '" data-action-name="' + navProperties[1] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="fa fa-circle-o"></i> <span>' + item.menuCaption + '</span></a></li>';
             }
-            else if (item.PageName == 'ReportViewer') {
+            else if (item.pageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';
-                template += '<li><a href="' + path + '" target="_blank" data-page-type="Report"><i class="fa fa-circle-o"></i> <span>' + item.MenuCaption + '</span></a></li>';
+                template += '<li><a href="' + path + '" target="_blank" data-page-type="Report"><i class="fa fa-circle-o"></i> <span>' + item.menuCaption + '</span></a></li>';
             }
             else {
-                template += '<li><a href="#!" data-controller-name="' + navProperties[0] + '" data-action-name="' + navProperties[1] + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '"><i class="fa fa-circle-o"></i> <span>' + item.MenuCaption + '</span></a></li>';
+                template += '<li><a href="#!" data-controller-name="' + navProperties[0] + '" data-action-name="' + navProperties[1] + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="fa fa-circle-o"></i> <span>' + item.menuCaption + '</span></a></li>';
             }
+       
             activeMenu = false;
             return true;
         }
         else {
-            activeMenu = item.MenuId == 509 ? true : false;
+  
+            activeMenu = item.menuId == 509 ? true : false;
             var active = activeMenu ? "active" : "";
             template += '<li class="treeview ' + active + '">';
             template += '<a href="#">'
-                + '<i class="fa fa-circle"></i><span>' + item.MenuCaption + '</span>'
+                + '<i class="fa fa-circle"></i><span>' + item.menuCaption + '</span>'
                 + '<span class="pull-right-container">'
                 + '<i class="fa fa-angle-left pull-right"></i>'
                 + '</span>'
@@ -484,8 +491,8 @@ function generateMenu(menuList) {
             activeMenu = false;
         }
 
-        generateMenu(item.Childs);
-
+        generateMenu(item.childs);
+    
         template += '</ul></li>';
     });
 }

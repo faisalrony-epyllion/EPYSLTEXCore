@@ -3,6 +3,7 @@ using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.DTO;
 using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
+using Microsoft.Extensions.Configuration;
 using System.Configuration;
 using System.Data.SqlClient;
 
@@ -10,11 +11,13 @@ namespace EPYSLTEXCore.Application.DataAccess
 {
     public class MenuDAL : IMenuDAL
     {
+        private readonly IConfiguration _configuration;
         private readonly SqlConnection _connection = null;
 
-        public MenuDAL()
+        public MenuDAL(IConfiguration configuration)
         {
-            _connection = new SqlConnection(ConfigurationManager.ConnectionStrings[AppConstants.GMT_CONNECTION].ConnectionString);
+            _configuration = configuration;
+            _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.GMT_CONNECTION));
         }
         public Task<Menu> AddAsync(Menu item)
         {

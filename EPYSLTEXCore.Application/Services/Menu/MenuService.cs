@@ -34,31 +34,21 @@ namespace EPYSLTEXCore.Application.Services
             return _IMenuDAL.GetByIdAsync(Id);
         }
 
-        public Task<List<MenuDTO>> GetAllAsync(int userId, int applicationId, int companyId)
-        {
-            return _IMenuDAL.GetAllAsync();
-        }
+
 
         public Task<bool> UpdateAsync(long Id, Menu item)
         {
             return _IMenuDAL.UpdateAsync(Id,item);
-        }
-
-   
-
-        Task<IEnumerable<Menu>> ICommonService<Menu>.GetAllAsync()
+        }        
+               
+        public Task<IEnumerable<Menu>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        Task<Menu> ICommonService<Menu>.GetByIdAsync(string Id)
+        public Task<List<MenuDTO>> GetMenusAsync(int userId, int applicationId, int companyId)
         {
-            throw new NotImplementedException();
-        }
-
-        Task<List<MenuDTO>> IMenuService.GetMenusAsync(int userId, int applicationId, int companyId)
-        {
-            throw new NotImplementedException();
+            return _IMenuDAL.GetMenusAsync(userId, applicationId, companyId);
         }
     }
 }

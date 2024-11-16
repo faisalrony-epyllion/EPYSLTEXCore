@@ -1,9 +1,13 @@
 ﻿using EPYSLEMSCore.Application.DataAccess.Interfaces;
 using EPYSLEMSCore.Application.Entities;
 using EPYSLEMSCore.Application.Interfaces;
+using EPYSLEMSCore.Infrastructure.Static;
 using EPYSLTEXCore.Application.DTO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +16,12 @@ namespace EPYSLEMSCore.Application.DataAccess
 {
     public class MenuDAL : IMenuDAL
     {
+        private readonly SqlConnection _connection = null;
+
+        public MenuDAL()
+        {
+            _connection = new SqlConnection(ConfigurationManager.ConnectionStrings[AppConstants.GMT_CONNECTION].ConnectionString);
+        }
         public Task<Menu> AddAsync(Menu item)
         {
             throw new NotImplementedException();
@@ -22,9 +32,26 @@ namespace EPYSLEMSCore.Application.DataAccess
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Menu>> GetAllAsync()
+        public async Task<List<MenuDTO>> GetMenusAsync(int userId, int applicationId, int companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _connection.OpenAsync();
+                var records = await _connection.QueryMultipleAsync($@"[dbo].[spGetMenuListForApiModule] @UserCode, @ApplicationID, @CompanyID", new { UserCode = userId, ApplicationID = applicationId, CompanyID = companyId });
+
+                var parentList = records.Read<MenuDTO>().OrderBy(x => x.SeqNo).ToList();
+                var menuList = records.Read<MenuDTO>().OrderBy(x => x.SeqNo).ToList();
+                PopulateMenus(ref parentList, menuList);
+                return parentList;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            finally
+            {
+                _connection.Close();
+            }
         }
 
         public Task<Menu> GetByIdAsync(string Id)
@@ -42,6 +69,9 @@ namespace EPYSLEMSCore.Application.DataAccess
             throw new NotImplementedException();
         }
 
-       
+        public Task<IEnumerable<Menu>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

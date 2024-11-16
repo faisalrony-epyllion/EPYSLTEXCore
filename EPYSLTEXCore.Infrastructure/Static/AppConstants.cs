@@ -12,6 +12,8 @@ namespace EPYSLEMSCore.Infrastructure.Static
         public const string NEW = "<<--New-->>";
         //public const string ConnectionString = "Server=192.168.10.231;User ID=sa;Password=Erp123!;Database=EPYEMS;Integrated Security=False;Trusted_Connection=False;TrustServerCertificate=True";
         public const string SPECIAL_CHARACTER_TO_REMOVE_IN_UPLOAD = "['<>&]|[\n]{2}";
+        public const string GMT_CONNECTION = "GmtConnection";
+        public const string TEXTILE_CONNECTION = "TexConnection";
     }
 
     public static class ContactCategoryNames

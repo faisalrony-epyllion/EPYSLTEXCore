@@ -1,4 +1,4 @@
-﻿using EPYSLEMSCore.Infrastructure.Data;
+﻿using EPYSLTEXCore.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,21 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using System.Data;
-using EPYSLEMSCore.Application.Entities;
-using EPYSLEMSCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Application.Interfaces;
 using System.Data.Entity;
 using Dapper.Contrib.Extensions;
 using static Dapper.SqlMapper;
 using System.Data.Common;
 using System.Data.SqlClient;
-using EPYSLEMSCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Static;
 using Azure;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using EPYSLEMSCore.Application.Entities.ReportAPI;
-using EPYSLEMSCore.Infrastructure.CustomException;
+using EPYSLTEXCore.Application.Entities.ReportAPI;
+using EPYSLTEXCore.Infrastructure.CustomException;
 
-namespace EPYSLEMSCore.Application.Services
+namespace EPYSLTEXCore.Application.Services
 {
     public class ReportAPISetupService : IReportAPISetupService
     {

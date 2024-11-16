@@ -1,11 +1,11 @@
-﻿using EPYSLEMSCore.API.Contollers.ReportAPI;
-using EPYSLEMSCore.Application.Interfaces;
+﻿using EPYSLTEXCore.API.Contollers.ReportAPI;
+using EPYSLTEXCore.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 
-namespace EPYSLEMSCore.API.Contollers.Menu
+namespace EPYSLTEXCore.API.Contollers.Menu
 {
     [Route("api/[controller]")]
     [ApiController]

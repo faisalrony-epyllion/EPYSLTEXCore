@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace EPYSLEMSCore.API.Contollers
+namespace EPYSLTEXCore.API.Contollers
 {
     public class HomeController : Controller
     {

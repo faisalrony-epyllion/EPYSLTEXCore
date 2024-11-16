@@ -1,6 +1,6 @@
-﻿using EPYSLEMSCore.Application.DataAccess.Interfaces;
-using EPYSLEMSCore.Application.Entities;
-using EPYSLEMSCore.Application.Interfaces;
+﻿using EPYSLTEXCore.Application.DataAccess.Interfaces;
+using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.DTO;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLEMSCore.Application.DataAccess
+namespace EPYSLTEXCore.Application.DataAccess
 {
     public class MenuDAL : IMenuDAL
     {

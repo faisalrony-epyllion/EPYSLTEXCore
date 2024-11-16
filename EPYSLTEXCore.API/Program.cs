@@ -1,10 +1,10 @@
 #region Using
-using EPYSLEMSCore.API.CustomMiddlwares;
-using EPYSLEMSCore.Application.DataAccess.Interfaces;
-using EPYSLEMSCore.Application.DataAccess;
-using EPYSLEMSCore.Application.Interfaces;
-using EPYSLEMSCore.Application.Services;
-using EPYSLEMSCore.Infrastructure.Data;
+using EPYSLTEXCore.API.CustomMiddlwares;
+using EPYSLTEXCore.Application.DataAccess.Interfaces;
+using EPYSLTEXCore.Application.DataAccess;
+using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Services;
+using EPYSLTEXCore.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;

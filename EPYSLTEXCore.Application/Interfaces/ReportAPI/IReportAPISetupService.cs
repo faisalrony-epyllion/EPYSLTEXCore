@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EPYSLEMSCore.Application.Entities;
+using EPYSLTEXCore.Application.Entities;
 
-namespace EPYSLEMSCore.Application.Interfaces
+namespace EPYSLTEXCore.Application.Interfaces
 {
     public interface IReportAPISetupService : ICommonService<ReportAPISetup>
     {

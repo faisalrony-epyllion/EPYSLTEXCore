@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLEMSCore.Infrastructure.Data
+namespace EPYSLTEXCore.Infrastructure.Data
 {
     public abstract class DapperBaseEntity : IDapperBaseEntity
     {

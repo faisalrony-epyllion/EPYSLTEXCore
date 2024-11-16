@@ -1,12 +1,12 @@
-﻿using EPYSLEMSCore.Application.Entities;
-using EPYSLEMSCore.Application.Interfaces;
+﻿using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLEMSCore.Application.DataAccess.Interfaces
+namespace EPYSLTEXCore.Application.DataAccess.Interfaces
 {
     public interface IMenuDAL:IMenuService
     {

@@ -1,16 +1,16 @@
-﻿using EPYSLEMSCore.Application.Interfaces;
-using EPYSLEMSCore.Application.Entities;
+﻿using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EPYSLEMSCore.Application.Entities.ReportAPI;
-using EPYSLEMSCore.Infrastructure.Data;
-using EPYSLEMSCore.Application.DataAccess.Interfaces;
+using EPYSLTEXCore.Application.Entities.ReportAPI;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.DTO;
 
-namespace EPYSLEMSCore.Application.Services
+namespace EPYSLTEXCore.Application.Services
 {
     public class MenuService : IMenuService
     {

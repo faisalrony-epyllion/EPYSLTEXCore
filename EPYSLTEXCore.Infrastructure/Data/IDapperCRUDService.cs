@@ -1,8 +1,8 @@
-﻿using EPYSLEMSCore.Infrastructure.Static;
+﻿using EPYSLTEXCore.Infrastructure.Static;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace EPYSLEMSCore.Infrastructure.Data
+namespace EPYSLTEXCore.Infrastructure.Data
 {
     public interface IDapperCRUDService<T> where T : class, IDapperBaseEntity
     {

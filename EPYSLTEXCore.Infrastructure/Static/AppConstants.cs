@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLEMSCore.Infrastructure.Static
+namespace EPYSLTEXCore.Infrastructure.Static
 {
     public static class AppConstants
     {

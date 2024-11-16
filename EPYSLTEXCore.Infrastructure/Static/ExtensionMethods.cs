@@ -1,5 +1,5 @@
-﻿using EPYSLEMSCore.Infrastructure.Data;
-using EPYSLEMSCore.Infrastructure.Entities;
+﻿using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using EPYSLEMSCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Static;
 
 namespace System
 {

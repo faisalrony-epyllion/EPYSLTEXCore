@@ -1,9 +1,9 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLEMSCore.Infrastructure.Data;
-using EPYSLEMSCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Static;
 
 
-namespace EPYSLEMSCore.Application.Entities
+namespace EPYSLTEXCore.Application.Entities
 {
     [Table("ReportAPISetup")]
     public class ReportAPISetup : DapperBaseEntity

@@ -1,13 +1,13 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
-using EPYSLEMSCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Collections;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 
-namespace EPYSLEMSCore.Infrastructure.Data
+namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
     {

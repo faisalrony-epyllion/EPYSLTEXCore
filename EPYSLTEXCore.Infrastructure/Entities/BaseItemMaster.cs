@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLEMSCore.Infrastructure.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     /// <summary>
     /// Base Item Master follows are generic Item Master structure. 

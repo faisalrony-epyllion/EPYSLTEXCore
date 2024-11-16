@@ -1,7 +1,7 @@
 ﻿using System.Net;
-using EPYSLEMSCore.Application.ResponseModels;
+using EPYSLTEXCore.Application.ResponseModels;
 
-namespace EPYSLEMSCore.API.CustomMiddlwares
+namespace EPYSLTEXCore.API.CustomMiddlwares
 {
     /// <summary>
     /// Middleware for handling exceptions and logging errors.

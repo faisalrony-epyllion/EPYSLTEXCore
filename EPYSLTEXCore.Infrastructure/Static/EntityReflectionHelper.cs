@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Dapper.Contrib.Extensions;
 
-namespace EPYSLEMSCore.Infrastructure.Static
+namespace EPYSLTEXCore.Infrastructure.Static
 {
     public static class EntityReflectionHelper
     {

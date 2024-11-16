@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Azure.Core.HttpHeader;
 
-namespace EPYSLEMSCore.Infrastructure.Static
+namespace EPYSLTEXCore.Infrastructure.Static
 {
     /// <summary>
     /// Write all your queries here.

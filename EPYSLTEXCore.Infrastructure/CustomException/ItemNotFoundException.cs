@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace EPYSLEMSCore.Infrastructure.CustomException
+namespace EPYSLTEXCore.Infrastructure.CustomException
 {
     public class ItemNotFoundException : Exception
     {

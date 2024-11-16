@@ -1,11 +1,11 @@
-﻿using EPYSLEMSCore.Application.Entities;
-using EPYSLEMSCore.Application.Interfaces;
-using EPYSLEMSCore.Infrastructure.Static;
+﻿using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
-namespace EPYSLEMSCore.API.Contollers.ReportAPI
+namespace EPYSLTEXCore.API.Contollers.ReportAPI
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,5 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLEMSCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLEMSCore.Application.Entities.ReportAPI
+namespace EPYSLTEXCore.Application.Entities.ReportAPI
 {
     [Table("ReportAPISetupUserPermission")]
     public class ReportAPISetupUserPermissionDaily : DapperBaseEntity

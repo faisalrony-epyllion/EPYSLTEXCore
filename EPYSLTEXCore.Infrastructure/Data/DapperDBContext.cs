@@ -1,4 +1,4 @@
-﻿using EPYSLEMSCore.Infrastructure.Static;
+﻿using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLEMSCore.Infrastructure.Data
+namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperDBContext
     {

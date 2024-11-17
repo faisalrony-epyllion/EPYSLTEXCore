@@ -1256,4 +1256,8 @@
     <ProjectReference Include="..\EPYSLTEXCore.Infrastructure\EPYSLTEXCore.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Account\" />
+  </ItemGroup>
+
 </Project>

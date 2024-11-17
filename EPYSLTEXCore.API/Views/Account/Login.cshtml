@@ -1,0 +1,46 @@
+﻿@using EPYSLTEXCore.API.Models.Security
+@model LoginBindingModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+<div class="align-wrapper center-align">
+    <h4 class="grey-text text-darken-1"><i class="fa fa-lock"></i>&nbsp;Login to Textile ERP</h4>    
+    <br />
+    @{
+        if (ViewBag.EmailSent == true)
+        {
+            <div class="green-text text-lighten-2 center">
+                <h5>A confirmation email is sent to your @ViewBag.Email</h5>
+                <p>Please check your your email.</p>
+            </div>
+        }
+    }    
+    <div class="login-form-box z-depth-1 grey lighten-4 row">
+        
+        <form id="login-form">
+            <div class='row' style="color:black">
+                <input type="hidden" name="grant_type" value="password" />
+                <div class='input-field col s12'>
+                    <input id="name" type="text" class="validate" name="Username" value="@ViewBag.UserName">
+                    <label for="name">Username</label>
+                </div>
+            </div>
+
+            <div class='row'>
+                <div class='input-field col s12'>
+                    <input id="password" type="password" class="validate" name="Password" value="@ViewBag.Password">
+                    <label for="password">Password</label>
+                </div>
+                <label style='float: right;'>
+                    @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account", new { @class = "green-text" })
+                </label>
+            </div>
+
+            <div class='row'>
+                <button id="btn-signin" class='col s12 btn waves-effect blue-grey darken-3'>Login</button>
+            </div>
+        </form>
+    </div>
+</div>

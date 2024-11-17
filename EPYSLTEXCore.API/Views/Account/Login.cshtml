@@ -27,20 +27,22 @@
                     <label for="name">Username</label>
                 </div>
             </div>
-
             <div class='row'>
                 <div class='input-field col s12'>
                     <input id="password" type="password" class="validate" name="Password" value="@ViewBag.Password">
                     <label for="password">Password</label>
                 </div>
                 <label style='float: right;'>
-                    @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account", new { @class = "green-text" })
+                    @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account", new { @class = "teal-text" })
                 </label>
             </div>
-
             <div class='row'>
-                <button id="btn-signin" class='col s12 btn waves-effect blue-grey darken-3'>Login</button>
+                <button id="btn-signin" class='col s12 btn waves-effect #00695c darken-3'>Login</button>
             </div>
+ 
+                <div class="container center grey-text text-darken-4 footer-text-small">
+                    © Copyright <a target="_blank" href="https://www.epylliongroup.com">Epyllion Group</a>. All rights reserved.
+                </div>
         </form>
     </div>
 </div>

@@ -6,35 +6,90 @@
     <title>@ViewBag.Title | Textile ERP</title>
 
     <link href="~/Content/home-bundle.min.css" rel="stylesheet" />
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+
+        .split {
+            height: 100%;
+            width: 50%;
+            position: fixed;
+            top: 0;
+        }
+
+        .left-side {
+            left: 0;
+            background-color: #00695c; /* Teal color */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .right-side {
+            right: 0;
+            background-color: #f4f4f4; /* Light background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-panel {
+            width: 100%;
+            max-width: 550px;
+        }
+    </style>
 </head>
 <body>
     <!--Main Navigation-->
     <header>
         <div class="navbar-fixed" style="font-family:'Encode Sans'">
             <div class="nav-wrapper">
-                <nav class="blue-grey darken-3" role="navigation">
+            
                     <div class="nav-wrapper container-fluid">
                         <a href="#!" class="brand-logo">
                             <img src="~/Images/logo.png" />
                         </a>
-                        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                        
 
-                        <ul id="nav-mobile" class="right hide-on-med-and-down">
-                            <li><a target="_blank" href="../../helpfile/Introduction.html"><i class="material-icons left">help</i>Help</a></li>
-                        </ul>
                     </div>
-                </nav>
+           
             </div>
         </div>
     </header>
     <!--Main Navigation-->
     <!--Main layout-->
+
     <main>
-        <section id="main-content">
-            <div class="container">
-                @RenderBody()
+        <div class="split left-side">
+            <div>
+                <h2>Welcome to Textile ERP</h2>
+              
             </div>
-        </section>
+        </div>
+        <div class="split right-side">
+            <div class="login-panel">
+                <div class="card">
+
+                    <div class="card-content">
+                    
+                        <section id="main-content">
+                            <div class="container">
+                                @RenderBody()
+                            </div>
+                        </section>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <main class="#00695c teal darken-3">
+    
     </main>
     <!--Main layout-->
     <!--Footer-->
@@ -46,7 +101,6 @@
         </div>
     </footer>
     <!--Footer-->
-
     <!--  Scripts-->
     <script src="~/Scripts/home-bundle.min.js"></script>
 </body>

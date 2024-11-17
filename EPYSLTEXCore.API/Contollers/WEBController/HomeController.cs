@@ -6,6 +6,8 @@ namespace EPYSLTEXCore.API.Contollers
     {
         public IActionResult Index()
         {
+            ViewBag.ProfilePic = "/Images/user.png";
+            ViewBag.EmployeeName = "Anupam";
             return View();
         }
     }

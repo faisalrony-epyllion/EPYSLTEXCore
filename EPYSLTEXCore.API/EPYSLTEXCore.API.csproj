@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Contollers\HomeController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\App_Themes\adminlte\css\report.css" />
     <None Include="wwwroot\App_Themes\adminlte\css\style.css" />
     <None Include="wwwroot\App_Themes\adminlte\data.html" />

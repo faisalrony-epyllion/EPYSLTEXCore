@@ -79,3 +79,9 @@
 /EPYSLTEXCore.Application/obj/project.assets.json
 /EPYSLTEXCore.Application/obj/project.nuget.cache
 /EPYSLTEXCore.Application/obj/Debug/net8.0/ref/EPYSLTEXCore.Application.dll
+/EPYSLTEXCore.API/wwwroot/Bundle/css/dashboard-bundle.min.css
+/EPYSLTEXCore.API/wwwroot/Bundle/css/report-bundle.min.css
+/EPYSLTEXCore.API/wwwroot/Bundle/css/site-bundle.min.css
+/EPYSLTEXCore.API/wwwroot/Bundle/js/dashboard-bundle.min.js
+/EPYSLTEXCore.API/wwwroot/Bundle/js/report-bundle.min.js
+/EPYSLTEXCore.API/wwwroot/Bundle/js/site-bundle.min.js

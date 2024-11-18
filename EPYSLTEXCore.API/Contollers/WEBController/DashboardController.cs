@@ -1,16 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEX.Web.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EPYSLTEXCore.API.Contollers.WEBController
 {
-    public class DashboardController : Controller
-
-
+    public class DashboardController : BaseController
     {
+        private readonly IUserService _userService;
+        public DashboardController(IUserService userService
+           ) : base(userService)
+        {
+            _userService = userService;
+        }
         [HttpGet]
         public ActionResult Index()
         {
             ViewBag.ProfilePic = "/images/user.png";
-            ViewBag.EmployeeName = "Test";
+            ViewBag.EmployeeName = AppUser.Name;
             return View();
         }
     }

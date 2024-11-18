@@ -10,23 +10,34 @@ namespace EPYSLTEX.Web.Services
 {
     public class TokenBuilder : ITokenBuilder
     {
+        private readonly IConfiguration _configuration;
+
+        public TokenBuilder(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public string BuildToken(LoginUser user, DateTime expiresAtUtc)
         {
             var role = user.IsSuperUser ? UserRoles.SUPER_USER : user.IsAdmin ? UserRoles.ADMIN : UserRoles.GENERAL;
-            var claims = new Claim[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserCode.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, role)
-            };
+            var claims = new[]
+        {
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Role, role)  // Add roles or any other claims you need
+        };
 
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConstants.SYMMETRIC_SECURITY_KEY));
-            var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-            
-            var jwt = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials, expires: expiresAtUtc);
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            return encodedJwt;
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JwtSettings:Issuer"],
+                audience: _configuration["JwtSettings:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),  // Set token expiry time
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 

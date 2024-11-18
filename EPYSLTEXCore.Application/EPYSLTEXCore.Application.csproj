@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Interfaces\Repository\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\User\" />
   </ItemGroup>

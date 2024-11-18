@@ -19,7 +19,8 @@
           "NLog.Web.AspNetCore": "5.3.12",
           "Newtonsoft.Json": "13.0.3",
           "Swashbuckle.AspNetCore": "6.4.0",
-          "Swashbuckle.AspNetCore.Annotations": "6.7.3"
+          "Swashbuckle.AspNetCore.Annotations": "6.7.3",
+          "EPYSL.Encription": "1.0.0.0"
         },
         "runtime": {
           "EPYSLTEXCore.API.dll": {}
@@ -631,6 +632,14 @@
         "runtime": {
           "EPYSLTEXCore.Infrastructure.dll": {}
         }
+      },
+      "EPYSL.Encription/1.0.0.0": {
+        "runtime": {
+          "EPYSL.Encription.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -1088,6 +1097,11 @@
     },
     "EPYSLTEXCore.Infrastructure/1.0.0": {
       "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "EPYSL.Encription/1.0.0.0": {
+      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }

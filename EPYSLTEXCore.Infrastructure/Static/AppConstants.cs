@@ -4,6 +4,7 @@
     {
         public const string DB_CONNECTION = "DBConnection";
         public const string NEW = "<<--New-->>";
+        public const string SYMMETRIC_SECURITY_KEY = "8b327b47-2e48-4116-9134-dcbcd5aff40b";
         //public const string ConnectionString = "Server=192.168.10.231;User ID=sa;Password=Erp123!;Database=EPYEMS;Integrated Security=False;Trusted_Connection=False;TrustServerCertificate=True";
         public const string SPECIAL_CHARACTER_TO_REMOVE_IN_UPLOAD = "['<>&]|[\n]{2}";
         public const string GMT_CONNECTION = "GmtConnection";

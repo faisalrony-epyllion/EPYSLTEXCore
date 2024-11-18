@@ -1,5 +1,8 @@
 #region Using
 
+using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEX.Infrastructure.Services;
+using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.API.CustomMiddlwares;
 using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
@@ -37,6 +40,8 @@ builder.Services.AddScoped(typeof(IDapperCRUDService<>), typeof(DapperCRUDServic
 builder.Services.AddTransient<IMenuService, MenuService>();
 builder.Services.AddTransient<IMenuDAL, MenuDAL>();
 builder.Services.AddTransient<IReportAPISetupService, ReportAPISetupService>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<TokenBuilder, TokenBuilder>();
 #endregion
 
 #region AutoMapper

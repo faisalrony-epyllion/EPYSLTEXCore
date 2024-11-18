@@ -1261,7 +1261,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Service\" />
     <Folder Include="Views\Account\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="EPYSL.Encription">
+      <HintPath>..\ExternalResources\EPYSL.Encription.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

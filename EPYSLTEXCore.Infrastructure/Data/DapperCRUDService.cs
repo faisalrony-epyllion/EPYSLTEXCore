@@ -19,7 +19,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public DapperCRUDService(IConfiguration configuration)
         {
             this._configuration = configuration;
-            this._connectionString = this._configuration.GetConnectionString("DBConnection");
+            this._connectionString = this._configuration.GetConnectionString("GmtConnection");
             //_signatureRepository = signatureRepository;
             Connection = new SqlConnection(this._connectionString);
         }

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using System.Net;
 using System.Security.Claims;
+using System.Data.Entity;
+using EPYSLTEX.Core.Entities;
 
 namespace EPYSLTEXCore.API.Contollers
 {
@@ -52,8 +54,56 @@ namespace EPYSLTEXCore.API.Contollers
              
             var expiresAtUtc = DateTime.UtcNow.AddHours(1);
             var token = _tokenBuilder.BuildToken(user, expiresAtUtc);
+
+            //LoginHistory loginHistory = this.GetLoginHistory(user.UserCode);
+            //loginHistory.UserCode = user.UserCode;
+            //loginHistory.LogInTime = DateTime.Now;
+            //loginHistory.EntityState = EntityState.Added;
+            //await _loginHistoryService.SaveAsync(loginHistory);
+
             return Json(new { statusCode = HttpStatusCode.OK, accessToken = token });
 
         }
+        [HttpGet]
+        public async Task<ActionResult> LogOff()
+        {
+            #region LogOutTime Set
+            //LoginHistory loginHistory = this.GetLoginHistory(AppUser.UserCode);
+            //loginHistory = await _loginHistoryService.GetAsync(loginHistory);
+            //if (loginHistory.IsNotNull())
+            //{
+            //    loginHistory.LogOutTime = DateTime.Now;
+            //    loginHistory.EntityState = EntityState.Modified;
+            //    await _loginHistoryService.SaveAsync(loginHistory);
+            //}
+            #endregion
+
+            //AppUser = null;
+            
+            return RedirectToAction("Login");
+        }
+
+        private LoginHistory GetLoginHistory(int userCode)
+        {
+            LoginHistory loginHistory = new LoginHistory();
+            if (Request.IsNotNull())
+            {
+                //loginHistory.IPAddress = Request.UserHostName;
+                //loginHistory.OpenPortNo = Request.Url.Port;
+                //loginHistory.LogonUserIdentityName = Request.LogonUserIdentity.Name;
+                //loginHistory.UserHostName = Request.UserHostName;
+                //loginHistory.MachineName = Environment.MachineName;
+
+                //if (Request.UserHostAddress.IsNotNull() && userCode != 542)
+                //{
+                //    IPHostEntry hostEntry = Dns.GetHostEntry(Request.UserHostAddress);
+                //    loginHistory.MachineName = hostEntry.HostName;
+                //}
+            }
+            loginHistory.MachineUserName = System.Environment.UserName;
+            return loginHistory;
+        }
+
+
     }
 }

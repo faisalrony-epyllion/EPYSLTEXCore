@@ -1,6 +1,7 @@
 #region Using
 
 using EPYSLTEXCore.API.CustomMiddlwares;
+using EPYSLTEXCore.API.Extension;
 using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.Interfaces;
@@ -18,26 +19,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
-//builder.Services..AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache(opt => { ////for in memory caching
     opt.SizeLimit = 100; ///// Set the caching key limit
 });
+builder.Services.AddApplication(); // Services LifeTime
 
 #region Swagger config
 //builder.Services.AddSwaggerGen();
 
 #endregion
 
-#region Services LifeTime
-//builder.Services.AddSingleton<DapperDBContext>();
 
-// Register IDapperCRUDService<T> with DapperCRUDService<T>
-builder.Services.AddScoped(typeof(IDapperCRUDService<>), typeof(DapperCRUDService<>));
-builder.Services.AddTransient<IMenuService, MenuService>();
-builder.Services.AddTransient<IMenuDAL, MenuDAL>();
-builder.Services.AddTransient<IReportAPISetupService, ReportAPISetupService>();
-#endregion
 
 #region AutoMapper
 //builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

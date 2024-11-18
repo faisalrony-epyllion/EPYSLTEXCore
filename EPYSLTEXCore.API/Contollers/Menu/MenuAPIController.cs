@@ -1,10 +1,12 @@
 ﻿using EPYSLTEXCore.API.Contollers.ReportAPI;
 using EPYSLTEXCore.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace EPYSLTEXCore.API.Contollers.Menu
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MenuAPIController : ControllerBase

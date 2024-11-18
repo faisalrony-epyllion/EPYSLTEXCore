@@ -27,6 +27,10 @@ builder.Services.AddMemoryCache(opt => { ////for in memory caching
     opt.SizeLimit = 100; ///// Set the caching key limit
 });
 builder.Services.AddApplication(); // Services LifeTime
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10); // Set session timeout
+});
 
 #region Swagger config
 //builder.Services.AddSwaggerGen();
@@ -89,6 +93,8 @@ builder.Services.AddSingleton(validateJwt);
 //});
 #endregion
 
+// Configure session options
+
 var app = builder.Build();
 
 #region Use Swagger
@@ -108,6 +114,7 @@ app.UseHttpsRedirection();
 //app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
+app.UseSession();
 #region Custom Middlwares
 app.UseMiddleware<GlobalExceptionHandler>();
 //app.UseMiddleware<LoggingMiddleware>();

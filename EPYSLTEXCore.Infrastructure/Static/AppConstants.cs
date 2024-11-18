@@ -45,6 +45,11 @@
         public const string ADMIN = "Admin";
         public const string GENERAL = "User";
     }
+    public static class SessionStorage
+    {
+        public const string UserID = "UserID";
+       
+    }
 
     /// <summary>
     /// Success message constants used throughout the application.

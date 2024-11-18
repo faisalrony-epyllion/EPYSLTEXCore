@@ -1262,7 +1262,6 @@
 
   <ItemGroup>
     <Folder Include="Service\" />
-    <Folder Include="Views\Account\" />
   </ItemGroup>
 
   <ItemGroup>

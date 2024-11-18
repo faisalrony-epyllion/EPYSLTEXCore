@@ -13,6 +13,8 @@ using System.Net;
 using System.Security.Claims;
 using System.Data.Entity;
 using EPYSLTEX.Core.Entities;
+using EPYSLTEXCore.Infrastructure.Static;
+using Microsoft.AspNetCore.Http;
 
 namespace EPYSLTEXCore.API.Contollers
 {
@@ -47,13 +49,14 @@ namespace EPYSLTEXCore.API.Contollers
         {
             LoginUser user = await _userService.FindUserForLoginAsync(model.Username);
             if (user == null) return Unauthorized(new { message = "Invalid username or password" });
-             
+
             var password = _encryption.Encrypt(model.Password, model.Username);
             if (password == null) return Unauthorized(new { message = "Invalid username or password" });
-             
-             
+
+
             var expiresAtUtc = DateTime.UtcNow.AddHours(1);
             var token = _tokenBuilder.BuildToken(user, expiresAtUtc);
+            UserCode = user.UserCode;
 
             //LoginHistory loginHistory = this.GetLoginHistory(user.UserCode);
             //loginHistory.UserCode = user.UserCode;
@@ -67,7 +70,7 @@ namespace EPYSLTEXCore.API.Contollers
         [HttpGet]
         public async Task<ActionResult> LogOff()
         {
-            var s = AppUser;
+            AppUser = null;
             #region LogOutTime Set
             //LoginHistory loginHistory = this.GetLoginHistory(AppUser.UserCode);
             //loginHistory = await _loginHistoryService.GetAsync(loginHistory);

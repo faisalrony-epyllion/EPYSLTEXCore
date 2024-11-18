@@ -57,10 +57,12 @@ builder.Host.UseNLog();
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var validateJwt = new TokenValidationParameters
 {
-    ValidateIssuer = false,
-    ValidateAudience = false,
+    ValidateIssuer = true,
+    ValidateAudience = true,
     ValidateLifetime = true,
     ValidateIssuerSigningKey = true,
+    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+    ValidAudience = builder.Configuration["JwtSettings:Audience"],
     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new ArgumentException("security key can not be null"))),
 };
 
@@ -111,7 +113,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 
 app.UseHttpsRedirection();
-//app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.UseSession();

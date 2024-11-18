@@ -1,5 +1,8 @@
 #region Using
 
+using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEX.Infrastructure.Services;
+using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.API.CustomMiddlwares;
 using EPYSLTEXCore.API.Extension;
 using EPYSLTEXCore.Application.DataAccess;

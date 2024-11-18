@@ -15,4 +15,9 @@
     <ProjectReference Include="..\EPYSLTEXCore.Infrastructure\EPYSLTEXCore.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\User\" />
+    <Folder Include="Services\User\" />
+  </ItemGroup>
+
 </Project>

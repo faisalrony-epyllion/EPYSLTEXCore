@@ -1243,7 +1243,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="EntityFramework" Version="6.5.1" />
@@ -1270,5 +1269,7 @@
       <HintPath>..\ExternalResources\EPYSL.Encription.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+<Target Name="RunBuildBundlerMinifier" AfterTargets="Build">
+  <Exec Command="dotnet bundler" />
+</Target>
 </Project>

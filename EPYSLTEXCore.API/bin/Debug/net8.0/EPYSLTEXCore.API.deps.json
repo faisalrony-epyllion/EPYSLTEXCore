@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "EPYSLTEXCore.API/1.0.0": {
         "dependencies": {
+          "BuildBundlerMinifier": "3.2.449",
           "Dapper": "2.1.35",
           "Dapper.Contrib": "2.0.78",
           "EPYSLTEXCore.Application": "1.0.0",
@@ -61,6 +62,7 @@
           }
         }
       },
+      "BuildBundlerMinifier/3.2.449": {},
       "Dapper/2.1.35": {
         "runtime": {
           "lib/net7.0/Dapper.dll": {
@@ -662,6 +664,13 @@
       "sha512": "sha512-4EsGMAr+oog5UqHs46qwA7S/lJiwpXjPBY3t9tQBmJ8nsgmT/LLnrc32eiTlfOdfKxUz4fxBD2YjSnVZacu97w==",
       "path": "azure.identity/1.11.3",
       "hashPath": "azure.identity.1.11.3.nupkg.sha512"
+    },
+    "BuildBundlerMinifier/3.2.449": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uA9sYDy4VepL3xwzBTLcP2LyuVYMt0ZIT3gaSiXvGoX15Ob+rOP+hGydhevlSVd+rFo+Y+VQFEHDuWU8HBW+XA==",
+      "path": "buildbundlerminifier/3.2.449",
+      "hashPath": "buildbundlerminifier.3.2.449.nupkg.sha512"
     },
     "Dapper/2.1.35": {
       "type": "package",

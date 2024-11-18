@@ -11,10 +11,10 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-
+    <link href="~/bundle/css/dashboard-bundle.min.css" rel="stylesheet" />
 
     <link href="~/App_Themes/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="~/Content/dashboard-bundle.min.css" rel="stylesheet" />   
+ @*    <link href="~/Content/dashboard-bundle.min.css" rel="stylesheet" />    *@
     <link href="~/App_Themes/plugins/syncfusion-ej2/material.css" rel="stylesheet" />
 
     @RenderSection("styles", false)
@@ -100,8 +100,8 @@
         </footer>
     </div>
     <!-- ./wrapper -->
-    <script src="~/Scripts/dashboard-bundle.min.js"></script>
-
+@*     <script src="~/Scripts/dashboard-bundle.min.js"></script> *@
+    <script src="~/bundle/js/dashboard-bundle.min.js"></script>
     <script src="~/Scripts/common/common-helpers.js?version=@version"></script>
     <script src="~/Scripts/common/app.js?version=@version"></script>
     <script src="~/Scripts/common/common-methods.js?version=@version"></script>

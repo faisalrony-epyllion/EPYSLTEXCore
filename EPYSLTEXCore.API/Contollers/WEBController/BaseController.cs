@@ -20,7 +20,7 @@ namespace EPYSLTEXCore.API.Contollers
             get
             {
                 int userId = HttpContext.Session.GetInt32(SessionStorage.UserID) ?? 0;
-                if (userId == null)
+                if (userId == 0)
                     throw new Exception("Can't not find logged in user.");
 
                 return userId;

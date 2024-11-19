@@ -1,14 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
+using EPYSLTEXCore.API.Extension;
 namespace EPYSLTEXCore.API.Contollers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(int menuId, string pageName,string navUrlName)
         {
-            ViewBag.ProfilePic = "/Images/user.png";
-            ViewBag.EmployeeName = "Anupam";
-            return View();
+            var rootName = "~/Views/";
+
+            ViewBag.MenuId = menuId;
+            ViewBag.PageName = pageName;
+            string viewPath= rootName + navUrlName.SplitAndAddUnderscore();
+           
+            return View(viewPath);
+         
+          
         }
+
+       
     }
 }

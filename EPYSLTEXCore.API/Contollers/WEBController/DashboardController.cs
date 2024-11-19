@@ -18,7 +18,8 @@ namespace EPYSLTEXCore.API.Contollers.WEBController
             
 
             ViewBag.ProfilePic = "/images/user.png";
-            ViewBag.EmployeeName =  AppUser.Name;
+            //ViewBag.EmployeeName =  AppUser.Name;
+            ViewBag.EmployeeName =  "Nishadur Rahman";
             return View();
         }
     }

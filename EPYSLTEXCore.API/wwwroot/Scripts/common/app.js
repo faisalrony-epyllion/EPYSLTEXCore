@@ -18,6 +18,8 @@ var $mainTab;
 var $mainTabContent;
 
 $(document).ready(function () {
+  
+
     rootPath = window.location.protocol + '//' + window.location.host;
 
     toastr.options.escapeHtml = true;
@@ -28,11 +30,12 @@ $(document).ready(function () {
     axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
     if (localStorage.getItem("token")) {
         axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+
     }
 
     //getBookingAnalysisBookingAcknowledgementCountALL();
     loadProgressBar();
-
+ 
     axios.interceptors.request.use(function (config) {
         if (config.method === "post") {
             HoldOn.open({
@@ -53,7 +56,7 @@ $(document).ready(function () {
         HoldOn.close();
         return Promise.reject(error);
     });
-
+ 
     GetMenus(constants.APPLICATION_ID);
 
     $('[data-toggle="tooltip"]').tooltip({ html: true });
@@ -355,6 +358,7 @@ function registerCloseEvent() {
 }
 
 function GetViewMarkup(controller, actionName, menuId, pageName, tabCaption, navUrlName) {
+
     var url = "/" + controller + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     axios.get(url).then(function (response) {
         $mainTab.append('<li><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');

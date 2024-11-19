@@ -2,126 +2,39 @@
   {
     "outputFileName": "wwwroot/Bundle/css/site-bundle.min.css",
     "inputFiles": [
-      "wwwroot/App_Themes/plugins/materialize/css/material-font.css",
-      "wwwroot/App_Themes/plugins/materialize/css/materialize.min.css",
-      "wwwroot/App_Themes/plugins/axios-progress-bar/nprogress.css",
-      "wwwroot/App_Themes/home/css/style.css"
+      "wwwroot/App_Themes/lib/bootstrap/css/bootstrap.css",
+      "wwwroot/App_Themes/lib/select2/css/select2.min.css",
+      "wwwroot/App_Themes/adminlte/css/adminlte.css",
+      "wwwroot/App_Themes/lib/toastr.js/toastr.min.css",
+      "wwwroot/App_Themes/lib/bootstrap3-editable/css/bootstrap-editable.css",
+      "wwwroot/App_Themes/lib/HoldOn/HoldOn.min.css",
+      "wwwroot/App_Themes/lib/clockpicker/bootstrap-clockpicker.css",
+      "wwwroot/App_Themes/lib/font-awesome/css/font-awesome.min.css"
     ],
     "minify": {
       "enabled": true
     }
   },
+
   {
     "outputFileName": "wwwroot/Bundle/js/site-bundle.min.js",
     "inputFiles": [
-      "wwwroot/App_Themes/plugins/babel-polyfill/polyfill.min.js",
-      "wwwroot/App_Themes/plugins/jquery/jquery.min.js",
-      "wwwroot/App_Themes/plugins/materialize/js/materialize.min.js",
-      "wwwroot/App_Themes/plugins/axios/axios.min.js",
-      "wwwroot/App_Themes/plugins/axios-progress-bar/index.js",
-      "wwwroot/App_Themes/plugins/drag/Drag.js",
-      "wwwroot/App_Themes/home/js/init.js"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/Bundle/css/dashboard-bundle.min.css",
-    "inputFiles": [
-      "wwwroot/App_Themes/plugins/bootstrap/css/bootstrap.min.css",
-      "wwwroot/App_Themes/plugins/toastr.js/toastr.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap-table/bootstrap-table.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.css",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap3-editable/css/bootstrap-editable.css",
-      "wwwroot/App_Themes/plugins/select2/css/select2.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap-toggle/css/bootstrap-toggle.css",
-      "wwwroot/App_Themes/plugins/icheck-bootstrap/icheck-bootstrap.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css",
-      "wwwroot/App_Themes/plugins/axios-progress-bar/nprogress.css",
-      "wwwroot/App_Themes/plugins/clockpicker/bootstrap-clockpicker.min.css",
-      "wwwroot/App_Themes/plugins/HoldOn.js/HoldOn.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap-fileinput/css/fileinput.min.css",
-      "wwwroot/App_Themes/adminlte/dist/css/AdminLTE.css",
-      "wwwroot/App_Themes/adminlte/dist/css/skins/skin-grey.css",
-      "wwwroot/App_Themes/adminlte/css/style.css",
-      "wwwroot/App_Themes/home/css/style.css"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/Bundle/js/dashboard-bundle.min.js",
-    "inputFiles": [
-      "wwwroot/App_Themes/plugins/babel-polyfill/polyfill.min.js",
-      "wwwroot/App_Themes/plugins/jquery/jquery.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap/js/bootstrap.min.js",
-      "wwwroot/App_Themes/plugins/axios/axios.min.js",
-      "wwwroot/App_Themes/plugins/axios-progress-bar/index.js",
-      "wwwroot/App_Themes/plugins/underscore.js/underscore.min.js",
-      "wwwroot/App_Themes/plugins/moment/moment.min.js",
-      "wwwroot/App_Themes/plugins/tableexport.jquery.plugin/tableExport.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/bootstrap-table-modified.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/export/bootstrap-table-export.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/auto-refresh/bootstrap-table-auto-refresh.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap3-editable/js/bootstrap-editable.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js",
-      "wwwroot/App_Themes/plugins/tablednd/jquery.tablednd.min.js",
-      "wwwroot/App_Themes/plugins/fastclick/fastclick.js",
-      "wwwroot/App_Themes/plugins/validatejs/validate.min.js",
-      "wwwroot/App_Themes/plugins/toastr.js/toastr.min.js",
-      "wwwroot/App_Themes/plugins/bootbox.js/bootbox.min.js",
-      "wwwroot/App_Themes/plugins/select2/js/select2.full.min.js",
-      "wwwroot/App_Themes/plugins/HoldOn.js/HoldOn.min.js",
-      "wwwroot/App_Themes/plugins/clockpicker/bootstrap-clockpicker.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js",
-      "wwwroot/App_Themes/plugins/jquery-slimscroll/jquery.slimscroll.js",
-      "wwwroot/App_Themes/plugins/bootstrap-fileinput/js/fileinput.min.js",
-      "wwwroot/App_Themes/plugins/drag/Drag.js",
-      "wwwroot/App_Themes/adminlte/dist/js/adminlte.js"
+      "wwwroot/App_Themes/lib/jquery/jquery.min.js",
+      "wwwroot/App_Themes/lib/axios/axios.js",
+      "wwwroot/App_Themes/lib/axios-progress-bar/index.js",
+      "wwwroot/App_Themes/lib/bootstrap/js/bootstrap.js",
+      "wwwroot/App_Themes/lib/clockpicker/bootstrap-clockpicker.js",
+      "wwwroot/App_Themes/lib/select2/js/select2.js",
+      "wwwroot/App_Themes/lib/toastr.js/toastr.min.js",
+      "wwwroot/App_Themes/lib/bootstrap3-editable/js/bootstrap-editable.min.js",
+      "wwwroot/App_Themes/lib/HoldOn/HoldOn.min.js",
+      "wwwroot/App_Themes/adminlte/js/adminlte.js"
+
     ],
     "minify": {
       "enabled": true,
       "renameLocals": true
     }
-  },
-  {
-    "outputFileName": "wwwroot/Bundle/css/report-bundle.min.css",
-    "inputFiles": [
-      "wwwroot/App_Themes/plugins/bootstrap/css/bootstrap.min.css",
-      "wwwroot/App_Themes/plugins/toastr.js/toastr.min.css",
-      "wwwroot/App_Themes/plugins/axios-progress-bar/nprogress.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap-table/bootstrap-table.min.css",
-      "wwwroot/App_Themes/plugins/bootstrap3-editable/css/bootstrap-editable.css",
-      "wwwroot/App_Themes/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css",
-      "wwwroot/App_Themes/adminlte/dist/css/AdminLTE.css",
-      "wwwroot/App_Themes/adminlte/dist/css/skins/skin-grey.css",
-      "wwwroot/App_Themes/adminlte/css/report.css",
-      "wwwroot/App_Themes/home/css/style.css"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/Bundle/js/report-bundle.min.js",
-    "inputFiles": [
-      "wwwroot/App_Themes/plugins/babel-polyfill/polyfill.min.js",
-      "wwwroot/App_Themes/plugins/jquery/jquery.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap/js/bootstrap.min.js",
-      "wwwroot/App_Themes/plugins/bootbox.js/bootbox.min.js",
-      "wwwroot/App_Themes/plugins/moment/moment.min.js",
-      "wwwroot/App_Themes/plugins/axios/axios.min.js",
-      "wwwroot/App_Themes/plugins/axios-progress-bar/index.js",
-      "wwwroot/App_Themes/plugins/jquery-slimscroll/jquery.slimscroll.min.js",
-      "wwwroot/App_Themes/plugins/fastclick/fastclick.js",
-      "wwwroot/App_Themes/plugins/toastr.js/toastr.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/bootstrap-table-modified.js",
-      "wwwroot/App_Themes/plugins/bootstrap3-editable/js/bootstrap-editable.js",
-      "wwwroot/App_Themes/plugins/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js",
-      "wwwroot/App_Themes/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js",
-      "wwwroot/App_Themes/adminlte/dist/js/adminlte.js",
-      "wwwroot/App_Themes/plugins/drag/Drag.js",
-      "wwwroot/Scripts/common/common-helpers.js",
-      "wwwroot/Scripts/common/common-methods.js",
-      "wwwroot/Scripts/common/ikr.table2excel.js"
-    ]
+
   }
 ]

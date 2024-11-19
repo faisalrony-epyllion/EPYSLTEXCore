@@ -4,45 +4,59 @@
     ViewBag.Title = "Log in";
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 }
-
-<div class="align-wrapper center-align">
-    <h3 class="teal-text text-darken-1"><i class="fa fa-lock"></i>Login</h3>
-    <br />
-    @{
-        if (ViewBag.EmailSent == true)
+<div class="d-flex justify-content-center align-items-center" style="height: 92vh !important;">
+    <div class="text-center w-100" style="max-width: 350px;">
+        <h3 class="text-primary"><i class="fa fa-lock"></i> Login</h3>
+        <br />
+        @if (ViewBag.EmailSent == true)
         {
-            <div class="green-text text-lighten-2 center">
-                <h5>A confirmation email is sent to your @ViewBag.Email</h5>
-                <p>Please check your your email.</p>
+            <div class="alert alert-success text-start">
+                <h6>A confirmation email has been sent to your <strong>@ViewBag.Email</strong></h6>
+                <p>Please check your email for further instructions.</p>
             </div>
         }
-    }    
-    <div class="login-form-box z-depth-1 grey lighten-4 row">
-        
-        <form id="login-form">
-            <div class='row' style="color:black">
-                <input type="hidden" name="grant_type" value="password" />
-                <div class='input-field col s12'>
-                    <input id="name" type="text" class="validate" name="Username" value="@ViewBag.UserName">
-                    <label for="name">Username</label>
-                </div>
+        <div class="card shadow" id="sign-in">
+            <div class="card-body p-4">
+                <form id="login-form">
+                    <div class="mb-3">
+                        <input type="hidden" name="grant_type" value="password" />
+                        <label for="name" class="form-label">Username</label>
+                        <input id="name" type="text" class="form-control" name="Username" value="@ViewBag.UserName" placeholder="Enter your username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input id="password" type="password" class="form-control" name="Password" value="@ViewBag.Password" placeholder="Enter your password">
+                        <div class="text-end mt-2">
+                            <a onclick="changeForm(0)" class="text-primary text-decoration-none small">Forgot Password?</a>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button id="btn-signin" type="submit" class="btn btn-primary btn-bg">Login</button>
+                    </div>
+                </form>
             </div>
-            <div class='row'>
-                <div class='input-field col s12'>
-                    <input id="password" type="password" class="validate" name="Password" value="@ViewBag.Password">
-                    <label for="password">Password</label>
-                </div>
-                <label style='float: right;'>
-                    @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account", new { @class = "teal-text" })
-                </label>
+        </div>
+        <div class="card shadow" id="forgot-password" style="display:none">
+            <div class="card-body p-4">
+                <form id="forgot-password-form">
+                    <div class="mb-3">
+   
+                        <label for="username" class="form-label">Username</label>
+                        <input id="username" type="text" class="form-control" name="Username" value="@ViewBag.UserName" placeholder="Enter your username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email </label>
+                        <input id="email" type="text" class="form-control" name="email" value="@ViewBag.Password" placeholder="Enter your Email">
+                        <div class="text-end mt-2">
+                            <a  onclick="changeForm(1)" class="text-primary text-decoration-none small">Go to Log In</a>
+
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button id="btn-forgot-password" type="submit" class="btn btn-primary btn-bg">Retrieve Password</button>
+                    </div>
+                </form>
             </div>
-            <div class='row'>
-                <button id="btn-signin" class='col s12 btn waves-effect #00695c darken-3'>Login</button>
-            </div>
- 
-                <div class="container center grey-text text-darken-4 footer-text-small">
-                    © Copyright <a target="_blank" href="https://www.epylliongroup.com">Epyllion Group</a>. All rights reserved.
-                </div>
-        </form>
+        </div>
     </div>
 </div>

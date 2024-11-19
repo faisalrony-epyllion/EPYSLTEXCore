@@ -4,105 +4,33 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>@ViewBag.Title | Textile ERP</title>
-    <link href="~/bundle/css/site-bundle.min.css" rel="stylesheet" />
-    
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-        }
+    <link href="~/Bundle/css/site-bundle.min.css" rel="stylesheet" />
 
-        .split {
-            height: 100%;
-            width: 50%;
-            position: fixed;
-            top: 0;
-        }
-
-        .footer-text-small {
-            font-size: 0.7rem; /* Adjust size as needed */
-        }
-        .left-side {
-            left: 0;
-            background-color: #00695d; /* Teal color */
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .right-side {
-            right: 0;
-            background-color: #f4f4f4; /* Light background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-panel {
-            width: 100%;
-            max-width: 550px;
-        }
-    </style>
 </head>
 <body>
     <!--Main Navigation-->
     <header>
-        <div class="navbar-fixed" style="font-family:'Encode Sans'">
-            <div class="nav-wrapper">
-            
-              
-           
-            </div>
-        </div>
     </header>
     <!--Main Navigation-->
     <!--Main layout-->
 
-    <main>
-        <div class="split left-side">
-            <div>
-                <h2>
-                    <a href="#!">
-                        <img src="~/Images/Big-Logo.png" style="width: 60%; height: 60%;" />
-                    </a>
-                </h2>
-              
-            </div>
+    <section id="main-content">
+        <div class="container">
+            @RenderBody()
         </div>
-        <div class="split right-side">
-            <div class="login-panel">
-                <div class="card">
+    </section>
 
-                    <div class="card-content">
-                    
-                        <section id="main-content">
-                            <div class="container">
-                                @RenderBody()
-                            </div>
-                        </section>
-
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    <main class="#00695c teal darken-3">
-    
-    </main>
     <!--Main layout-->
     <!--Footer-->
-    <footer class="page-footer blue-grey lighten-5">
-        <div class="footer-copyright">
-            <div class="container center grey-text text-darken-4">
-                © Copyright <a target="_blank" href="https://www.epylliongroup.com">Epyllion Group</a>. All rights reserved.
-            </div>
+    <footer class="bg-light py-4">
+        <div class="container text-center text-muted">
+            © Copyright <a target="_blank" href="https://www.epylliongroup.com" class="text-decoration-none">Epyllion Group</a>. All rights reserved.
         </div>
     </footer>
+
     <!--Footer-->
     <!--  Scripts-->
     <script src="~/bundle/js/site-bundle.min.js"></script>
+    <script src="~/Scripts/Account/Login.js"></script>
 </body>
 </html>

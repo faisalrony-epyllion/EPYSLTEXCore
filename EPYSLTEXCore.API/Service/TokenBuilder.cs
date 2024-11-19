@@ -20,10 +20,12 @@ namespace EPYSLTEX.Web.Services
         public string BuildToken(LoginUser user, DateTime expiresAtUtc)
         {
             var role = user.IsSuperUser ? UserRoles.SUPER_USER : user.IsAdmin ? UserRoles.ADMIN : UserRoles.GENERAL;
+
             var claims = new[]
         {
-            new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.Role, role)  // Add roles or any other claims you need
+            new Claim(JwtTokenStorage.UserID, user.UserCode.ToString()),
+            new Claim(JwtTokenStorage.CompanyId, user.CompanyId.ToString()),
+
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
@@ -31,9 +33,9 @@ namespace EPYSLTEX.Web.Services
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],
-                audience: _configuration["JwtSettings:Audience"],
+                audience: _configuration["JwtSettings:Audience"],                 
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),  // Set token expiry time
+                expires: DateTime.Now.AddDays(1),  // Set token expiry time
                 signingCredentials: creds
             );
 

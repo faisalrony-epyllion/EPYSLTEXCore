@@ -16,8 +16,9 @@ namespace EPYSLTEXCore.API.Contollers.WEBController
         public ActionResult Index()
         {
             
+
             ViewBag.ProfilePic = "/images/user.png";
-            ViewBag.EmployeeName = AppUser.Name;
+            ViewBag.EmployeeName =  AppUser.Name;
             return View();
         }
     }

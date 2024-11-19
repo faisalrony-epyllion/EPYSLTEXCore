@@ -30,7 +30,8 @@ namespace EPYSLTEXCore.API.Contollers.Menu
         [HttpGet("GetAllMenu/{applicationId}")]
         public async Task<IActionResult> GetAllMenu(int applicationId)
         {
-            var lst = await _IMenuService.GetMenusAsync(AppUser.UserCode, applicationId,AppUser.CompanyId);
+            var UserInfo = AppUser;
+            var lst = await _IMenuService.GetMenusAsync(UserInfo.UserCode, applicationId, UserInfo.CompanyId);
             return Ok(lst);
         }
     }

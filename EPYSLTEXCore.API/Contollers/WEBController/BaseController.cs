@@ -19,16 +19,13 @@ namespace EPYSLTEXCore.API.Contollers
         {
             get
             {
-                int userId = HttpContext.Session.GetInt32(SessionStorage.UserID) ?? 0;
-                if (userId == 0)
+                string userId = User.FindFirst(JwtTokenStorage.UserID)?.Value ?? TempData[JwtTokenStorage.UserID].ToString();
+                if (userId == null)
                     throw new Exception("Can't not find logged in user.");
 
-                return userId;
+                return userId.ToInt();
             }
-            set
-            {
-                HttpContext.Session.SetInt32(SessionStorage.UserID, value);
-            }
+             
         }
 
         //protected int UserId => User.Identity.GetUserId<int>();

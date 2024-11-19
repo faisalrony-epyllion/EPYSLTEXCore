@@ -45,10 +45,11 @@
         public const string ADMIN = "Admin";
         public const string GENERAL = "User";
     }
-    public static class SessionStorage
+    public static class JwtTokenStorage
     {
         public const string UserID = "UserID";
-       
+        public const string CompanyId = "CompanyId"; 
+
     }
 
     /// <summary>

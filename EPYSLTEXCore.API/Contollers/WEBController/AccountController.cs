@@ -47,16 +47,18 @@ namespace EPYSLTEXCore.API.Contollers
         [HttpPost]
         public async Task<ActionResult> Login(LoginBindingModel model)
         {
+            AppUser = null;
             LoginUser user = await _userService.FindUserForLoginAsync(model.Username);
             if (user == null) return Unauthorized(new { message = "Invalid username or password" });
 
             var password = _encryption.Encrypt(model.Password, model.Username);
-            if (password == null) return Unauthorized(new { message = "Invalid username or password" });
+            if (password != user.Password) return Unauthorized(new { message = "Invalid username or password" });
 
 
             var expiresAtUtc = DateTime.UtcNow.AddHours(1);
             var token = _tokenBuilder.BuildToken(user, expiresAtUtc);
-            UserCode = user.UserCode;
+             
+            TempData[JwtTokenStorage.UserID] = user.UserCode;
 
             //LoginHistory loginHistory = this.GetLoginHistory(user.UserCode);
             //loginHistory.UserCode = user.UserCode;

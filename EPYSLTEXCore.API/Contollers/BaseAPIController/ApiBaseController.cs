@@ -22,11 +22,11 @@ namespace EPYSLTEXCore.API.Contollers.APIBaseController
         {
             get
             {
-                int userId = HttpContext.Session.GetInt32(SessionStorage.UserID) ?? 0;
-                if (userId == 0)
+                string userId = User.FindFirst(JwtTokenStorage.UserID)?.Value;
+                if (userId == null)
                     throw new Exception("Can't not find logged in user.");
 
-                return userId;
+                return userId.ToInt();
             }
 
         }

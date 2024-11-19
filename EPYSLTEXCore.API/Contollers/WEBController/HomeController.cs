@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using EPYSLTEXCore.API.Extension;
 using EPYSLTEX.Core.Interfaces.Services;
 namespace EPYSLTEXCore.API.Contollers
 {

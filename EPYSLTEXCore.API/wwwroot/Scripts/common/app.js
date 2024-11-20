@@ -143,7 +143,7 @@ function reloadTableData(type, tableId) {
         animationSpeed: 500,
         accordion: true,
         followLink: false,
-        trigger: '.treeview a'
+        trigger: '.nav-item a'
     };
 
     var Selector = {
@@ -152,7 +152,7 @@ function reloadTableData(type, tableId) {
         treeviewMenu: '.treeview-menu',
         open: '.menu-open, .active',
         li: 'li',
-        data: '[data-widget="tree"]',
+        data: '[data-widget="treeview"]',
         active: '.active'
     };
 
@@ -232,9 +232,11 @@ function reloadTableData(type, tableId) {
 
         $(this.element).on('click', this.options.trigger, function (event) {
             that.toggle($(this), event);
-
-            if ($(this).parent().hasClass("treeview"))
+          
+            if ($(this).parent().hasClass("nav-item")) {            
                 return;
+            }
+                
 
             $('.treeview li').removeClass('active');
             $(this).parent().addClass("active");
@@ -460,28 +462,28 @@ function generateMenu(menuList) {
 
     var controllerName = 'home';
     var actionName = 'index';
-    
+  
     $.each(menuList, function (i, item) {
         if (!item.childs.length) {
-          
+            
             if (!item.navigateUrl) return true;
             var navProperties = item.navigateUrl.split('/');
 
             // Replace all occurrences of '/' with '_'
             var updatednavigateUrl = item.navigateUrl.replace(/\//g, '_');
-
+         
             if (navProperties[1] == 'notfoundpartial') {
-                template += '<li class="nav-item"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.useCommonInterface) {
-                template += '<li class="nav-item"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + navProperties[0] + '" data-action-name="' + navProperties[1] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + navProperties[0] + '" data-action-name="' + navProperties[1] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.pageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';
-                template += '<li class="nav-item"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else {
-                template += '<li class="nav-item"><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
        
             activeMenu = false;
@@ -498,7 +500,7 @@ function generateMenu(menuList) {
            
               //  + '</p>'
                 + '</a>';
-            template += '<ul class="nav nav-treeview">';
+            template += '<ul class="nav nav-treeview treeview-menu">';
             activeMenu = false;
         }
 
@@ -512,13 +514,13 @@ function generateMenu(menuList) {
 
 // #region Constants
 var constants = Object.freeze({
-    APPLICATION_ID: 8,
+    APPLICATION_ID:11,
     LOAD_ERROR_MESSAGE: "An error occured in fetching your data",
     SUCCESS_MESSAGE: "Your record saved successfully!",
     PROPOSE_SUCCESSFULLY: "Your record has been sent for approval!",
     APPROVE_SUCCESSFULLY: "Your record approved successfylly!",
     ACCEPTED_SUCCESFULLY: "Your record accepted successfully!",
-    REJECT_SUCCESSFULLY: "Your record rejected successfylly!",
+    REJECT_SUCCESSFULLY: "Your record rejected successfully!",
     UNAPPROVE_SUCCESSFULLY: "Your record unapproved successfully",
     REVISE_BOOKING: "Your booking is under Revised Stage!!!",
     GMT_ERP_BASE_PATH: "https://gmterp.epylliongroup.com",

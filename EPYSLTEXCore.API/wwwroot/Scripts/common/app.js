@@ -476,7 +476,7 @@ function generateMenu(menuList) {
                 template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.useCommonInterface) {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + navProperties[0] + '" data-action-name="' + navProperties[1] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.pageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';

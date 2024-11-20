@@ -1,0 +1,77 @@
+﻿
+<div class="ci" id="divCommonInterface-@ViewBag.MenuId">
+    <input type="hidden" id="menuId" value="@ViewBag.MenuId" />
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-success">
+                <div class="box-header">
+                    <h3 class="box-title" id="title-form-ci-@ViewBag.MenuId"></h3>
+                </div>
+                <div class="box-body ci">
+                    <form class="form-horizontal" id="form-ci-@ViewBag.MenuId">
+                        <input type="hidden" id="EntityState" name="EntityState" value="4" />
+                    </form>
+                </div>
+            </div>
+
+            <div class="box box-success" style="display: none" id="boxChildGrid-@ViewBag.MenuId">
+                <div class="box-header">
+                    <h3 class="box-title" id="title-child-grid-@ViewBag.MenuId"></h3>
+                    <div class="box-tools pull-right">
+                        @*<button class="btn btn-success btn-sm ladda-button" data-style="expand-right" id="btnNewChildItem-@ViewBag.MenuId">
+                            <span class="ladda-label"><i class="fa fa-plus-square"></i>&nbsp; New Item</span>
+                        </button>*@
+                    </div>
+                </div>
+                <div class="box-body ci table-responsive">
+                    <table class="table table-hover" id="tabaleGridData-@ViewBag.MenuId"></table>
+                </div>
+            </div>
+
+            <div class="pull-right" id="masterButtons-@ViewBag.MenuId">
+                <button class="btn btn-default w-150" id="btnResetMaster-@ViewBag.MenuId"><i class="fa fa-refresh"></i>&nbsp; Clear Info</button>
+                <button class="btn btn-success w-150" id="btnSaveMaster-@ViewBag.MenuId"><span class="ladda-label"><i class="fa fa-save"></i>&nbsp; Save Info</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-finder-@ViewBag.MenuId">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                    <h5 class="modal-title" id="finderTitle-@ViewBag.MenuId"></h5>
+                </div>
+                <div class="modal-body">
+                    <table id="tblSearchData-@ViewBag.MenuId"></table>
+                </div>
+                <div class="modal-footer" style="text-align:right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-child-@ViewBag.MenuId">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="childTitle-@ViewBag.MenuId"></h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="form-ci-child-@ViewBag.MenuId"></form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary pull-right w-150 ladda-button" data-style="expand-right" id="btnSaveChild-@ViewBag.MenuId"><span class="ladda-label"><i class="fa fa-save"></i>&nbsp; Save Info</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

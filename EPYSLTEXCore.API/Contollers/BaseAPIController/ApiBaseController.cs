@@ -1,6 +1,7 @@
 ﻿using EPYSLTEX.Core.Entities.Gmt;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.Infrastructure.Static;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,8 @@ namespace EPYSLTEXCore.API.Contollers.APIBaseController
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+    [AutoValidateAntiforgeryToken]
     public class ApiBaseController : ControllerBase
     {
         private static LoginUser _user;

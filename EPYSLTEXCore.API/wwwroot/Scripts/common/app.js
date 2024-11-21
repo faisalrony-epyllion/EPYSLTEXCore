@@ -16,6 +16,9 @@ var activeMenu = false;
 const FILTERCONTROLPLACEHOLDER = "Type & Enter for Search";
 var $mainTab;
 var $mainTabContent;
+ 
+var globalControllerName = 'home';
+var globalActionName = 'index';
 
 $(document).ready(function () {
   
@@ -261,7 +264,7 @@ function reloadTableData(type, tableId) {
                 else showTab(pageName);
             }
             else if (pageType == 'CI') {
-                if (isExists.length === 0) getCommonInterfaceMarkup(menuId, pageName, actionName, tabCaption);
+                if (isExists.length === 0) getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName);
                 else showTab(pageName);
             }
             else {
@@ -359,9 +362,9 @@ function registerCloseEvent() {
     });
 }
 
-function GetViewMarkup(controller, actionName, menuId, pageName, tabCaption, navUrlName) {
+function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName) {
 
-    var url = "/" + controller + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
+    var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     axios.get(url).then(function (response) {
         $mainTab.append('<li><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
@@ -369,7 +372,7 @@ function GetViewMarkup(controller, actionName, menuId, pageName, tabCaption, nav
         showTab(pageName);
         registerCloseEvent();
 
-        var scriptPath = '/Scripts/' + controller + '/' + actionName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
+        var scriptPath = '/Scripts/' + controllerName + '/' + actionName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
         if ($('script[src="' + scriptPath + '"]').length === 0) {
             var s = document.createElement('script');
             s.setAttribute('src', scriptPath);
@@ -426,9 +429,10 @@ function GetNotFoundViewMarkup(tabid, tabCaption) {
         .catch(showResponseError);
 }
 
-function getCommonInterfaceMarkup(menuId, pageName, actionName, tabCaption) {
+function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName) {
     localStorage.setItem("current_common_interface_menuid", menuId);
-    var url = `/admin/${actionName}?menuId=${menuId}`;
+    var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
+   // var url = `/admin/${actionName}?menuId=${menuId}`;
     axios.get(url).then(function (response) {
         $mainTab.append('<li><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
@@ -437,7 +441,8 @@ function getCommonInterfaceMarkup(menuId, pageName, actionName, tabCaption) {
         showTab(pageName);
         registerCloseEvent();
 
-        var scriptPath = `/Scripts/admin/${actionName}.js?version=${menuId}`;
+        var scriptPath = '/Scripts/' + controllerName + '/' + actionName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
+       // var scriptPath = `/Scripts/admin/${actionName}.js?version=${menuId}`;
         if ($('script[src="' + scriptPath + '"]').length === 0) {
             var s = document.createElement('script');
             s.setAttribute('src', scriptPath);
@@ -460,8 +465,7 @@ function GetMenus(applicationId) {
 
 function generateMenu(menuList) {
 
-    var controllerName = 'home';
-    var actionName = 'index';
+
   
     $.each(menuList, function (i, item) {
         if (!item.childs.length) {
@@ -473,17 +477,17 @@ function generateMenu(menuList) {
             var updatednavigateUrl = item.navigateUrl.replace(/\//g, '_');
          
             if (navProperties[1] == 'notfoundpartial') {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.useCommonInterface) {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.pageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';
                 template += '<li><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else {
-                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + controllerName + '" data-action-name="' + actionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
        
             activeMenu = false;

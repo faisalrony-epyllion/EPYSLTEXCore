@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Entities\CommonInterface\" />
+    <Folder Include="Interfaces\CommonInterface\" />
     <Folder Include="Interfaces\Repository\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\User\" />

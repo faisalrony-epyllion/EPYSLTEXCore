@@ -10,7 +10,10 @@
       "wwwroot/App_Themes/lib/HoldOn/HoldOn.min.css",
       "wwwroot/App_Themes/lib/clockpicker/bootstrap-clockpicker.css",
       "wwwroot/App_Themes/lib/font-awesome/css/font-awesome.min.css",
-      "wwwroot/App_Themes/lib/syncfusion/bootstrap4.css"
+      "wwwroot/App_Themes/lib/syncfusion/bootstrap4.css",
+      "wwwroot/App_Themes/lib/CustomCSS/report.css",
+      "wwwroot/App_Themes/lib/CustomCSS/style.css"
+
 
     ],
     "minify": {

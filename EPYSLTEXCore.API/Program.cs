@@ -129,13 +129,14 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 #endregion
 
 
+
+#region Custom Middlwares
+app.UseMiddleware<GlobalExceptionHandler>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.UseResponseCaching();
-#region Custom Middlwares
-app.UseMiddleware<GlobalExceptionHandler>();
 //app.UseMiddleware<LoggingMiddleware>();
 //app.UseMiddleware<RateLimitingMiddleware>();
 #endregion

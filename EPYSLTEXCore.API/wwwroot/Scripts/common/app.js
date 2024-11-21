@@ -68,12 +68,16 @@ $(document).ready(function () {
     $mainTabContent = $("#mainTabContent");
     //when ever any tab is clicked this method will be call
     $mainTab.on("click", "a", function (e) {
+
+       
         e.preventDefault();
         $(this).tab('show');
         currentTab = $(this);
 
         var menuLink = e.target.hash.split('#')[1];
+      
         var el = $("[data-action-name='" + menuLink + "']");
+    
         $('.treeview li').removeClass('active');
         el.parent().addClass("active");
     });
@@ -366,7 +370,7 @@ function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption,
 
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     axios.get(url).then(function (response) {
-        $mainTab.append('<li class="p-2 active bg-info" style=" border: 1px solid #ccc;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '&nbsp;<span class="close closeTab fa fa-times fa-lg pt-1"  type="button"><i class="icon-remove fa-lg"></i></span></a></li>');
+        $mainTab.append('<li><a href="#' + pageName + '">' + tabCaption + '&nbsp;<span class="close closeTab fa fa-times fa-lg pt-1"  type="button"><i class="icon-remove fa-lg"></i></span></a></li>');
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
         $mainTabContent.append(markup);
         showTab(pageName);

@@ -13,9 +13,11 @@ using EPYSLTEXCore.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Converters;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System.Text;
+using System.Text.Json;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,8 +25,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+ 
+ 
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddMemoryCache(opt => { ////for in memory caching
+builder.Services.AddMemoryCache(opt =>
+{ ////for in memory caching
     opt.SizeLimit = 100; ///// Set the caching key limit
 });
 builder.Services.AddApplication(); // Services LifeTime
@@ -86,7 +93,7 @@ builder.Services.AddAuthentication().AddJwtBearer(jwt =>
     jwt.SaveToken = true;
     jwt.TokenValidationParameters = validateJwt;
 });
- 
+
 
 builder.Services.AddSingleton(validateJwt);
 #endregion
@@ -126,7 +133,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
- 
+
 #region Custom Middlwares
 app.UseMiddleware<GlobalExceptionHandler>();
 //app.UseMiddleware<LoggingMiddleware>();

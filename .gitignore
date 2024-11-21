@@ -87,3 +87,5 @@
 /EPYSLTEXCore.API/wwwroot/Bundle/js/site-bundle.min.js
 /EPYSLTEXCore.API/bin/Debug/net8.0/bundleconfig.json
 *.dll
+/.vs/ProjectEvaluation/epysltexcore.metadata.v7.bin
+/.vs/ProjectEvaluation/epysltexcore.projects.v7.bin

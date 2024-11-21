@@ -13,8 +13,8 @@
 
     <link href="~/bundle/css/site-bundle.min.css" rel="stylesheet" />
 
-  
-   
+
+    <script src="~/bundle/js/site-bundle.min.js"></script>
 
     @RenderSection("styles", false)
 </head> 
@@ -133,10 +133,11 @@
     </div>
     <!-- ./wrapper -->
 
-    <script src="~/bundle/js/site-bundle.min.js"></script>
+    
     <script src="~/Scripts/common/common-helpers.js?version=@version"></script>
     <script src="~/Scripts/common/app.js?version=@version"></script>
     <script src="~/Scripts/common/common-methods.js?version=@version"></script>
+    <script src="@Url.Action("CacheEj2MinJS", "Cache")"></script>
     <script src="~/Scripts/common/ikr.table2excel.js?version=@version"></script>
     @RenderSection("scripts", false)
 </body>

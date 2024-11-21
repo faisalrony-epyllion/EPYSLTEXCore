@@ -133,7 +133,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-
+app.UseResponseCaching();
 #region Custom Middlwares
 app.UseMiddleware<GlobalExceptionHandler>();
 //app.UseMiddleware<LoggingMiddleware>();

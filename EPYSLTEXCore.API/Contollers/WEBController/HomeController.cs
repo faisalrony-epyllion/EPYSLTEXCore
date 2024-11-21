@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EPYSLTEX.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 namespace EPYSLTEXCore.API.Contollers
 {
+    [Authorize]
     public class HomeController : BaseController
     {
 
@@ -13,7 +15,7 @@ namespace EPYSLTEXCore.API.Contollers
         }
         public IActionResult Index(int menuId, string pageName,string navUrlName)
         {
-            var s = AppUser;
+            //var s = AppUser;
             var rootName = "~/Views/";
 
             ViewBag.MenuId = menuId;

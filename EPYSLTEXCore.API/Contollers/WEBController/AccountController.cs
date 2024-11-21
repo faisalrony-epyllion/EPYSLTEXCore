@@ -15,6 +15,7 @@ using System.Data.Entity;
 using EPYSLTEX.Core.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Http;
+using NLog.Web.LayoutRenderers;
 
 namespace EPYSLTEXCore.API.Contollers
 {
@@ -22,10 +23,13 @@ namespace EPYSLTEXCore.API.Contollers
     {
         private readonly IUserService _userService;
         private readonly Encryption _encryption;
-        private readonly TokenBuilder _tokenBuilder;
+        private readonly ITokenBuilder _tokenBuilder;
+        private readonly IDeSerializeJwtToken _deSerializeJwtToken;
 
         public AccountController(IUserService userService
-           , TokenBuilder tokenBuilder
+           , ITokenBuilder tokenBuilder
+           , IDeSerializeJwtToken deSerializeJwtToken
+
            ) : base(userService)
         {
 
@@ -33,6 +37,7 @@ namespace EPYSLTEXCore.API.Contollers
             _tokenBuilder = tokenBuilder;
 
             _encryption = new Encryption();
+            _deSerializeJwtToken = deSerializeJwtToken;
         }
 
         [HttpGet, AllowAnonymous]
@@ -55,10 +60,21 @@ namespace EPYSLTEXCore.API.Contollers
             if (password != user.Password) return Unauthorized(new { message = "Invalid username or password" });
 
 
-            var expiresAtUtc = DateTime.UtcNow.AddHours(1);
+            var expiresAtUtc = DateTime.UtcNow.AddDays(1);
             var token = _tokenBuilder.BuildToken(user, expiresAtUtc);
-             
-            TempData[JwtTokenStorage.UserID] = user.UserCode;
+
+            var claims = _deSerializeJwtToken.GetClaims(token);
+
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+
+
+
+
+
 
             //LoginHistory loginHistory = this.GetLoginHistory(user.UserCode);
             //loginHistory.UserCode = user.UserCode;
@@ -73,6 +89,7 @@ namespace EPYSLTEXCore.API.Contollers
         public async Task<ActionResult> LogOff()
         {
             AppUser = null;
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             #region LogOutTime Set
             //LoginHistory loginHistory = this.GetLoginHistory(AppUser.UserCode);
             //loginHistory = await _loginHistoryService.GetAsync(loginHistory);

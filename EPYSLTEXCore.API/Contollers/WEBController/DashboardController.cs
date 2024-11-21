@@ -15,12 +15,11 @@ namespace EPYSLTEXCore.API.Contollers.WEBController
         [HttpGet]
         public ActionResult Index()
         {
-            
+             
 
             ViewBag.ProfilePic = "/images/user.png";
-            //ViewBag.EmployeeName =  AppUser.Name;
-            ViewBag.EmployeeName =  "Nishadur Rahman";
-            return View();
+            ViewBag.EmployeeName =  AppUser.Name;
+             return View();
         }
     }
 }

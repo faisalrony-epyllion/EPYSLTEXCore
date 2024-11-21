@@ -20,7 +20,8 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IMenuService, MenuService>();
             service.AddTransient<IMenuDAL, MenuDAL>();
             service.AddTransient<IUserService, UserService>();
-            service.AddTransient<TokenBuilder, TokenBuilder>();
+            service.AddTransient<ITokenBuilder, TokenBuilder>();
+            service.AddTransient<IDeSerializeJwtToken, DeSerializeJwtToken>();
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
 
         }

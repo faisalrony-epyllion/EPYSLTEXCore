@@ -10,6 +10,7 @@ using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
@@ -54,6 +55,18 @@ builder.Host.UseNLog();
 #endregion
 
 #region Authentification
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+
+        options.LoginPath = "/Account/Login";
+        options.LoginPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+        options.SlidingExpiration = true;
+    });
+
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var validateJwt = new TokenValidationParameters
 {
@@ -67,17 +80,14 @@ var validateJwt = new TokenValidationParameters
 };
 
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(jwt =>
+builder.Services.AddAuthentication().AddJwtBearer(jwt =>
 {
 
     jwt.SaveToken = true;
     jwt.TokenValidationParameters = validateJwt;
 });
+ 
+
 builder.Services.AddSingleton(validateJwt);
 #endregion
 
@@ -116,7 +126,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-app.UseSession();
+ 
 #region Custom Middlwares
 app.UseMiddleware<GlobalExceptionHandler>();
 //app.UseMiddleware<LoggingMiddleware>();

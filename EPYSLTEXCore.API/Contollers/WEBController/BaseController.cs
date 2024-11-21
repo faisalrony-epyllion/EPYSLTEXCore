@@ -19,12 +19,8 @@ namespace EPYSLTEXCore.API.Contollers
         {
             get
             {
-                var tempUserId = "";
-                if (TempData[JwtTokenStorage.UserID] != null)
-                {
-                    tempUserId= TempData[JwtTokenStorage.UserID].ToString();
-                }
-                string userId = User.FindFirst(JwtTokenStorage.UserID)?.Value ?? tempUserId ;
+               
+                string userId = User.FindFirst(JwtTokenStorage.UserID)?.Value ;
                 if (userId == null)
                     throw new Exception("Can't not find logged in user.");
 

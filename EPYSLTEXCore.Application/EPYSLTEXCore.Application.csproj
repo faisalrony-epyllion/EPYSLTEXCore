@@ -17,9 +17,13 @@
 
   <ItemGroup>
     <Folder Include="Entities\CommonInterface\" />
+    <Folder Include="Entities\Knitting\" />
+    <Folder Include="Entities\Base\" />
     <Folder Include="Interfaces\CommonInterface\" />
+    <Folder Include="Interfaces\Base\" />
     <Folder Include="Interfaces\Repository\" />
     <Folder Include="Interfaces\User\" />
+    <Folder Include="Services\CommonInterface\" />
     <Folder Include="Services\User\" />
   </ItemGroup>
 

@@ -1,8 +1,5 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEX.Core.Entities.Tex;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using EPYSLTEX.Core.Entities.Tex;
+using EPYSLTEXCore.Application.DTO;
 
 namespace EPYSLTEX.Core.Interfaces.Services
 {

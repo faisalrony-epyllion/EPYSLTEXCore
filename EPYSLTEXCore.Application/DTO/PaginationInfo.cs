@@ -1,4 +1,4 @@
-﻿namespace EPYSLTEX.Core.DTOs
+﻿namespace EPYSLTEXCore.Application.DTO
 {
     public class PaginationInfo
     {

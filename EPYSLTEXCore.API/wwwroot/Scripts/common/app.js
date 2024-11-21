@@ -440,9 +440,11 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
         $mainTabContent.append(markup);
         showTab(pageName);
         registerCloseEvent();
-
-        var scriptPath = '/Scripts/' + controllerName + '/' + actionName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
-       // var scriptPath = `/Scripts/admin/${actionName}.js?version=${menuId}`;
+        const result = navUrlName.split("_");
+        var folderName = result[0];
+        var jsFileName = result[1];
+        var scriptPath = '/Scripts/' + folderName + '/' + jsFileName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
+      
         if ($('script[src="' + scriptPath + '"]').length === 0) {
             var s = document.createElement('script');
             s.setAttribute('src', scriptPath);

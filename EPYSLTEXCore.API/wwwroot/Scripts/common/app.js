@@ -363,7 +363,7 @@ function GetViewMarkup(controller, actionName, menuId, pageName, tabCaption, nav
 
     var url = "/" + controller + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     axios.get(url).then(function (response) {
-        $mainTab.append('<li><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
+        $mainTab.append('<li class="p-2 active bg-info" style=" border: 1px solid #ccc;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '&nbsp;<span class="close closeTab fa fa-times fa-lg pt-1"  type="button"><i class="icon-remove fa-lg"></i></span></a></li>');
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
         $mainTabContent.append(markup);
         showTab(pageName);

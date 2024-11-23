@@ -89,3 +89,9 @@
 *.dll
 /.vs/ProjectEvaluation/epysltexcore.metadata.v7.bin
 /.vs/ProjectEvaluation/epysltexcore.projects.v7.bin
+/EPYSLTEXCore.Application/bin/Debug/net8.0/EPYSLTEXCore.Application.deps.json
+/EPYSLTEXCore.Application/obj/Debug/net8.0/EPYSLTEXCore.Application.csproj.CopyComplete
+/.vs/ProjectEvaluation/epysltexcore.metadata.v9.bin
+/.vs/ProjectEvaluation/epysltexcore.projects.v9.bin
+/.vs/ProjectEvaluation/epysltexcore.strings.v8.bin
+/.vs/ProjectEvaluation/epysltexcore.strings.v9.bin

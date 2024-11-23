@@ -386,8 +386,8 @@
 
         $.each(interfaceConfigs.Childs, function (i, value) {
             var cssHidden = value.IsHidden ? "display:none;" : "",
-                cssEnable = !value.IsEnabled ? "disabled" : "";
-       
+                cssEnable = !value.IsEnable ? "disabled" : "";
+       debugger;
             rowCount++;
             switch (value.EntryType) {
                 case "text":

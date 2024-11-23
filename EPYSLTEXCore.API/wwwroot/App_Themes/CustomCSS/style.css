@@ -1,0 +1,15 @@
+﻿/*.nav-tabs-custom > .nav-tabs > li.active > a, .nav-tabs-custom > .nav-tabs > li.active:hover > a {
+    background-color: #e8eff5;
+    color: #444;
+    font-weight: bold;
+}
+*/
+
+
+
+.custom-logo-lg {
+
+    line-height: 0.85 !important;
+  /*  padding: .7125rem .5rem !important; */
+ 
+}

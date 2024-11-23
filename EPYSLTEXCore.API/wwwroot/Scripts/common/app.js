@@ -68,14 +68,17 @@ $(document).ready(function () {
     $mainTabContent = $("#mainTabContent");
     //when ever any tab is clicked this method will be call
     $mainTab.on("click", "a", function (e) {
+
         e.preventDefault();
         $(this).tab('show');
         currentTab = $(this);
 
         var menuLink = e.target.hash.split('#')[1];
         var el = $("[data-action-name='" + menuLink + "']");
-        $('.treeview li').removeClass('active');
-        el.parent().addClass("active");
+        $(this).parent().siblings().removeClass('active');
+        $(this).parent().siblings().removeClass('bg-info');
+        $(this).parent().addClass("active");
+        $(this).parent().addClass("bg-info");
     });
 
     registerCloseEvent();
@@ -363,10 +366,11 @@ function registerCloseEvent() {
 }
 
 function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName) {
-
+    $($mainTab[0]).children().removeClass('active');
+    $($mainTab[0]).children().removeClass('bg-info');
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     axios.get(url).then(function (response) {
-        $mainTab.append('<li class="p-2 active bg-info" style=" border: 1px solid #ccc;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '&nbsp;<span class="close closeTab fa fa-times fa-lg pt-1"  type="button"><i class="icon-remove fa-lg"></i></span></a></li>');
+        $mainTab.append('<li class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '&nbsp;<span class="close closeTab fa fa-times fa-lg pt-1"  type="button"><i class="icon-remove fa-lg"></i></span></a></li>');
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
         $mainTabContent.append(markup);
         showTab(pageName);
@@ -387,10 +391,12 @@ function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption,
 function clickAccountNavigation(event) {
     var target = event.currentTarget;
     var actionName = target.dataset.actionName;
+    $($mainTab[0]).children().removeClass('active');
+    $($mainTab[0]).children().removeClass('bg-info');
     var isExists = $('#mainTab a[href="#' + actionName + '"]');
     if (isExists.length === 0) {
         var tabCaption = target.innerText.trim();
-        $mainTab.append('<li><a href="#' + actionName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
+        $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + actionName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
 
         var controllerName = target.dataset.controllerName;
         getAccountViewMarkup(controllerName, actionName);
@@ -418,9 +424,12 @@ function getAccountViewMarkup(controller, actionName) {
 }
 
 function GetNotFoundViewMarkup(tabid, tabCaption) {
+    $($mainTab[0]).children().removeClass('active');
+    $($mainTab[0]).children().removeClass('bg-info');
     axios.get("/home/notfoundpartial")
         .then(function (response) {
-            $mainTab.append('<li><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
+         
+            $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times fa-lg pt-1" type="button"><i class="icon-remove"></i></span></a></li>');
             var markup = '<div class="tab-pane" id="' + tabid + '">' + response.data + '</div>';
             $mainTabContent.append(markup);
             showTab(tabid);
@@ -430,11 +439,13 @@ function GetNotFoundViewMarkup(tabid, tabCaption) {
 }
 
 function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName) {
+    $($mainTab[0]).children().removeClass('active');
+    $($mainTab[0]).children().removeClass('bg-info');
     localStorage.setItem("current_common_interface_menuid", menuId);
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
    // var url = `/admin/${actionName}?menuId=${menuId}`;
     axios.get(url).then(function (response) {
-        $mainTab.append('<li><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
+        $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times fa-lg p-1" type="button"><i class="icon-remove fa-lg pt-1"></i></span></a></li>');
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
 
         $mainTabContent.append(markup);

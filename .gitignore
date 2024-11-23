@@ -89,3 +89,4 @@
 *.dll
 /.vs/ProjectEvaluation/epysltexcore.metadata.v7.bin
 /.vs/ProjectEvaluation/epysltexcore.projects.v7.bin
+*.bin

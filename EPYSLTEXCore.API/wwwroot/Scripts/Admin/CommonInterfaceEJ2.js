@@ -380,14 +380,14 @@
             totalRow = setColWiseRowValue(interfaceConfigs.MasterColNum, interfaceConfigs.MasterRowNum);
 
         template += setColStartDiv(totalColumn);
-
+ 
         var rowCount = 0,
             colCount = 1;
 
         $.each(interfaceConfigs.Childs, function (i, value) {
             var cssHidden = value.IsHidden ? "display:none;" : "",
                 cssEnable = !value.IsEnabled ? "disabled" : "";
-
+       
             rowCount++;
             switch (value.EntryType) {
                 case "text":
@@ -397,7 +397,9 @@
                                 <label class="col-sm-2 control-label ci">${value.Label}</label>
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
-                                        <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" readonly />
+                                        <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" readonly />                                        
+                                          ${adNew(interfaceConfigs.IsInsertAllow, menuId, value.ChildID)}                  
+                                       
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
                                 </div>
@@ -413,6 +415,7 @@
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />
+                                          
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
                                 </div>
@@ -436,11 +439,12 @@
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <select class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" style="width: 100%;" ${cssEnable}></select>
+                                          
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
                                 </div>
                             </div>`;
-
+                      
                     var selectColumn = {};
                     selectColumn.id = value.ColumnName;
                     selectColumn.placeholder = value.Label;
@@ -457,6 +461,7 @@
                             <div class="col-sm-10">
                                 <div class="input-group input-group-sm" style='width: 100%;'>
                                     <input type="number" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />
+                                      
                                     ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                 </div>
                             </div>
@@ -493,7 +498,18 @@
         });
         $formEl.append(template);
 
+        initAddNew();
         initFinder();
+    }
+
+    function adNew(IsInsertAllow, menuId, childID) {
+       
+        if (IsInsertAllow) {
+            return `<span class="input-group-btn">
+                        <button type="button" class="btn btn-success ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                    </span>`;
+        }
+        return "";
     }
 
     function setFinder(hasFinder, menuId, childID) {
@@ -503,6 +519,18 @@
                     </span>`;
         }
         return "";
+    }
+
+    function initAddNew() {         
+
+        interfaceConfigs.Childs.map(child => {
+            $formEl.find("." + `ci-adnew-${menuId}-${child.ChildID}`).click(function () {
+               
+                newId();
+            });
+
+        });
+                    
     }
     function initFinder() {
         interfaceConfigs.Childs.filter(x => x.HasFinder == true).map(child => {
@@ -560,7 +588,7 @@
                     setSelect2Combo($formEl.find("#" + dependentSegmentEl.Id), e.params.data.desc)
                 });
             }
-
+      
             $.ajax({
                 type: 'GET',
                 url: value.apiUrl,

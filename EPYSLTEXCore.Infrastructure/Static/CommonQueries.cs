@@ -36,5 +36,25 @@ namespace EPYSLTEXCore.Infrastructure.Static
             return $@"SELECT CAST(UnitID AS VARCHAR) AS id, DisplayUnitDesc AS text
                   FROM Unit";
         }
+        public static string GetEntityTypesByEntityTypeName(string segmentName)
+        {
+            /* return
+                 $@"SELECT CAST(ValueID AS VARCHAR) id, ValueName text
+                 FROM {DbNames.EPYSL}..EntityTypeValue EV
+                 Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+                 WHERE ET.EntityTypeName = '{entityTypeName}' AND ValueName <> 'Select'
+                 ORDER BY ValueName";*/
+            return $@"Select CAST(ISV.SegmentValueID AS nvarchar) id, ISV.SegmentValue [text]
+                From {DbNames.EPYSL}..ItemSegmentValue ISV
+                Inner Join {DbNames.EPYSL}..ItemSegmentName ISN On ISV.SegmentNameID = ISN.SegmentNameID
+                Where ISN.SegmentName = '{segmentName}'";
+        }
+        public static string GetItemSegmentValuesBySegmentName(string segmentName)
+        {
+            return $@"Select CAST(ISV.SegmentValueID AS nvarchar) id, ISV.SegmentValue [text]
+                From {DbNames.EPYSL}..ItemSegmentValue ISV
+                Inner Join {DbNames.EPYSL}..ItemSegmentName ISN On ISV.SegmentNameID = ISN.SegmentNameID
+                Where ISN.SegmentName = '{segmentName}'";
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
         IList<Select2OptionModel> GetYarnSupplierNames_YarnPO();
 
-        Task<IList<Select2OptionModel>> GetEntityTypesAsync();
+        IList<Select2OptionModel> GetEntityTypesAsync();
 
         Task<IList<Select2OptionModel>> GetEntityTypes(int entityTypeId);
 

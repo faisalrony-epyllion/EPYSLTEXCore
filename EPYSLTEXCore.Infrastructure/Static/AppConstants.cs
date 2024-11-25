@@ -10,7 +10,11 @@
         public const string GMT_CONNECTION = "GmtConnection";
         public const string TEXTILE_CONNECTION = "TexConnection";
     }
-
+    public static class DbNames
+    {
+        public const string EPYSL = "EPYSL";
+        public const string EPYSLTEX = "EPYSLTEX";
+    }
     public static class ContactCategoryNames
     {
         public const string BUYER = "Buyer";

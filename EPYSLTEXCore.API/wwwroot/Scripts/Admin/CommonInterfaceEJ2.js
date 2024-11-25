@@ -45,12 +45,14 @@
         });
 
         $("#btnNewChildItem-" + menuId).click(function (e) {
+
             e.preventDefault();
 
             if (!validateMasterForm()) return;
+          
             var cObj = _.clone(childObject);
             cObj.Id = getMaxIdForArray(masterData.Childs, "Id");
-            cObj.EntityState = 4;
+            //cObj.EntityState = 4;
             masterData.Childs.unshift(_.clone(cObj));
             $tblChildEl.bootstrapTable('load', masterData.Childs);
         });
@@ -66,9 +68,11 @@
 
     // #region Genereting markup
     function getInterfaceChilds() {
+        
         var url = '/api/common-interface/configs?menuId=' + menuId;
         axios.get(url)
             .then(function (response) {
+   
                 interfaceConfigs = response.data;
                 $("#title-form-ci-" + menuId).text(interfaceConfigs.InterfaceName);
                 $("#finderTitle-" + menuId).text(interfaceConfigs.InterfaceName + " List")
@@ -77,6 +81,7 @@
                 initControls();
 
                 if (interfaceConfigs.HasGrid) {
+                   
                     if (interfaceConfigs.ChildGrids.length == 0) {
                         toastr.error("No child grid found.");
                         return;
@@ -89,7 +94,9 @@
             .catch(showResponseError);
     }
     async function initChildGrid(data) {
+
         if (interfaceConfigs.HasGrid) {
+        
             if (interfaceConfigs.ApiUrl.length == 0) {
                 toastr.error("Api URL is missing.");
                 return;
@@ -106,7 +113,7 @@
                 columnFilters = childGrid.ColumnFilters.split(','),
                 columnTypes = childGrid.ColumnTypes.split(','),
                 columnSortings = childGrid.ColumnSortings.split(',');
-
+ 
             for (var iColumnName = 0; iColumnName < columnNames.length; iColumnName++) {
                 var columnName = $.trim(columnNames[iColumnName]);
                 var columnObj = {
@@ -117,6 +124,7 @@
                     allowFiltering: convertToBoolean(columnFilters[iColumnName]),
                     visible: $.inArray(columnName, hiddenColumns) !== -1 ? false : true
                 };
+          
                 if (columnName == $.trim(childGrid.PrimaryKeyColumn)) columnObj.isPrimaryKey = true;
                 columnObj = setAdditionalProps(columnObj, columnTypes[iColumnName], columnName, allSelectListObj);
                 columns.push(columnObj);
@@ -124,7 +132,7 @@
             var commandsField = getCommandsFields();
             if (commandsField) columns.unshift(commandsField);
             ej.base.enableRipple(true);
-
+             
             $tblChildEl = new ej.grids.Grid({
                 dataSource: data,
                 columns: columns,
@@ -164,7 +172,7 @@
         var objList = [],
             dependentColumnList = [],
             apiUrls = [];
-
+        
         interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" && x.ApiUrl.length > 0).map(x => {
             var dIndex = interfaceConfigs.ChildGridColumns.findIndex(d => d.DependentColumnName == x.ColumnName);
             if (!dependentColumnList.includes(x.ColumnName) || dIndex > -1) {
@@ -188,7 +196,7 @@
                 axios.get(x.ApiUrl).then(function (res) {
                     var obj = {
                         ColumnName: x.ColumnName,
-                        List: res.data.Items,
+                        List: res.data,
                         ValueColumnName: x.ValueColumnName,
                         DisplayColumnName: x.DisplayColumnName,
                         Label: x.Label,
@@ -247,6 +255,7 @@
                 columnObj.displayAsCheckBox = true;
                 break;
             case "select":
+                
                 var gridColumnObj = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnName),
                     columnObjWithList = allSelectListObj.find(x => x.ColumnName == columnName);
                 if (gridColumnObj) {
@@ -274,53 +283,56 @@
                             IsEnabled: columnObjWithList.IsEnabled
                         });
                     }
-                    columnObj.valueAccessor = ej2GridDisplayFormatterV2;
-                    columnObj.edit = {
-                        create: function () {
-                            typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeElem = document.createElement('input');
-                            return typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeElem;
-                        },
-                        read: function () {
-                            return typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeObj.text;
-                        },
-                        destroy: function () {
-                            typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeObj.destroy();
-                        },
-                        write: function (e) {
-                            var objTemp = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnName);
-                            typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeObj = new ej.dropdowns.DropDownList({
-                                dataSource: allSelectListObj.length > 0 && columnObjWithList ? allSelectListObj.find(x => x.ColumnName == columnName).List : [],
-                                fields: { value: 'id', text: 'text' },
-                                //fields: { value: columnName, text: objTemp.DisplayColumnName },
-                                placeholder: 'Select ' + columnObjWithList.Label,
-                                floatLabelType: 'Never',
-                                change: function (f) {
+                    columnObj.valueAccessor = ej2GridDisplayFormatter;
+                    columnObj.dataSource = columnObjWithList.List;
+                    columnObj.edit= ej2GridDropDownObj({
+                    });
+                    //columnObj.edit = {
+                    //    create: function () {
+                    //        typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeElem = document.createElement('input');
+                    //        return typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeElem;
+                    //    },
+                    //    read: function () {
+                    //        return typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeObj.text;
+                    //    },
+                    //    destroy: function () {
+                    //        typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeObj.destroy();
+                    //    },
+                    //    write: function (e) {
+                    //        var objTemp = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnName);
+                    //        typeElements.find(x => x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName).TypeObj = new ej.dropdowns.DropDownList({
+                    //            dataSource: allSelectListObj.length > 0 && columnObjWithList ? allSelectListObj.find(x => x.ColumnName == columnName).List : [],
+                    //            fields: { value: 'id', text: 'text' },
+                    //            //fields: { value: columnName, text: objTemp.DisplayColumnName },
+                    //            placeholder: 'Select ' + columnObjWithList.Label,
+                    //            floatLabelType: 'Never',
+                    //            change: function (f) {
 
-                                    e.rowData[columnName] = f.itemData.id;
-                                    e.rowData[gridColumnObj.ValueColumnName] = f.itemData.id;
-                                    e.rowData[gridColumnObj.DisplayColumnName] = f.itemData.text;
+                    //                e.rowData[columnName] = f.itemData.id;
+                    //                e.rowData[gridColumnObj.ValueColumnName] = f.itemData.id;
+                    //                e.rowData[gridColumnObj.DisplayColumnName] = f.itemData.text;
 
-                                    var hasDependency = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnName).HasDependentColumn;
-                                    if (hasDependency) {
-                                        var dependentColumnId = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnObjWithList.DependentColumnName).ChildGridColumnID;
-                                        var obj = typeElements.find(x => x.ChildGridColumnID == dependentColumnId && x.ColumnName == columnObjWithList.DependentColumnName);
-                                        if (obj) {
-                                            obj = obj.TypeObj;
-                                            obj.enabled = true;
-                                            obj.dataSource = allSelectListObj.find(x => x.ColumnName == columnObjWithList.DependentColumnName).List.filter(x => x.id == f.itemData.id);
-                                            obj.dataBind();
-                                        }
-                                    }
-                                }
-                            });
-                            typeElements.find(x =>
-                                x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName)
-                                .TypeObj
-                                .appendTo(typeElements.find(x =>
-                                    x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName)
-                                    .TypeElem);
-                        }
-                    }
+                    //                var hasDependency = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnName).HasDependentColumn;
+                    //                if (hasDependency) {
+                    //                    var dependentColumnId = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnObjWithList.DependentColumnName).ChildGridColumnID;
+                    //                    var obj = typeElements.find(x => x.ChildGridColumnID == dependentColumnId && x.ColumnName == columnObjWithList.DependentColumnName);
+                    //                    if (obj) {
+                    //                        obj = obj.TypeObj;
+                    //                        obj.enabled = true;
+                    //                        obj.dataSource = allSelectListObj.find(x => x.ColumnName == columnObjWithList.DependentColumnName).List.filter(x => x.id == f.itemData.id);
+                    //                        obj.dataBind();
+                    //                    }
+                    //                }
+                    //            }
+                    //        });
+                    //        typeElements.find(x =>
+                    //            x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName)
+                    //            .TypeObj
+                    //            .appendTo(typeElements.find(x =>
+                    //                x.ChildGridColumnID == columnObjWithList.ChildGridColumnID && x.ColumnName == columnName)
+                    //                .TypeElem);
+                    //    }
+                    //}
                 }
                 break;
             default:
@@ -387,7 +399,7 @@
         $.each(interfaceConfigs.Childs, function (i, value) {
             var cssHidden = value.IsHidden ? "display:none;" : "",
                 cssEnable = !value.IsEnable ? "disabled" : "";
-       debugger;
+             
             rowCount++;
             switch (value.EntryType) {
                 case "text":
@@ -497,9 +509,14 @@
             }
         });
         $formEl.append(template);
-
+        
         initAddNew();
         initFinder();
+    }
+    function getSysColumn() {
+       
+       var colName=  interfaceConfigs.Childs.find(x => x.IsSys === true).ColumnName;
+        return colName;
     }
 
     function adNew(IsInsertAllow, menuId, childID) {
@@ -799,25 +816,33 @@
     }
     function resetChildForm() {
         childForm.trigger("reset");
-        childForm.find("#Id").val(-1111);
-        childForm.find("#EntityState").val(4);
+        var sysColName = getSysColumn();
+
+        $formEl.find("#" + sysColName + "").val(-1111);
+       /// childForm.find("#EntityState").val(4);
     }
 
     function newId() {
+    
         resetForm();
-        $formEl.find("#Id").val(-1111);
+      
+       var  sysColName = getSysColumn();
+       
+        $formEl.find("#" + sysColName +"").val(-1111);
     }
 
     // #region Save
     function saveMaster(e) {
+     
         e.preventDefault();
-        if (!validateMasterForm()) return;
+       // if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
         var data = formDataToJson($formEl.serializeArray());
-        //if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
-        data["Childs"] = $tblChildEl.getCurrentViewRecords();
+     
+       // if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
+      //  data["Childs"] = $tblChildEl.getCurrentViewRecords();
         var config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -826,6 +851,7 @@
         $formEl.find('input:disabled').each(function () {
             data[$(this).attr("id")] = $(this).val();
         });
+        
         axios.post(interfaceConfigs.SaveApiUrl, data, config)
             .then(function () {
                 toastr.success(constants.SUCCESS_MESSAGE);
@@ -936,7 +962,9 @@
     function generateChildElements() {
         var template = "";
         $.each(interfaceConfigs.ChildGrids[0].Childs, function (i, value) {
+      
             switch (value.EntryType) {
+               
                 case "text":
                     if (value.IsSys) {
                         template += '<div class="form-group">'

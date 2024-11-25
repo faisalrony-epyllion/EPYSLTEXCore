@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPYSLTEXCore.Infrastructure
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPYSLTEXCore.Application", "EPYSLTEXCore.Application\EPYSLTEXCore.Application.csproj", "{15AAD821-C7A2-481C-B2E2-BCD3AF092A19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPYSLTEXCore.Report", "EPYSLTEXCore.Report\EPYSLTEXCore.Report.csproj", "{C1E8B5B3-D75E-486D-B47F-0AF41465FA3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{15AAD821-C7A2-481C-B2E2-BCD3AF092A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15AAD821-C7A2-481C-B2E2-BCD3AF092A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15AAD821-C7A2-481C-B2E2-BCD3AF092A19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1E8B5B3-D75E-486D-B47F-0AF41465FA3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1E8B5B3-D75E-486D-B47F-0AF41465FA3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1E8B5B3-D75E-486D-B47F-0AF41465FA3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1E8B5B3-D75E-486D-B47F-0AF41465FA3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

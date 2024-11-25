@@ -50,5 +50,9 @@ namespace EPYSLTEXCore.Application.Services
         {
             return _IMenuDAL.GetMenusAsync(userId, applicationId, companyId);
         }
+        public Task<List<MenuDTO>> GetAllMenuReport(int userId, int applicationId, int companyId)
+        {
+            return _IMenuDAL.GetAllMenuReport(userId, applicationId, companyId);
+        }
     }
 }

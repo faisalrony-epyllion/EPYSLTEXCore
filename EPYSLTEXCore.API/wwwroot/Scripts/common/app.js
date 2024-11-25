@@ -5,6 +5,7 @@
 'use strict'
 
 var rootPath;
+var apiRootPath;
 var HasAutoNumber = false;
 var CanInsert = false;
 var CanUpdate = false;
@@ -24,7 +25,7 @@ $(document).ready(function () {
   
 
     rootPath = window.location.protocol + '//' + window.location.host;
-
+    apiRootPath = "https://localhost:7053/";
     toastr.options.escapeHtml = true;
 
     $.fn.editable.defaults.mode = 'inline';

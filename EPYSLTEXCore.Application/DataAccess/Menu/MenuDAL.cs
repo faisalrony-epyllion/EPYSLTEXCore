@@ -89,5 +89,54 @@ namespace EPYSLTEXCore.Application.DataAccess
             return childList;
         }
 
+        public async Task<List<MenuDTO>> GetAllMenuReport(int userId, int applicationId, int companyId)
+        {
+            var menuList = new List<MenuDTO>();
+            var parentList = new List<MenuDTO>();
+            try
+            {
+                await _connection.OpenAsync();
+                var records = await _connection.QueryMultipleAsync($@"[dbo].[spGetReportMenuListForApi] @UserCode, @ApplicationID, @CompanyID", new { UserCode = userId, ApplicationID = applicationId, CompanyID = companyId });
+
+                parentList = records.Read<MenuDTO>().ToList();
+
+                menuList = parentList.FindAll(x => x.ReportId != x.Parent_Key);
+                parentList=parentList.FindAll(x => x.ReportId == x.Parent_Key);
+
+                PopulateReportMenus(ref parentList, menuList);
+                return parentList;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        private void PopulateReportMenus(ref List<MenuDTO> parentList, List<MenuDTO> menuList)
+        {
+            foreach (var parentMenu in parentList)
+            {
+                parentMenu.Childs = menuList.FindAll(x => x.ReportId != parentMenu.Parent_Key && x.Parent_Key == parentMenu.ReportId).OrderBy(x => x.SeqNo).ToList();
+
+                var subParents = parentMenu.Childs.FindAll(x => string.IsNullOrEmpty(x.Report_Name));
+                foreach (var item in subParents)
+                    item.Childs = PopulateChildReportMenu(menuList, item.ReportId);
+            }
+        }
+
+        private List<MenuDTO> PopulateChildReportMenu(List<MenuDTO> menuList, int parentId)
+        {
+            var childList = menuList.FindAll(x => x.Parent_Key == parentId).OrderBy(x => x.SeqNo).ToList();
+
+            var subParents = childList.FindAll(x => string.IsNullOrEmpty(x.Report_Name));
+            foreach (var childMenu in subParents)
+                childMenu.Childs = PopulateChildMenu(menuList, childMenu.ReportId);
+
+            return childList;
+        }
     }
 }

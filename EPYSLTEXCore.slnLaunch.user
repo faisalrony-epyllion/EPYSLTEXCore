@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "EPYSLTEXCore.API\\EPYSLTEXCore.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "EPYSLTEXCore.Report\\EPYSLTEXCore.Report.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

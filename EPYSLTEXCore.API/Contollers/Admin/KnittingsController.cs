@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EPYSLTEX.Core.Interfaces.Repositories;
+using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEX.Web.Models;
 using EPYSLTEXCore.Application.DTO;
@@ -10,17 +11,19 @@ namespace EPYSLTEXCore.API.Contollers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class KnittingsController : ControllerBase
+    public class KnittingsController : BaseController
     {
+        IUserService _userService;
         private readonly ICommonHelpers _commonHelpers;
         private readonly IEfRepository<KnittingUnit> _knittingUnitRepository;
         private readonly IMapper _mapper;
 
-        public KnittingsController(ICommonHelpers commonHelpers, IEfRepository<KnittingUnit> knittingUnitRepository, IMapper mapper)
+        public KnittingsController(ICommonHelpers commonHelpers, IEfRepository<KnittingUnit> knittingUnitRepository, IMapper mapper, IUserService userService):base(userService)
         {
             _commonHelpers = commonHelpers;
             _knittingUnitRepository = knittingUnitRepository;
             _mapper = mapper;
+            _userService = userService;
         }
 
 

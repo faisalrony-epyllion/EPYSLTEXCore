@@ -21,6 +21,7 @@
     <Folder Include="Entities\Base\" />
     <Folder Include="Interfaces\CommonInterface\" />
     <Folder Include="Interfaces\Base\" />
+    <Folder Include="Interfaces\Select2\" />
     <Folder Include="Interfaces\Repository\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\CommonInterface\" />

@@ -778,6 +778,19 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 {
                     // If the entity does not exist, set it to be added
                     entity.EntityState = System.Data.Entity.EntityState.Added;
+                    // Get Max Number of primary Key Value from table
+                    var result = await Connection.QueryAsync<dynamic>(
+                        $"SELECT TOP 1 {keyColumnName} AS ID FROM {tableName} ORDER BY {keyColumnName} DESC",
+                        transaction: transaction
+                    ).ConfigureAwait(false);
+
+                    int id = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
+
+                    // Increment the ID to assign the next value
+                    id++;
+
+                    // Set Max Number to primary key property
+                    typeof(T).GetProperty(keyColumnName)?.SetValue(entity, id);
                 }
                 else
                 {
@@ -890,6 +903,22 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 {
                     // If the entity does not exist, set it to be added
                     entity.EntityState = System.Data.Entity.EntityState.Added;
+
+                    //NEED TO WORK 
+
+                    // get max number of primary key value from table
+                    //var result = await Connection.queryasync<dynamic>(
+                    //    $"select top 1 {keycolumnname} as id from {tableName} order by {keycolumnname} desc",
+                    //    transaction: transaction
+                    //).configureawait(false);
+
+                    // int id = result.firstordefault()?.id ?? 0; // default to 0 if no records exist
+
+                    // // increment the id to assign the next value
+                    // id++;
+
+                    // // set max number to primary key property
+                    // typeof(t).getproperty(keycolumnname)?.setvalue(entity, id);
                 }
                 else
                 {

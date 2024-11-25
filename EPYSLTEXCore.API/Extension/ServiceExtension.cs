@@ -8,6 +8,8 @@ using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Infrastructure.Services;
 using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.Application.Services.Select;
+using EPYSLTEX.Web.Extends.Helpers;
+using AutoMapper;
 
 namespace EPYSLTEXCore.API.Extension
 {
@@ -25,8 +27,8 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IDeSerializeJwtToken, DeSerializeJwtToken>();
             service.AddTransient<ICommonInterfaceService, CommonInterfaceService>();
             service.AddTransient<ISelect2Service, Select2Service>();
-
-
+            service.AddTransient<ICommonHelpers, CommonHelpers>();
+       
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
 
         }

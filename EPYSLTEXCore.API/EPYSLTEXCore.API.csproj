@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Contollers\Admin\KnittingsController.cs" />
     <Compile Remove="Contollers\APIBaseController\ApiBaseController.cs" />
     <Compile Remove="Contollers\HomeController.cs" />
   </ItemGroup>
@@ -56,6 +57,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Contollers\Admin\" />
     <Folder Include="Contollers\Select2\" />
     <Folder Include="Service\" />
     <Folder Include="wwwroot\Bundle\css\" />

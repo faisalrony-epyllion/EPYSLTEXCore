@@ -170,6 +170,7 @@ namespace EPYSLTEXCore.Application.Services.Select
                 Order By C.ShortName";
             return await _gmtService.GetDataAsync<Select2OptionModel>(query);
         }
+    
 
         Task<IList<Select2OptionModel>> ISelect2Service.GetContactNamesByCintactIdsAsync(int contactCategoryId, string ids)
         {
@@ -241,19 +242,18 @@ namespace EPYSLTEXCore.Application.Services.Select
             throw new NotImplementedException();
         }
 
-        Task<IList<Select2OptionModel>> ISelect2Service.GetEntityTypesAsync()
-        {
-            throw new NotImplementedException();
-        }
+      
 
         Task<IList<Select2OptionModel>> ISelect2Service.GetEntityTypesAsync(int entityTypeId)
         {
             throw new NotImplementedException();
         }
 
-        Task<IList<Select2OptionModel>> ISelect2Service.GetEntityTypesAsync(string entityTypeName)
+      
+        public async Task<IList<Select2OptionModel>> GetEntityTypesAsync(string entityTypeName)
         {
-            throw new NotImplementedException();
+            var query = $@"{CommonQueries.GetEntityTypesByEntityTypeName(entityTypeName)}";
+            return await _gmtService.GetDataAsync<Select2OptionModel>(query);
         }
 
         Task<IList<Select2OptionModel>> ISelect2Service.GetExportLCForTextileAsync()
@@ -652,6 +652,11 @@ namespace EPYSLTEXCore.Application.Services.Select
         }
 
         IList<Select2OptionModel> ISelect2Service.GetYarnYDStatusLists()
+        {
+            throw new NotImplementedException();
+        }
+
+        IList<Select2OptionModel> ISelect2Service.GetEntityTypesAsync()
         {
             throw new NotImplementedException();
         }

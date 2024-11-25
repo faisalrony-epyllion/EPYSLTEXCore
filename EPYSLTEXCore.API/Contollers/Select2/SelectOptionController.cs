@@ -1,11 +1,14 @@
-﻿using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.DTOs;
+using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Infrastructure.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EPYSLTEX.Web.Controllers.Apis
 {
 
+    [Route("api/selectoption")]
     public class SelectOptionController : ApiBaseController
     {
    
@@ -33,6 +36,23 @@ namespace EPYSLTEX.Web.Controllers.Apis
             return Ok(await _select2Service.GetKnittingUnit());
         }
 
-       
+        [Route("yarnproducttype")]
+        public async Task<IActionResult> GetYarnType()
+        {
+           // var data = await _textileSqlRepository.GetDataDapperAsync<List<Select2OptionModel>>(CommonQueries.GetEntityTypesByEntityTypeId(EntityTypeConstants.YARN_TYPE));
+            return Ok( );
+        }
+
+     
+
+        [Route("entity-types/{entityTypeName}")]
+        public async Task<IActionResult> GetEntityTypesByType(string entityTypeName)
+        {
+            var data = _select2Service.GetEntityTypesAsync(entityTypeName);
+            return Ok(await data);
+        }
+        
+
+
     }
 }

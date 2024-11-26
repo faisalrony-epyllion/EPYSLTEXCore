@@ -59,11 +59,6 @@ namespace EPYSLTEXCore.API.Contollers
     }
 
 
-    [HttpPost]
-    [Route("knitting-unit111")]
-    public async Task<IActionResult> SaveKnittingUnit()
-    {
-        return Ok();
-    }
+   
 }
 }

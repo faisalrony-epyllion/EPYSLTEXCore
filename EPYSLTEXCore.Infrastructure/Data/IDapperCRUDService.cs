@@ -98,6 +98,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<bool> DeleteEntityAsync(T entity, string keyValue);
         Task<T> SaveEntityCompositKeyAsync(T entity);
         Task<bool> DeleteEntityCompositKeyAsync(T entity);
+        //Task SaveNestedEntityAsync(Object T, IDbTransaction transaction = null);
         Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null);
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);
     }

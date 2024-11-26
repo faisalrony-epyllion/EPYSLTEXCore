@@ -43,10 +43,11 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         [Route("list")]
         public async Task<IActionResult> GetList(int menuId)
         {
-            var interfaceInfo = await _service.GetMasterDetailsAsync(menuId);
-            var paginationInfo = new PaginationInfo();
-            var records = await _service.GetPagedAsync(interfaceInfo.SelectSql, paginationInfo);
-            return Ok(new TableResponseModel(records, paginationInfo.GridType));
+            //var interfaceInfo = await _service.GetMasterDetailsAsync(menuId);
+            //var paginationInfo = new PaginationInfo();
+            //var records = await _service.GetPagedAsync(interfaceInfo.SelectSql, paginationInfo);
+            //return Ok(new TableResponseModel(records, paginationInfo.GridType));
+            return Ok();
         }
         [Route("details/{menuId}/{id}")]
         public async Task<IActionResult> GetCommonInterfaceDetails(int menuId, int id)

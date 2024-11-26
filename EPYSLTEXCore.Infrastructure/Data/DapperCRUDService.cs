@@ -751,7 +751,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             throw new System.NotImplementedException();
         }
 
-        public async Task<T> SaveEntityAsync(T entity)
+        /*public async Task<T> SaveEntityAsync(T entity)
         {
             SqlTransaction transaction = null;
             try
@@ -821,7 +821,117 @@ namespace EPYSLTEXCore.Infrastructure.Data
             {
                 Connection.Close();
             }
+        }*/
+
+        public async Task<T> SaveEntityAsync(T entity)
+        {
+            SqlTransaction transaction = null;
+            try
+            {
+                await Connection.OpenAsync();
+                transaction = Connection.BeginTransaction();
+
+                await SaveNestedEntityAsync(entity, transaction);
+
+                transaction.Commit();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                transaction?.Rollback();
+                throw new Exception("An error occurred while saving the entity and its nested entities.", ex);
+            }
+            finally
+            {
+                await Connection.CloseAsync();
+            }
         }
+
+        public async Task SaveNestedEntityAsync(T entity, IDbTransaction transaction)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
+            string tableName = EntityReflectionHelper.GetTableName(entity.GetType());
+            string keyPropertyName = EntityReflectionHelper.GetKeyPropertyName(entity.GetType());
+
+            if (string.IsNullOrWhiteSpace(tableName) || string.IsNullOrWhiteSpace(keyPropertyName))
+            {
+                throw new InvalidOperationException("Table name or key column could not be determined for the entity.");
+            }
+
+            var keyProperty = entity.GetType().GetProperty(keyPropertyName);
+            var keyValue = keyProperty?.GetValue(entity);
+
+            // Check if entity exists
+            string selectQuery = $"SELECT * FROM {tableName} WHERE {keyPropertyName} = @Key";
+            var existingEntity = await Connection.QueryFirstOrDefaultAsync<T>(selectQuery, new { Key = keyValue }, transaction);
+
+            if (existingEntity == null)
+            {
+                // If the entity does not exist, set it to be added
+                entity.EntityState = System.Data.Entity.EntityState.Added;
+
+                // Generate primary key for new entity
+                var result = await Connection.QueryAsync<dynamic>(
+                    $"SELECT TOP 1 {keyPropertyName} AS ID FROM {tableName} ORDER BY {keyPropertyName} DESC",
+                    transaction: transaction
+                ).ConfigureAwait(false);
+
+                int newId = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
+                newId++; // Increment the ID for the new entity
+
+                // Set the new ID value on the entity
+                keyProperty?.SetValue(entity, newId);
+
+                // Insert the new entity
+                await Connection.InsertAsync(entity, transaction);
+                keyValue = newId; // Refresh keyValue for foreign key assignment
+            }
+            else
+            {
+                // If the entity exists, set it to be modified
+                entity.EntityState = System.Data.Entity.EntityState.Modified;
+
+                // Update the existing entity
+                await Connection.UpdateAsync(entity, transaction);
+            }
+
+            foreach (var prop in entity.GetType().GetProperties())
+            {
+                // Save child entities (single object foreign key relationships)
+                if (EntityReflectionHelper.IsForeignKey(prop))
+                {
+                    var childEntity = prop.GetValue(entity);
+                    if (childEntity != null)
+                    {
+                        var foreignKeyProperty = childEntity.GetType().GetProperty(prop.Name);
+                        foreignKeyProperty?.SetValue(childEntity, keyValue);
+
+                        await SaveNestedEntityAsync(childEntity as T, transaction);
+                    }
+                }
+                // Save collections of child entities (one-to-many relationships)
+                else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsGenericType)
+                {
+                    var childEntities = prop.GetValue(entity) as IEnumerable;
+                    if (childEntities != null)
+                    {
+                        foreach (var childEntity in childEntities)
+                        {
+                            if (childEntity != null)
+                            {
+                                var foreignKeyProperty = childEntity.GetType().GetProperty($"{entity.GetType().Name}Id");
+                                foreignKeyProperty?.SetValue(childEntity, keyValue);
+
+                                await SaveNestedEntityAsync(childEntity as T, transaction);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+       
 
         public async Task<bool> DeleteEntityAsync(T entity, string keyValue)
         {
@@ -1005,7 +1115,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-        public async Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null)
+     /*   public async Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null)
         {
             if (Connection.State != ConnectionState.Open)
             {
@@ -1076,7 +1186,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 }
             }
         }
-
+     */
         public async Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null)
         {
             if (Connection.State != ConnectionState.Open)
@@ -1133,6 +1243,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-
+        
     }
 }

@@ -4,7 +4,7 @@ using System.Data.Entity;
 
 namespace EPYSLTEXCore.Report.Entities
 {
-    public class ReportSuiteColumnValue : IBaseEntity
+    public class ReportSuiteColumnValue
     {
         ///<summary>
         /// ReportSuiteColumnID (Primary key)
@@ -94,8 +94,7 @@ namespace EPYSLTEXCore.Report.Entities
         ///</summary>
         public string ColumnWidth { get; set; }
 
-        [NotMapped]
-        public EntityState EntityState { get; set; }
+    
 
         /// <summary>
         /// Parent ReportSuite pointed by [ReportSuiteColumnValue].([ReportId]) (FK_ReportSuiteColumnValue_ReportSuite)
@@ -107,7 +106,7 @@ namespace EPYSLTEXCore.Report.Entities
             IsHidden = false;
             IsMultipleSelection = true;
             ShowAdditionalColumn = false;
-            EntityState = EntityState.Added;
+           
         }
     }
 }

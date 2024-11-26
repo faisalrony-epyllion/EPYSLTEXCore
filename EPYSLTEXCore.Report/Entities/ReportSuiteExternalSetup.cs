@@ -1,10 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Data.Entity;
-
-namespace EPYSLTEXCore.Report.Entities
+﻿namespace EPYSLTEXCore.Report.Entities
 {
-    public class ReportSuiteExternalSetup : IBaseEntity
+    public class ReportSuiteExternalSetup 
     {
         ///<summary>
         /// SetupID (Primary key)
@@ -25,8 +21,7 @@ namespace EPYSLTEXCore.Report.Entities
         ///</summary>
         public string ReportPathName { get; set; }
 
-        [NotMapped]
-        public EntityState EntityState { get; set; }
+
 
 
         /// <summary>
@@ -36,7 +31,7 @@ namespace EPYSLTEXCore.Report.Entities
 
         public ReportSuiteExternalSetup()
         {
-            EntityState = EntityState.Added;
+           
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Data;
 
 namespace EPYSLTEXCore.Report.Entities
 {
-    public class ReportSuite : IBaseEntity
+    public class ReportSuite 
     {
         ///<summary>
         /// REPORTID (Primary key)

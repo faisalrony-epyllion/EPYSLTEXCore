@@ -25,10 +25,12 @@ namespace EPYSLTEXCore.Report.ExceptionHandler
 
     public static class GuardExtensions
     {
-        public static void NullEntity(this IGuardClause guardClause, int id, IBaseEntity entity)
+        public static void NullEntity<T>(this IGuardClause guardClause, int id, T entity)
         {
-            if (entity == null) throw new ItemNotFoundException(id);
+            if (entity == null)
+                throw new ItemNotFoundException(id);
         }
+
 
         public static void NullObject(this IGuardClause guardClause, int id, object obj)
         {

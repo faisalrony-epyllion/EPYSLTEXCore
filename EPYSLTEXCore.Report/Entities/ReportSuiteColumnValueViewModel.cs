@@ -1,6 +1,6 @@
 ﻿namespace EPYSLTEXCore.Report.Entities
 {
-    public class ReportSuiteColumnValueViewModel : BaseModel
+    public class ReportSuiteColumnValueViewModel 
     {
         /// <summary>
         /// ReportId

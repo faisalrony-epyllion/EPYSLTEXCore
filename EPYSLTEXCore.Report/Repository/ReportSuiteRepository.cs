@@ -1,120 +1,154 @@
-﻿using System;
+﻿using Dapper;
+using EPYSLTEXCore.Report.Entities;
+using EPYSLTEXCore.Report.Statics;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
-
-namespace EPYSLTEX.Infrastructure.Data.Repositories
+namespace EPYSLTEXCore.Report.Repositories
 {
-    public class ReportSuiteRepository 
+    public class ReportSuiteRepository : IReportSuiteRepository
     {
+        
+        private readonly SqlConnection _connection;
+
         public ReportSuiteRepository()
-          
         {
+            string aa = AppConstants.GMT_CONNECTION;
+            var aaaa = ConfigurationManager.ConnectionStrings["GmtConnection"];
+            string a = ConfigurationManager.ConnectionStrings[AppConstants.GMT_CONNECTION].ConnectionString;
+            _connection = new SqlConnection(ConfigurationManager.ConnectionStrings[AppConstants.GMT_CONNECTION].ConnectionString);
         }
 
- 
-        public async Task<DataSet> LoadReportParameterInfoAsync(int reportId)
+
+
+        public async Task<ReportSuite> GetByIdAsync(int id)
         {
-            var command = _dbContext.Database.Connection.CreateCommand();
-            command.CommandText = $@"Declare @SQL As Varchar(8000)
-	                                Set @SQL = (Select REPORT_SQL From ReportSuite Where ReportID = {reportId})
-	                                IF(@SQL Is Null Or @SQL = '')
-		                            Set @SQL = 'Select Null As Dummy Where 1 = 2'
-	                                Exec (@SQL)";
+            var sql = "SELECT * FROM ReportSuite WHERE Id = @Id";
+
+       
+                _connection.Open();
+                var reportSuite = await _connection.QuerySingleOrDefaultAsync<ReportSuite>(sql, new { Id = id });
+                return reportSuite;
+            
+        }
+
+        public async Task<List<dynamic>> GetDynamicDataDapperAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentException("Query cannot be null or empty.", nameof(query));
 
             try
             {
-                _dbContext.Database.Connection.Open();
-                var reader = await command.ExecuteReaderAsync();
-                var dataSet = ExtensionMethods.DataReaderToDataSet(reader);
+                await _connection.OpenAsync();
+                var records = await _connection.QueryAsync<dynamic>(query); 
+                return records.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error executing query.", ex);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public async Task<DataSet> LoadReportParameterInfoAsync(int reportId)
+        {
+          
+            string query = $@" Declare @SQL As Varchar(8000)
+                        Set @SQL = (Select REPORT_SQL From ReportSuite Where ReportID = @ReportId)
+                        IF(@SQL Is Null Or @SQL = '')
+                            Set @SQL = 'Select Null As Dummy Where 1 = 2'
+                        Exec (@SQL)";
+
+            try
+            {
+              
+                var result = await _connection.QueryAsync(query, new { ReportId = reportId });
+
+                
+                var dataTable = new DataTable();
+
+                if (result != null && result.Any())
+                {
+                   
+                    var firstRecord = result.First();
+                    foreach (var key in firstRecord)
+                    {
+                        dataTable.Columns.Add(key.Key);
+                    }
+
+       
+                    foreach (var row in result)
+                    {
+                        var dataRow = dataTable.NewRow();
+                        foreach (var key in row)
+                        {
+                            dataRow[key.Key] = key.Value;
+                        }
+                        dataTable.Rows.Add(dataRow);
+                    }
+                }
+
+
+                var dataSet = new DataSet();
+                dataSet.Tables.Add(dataTable);
+
                 return dataSet;
             }
             catch (Exception ex)
             {
-                throw (ex);
-            }
-            finally
-            {
-                _dbContext.Database.Connection.Close();
+                // Log or handle the exception
+                throw new InvalidOperationException("Error executing the report query", ex);
             }
         }
+
+
 
         public DataSet LoadReportSourceDataSet(CommandType cmdType, string strCmdText, IDbDataParameter[] sqlParam)
         {
-            var dataSet = new DataSet();
-            IDataReader reader;
-            IDbDataParameter parameter;
-
             try
             {
-                var command = _dbContext.Database.Connection.CreateCommand();
-                command.CommandTimeout = 600;
-                command.CommandType = cmdType;
-                command.CommandText = strCmdText;
-                foreach (var param in sqlParam)
-                {
-                    parameter = command.CreateParameter();
-                    parameter.ParameterName = $"{param.ParameterName}";
-                    parameter.Value = param.Value;
-                    command.Parameters.Add(parameter);
+              
+                     _connection.Open();
+
+                    using (var command = _connection.CreateCommand())
+                    {
+                        command.CommandText = strCmdText;
+                        command.CommandType = cmdType;
+
+                        // Add parameters to the command
+                        if (sqlParam != null)
+                        {
+                            foreach (var param in sqlParam)
+                            {
+                                var parameter = command.CreateParameter();
+                                parameter.ParameterName = param.ParameterName;
+                                parameter.Value = param.Value ?? DBNull.Value;
+                                parameter.DbType = param.DbType;
+                                command.Parameters.Add(parameter);
+                            }
+                        }
+
+                        using (var reader =  command.ExecuteReader())
+                        {
+                     
+                            return ExtensionMethods.DataReaderToDataSet(reader);
+                        }
+                    }
                 }
-
-                _dbContext.Database.Connection.Open();
-                reader = command.ExecuteReader();
-                DataTable table;
-                do
-                {
-                    table = new DataTable();
-                    table.Load(reader);
-                    dataSet.Tables.Add(table);
-
-                } while (!reader.IsClosed && reader.NextResult());
-
-                reader.Close();
-
-                return dataSet;
-            }
+            
             catch (Exception ex)
             {
-                throw ex;
-            }
-            finally
-            {
-                _dbContext.Database.Connection.Close();
+                throw new InvalidOperationException("An error occurred while loading the report source data.", ex);
             }
         }
 
-        public async Task<DataSet> LoadReportSourceDataSetAsync(CommandType cmdType, string strCmdText, IDbDataParameter[] sqlParam)
-        {
-            IDataReader reader;
-            IDbDataParameter parameter;
 
-            try
-            {
-                var command = _dbContext.Database.Connection.CreateCommand();
-                command.CommandType = cmdType;
-                foreach(var param in sqlParam)
-                {
-                    parameter = command.CreateParameter();
-                    parameter.ParameterName = $"@{param.ParameterName}";
-                    parameter.Value = param.Value;
-                    command.Parameters.Add(parameter);
-                }
-
-                reader = await command.ExecuteReaderAsync();
-
-                var dataSet = ExtensionMethods.DataReaderToDataSet(reader);
-                return dataSet;
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-            finally
-            {
-                _dbContext.Database.Connection.Close();
-            }
-        }
-
-  
     }
 }

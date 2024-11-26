@@ -829,19 +829,20 @@
     }
     function resetChildForm() {
         childForm.trigger("reset");
-        var sysColName = getSysColumn();
-
-        $formEl.find("#" + sysColName + "").val(-1111);
+       updateSysID(-1111);
        /// childForm.find("#EntityState").val(4);
     }
-
+    function updateSysID(id)
+    {
+        var  sysColName = getSysColumn();
+       
+        $formEl.find("#" + sysColName +"").val(id);
+    }
     function newId() {
     
         resetForm();
-      
-       var  sysColName = getSysColumn();
-       
-        $formEl.find("#" + sysColName +"").val(-1111);
+      updateSysID(-1111);
+  
     }
 
     // #region Save
@@ -867,9 +868,11 @@
        
       
         axios.post(interfaceConfigs.SaveApiUrl, data, config)
-            .then(function () {
+            .then(function (response) {  
+             
+               updateSysID(response.data)
                 toastr.success(constants.SUCCESS_MESSAGE);
-                resetForm();
+                //resetForm();
             })
             .catch(e);
     }

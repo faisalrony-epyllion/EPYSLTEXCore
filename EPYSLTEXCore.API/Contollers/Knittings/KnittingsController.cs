@@ -11,6 +11,7 @@ using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Validations;
 using System.Configuration;
 using System.Data.SqlClient;
 
@@ -50,12 +51,12 @@ namespace EPYSLTEXCore.API.Contollers
     [Route("knitting-unit")]
     public async Task<IActionResult> SaveKnittingUnit(EPYSLTEX.Web.Models.KnittingUnit model)
     {
-           
-            var s = _dapperCRUDService.SaveEntityAsync(model);
+
+            var knittingUnitModel = await _dapperCRUDService.SaveEntityAsync(model);
            // var s1 = _dapperCRUDService.SaveEntityCompositKeyAsync(model);
             
            
-            return Ok(s);
+            return Ok(knittingUnitModel.KnittingUnitID);
     }
 
 

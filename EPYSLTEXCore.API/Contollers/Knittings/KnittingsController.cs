@@ -1,17 +1,10 @@
-﻿using AutoMapper;
-using Azure;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Web.Extends.Helpers;
-using EPYSLTEX.Web.Models;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.DTO;
 using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Configuration;
 using System.Data.SqlClient;
 
 namespace EPYSLTEXCore.API.Contollers
@@ -21,12 +14,12 @@ namespace EPYSLTEXCore.API.Contollers
     public class KnittingsController : ApiBaseController
     {
         IUserService _userService;
-        IDapperCRUDService<EPYSLTEX.Web.Models.KnittingUnit> _dapperCRUDService;
+        IDapperCRUDService<KnittingUnit> _dapperCRUDService;
         private readonly ICommonHelpers _commonHelpers;
         private readonly IConfiguration _configuration;
 
 
-        public KnittingsController(ICommonHelpers commonHelpers, IUserService userService, IDapperCRUDService<EPYSLTEX.Web.Models.KnittingUnit> dapperCRUDService, IConfiguration configuration) : base(userService)
+        public KnittingsController(ICommonHelpers commonHelpers, IUserService userService, IDapperCRUDService<KnittingUnit> dapperCRUDService, IConfiguration configuration) : base(userService)
         {
             _configuration = configuration;
             _commonHelpers = commonHelpers;     
@@ -48,22 +41,17 @@ namespace EPYSLTEXCore.API.Contollers
 
     [HttpPost]
     [Route("knitting-unit")]
-    public async Task<IActionResult> SaveKnittingUnit(EPYSLTEX.Web.Models.KnittingUnit model)
+    public async Task<IActionResult> SaveKnittingUnit(KnittingUnit model)
     {
+
+            var knittingUnitModel = await _dapperCRUDService.SaveEntityAsync(model);
            
-            var s = _dapperCRUDService.SaveEntityAsync(model);
-           // var s1 = _dapperCRUDService.SaveEntityCompositKeyAsync(model);
             
            
-            return Ok(s);
+            return Ok(knittingUnitModel.KnittingUnitID);
     }
 
 
-    [HttpPost]
-    [Route("knitting-unit111")]
-    public async Task<IActionResult> SaveKnittingUnit()
-    {
-        return Ok();
-    }
+   
 }
 }

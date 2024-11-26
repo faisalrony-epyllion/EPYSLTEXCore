@@ -145,19 +145,29 @@
                 },
                 actionBegin: function (args) {
                     if (args.requestType === "save") {
+                      
                         var selectColumns = interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select");
                         selectColumns.map(x => {
                             args.data[x.ValueColumnName] = args.rowData[x.ValueColumnName];
                             args.data[x.DisplayColumnName] = args.rowData[x.DisplayColumnName];
                         });
                     } else if (args.requestType === "add") {
-                        for (var key in args.rowData) {
+                      
+                      var  ParentColumn = interfaceConfigs.ChildGrids[0]['ParentColumn']
+                      var   PrimaryKeyColumn = interfaceConfigs.ChildGrids[0]['PrimaryKeyColumn'] 
+                       
+                        var sysColName = getSysColumn();
+       
+
+                        args.data[ParentColumn] = $formEl.find("#" + sysColName + "").val();
+                       /* for (var key in args.rowData) {
                             var wd = key.slice(-2);
                             if (wd.toLowerCase() == "id") {
                                 args.rowData[key] = 0;
                                 args.data[key] = 0;
+
                             }
-                        }
+                        }*/
                     }
                 },
             });
@@ -186,6 +196,7 @@
                     ChildGridColumnID: x.ChildGridColumnID,
                     IsEnabled: x.IsEnabled
                 };
+               
                 apiUrls.push(obj);
                 if (x.HasDependentColumn) dependentColumnList.push(x.DependentColumnName);
             }
@@ -194,11 +205,10 @@
         await Promise.all(
             apiUrls.map(x =>
                 axios.get(x.ApiUrl).then(function (res) {
+                
                     var obj = {
                         ColumnName: x.ColumnName,
-                        List: res.data,
-                        ValueColumnName: x.ValueColumnName,
-                        DisplayColumnName: x.DisplayColumnName,
+                        List: res.data,                         
                         Label: x.Label,
                         DependentColumnName: x.DependentColumnName,
                         ChildGridColumnID: x.ChildGridColumnID,
@@ -255,7 +265,7 @@
                 columnObj.displayAsCheckBox = true;
                 break;
             case "select":
-                
+             
                 var gridColumnObj = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnName),
                     columnObjWithList = allSelectListObj.find(x => x.ColumnName == columnName);
                 if (gridColumnObj) {
@@ -283,8 +293,11 @@
                             IsEnabled: columnObjWithList.IsEnabled
                         });
                     }
+                    
                     columnObj.valueAccessor = ej2GridDisplayFormatter;
                     columnObj.dataSource = columnObjWithList.List;
+                    columnObj.displayField= columnObjWithList.List.length>0  && Object.keys(columnObjWithList.List[0]).length>2 ? Object.keys(columnObjWithList.List[0])[1]:'text';
+                    columnObj.field = columnObjWithList.ColumnName;
                     columnObj.edit= ej2GridDropDownObj({
                     });
                     //columnObj.edit = {
@@ -816,48 +829,54 @@
     }
     function resetChildForm() {
         childForm.trigger("reset");
-        var sysColName = getSysColumn();
-
-        $formEl.find("#" + sysColName + "").val(-1111);
+       updateSysID(-1111);
        /// childForm.find("#EntityState").val(4);
     }
-
+    function updateSysID(id)
+    {
+        var  sysColName = getSysColumn();
+       
+        $formEl.find("#" + sysColName +"").val(id);
+    }
     function newId() {
     
         resetForm();
-      
-       var  sysColName = getSysColumn();
-       
-        $formEl.find("#" + sysColName +"").val(-1111);
+      updateSysID(-1111);
+  
     }
 
     // #region Save
     function saveMaster(e) {
-     
+   
         e.preventDefault();
        // if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
         var data = formDataToJson($formEl.serializeArray());
-     
-       // if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
-      //  data["Childs"] = $tblChildEl.getCurrentViewRecords();
+         if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
+         if ($tblChildEl  ) data["Childs"] = $tblChildEl.getCurrentViewRecords();
+         
+        
         var config = {
             headers: {
                 'Content-Type': 'application/json'
             }
         };
+  
         $formEl.find('input:disabled').each(function () {
             data[$(this).attr("id")] = $(this).val();
         });
-        
+       
+      
         axios.post(interfaceConfigs.SaveApiUrl, data, config)
-            .then(function () {
+            .then(function (response) {  
+             
+               updateSysID(response.data)
                 toastr.success(constants.SUCCESS_MESSAGE);
-                resetForm();
+                //resetForm();
             })
-            .catch(showResponseError);
+            .catch(e);
     }
 
     function validateMasterForm() {
@@ -888,8 +907,10 @@
             data[v.name] = v.value;
             data["Actions"] = "";
         });
-
-        data[interfaceConfigs.ChildGrids[0].ParentColumn] = $formEl.find("#Id").val();
+          var sysColName = getSysColumn();
+           
+       /// childForm.find("#EntityState").val(4);
+        data[interfaceConfigs.ChildGrids[0].ParentColumn] = $formEl.find("#" + sysColName + "").val();
 
         masterData.Childs.rows.push(data);
         masterData.Childs.total = masterData.Childs.rows.length;

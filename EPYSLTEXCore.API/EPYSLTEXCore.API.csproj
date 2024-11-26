@@ -62,7 +62,6 @@
     <Folder Include="Service\" />
     <Folder Include="wwwroot\Bundle\css\" />
     <Folder Include="wwwroot\Bundle\js\" />
-    <Folder Include="wwwroot\Scripts\Admin\" />
   </ItemGroup>
 
   <ItemGroup>

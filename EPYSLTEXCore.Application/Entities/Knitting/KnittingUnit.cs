@@ -1,36 +1,27 @@
-﻿namespace EPYSLTEXCore.Application.Entities
+﻿using Dapper.Contrib.Extensions;
+using EPYSLTEXCore.Infrastructure.Data;
+using System.Data.Entity;
+using System.Runtime.Serialization;
+
+namespace EPYSLTEXCore.Application.Entities
 {
-    public class KnittingUnit : BaseEntity
+    [Table("KnittingUnit")]
+    public class KnittingUnit : DapperBaseEntity
     {
-        ///<summary>
-        /// ContactID
-        ///</summary>
-        public int ContactId { get; set; }
+        [ExplicitKey]
 
-        ///<summary>
-        /// ShortName (length: 50)
-        ///</summary>
-        public string ShortName { get; set; }
+        public int KnittingUnitID { get; set; }
+        public string ContactId { get; set; }
 
-        ///<summary>
-        /// UnitName (length: 150)
-        ///</summary>
         public string UnitName { get; set; }
 
-        ///<summary>
-        /// UnitName (length: 150)
-        ///</summary>
-        public bool IsKnitting { get; set; }
+        public string ShortName { get; set; }
 
-        ///<summary>
-        /// WeightURL (length: 300)
-        ///</summary>
-        public string WeightURL { get; set; }
-
-        ///<summary>
-        /// PrinterName (length: 300)
-        ///</summary>
-        public string PrinterName { get; set; }
-
+       
+        public string IsKnitting { get; set; }
+        #region Additional Properties
+        [Write(false)]
+        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified;
+        #endregion Additional Properties
     }
 }

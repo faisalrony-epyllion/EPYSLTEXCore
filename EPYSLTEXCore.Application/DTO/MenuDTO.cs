@@ -39,7 +39,20 @@ namespace EPYSLTEXCore.Application.DTO
             public bool CanInsert { get; set; }
             public bool CanUpdate { get; set; }
             public bool CanDelete { get; set; }
-            public List<MenuDTO> Childs { get; set; }
+
+        public int ReportId { get; set; }
+        public int? Parent_Key { get; set; }
+        public string Node_Text { get; set; }
+        public string Report_Name { get; set; }
+        public string Report_Path_Name { get; set; }
+        public string Report_Sql { get; set; }
+
+        public bool HasDefaultValue { get; set; }
+        public bool IsMultipleSelection { get; set; }
+
+        public bool HasExternalReport { get; set; }
+        public bool IsSessionUse { get; set; }
+        public List<MenuDTO> Childs { get; set; }
         }
     }
 

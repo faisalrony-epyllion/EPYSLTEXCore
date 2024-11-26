@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="tblReportFilters"></table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div id="modal-filterset-commonFinder">
+
+</div>
+<div class="modal fade" id="modal-filterset">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="modal-filterset-title"></h4>
+            </div>
+            <div class="modal-body">
+                <table id="tblFilterSetValue"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary m-w-100" id="btnOk">Ok</button>
+            </div>
+        </div>
+        /.modal-content
+    </div>
+    /.modal-dialog
+</div>

@@ -855,7 +855,9 @@
         });
         var data = formDataToJson($formEl.serializeArray());
          if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
-        //data["Childs"] = $tblChildEl.getCurrentViewRecords();
+         if ($tblChildEl  ) data["Childs"] = $tblChildEl.getCurrentViewRecords();
+         
+        
         var config = {
             headers: {
                 'Content-Type': 'application/json'

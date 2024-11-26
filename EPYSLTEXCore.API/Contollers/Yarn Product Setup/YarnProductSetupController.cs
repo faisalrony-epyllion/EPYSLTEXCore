@@ -24,7 +24,7 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
         {
              
 
-             var cc= JsonConvert.DeserializeObject<Setup>(JsonConvert.SerializeObject(entity));
+             var cc= JsonConvert.DeserializeObject<YarnProductSetup>((Convert.ToString(entity)));
             // Initialize AutoMapper
             var configuration = new MapperConfiguration(cfg => cfg.CreateMap<dynamic, YarnProductSetup>());
             var mapper = configuration.CreateMapper();

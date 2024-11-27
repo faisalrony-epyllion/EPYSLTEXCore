@@ -25,7 +25,7 @@ namespace EPYSLTEXCore.Report.Repositories
 
         public async Task<ReportSuite> GetByIdAsync(int id)
         {
-            var sql = "SELECT * FROM ReportSuite WHERE REPORTID = @Id";
+            var sql = "SELECT * FROM ReportSuite WHERE REPORTID = @Id and isapi=1";
 
        
                 _connection.Open();
@@ -33,6 +33,18 @@ namespace EPYSLTEXCore.Report.Repositories
             _connection.Close();
             return reportSuite;
             
+        }
+
+        public async Task<ReportSuite> GetByNameAsync(string name)
+        {
+            var sql = "SELECT * FROM ReportSuite WHERE REPORT_NAME = @name";
+
+
+            _connection.Open();
+            var reportSuite = await _connection.QuerySingleOrDefaultAsync<ReportSuite>(sql, new { name = name });
+            _connection.Close();
+            return reportSuite;
+
         }
 
         public async Task<List<dynamic>> GetDynamicDataDapperAsync(string query)

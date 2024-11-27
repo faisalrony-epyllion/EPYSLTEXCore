@@ -1,27 +1,33 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLEMSCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Data;
 
 
 namespace EPYSLTEXCore.Application.Entities
 {
     [Table("YarnProductSetupChild")]
-    public class YarnProductSetupChild: DapperBaseEntity
-    { 
-        public string SetupMasterID { get; set; }
-        public string? BlendTypeID { get; set; }  // Nullable as it's `null` in the JSON
-        public string YarnTypeID { get; set; }
-        public string ProgramID { get; set; }
-        public string SubProgramID { get; set; }
-        public string CertificationsID { get; set; }
-        public string TechnicalParameterID { get; set; }
-        public string CompositionsID { get; set; }
-        public string ShadeID { get; set; }
-        public string ManufacturingLineID { get; set; }
-        public string ManufacturingProcessID { get; set; }
-        public string ManufacturingSubProcessID { get; set; }
-        public string YarnColorID { get; set; }
-        public string ColorGradeID { get; set; }
-        public string Text { get; set; }
+    public class YarnProductSetupChild : DapperBaseEntity
+    {
+        [ExplicitKey]
+
+        public int SetupChildID { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.ForeignKey("SetupMasterID")] // This indicates that UserId is a foreign key referring to the User table
+        public int SetupMasterID { get; set; }
+
+        public int? BlendTypeID { get; set; }  // Nullable as it's `null` in the JSON
+        public int? YarnTypeID { get; set; }
+        public int? ProgramID { get; set; }
+        public int? SubProgramID { get; set; }
+        public int? CertificationsID { get; set; }
+        public int? TechnicalParameterID { get; set; }
+        public int? CompositionsID { get; set; }
+        public int? ShadeID { get; set; }
+        public int? ManufacturingLineID { get; set; }
+        public int? ManufacturingProcessID { get; set; }
+        public int? ManufacturingSubProcessID { get; set; }
+        public int? YarnColorID { get; set; }
+        public int? ColorGradeID { get; set; }
+         
 
         #region Additional Properties
         [Write(false)]
@@ -29,12 +35,22 @@ namespace EPYSLTEXCore.Application.Entities
         #endregion Additional Properties
     }
 
-    [Table("YarnProductSetup")]
+    [Table("YarnProductSetupMaster")]
     public class YarnProductSetup : DapperBaseEntity
     {
-  
-        public string SetupID { get; set; }
-        public string YarnFiberTypeID { get; set; }
+
+        [ExplicitKey]
+        public int SetupMasterID { get; set; }
+        public int? FiberTypeID { get; set; }
+        public int? AddedBy { get; set; }
+        public int? UpdatedBy { get; set; }
+        public DateTime? DateAdded { get; set; }
+        public DateTime? DateUpdated { get; set; }
+        
+
+
+        [Write(false)]
+        [ChildEntity]
         public List<YarnProductSetupChild> Childs { get; set; }
 
         #region Additional Properties
@@ -43,10 +59,10 @@ namespace EPYSLTEXCore.Application.Entities
         #endregion Additional Properties
     }
 
- 
 
- 
 
-     
+
+
+
 }
 

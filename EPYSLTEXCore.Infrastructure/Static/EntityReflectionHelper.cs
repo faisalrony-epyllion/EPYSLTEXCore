@@ -86,9 +86,34 @@ namespace EPYSLTEXCore.Infrastructure.Static
             {
                 return true;
             }
-
-            // Alternatively, check if the property name follows a convention (e.g., ends with "Id")
-            return property.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase);
+            else
+            {
+                return false;
+            }
         }
+
+        /// <summary>
+        /// Gets the foreign key property name for a child entity referring to the parent entity.
+        /// </summary>
+        /// <param name="childEntityType">The type of the child entity.</param>
+        /// <param name="parentEntityType">The type of the parent entity.</param>
+        /// <returns>The foreign key property name.</returns>
+        public static string GetForeignKeyName(Type childEntityType, Type parentEntityType)
+        {
+            // Find properties in the child entity with the ForeignKey attribute
+            var foreignKeyProperty = childEntityType.GetProperties()
+                .FirstOrDefault(prop =>
+                    prop.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute), true)
+                        .Cast<System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute>()
+                        .Any(attr => attr.Name == parentEntityType.GetProperty(EntityReflectionHelper.GetKeyPropertyName(parentEntityType))?.Name));
+
+            if (foreignKeyProperty != null)
+            {
+                return foreignKeyProperty.Name;
+            }
+
+            throw new InvalidOperationException($"Foreign key for parent entity '{parentEntityType.Name}' not found in child entity '{childEntityType.Name}'.");
+        }
+
     }
 }

@@ -38,6 +38,7 @@ $(document).ready(function () {
 
     $("#btnOk").on('click', function (e) {
         e.preventDefault();
+        console.log("oka");
         var selectedFilterValue = $("#tblFilterSetValue").bootstrapTable('getSelections');
         selectedFilterValue = selectedFilterValue.map(function (el) { return el.value; });
         currentRow.ColumnValue = selectedFilterValue.toString();
@@ -52,6 +53,7 @@ $(document).ready(function () {
 
     $("#btnPreveiw").on("click", function (e) {
         e.preventDefault();
+        
         previewReport();
     });
 
@@ -291,6 +293,7 @@ function generateMenu(menuList) {
 }
 
 function showReportBuyerSelection() {
+    console.log("showReportBuyerSelection");
     axios.get("/reports/GetReportBuyers")
         .then(function (response) {
             showBootboxSelect2Dialog("Select Buyer", "BuyerID", "Select Buyer", response.data, function (result) {
@@ -317,6 +320,7 @@ function loadReportInformation() {
     axios.get(url)
         .then(function (response) {
             columnValues = response.data.FilterSetList;
+            console.log(columnValues);
             columnValueOptions = response.data.ColumnValueOptions;
             shownColumnValues = columnValues.filter(function (el) {
                 return !el.IsSystemParameter && !el.IsHidden && el.ColumnName != "Expression";
@@ -378,11 +382,16 @@ function initTable(data) {
                                 todayBtn: true
                             }).on('changeDate', function (e) {
                                 try {
+                                 
                                     row.ColumnValue = formatDateToDefault(e.date);
+                                    console.log(columnValues);
                                     refreshRow(row);
+                                   
+                           
                                 } catch (e) {
+                                    console.log("asdasdasd");
                                     row.ColumnValue = "";
-                                    //console.log(e);
+                                    
                                 }
                             });
                         }
@@ -515,9 +524,13 @@ function initTable(data) {
 }
 
 function refreshRow(data) {
+    debugger;
     var columnValuesArray = data.ColumnValue.split(',');
+    
     data.Operators = columnValuesArray.length > 1 ? "In" : "=";
+    console.log("Before Update: ", $("#tblReportFilters").bootstrapTable('getData'));
     $("#tblReportFilters").bootstrapTable('updateByUniqueId', { id: data.ColumnName, row: data });
+    console.log("After Update: ", $("#tblReportFilters").bootstrapTable('getData'));
 }
 function isUseCommonFinderReport(reportId) {
     return true;
@@ -528,7 +541,7 @@ function isUseCommonFinderReport(reportId) {
     //return false;
 }
 function initTableFilterValue(data, reportId) {
-
+    console.log("initTableFilterValue");
     if (isUseCommonFinderReport(reportId)) {
         //Ratin
         if (data.length == 0) return toastr.error("No list found");
@@ -621,9 +634,11 @@ function clearParameters() {
 }
 
 function previewReport(reportType) {
+    debugger;
     toastr.info("Please wait while we process your report.");
-
+   
     var requiredFilterSets = columnValues.filter(function (el) { return el.Caption == "***" });
+    console.log(columnValues);
     var isValid = true;
     $.each(requiredFilterSets, function (i, cv) {
         if (!cv.ColumnValue) {

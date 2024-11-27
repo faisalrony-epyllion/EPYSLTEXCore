@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EPYSLTEX.Web.Reports
+namespace EPYSLTEXCore.Report.Reports
 {
 
 

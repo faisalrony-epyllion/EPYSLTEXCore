@@ -189,6 +189,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CacheController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Entities\FilterSets.cs" />
     <Compile Include="Entities\RDLColumn.cs" />
@@ -232,6 +233,8 @@
     <Content Include="Content\lib\font-awesome\css\font-awesome.css" />
     <Content Include="Content\lib\font-awesome\css\font-awesome.min.css" />
     <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\lib\syncfusion\bootstrap4.css" />
+    <Content Include="Content\lib\syncfusion\ej2.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\lib\font-awesome\css\font-awesome.css.map" />

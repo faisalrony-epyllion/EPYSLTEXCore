@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 namespace EPYSLTEXCore.Report.Repositories
 {
     public class ReportSuiteRepository : IReportSuiteRepository
@@ -67,7 +69,35 @@ namespace EPYSLTEXCore.Report.Repositories
                 _connection.Close();
             }
         }
+        public List<dynamic> GetDynamicData(string query, bool IsSP, params SqlParameter[] parameters)
+        {
+            try
+            {
+                _connection.Open();
 
+            var dynamicParameters = new DynamicParameters();
+                foreach (var param in parameters)
+                {
+                    dynamicParameters.Add(param.ParameterName, param.Value);
+                }
+
+                var result = _connection.Query(
+                    query,
+                    dynamicParameters,
+                    commandType: IsSP ? CommandType.StoredProcedure : CommandType.Text
+                ).ToList();
+                _connection.Close();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _connection.Close();
+                throw new InvalidOperationException("Error executing query.", ex);
+                
+            }
+         
+
+        }
         public async Task<DataSet> LoadReportParameterInfoAsync(int reportId)
         {
           

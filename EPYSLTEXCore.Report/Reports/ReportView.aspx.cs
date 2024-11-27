@@ -1,10 +1,6 @@
-﻿using Microsoft.Reporting.WebForms;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System;
 
-namespace EPYSLTEX.Web.Reports
+namespace EPYSLTEXCore.Report.Reports
 {
     public partial class ReportView : System.Web.UI.Page
     {

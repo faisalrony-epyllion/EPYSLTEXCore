@@ -524,13 +524,13 @@ function initTable(data) {
 }
 
 function refreshRow(data) {
-    debugger;
+
     var columnValuesArray = data.ColumnValue.split(',');
     
     data.Operators = columnValuesArray.length > 1 ? "In" : "=";
-    console.log("Before Update: ", $("#tblReportFilters").bootstrapTable('getData'));
+   
     $("#tblReportFilters").bootstrapTable('updateByUniqueId', { id: data.ColumnName, row: data });
-    console.log("After Update: ", $("#tblReportFilters").bootstrapTable('getData'));
+   
 }
 function isUseCommonFinderReport(reportId) {
     return true;
@@ -634,11 +634,12 @@ function clearParameters() {
 }
 
 function previewReport(reportType) {
-    debugger;
+ 
     toastr.info("Please wait while we process your report.");
-   
+ 
+columnValues=$("#tblReportFilters").bootstrapTable('getData');
     var requiredFilterSets = columnValues.filter(function (el) { return el.Caption == "***" });
-    console.log(columnValues);
+
     var isValid = true;
     $.each(requiredFilterSets, function (i, cv) {
         if (!cv.ColumnValue) {

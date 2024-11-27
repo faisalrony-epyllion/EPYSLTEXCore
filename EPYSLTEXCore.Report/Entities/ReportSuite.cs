@@ -9,32 +9,32 @@ namespace EPYSLTEXCore.Report.Entities
         ///<summary>
         /// REPORTID (Primary key)
         ///</summary>
-        public int Id { get; set; }
+        public int REPORTID { get; set; }
 
         ///<summary>
         /// PARENT_KEY
         ///</summary>
-        public int? ParentKey { get; set; }
+        public int? PARENT_KEY { get; set; }
 
         ///<summary>
         /// NODE_TEXT (length: 200)
         ///</summary>
-        public string NodeText { get; set; }
+        public string NODE_TEXT { get; set; }
 
         ///<summary>
         /// REPORT_NAME (length: 255)
         ///</summary>
-        public string ReportName { get; set; }
+        public string REPORT_NAME { get; set; }
 
         ///<summary>
         /// REPORT_PATH_NAME (length: 255)
         ///</summary>
-        public string ReportPathName { get; set; }
+        public string REPORT_PATH_NAME { get; set; }
 
         ///<summary>
         /// REPORT_SQL (length: 8000)
         ///</summary>
-        public string ReportSql { get; set; }
+        public string REPORT_SQL { get; set; }
 
         public int SeqNo { get; set; }
 
@@ -52,9 +52,7 @@ namespace EPYSLTEXCore.Report.Entities
 
         public bool IsApi { get; set; }
 
-        [NotMapped]
-        public EntityState EntityState { get; set; }
-
+        
         /// <summary>
         /// Child ReportSuiteColumnValues where [ReportSuiteColumnValue].[ReportID] point to this entity (FK_ReportSuiteColumnValue_ReportSuite)
         /// </summary>
@@ -79,7 +77,6 @@ namespace EPYSLTEXCore.Report.Entities
             HasExternalReport = false;
             IsSessionUse = false;
             IsApi = false;
-            EntityState = EntityState.Added;
             ReportSuiteColumnValues = new List<ReportSuiteColumnValue>();
             ReportSuiteExternalSetups = new List<ReportSuiteExternalSetup>();
             

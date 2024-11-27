@@ -225,5 +225,10 @@ namespace EPYSLTEXCore.Application.Services
                 throw new Exception(ErrorKeys.UnsuccesfullInsertUpdate);
             return true;
         }
+
+        public Task<dynamic> AddNestedAsync(dynamic item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

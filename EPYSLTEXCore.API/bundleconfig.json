@@ -12,8 +12,9 @@
       "wwwroot/App_Themes/lib/font-awesome/css/font-awesome.min.css",
       "wwwroot/App_Themes/lib/syncfusion/bootstrap4.css",
       "wwwroot/App_Themes/CustomCSS/style.css",
-      "wwwroot/App_Themes/CustomCSS/report.css"
-
+      "wwwroot/App_Themes/CustomCSS/report.css",
+      "wwwroot/App_Themes/lib/bootstrap-table/bootstrap-table.css",
+      "wwwroot/App_Themes/lib/bootstrap-datepicker/css/bootstrap-datepicker.css"
 
 
     ],
@@ -34,8 +35,11 @@
       "wwwroot/App_Themes/lib/toastr.js/toastr.min.js",
       "wwwroot/App_Themes/lib/bootstrap3-editable/js/bootstrap-editable.min.js",
       "wwwroot/App_Themes/lib/HoldOn/HoldOn.min.js",
-      "wwwroot/App_Themes/adminlte/js/adminlte.js"
-
+      "wwwroot/App_Themes/adminlte/js/adminlte.js",
+      "wwwroot/App_Themes/lib/bootstrap-table/bootstrap-table-modified.js",
+      "wwwroot/App_Themes/lib/bootstrap-table/extensions/editable/bootstrap-table-editable.js",
+      "wwwroot/App_Themes/lib/bootstrap-datepicker/js/bootstrap-datepicker.js",
+      "wwwroot/App_Themes/lib/moment/moment.min.js"
     ],
     "minify": {
       "enabled": true,

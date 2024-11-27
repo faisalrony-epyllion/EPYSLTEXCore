@@ -14,7 +14,7 @@ namespace EPYSLTEXCore.Report.Repositories
     {
         private readonly SqlConnection _connection;
 
-        public ReportSuiteColumnValueRepository(string connectionString)
+        public ReportSuiteColumnValueRepository()
         {
             _connection = new SqlConnection(ConfigurationManager.ConnectionStrings[AppConstants.GMT_CONNECTION].ConnectionString);
         }

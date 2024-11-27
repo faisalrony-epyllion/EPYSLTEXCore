@@ -40,10 +40,10 @@ namespace EPYSLTEXCore.Report.Controllers
             var reportEntity = await _reportSuiteRepository.GetByIdAsync(reportId);
             Guard.Against.NullEntity(reportId, reportEntity);
 
-            var columnValueOptions = await _reportSuiteRepository.GetDynamicDataDapperAsync(reportEntity.ReportSql);          
+            var columnValueOptions = await _reportSuiteRepository.GetDynamicDataDapperAsync(reportEntity.REPORT_SQL);          
                
-            var reportName = reportEntity.ReportName;
-            var reportPathName = reportEntity.ReportPathName;
+            var reportName = reportEntity.REPORT_NAME;
+            var reportPathName = reportEntity.REPORT_PATH_NAME;
             if (hasExternalReport)
             {
                 if (buyerId <= 0)
@@ -94,7 +94,7 @@ namespace EPYSLTEXCore.Report.Controllers
 
             var parameterValues = await _reportSuiteRepository.LoadReportParameterInfoAsync(reportId);
             parameterValues.Tables[0].TableName = "ParameterValues";
-            _reportDocument.SetFields("UserId.ToString()", reportEntity.NodeText, reportPathName);
+            _reportDocument.SetFields("UserId.ToString()", reportEntity.NODE_TEXT, reportPathName);
             _reportDocument.Load(reportPhysicalPath);
             _reportDocument.LoadFilterTable(parameterValues.Tables["ParameterValues"].Columns, columnValues);
 

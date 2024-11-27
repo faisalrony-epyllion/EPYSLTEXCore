@@ -17,9 +17,7 @@ namespace EPYSLTEXCore.Report.Repositories
 
         public ReportSuiteRepository()
         {
-            string aa = AppConstants.GMT_CONNECTION;
-            var aaaa = ConfigurationManager.ConnectionStrings["GmtConnection"];
-            string a = ConfigurationManager.ConnectionStrings[AppConstants.GMT_CONNECTION].ConnectionString;
+           
             _connection = new SqlConnection(ConfigurationManager.ConnectionStrings[AppConstants.GMT_CONNECTION].ConnectionString);
         }
 
@@ -27,12 +25,13 @@ namespace EPYSLTEXCore.Report.Repositories
 
         public async Task<ReportSuite> GetByIdAsync(int id)
         {
-            var sql = "SELECT * FROM ReportSuite WHERE Id = @Id";
+            var sql = "SELECT * FROM ReportSuite WHERE REPORTID = @Id";
 
        
                 _connection.Open();
                 var reportSuite = await _connection.QuerySingleOrDefaultAsync<ReportSuite>(sql, new { Id = id });
-                return reportSuite;
+            _connection.Close();
+            return reportSuite;
             
         }
 

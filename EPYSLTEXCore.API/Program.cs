@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache(opt =>
 {
@@ -22,10 +22,7 @@ builder.Services.AddMemoryCache(opt =>
 });
 
 builder.Services.AddApplication(); // Services LifeTime
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(10); // Set session timeout
-});
+ 
 
 #region Swagger config
 //builder.Services.AddSwaggerGen();
@@ -104,7 +101,7 @@ app.UseCors("AllowSpecificOrigin");
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSession();
+ 
 
 // Authentication and Authorization
 app.UseAuthentication();

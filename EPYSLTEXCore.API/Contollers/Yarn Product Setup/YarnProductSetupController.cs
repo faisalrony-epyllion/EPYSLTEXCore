@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data.SqlClient;
+using System.Security.Claims;
 
 namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
 {
@@ -21,31 +22,42 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
     {
         IUserService _userService;
         IDapperCRUDService<YarnProductSetup> _dapperCRUDService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
-        public YarnProductSetupController(IUserService userService, IDapperCRUDService<YarnProductSetup> dapperCRUDService, IConfiguration configuration) : base(userService)
+        public YarnProductSetupController(IUserService userService, IDapperCRUDService<YarnProductSetup> dapperCRUDService, IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(userService)
         {
             _userService = userService;
             _configuration = configuration;
             _dapperCRUDService = dapperCRUDService;
             _dapperCRUDService.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
-          
-                }
+            _httpContextAccessor = httpContextAccessor;
+            var userClaims = _httpContextAccessor.HttpContext?.User?.Claims;
+
+            if (userClaims != null)
+            {
+                _dapperCRUDService.UserCode = Convert.ToInt32(userClaims.FirstOrDefault(c => c.Type == JwtTokenStorage.UserID)?.Value);
+            }
+
+           
+
+        }
         [HttpPost]
         [Route("Save")]
         public async Task<IActionResult> SaveYarnProductSetup(dynamic entity)
         {
-            
+
             
 
             YarnProductSetup model = JsonConvert.DeserializeObject<YarnProductSetup>(Convert.ToString(entity));
+
              
-            //CommonHelpers.SetNullsToDefaultValues(model);
             var yarnProductSetupModel =   await _dapperCRUDService.SaveEntityAsync(model);
 
-            //  var s =  await _setupService.AddNestedAsync(entity);
+
 
             return Ok(yarnProductSetupModel.SetupMasterID);
+             
         }
     }
 }

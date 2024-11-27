@@ -48,8 +48,8 @@ namespace EPYSLTEX.Web.Controllers.Apis
         [Route("entity-types/{entityTypeName}")]
         public async Task<IActionResult> GetEntityTypesByType(string entityTypeName)
         {
-            var data = _select2Service.GetEntityTypesAsync(entityTypeName);
-            return Ok(await data);
+            var data = await _select2Service.GetEntityTypesAsync(entityTypeName);
+            return Ok( data);
         }
         
 

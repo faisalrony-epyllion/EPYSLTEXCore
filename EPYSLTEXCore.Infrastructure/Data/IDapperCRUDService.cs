@@ -7,7 +7,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
     public interface IDapperCRUDService<T> where T : class, IDapperBaseEntity
     {
         SqlConnection Connection { get; set; }
-
+        public int UserCode { get; set; }
         SqlConnection GetConnection(string connectionName = AppConstants.DB_CONNECTION);
 
         Task<SqlConnection> OpenTexConnectionAsync();
@@ -98,8 +98,10 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<bool> DeleteEntityAsync(T entity, string keyValue);
         Task<T> SaveEntityCompositKeyAsync(T entity);
         Task<bool> DeleteEntityCompositKeyAsync(T entity);
-        //Task SaveNestedEntityAsync(Object T, IDbTransaction transaction = null);
-        Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null);
+         Task SaveNestedEntityAsync(Object T, IDbTransaction transaction = null);
+        // Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null);
+       // Task SaveNestedEntityAsync<T>(T entity, IDbTransaction transaction);
+
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);
     }
 }

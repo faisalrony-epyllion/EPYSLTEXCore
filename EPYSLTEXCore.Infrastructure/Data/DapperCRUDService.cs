@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
+using EPYSLEMSCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Collections;
@@ -14,6 +15,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
         public SqlConnection Connection { get; set; }
+        public int UserCode { get; set; }
         //private readonly ISignatureRepository _signatureRepository;
 
         public DapperCRUDService(IConfiguration configuration)
@@ -847,91 +849,219 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-        public async Task SaveNestedEntityAsync(T entity, IDbTransaction transaction)
+
+        public async Task SaveNestedEntityAsync(object entity, IDbTransaction transaction)
+
         {
+
             if (entity == null) throw new ArgumentNullException(nameof(entity));
 
             string tableName = EntityReflectionHelper.GetTableName(entity.GetType());
+
             string keyPropertyName = EntityReflectionHelper.GetKeyPropertyName(entity.GetType());
 
             if (string.IsNullOrWhiteSpace(tableName) || string.IsNullOrWhiteSpace(keyPropertyName))
+
             {
+
                 throw new InvalidOperationException("Table name or key column could not be determined for the entity.");
+
             }
 
             var keyProperty = entity.GetType().GetProperty(keyPropertyName);
+
             var keyValue = keyProperty?.GetValue(entity);
 
-            // Check if entity exists
+            // Check if the entity exists
+
             string selectQuery = $"SELECT * FROM {tableName} WHERE {keyPropertyName} = @Key";
-            var existingEntity = await Connection.QueryFirstOrDefaultAsync<T>(selectQuery, new { Key = keyValue }, transaction);
+
+            var existingEntity = await Connection.QueryFirstOrDefaultAsync(selectQuery, new { Key = keyValue }, transaction);
 
             if (existingEntity == null)
+
             {
-                // If the entity does not exist, set it to be added
-                entity.EntityState = System.Data.Entity.EntityState.Added;
 
                 // Generate primary key for new entity
+
                 var result = await Connection.QueryAsync<dynamic>(
+
                     $"SELECT TOP 1 {keyPropertyName} AS ID FROM {tableName} ORDER BY {keyPropertyName} DESC",
+
                     transaction: transaction
+
                 ).ConfigureAwait(false);
 
                 int newId = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
+
                 newId++; // Increment the ID for the new entity
 
                 // Set the new ID value on the entity
+
                 keyProperty?.SetValue(entity, newId);
 
-                // Insert the new entity
-                await Connection.InsertAsync(entity, transaction);
+                entity.GetType().GetProperty("AddedBy")?.SetValue(entity, UserCode);
+
+                entity.GetType().GetProperty("DateAdded")?.SetValue(entity, DateTime.UtcNow);
+
+                // Insert the new entity dynamically
+
+                string insertQuery = GenerateInsertQuery(entity, tableName);
+
+                await Connection.ExecuteAsync(insertQuery, entity, transaction);
+
                 keyValue = newId; // Refresh keyValue for foreign key assignment
+
             }
+
             else
-            {
-                // If the entity exists, set it to be modified
-                entity.EntityState = System.Data.Entity.EntityState.Modified;
 
-                // Update the existing entity
-                await Connection.UpdateAsync(entity, transaction);
+            {
+
+                entity.GetType().GetProperty("UpdatedBy")?.SetValue(entity, UserCode);
+
+                entity.GetType().GetProperty("DateUpdated")?.SetValue(entity, DateTime.UtcNow);
+
+                // Update the existing entity dynamically
+
+                string updateQuery = GenerateUpdateQuery(entity, tableName, keyPropertyName);
+
+                await Connection.ExecuteAsync(updateQuery, entity, transaction);
+
             }
 
-            foreach (var prop in entity.GetType().GetProperties())
+            // Handle child entities
+
+            var childProperties = entity.GetType()
+
+                .GetProperties()
+
+                .Where(prop => prop.GetCustomAttributes(typeof(ChildEntityAttribute), true).Any())
+
+                .ToList();
+
+            foreach (var prop in childProperties)
+
             {
-                // Save child entities (single object foreign key relationships)
-                if (EntityReflectionHelper.IsForeignKey(prop))
+                if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsGenericType)
                 {
-                    var childEntity = prop.GetValue(entity);
-                    if (childEntity != null)
-                    {
-                        var foreignKeyProperty = childEntity.GetType().GetProperty(prop.Name);
-                        foreignKeyProperty?.SetValue(childEntity, keyValue);
+                    // Collection of child entities
+                    var currentChildEntities = prop.GetValue(entity) as IEnumerable<object>;
+                    var childEntityType = prop.PropertyType.GetGenericArguments().FirstOrDefault();
+                    var childTableName = EntityReflectionHelper.GetTableName(childEntityType);
+                    var foreignKeyName = EntityReflectionHelper.GetForeignKeyName(childEntityType, entity.GetType());
 
-                        await SaveNestedEntityAsync(childEntity as T, transaction);
-                    }
-                }
-                // Save collections of child entities (one-to-many relationships)
-                else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsGenericType)
-                {
-                    var childEntities = prop.GetValue(entity) as IEnumerable;
-                    if (childEntities != null)
+                    if (currentChildEntities != null)
                     {
-                        foreach (var childEntity in childEntities)
+                        // Step 1: Fetch existing child entities from the database
+                        string selectChildQuery = $"SELECT * FROM {childTableName} WHERE {foreignKeyName} = @ParentKey";
+                        var existingChildEntities = await Connection.QueryAsync<dynamic>(selectChildQuery, new { ParentKey = keyValue }, transaction);
+
+                        // Step 2: Identify child entities to delete
+                        var currentChildIds = currentChildEntities
+                            .Select(child => (int)child.GetType().GetProperty(EntityReflectionHelper.GetKeyPropertyName(childEntityType)).GetValue(child))
+                            .ToList();
+
+                        var existingChildIds = existingChildEntities.Select(e => (int)e[EntityReflectionHelper.GetKeyPropertyName(childEntityType)]).ToList();
+
+                        var idsToDelete = existingChildIds.Except(currentChildIds).ToList();
+
+                        foreach (var id in idsToDelete)
                         {
-                            if (childEntity != null)
-                            {
-                                var foreignKeyProperty = childEntity.GetType().GetProperty($"{entity.GetType().Name}Id");
-                                foreignKeyProperty?.SetValue(childEntity, keyValue);
+                            string deleteQuery = $"DELETE FROM {childTableName} WHERE {EntityReflectionHelper.GetKeyPropertyName(childEntityType)} = @Id";
+                            await Connection.ExecuteAsync(deleteQuery, new { Id = id }, transaction);
+                        }
 
-                                await SaveNestedEntityAsync(childEntity as T, transaction);
-                            }
+                        // Step 3: Save or update current child entities
+                        foreach (var childEntity in currentChildEntities)
+                        {
+                            var foreignKeyProperty = childEntity.GetType().GetProperty(foreignKeyName);
+                            foreignKeyProperty?.SetValue(childEntity, keyValue);
+
+                            await SaveNestedEntityAsync(childEntity, transaction);
                         }
                     }
                 }
+
+
+                else if (prop.PropertyType.IsGenericType)
+
+                {
+
+                    var childEntities = prop.GetValue(entity) as IEnumerable<object>;
+
+                    if (childEntities != null)
+
+                    {
+
+                        foreach (var childEntity in childEntities)
+
+                        {
+
+                            var foreignKeyProperty = childEntity.GetType().GetProperties()
+
+                                .FirstOrDefault(p => p.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute), true)
+
+                                                      .Cast<System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute>()
+
+                                                      .Any(fk => fk.Name == keyPropertyName));
+
+                            if (foreignKeyProperty != null)
+
+                            {
+
+                                foreignKeyProperty.SetValue(childEntity, keyValue);
+
+                            }
+
+                            await SaveNestedEntityAsync(childEntity, transaction);
+
+                        }
+
+                    }
+
+                }
+
             }
+
         }
 
-       
+        private string GenerateInsertQuery(object entity, string tableName)
+
+        {
+
+            var properties = entity.GetType().GetProperties()
+
+                .Where(p => p.GetValue(entity) != null && !Attribute.IsDefined(p, typeof(WriteAttribute)))
+
+                .Select(p => p.Name);
+
+            var columns = string.Join(", ", properties);
+
+            var values = string.Join(", ", properties.Select(p => $"@{p}"));
+
+            return $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
+
+        }
+
+        private string GenerateUpdateQuery(object entity, string tableName, string keyPropertyName)
+
+        {
+
+            var properties = entity.GetType().GetProperties()
+
+                .Where(p => p.GetValue(entity) != null && p.Name != keyPropertyName && !Attribute.IsDefined(p, typeof(WriteAttribute)))
+
+                .Select(p => $"{p.Name} = @{p.Name}");
+
+            var updates = string.Join(", ", properties);
+
+            return $"UPDATE {tableName} SET {updates} WHERE {keyPropertyName} = @{keyPropertyName}";
+
+        }
+
+
+
 
         public async Task<bool> DeleteEntityAsync(T entity, string keyValue)
         {
@@ -1115,78 +1245,78 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-     /*   public async Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null)
-        {
-            if (Connection.State != ConnectionState.Open)
-            {
-                await Connection.OpenAsync();
-            }
+        /*   public async Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null)
+           {
+               if (Connection.State != ConnectionState.Open)
+               {
+                   await Connection.OpenAsync();
+               }
 
-            using (var transactionScope = transaction ?? Connection.BeginTransaction())
-            {
-                try
-                {
-                    string tableName = EntityReflectionHelper.GetTableName(entity.GetType());
-                    string keyPropertyName = EntityReflectionHelper.GetKeyPropertyName(entity.GetType());
+               using (var transactionScope = transaction ?? Connection.BeginTransaction())
+               {
+                   try
+                   {
+                       string tableName = EntityReflectionHelper.GetTableName(entity.GetType());
+                       string keyPropertyName = EntityReflectionHelper.GetKeyPropertyName(entity.GetType());
 
-                    var keyValue = entity.GetType().GetProperty(keyPropertyName).GetValue(entity);
-                    bool isNew = keyValue == null || Convert.ToInt64(keyValue) == 0;
+                       var keyValue = entity.GetType().GetProperty(keyPropertyName).GetValue(entity);
+                       bool isNew = keyValue == null || Convert.ToInt64(keyValue) == 0;
 
-                    if (isNew)
-                    {
-                        await Connection.InsertAsync(entity, transactionScope);
-                    }
-                    else
-                    {
-                        await Connection.UpdateAsync(entity, transactionScope);
-                    }
+                       if (isNew)
+                       {
+                           await Connection.InsertAsync(entity, transactionScope);
+                       }
+                       else
+                       {
+                           await Connection.UpdateAsync(entity, transactionScope);
+                       }
 
-                    foreach (var prop in entity.GetType().GetProperties())
-                    {
-                        if (EntityReflectionHelper.IsForeignKey(prop))
-                        {
-                            var childEntity = prop.GetValue(entity);
-                            if (childEntity != null)
-                            {
-                                var foreignKeyProperty = childEntity.GetType().GetProperty(prop.Name);
-                                foreignKeyProperty.SetValue(childEntity, keyValue);
+                       foreach (var prop in entity.GetType().GetProperties())
+                       {
+                           if (EntityReflectionHelper.IsForeignKey(prop))
+                           {
+                               var childEntity = prop.GetValue(entity);
+                               if (childEntity != null)
+                               {
+                                   var foreignKeyProperty = childEntity.GetType().GetProperty(prop.Name);
+                                   foreignKeyProperty.SetValue(childEntity, keyValue);
 
-                                await SaveNestedEntityAsync(childEntity as T, transactionScope);
-                            }
-                        }
-                        else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsGenericType)
-                        {
-                            var childEntities = prop.GetValue(entity) as IEnumerable;
-                            if (childEntities != null)
-                            {
-                                foreach (var childEntity in childEntities)
-                                {
-                                    var foreignKeyProperty = childEntity.GetType().GetProperty($"{entity.GetType().Name}Id");
-                                    foreignKeyProperty.SetValue(childEntity, keyValue);
+                                   await SaveNestedEntityAsync(childEntity as T, transactionScope);
+                               }
+                           }
+                           else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsGenericType)
+                           {
+                               var childEntities = prop.GetValue(entity) as IEnumerable;
+                               if (childEntities != null)
+                               {
+                                   foreach (var childEntity in childEntities)
+                                   {
+                                       var foreignKeyProperty = childEntity.GetType().GetProperty($"{entity.GetType().Name}Id");
+                                       foreignKeyProperty.SetValue(childEntity, keyValue);
 
-                                    await SaveNestedEntityAsync(childEntity as T, transactionScope);
-                                }
-                            }
-                        }
-                    }
+                                       await SaveNestedEntityAsync(childEntity as T, transactionScope);
+                                   }
+                               }
+                           }
+                       }
 
-                    transactionScope.Commit();
-                }
-                catch (Exception ex)
-                {
-                    transactionScope.Rollback();
-                    throw ex;
-                }
-                finally
-                {
-                    if (transaction == null)
-                    {
-                        Connection.Close();
-                    }
-                }
-            }
-        }
-     */
+                       transactionScope.Commit();
+                   }
+                   catch (Exception ex)
+                   {
+                       transactionScope.Rollback();
+                       throw ex;
+                   }
+                   finally
+                   {
+                       if (transaction == null)
+                       {
+                           Connection.Close();
+                       }
+                   }
+               }
+           }
+        */
         public async Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null)
         {
             if (Connection.State != ConnectionState.Open)
@@ -1243,6 +1373,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-        
+
+      
     }
 }

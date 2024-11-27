@@ -114,3 +114,7 @@
 /EPYSLTEXCore.Report/obj/Debug/EPYSLTEXCore.Report.csproj.CoreCompileInputs.cache
 /EPYSLTEXCore.Report/obj/Debug/EPYSLTEXCore.Report.csproj.FileListAbsolute.txt
 /EPYSLTEXCore.Report/obj/Debug/EPYSLTEXCore.Report.pdb
+*.xdt
+/packages/Microsoft.AspNet.Mvc.5.3.0/lib/net45
+/packages/Microsoft.AspNet.Mvc.5.3.0
+/packages

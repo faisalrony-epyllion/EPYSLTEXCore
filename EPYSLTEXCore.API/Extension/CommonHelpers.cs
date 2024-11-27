@@ -60,5 +60,49 @@ namespace EPYSLTEX.Web.Extends.Helpers
 
             return filterExpressionModel;
         }
+
+
+
+        public static void SetNullsToDefaultValues(object obj)
+        {
+            var properties = obj.GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                // Only handle properties that are not readonly and are public
+                if (property.CanWrite)
+                {
+                    var value = property.GetValue(obj);
+
+                    // Check if the property is nullable and if the value is null
+                    if (value == null)
+                    {
+                        // If it's a nullable value type, set it to 0 or other default value
+                        if (Nullable.GetUnderlyingType(property.PropertyType) != null)
+                        {
+                            // Set to 0 for numeric types (int?, double?, etc.)
+                            if (property.PropertyType == typeof(int?))
+                                property.SetValue(obj, 0);
+                            else if (property.PropertyType == typeof(double?))
+                                property.SetValue(obj, 0.0);
+                            else if (property.PropertyType == typeof(decimal?))
+                                property.SetValue(obj, 0.0m);
+                            else if (property.PropertyType == typeof(DateTime?))
+                                property.SetValue(obj, DateTime.MinValue); // Set to a default date
+                        }
+                        // If it's a reference type (string, object), set to a default value
+                        else if (property.PropertyType == typeof(string))
+                        {
+                            property.SetValue(obj, string.Empty); // Empty string for strings
+                        }
+                        else
+                        {
+                            // For other reference types, you can set to null, or a default value if needed
+                            property.SetValue(obj, null);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

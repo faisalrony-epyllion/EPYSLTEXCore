@@ -587,15 +587,21 @@
             lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
+
                 finder.hideModal();
-                var data = res.rowData;
-                $formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
-                $formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
-                $formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
-                //loadGrid(generateParams(selectedChild.ColumnName, data));
+                var data = res.rowData;                 
+                for (var p in data) {
+                    var aaa = data[p];
+                    $formEl.find("#" + p).val(data[p]).trigger("change");
+                }
+                //setFormData($formEl, data);
+                //$formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
+                //$formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
+                //$formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
+               // loadGrid(generateParams(selectedChild.ColumnName, data));
                 if (data.Childs) {
                     initChildGrid(data.Childs);
-                    //$tblChildEl.bootstrapTable('load', data.Childs);
+                    $tblChildEl.bootstrapTable('load', data.Childs);
                 }
             }
         });

@@ -5,6 +5,7 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEX.Core.Interfaces.Repositories;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.Application.DTO;
+using EPYSLTEXCore.Application.Entities;
 namespace EPYSLTEXCore.Application.Services.Select
 {
     public class Select2Service:ISelect2Service
@@ -254,6 +255,11 @@ namespace EPYSLTEXCore.Application.Services.Select
         {
             var query = $@"{CommonQueries.GetEntityTypesByEntityTypeName(entityTypeName)}";
             return await _gmtService.GetDataAsync<Select2OptionModel>(query);
+        }
+        public async Task<IList<YarnProductSetupFinder>> GetAllFiberType()
+        {
+            var query = $@"{CommonQueries.GetAllFiberType()}";
+            return await _gmtService.GetDataAsync<YarnProductSetupFinder>(query);
         }
 
         Task<IList<Select2OptionModel>> ISelect2Service.GetExportLCForTextileAsync()

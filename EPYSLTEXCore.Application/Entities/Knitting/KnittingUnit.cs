@@ -10,15 +10,12 @@ namespace EPYSLTEXCore.Application.Entities
     {
         [ExplicitKey]
 
-        public int KnittingUnitID { get; set; }
-        public string ContactId { get; set; }
+        public int KnittingUnitID { get; set; } = 0;
+        public string ContactId { get; set; } = "";
+        public string UnitName { get; set; } = "";
+        public string ShortName { get; set; } = "";
+        public bool IsKnitting { get; set; } = false;
 
-        public string UnitName { get; set; }
-
-        public string ShortName { get; set; }
-
-       
-        public string IsKnitting { get; set; }
         #region Additional Properties
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified;

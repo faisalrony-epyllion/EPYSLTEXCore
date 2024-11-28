@@ -270,7 +270,7 @@ function generateMenu(menuList) {
 
     $.each(menuList, function (i, item) {
         if (!item.childs.length) {
-            template += '<li><a href="#!" class="nav-link" data-report-id="' + item.reportId + '" data-has-external-report="' + item.hasExternalReport + '"><i class="nav-icon fa fa-circle-o"></i><p title="' + item.node_Text + '">' + item.node_Text + '</p></a></li>';
+            template += '<li><a href="#!" class="nav-link" data-report-id="' + item.reportId + '" data-has-external-report="' + item.hasExternalReport + '"><i class="nav-icon far fa-dot-circle"></i><p title="' + item.node_Text + '">' + item.node_Text + '</p></a></li>';
             activeMenu = false;
             return true;
         }
@@ -320,7 +320,7 @@ function loadReportInformation() {
     axios.get(url)
         .then(function (response) {
             columnValues = response.data.FilterSetList;
-            console.log(columnValues);
+            
             columnValueOptions = response.data.ColumnValueOptions;
             shownColumnValues = columnValues.filter(function (el) {
                 return !el.IsSystemParameter && !el.IsHidden && el.ColumnName != "Expression";
@@ -384,12 +384,11 @@ function initTable(data) {
                                 try {
                                  
                                     row.ColumnValue = formatDateToDefault(e.date);
-                                    console.log(columnValues);
+                   
                                     refreshRow(row);
                                    
                            
                                 } catch (e) {
-                                    console.log("asdasdasd");
                                     row.ColumnValue = "";
                                     
                                 }
@@ -397,6 +396,7 @@ function initTable(data) {
                         }
                         else if (row.DataType == "String" || row.DataType == "System.String" || row.DataType == "Int32" || row.DataType == "System.Int32") {
                             var selectOptions = [];
+                            columnValues = $("#tblReportFilters").bootstrapTable('getData');
                             if (row.IsMultipleSelection) { // Multiple Value
                                 var title = "Select " + row.ColumnName;
 
@@ -524,13 +524,13 @@ function initTable(data) {
 }
 
 function refreshRow(data) {
-    debugger;
+
     var columnValuesArray = data.ColumnValue.split(',');
     
     data.Operators = columnValuesArray.length > 1 ? "In" : "=";
-    console.log("Before Update: ", $("#tblReportFilters").bootstrapTable('getData'));
+   
     $("#tblReportFilters").bootstrapTable('updateByUniqueId', { id: data.ColumnName, row: data });
-    console.log("After Update: ", $("#tblReportFilters").bootstrapTable('getData'));
+   
 }
 function isUseCommonFinderReport(reportId) {
     return true;
@@ -541,7 +541,7 @@ function isUseCommonFinderReport(reportId) {
     //return false;
 }
 function initTableFilterValue(data, reportId) {
-    console.log("initTableFilterValue");
+  
     if (isUseCommonFinderReport(reportId)) {
         //Ratin
         if (data.length == 0) return toastr.error("No list found");
@@ -634,11 +634,12 @@ function clearParameters() {
 }
 
 function previewReport(reportType) {
-    debugger;
+ 
     toastr.info("Please wait while we process your report.");
-   
+ 
+columnValues=$("#tblReportFilters").bootstrapTable('getData');
     var requiredFilterSets = columnValues.filter(function (el) { return el.Caption == "***" });
-    console.log(columnValues);
+
     var isValid = true;
     $.each(requiredFilterSets, function (i, cv) {
         if (!cv.ColumnValue) {

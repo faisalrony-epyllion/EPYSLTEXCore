@@ -491,17 +491,17 @@ function generateMenu(menuList) {
             var updatednavigateUrl = item.navigateUrl.replace(/\//g, '_');
          
             if (navProperties[1] == 'notfoundpartial') {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.useCommonInterface) {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else if (item.pageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';
                 template += '<li><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
             else {
-                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
        
             activeMenu = false;

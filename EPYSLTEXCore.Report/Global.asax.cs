@@ -1,11 +1,11 @@
-using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Optimization;
-using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using EPYSLTEXCore.Report.Repositories;
 using EPYSLTEXCore.Report.Service;
+using System.Web.Http;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
 namespace EPYSLTEXCore.Report
 {
     public class MvcApplication : System.Web.HttpApplication
@@ -23,6 +23,7 @@ namespace EPYSLTEXCore.Report
             builder.RegisterType<ReportSuiteRepository>().As<IReportSuiteRepository>().InstancePerRequest();
             builder.RegisterType<ReportSuiteColumnValueRepository>().As<IReportSuiteColumnValueRepository>().InstancePerRequest();
             builder.RegisterType<ReportSuiteColumnValueRepository>().As<IReportSuiteColumnValueRepository>().InstancePerRequest();
+            builder.RegisterType<ReportingService>().As<IReportingService>().InstancePerRequest();
             builder.RegisterType<RDLReportDocument>().AsSelf().InstancePerRequest();
             // Build the container
             var container = builder.Build();

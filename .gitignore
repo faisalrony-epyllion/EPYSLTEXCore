@@ -1,7 +1,7 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
-
+.gitignore
 /.vs/EPYSLTEXCore/DesignTimeBuild
 /.vs/EPYSLTEXCore/FileContentIndex
 /.vs/EPYSLTEXCore/v17
@@ -122,3 +122,9 @@
 /packages/Autofac.8.1.1/lib/net8.0/Autofac.xml
 /EPYSLTEXCore.Report/.vs/EPYSLTEXCore.Report.csproj.dtbcache.json
 /packages
+*.xdt
+/packages/Microsoft.AspNet.Mvc.5.3.0/lib/net45
+/packages/Microsoft.AspNet.Mvc.5.3.0
+/packages
+/.vs/ProjectEvaluation/epysltexcore.metadata.v8.bin
+/.vs/ProjectEvaluation/epysltexcore.projects.v8.bin

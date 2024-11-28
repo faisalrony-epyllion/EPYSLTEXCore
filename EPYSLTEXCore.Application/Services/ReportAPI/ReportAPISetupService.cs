@@ -106,7 +106,16 @@ namespace EPYSLTEXCore.Application.Services
             //    //_connection.Close();
             //}
         }
+        public async Task<dynamic> AddNestedAsync(dynamic entity )
+        {
 
+            //var savedEntity = await _dbService.SaveNestedEntityAsync(entity) ??
+            //    throw new Exception(ErrorKeys.UnsuccesfullInsertUpdate);
+            //return savedEntity;
+            string response = string.Empty;
+            return response;
+
+        }
         public async Task<string> DeleteAsync(string reportName)
         {
             try
@@ -224,11 +233,6 @@ namespace EPYSLTEXCore.Application.Services
             var savedEntity = await _dbService.SaveEntityAsync(reportAPISetup) ??
                 throw new Exception(ErrorKeys.UnsuccesfullInsertUpdate);
             return true;
-        }
-
-        public Task<dynamic> AddNestedAsync(dynamic item)
-        {
-            throw new NotImplementedException();
         }
     }
 }

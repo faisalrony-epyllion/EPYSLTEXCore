@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 namespace EPYSLTEXCore.Report.Repositories
 {
     public class ReportSuiteRepository : IReportSuiteRepository
@@ -25,7 +27,7 @@ namespace EPYSLTEXCore.Report.Repositories
 
         public async Task<ReportSuite> GetByIdAsync(int id)
         {
-            var sql = "SELECT * FROM ReportSuite WHERE REPORTID = @Id";
+            var sql = "SELECT * FROM ReportSuite WHERE REPORTID = @Id and isapi=1";
 
        
                 _connection.Open();
@@ -33,6 +35,28 @@ namespace EPYSLTEXCore.Report.Repositories
             _connection.Close();
             return reportSuite;
             
+        }
+        public  ReportSuite GetById(int id)
+        {
+            var sql = "SELECT * FROM ReportSuite WHERE REPORTID = @Id and isapi=1";
+
+
+            _connection.Open();
+            var reportSuite =  _connection.QuerySingleOrDefault<ReportSuite>(sql, new { Id = id });
+            _connection.Close();
+            return reportSuite;
+
+        }
+        public async Task<ReportSuite> GetByNameAsync(string name)
+        {
+            var sql = "SELECT * FROM ReportSuite WHERE REPORT_NAME = @name";
+
+
+            _connection.Open();
+            var reportSuite = await _connection.QuerySingleOrDefaultAsync<ReportSuite>(sql, new { name = name });
+            _connection.Close();
+            return reportSuite;
+
         }
 
         public async Task<List<dynamic>> GetDynamicDataDapperAsync(string query)
@@ -55,7 +79,35 @@ namespace EPYSLTEXCore.Report.Repositories
                 _connection.Close();
             }
         }
+        public List<dynamic> GetDynamicData(string query, bool IsSP, params SqlParameter[] parameters)
+        {
+            try
+            {
+                _connection.Open();
 
+            var dynamicParameters = new DynamicParameters();
+                foreach (var param in parameters)
+                {
+                    dynamicParameters.Add(param.ParameterName, param.Value);
+                }
+
+                var result = _connection.Query(
+                    query,
+                    dynamicParameters,
+                    commandType: IsSP ? CommandType.StoredProcedure : CommandType.Text
+                ).ToList();
+                _connection.Close();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _connection.Close();
+                throw new InvalidOperationException("Error executing query.", ex);
+                
+            }
+         
+
+        }
         public async Task<DataSet> LoadReportParameterInfoAsync(int reportId)
         {
           

@@ -29,9 +29,18 @@ namespace EPYSLTEXCore.Report.Repositories
             return reportSuiteExtSetUp;
         }
 
-    
 
-   
+        public ReportSuiteExternalSetup GetByIdAndBuyer(int Reportid, int ExternalId)
+        {
+            var sql = "SELECT * FROM ReportSuiteExternalSetup WHERE  REPORTID=@Reportid and ExternalID=@ExternalId";
+
+
+            _connection.Open();
+            var reportSuiteExtSetUp =  _connection.QuerySingleOrDefault<ReportSuiteExternalSetup>(sql, new { Reportid = Reportid, ExternalId = ExternalId });
+            return reportSuiteExtSetUp;
+        }
+
+
 
     }
 }

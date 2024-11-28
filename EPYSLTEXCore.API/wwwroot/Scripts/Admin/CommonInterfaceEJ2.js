@@ -571,6 +571,7 @@
         });
     }
     function openSingleSelectFinder() {
+        debugger;
         var finder = new commonFinder({
             title: "Select " + selectedChild.Label,
             pageId: "divCommonInterface-" + menuId,
@@ -583,7 +584,7 @@
             primaryKeyColumn: selectedChild.FinderValueColumn,
             //allowPaging: true,
             allowSorting: selectedChild.FinderColumnSortings,
-            allowFiltering: selectedChild.FinderFilterColumns,
+            lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
                 finder.hideModal();

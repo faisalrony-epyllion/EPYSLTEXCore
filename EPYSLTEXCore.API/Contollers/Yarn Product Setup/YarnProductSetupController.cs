@@ -1,5 +1,6 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DTO;
 using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
@@ -8,6 +9,7 @@ using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using System.Text.Json;
 
 namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
 {
@@ -21,14 +23,14 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
-        public YarnProductSetupController(IUserService userService, IYarnProductSetupService yarnProductSetupService,IDapperCRUDService<YarnProductSetup> dapperCRUDService, IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(userService)
+        public YarnProductSetupController(IUserService userService, IYarnProductSetupService yarnProductSetupService, IDapperCRUDService<YarnProductSetup> dapperCRUDService, IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(userService)
         {
             _userService = userService;
             _configuration = configuration;
             _dapperCRUDService = dapperCRUDService;
             _yarnProductSetupService = yarnProductSetupService;
             _dapperCRUDService.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
-            
+
 
 
             _httpContextAccessor = httpContextAccessor;
@@ -38,26 +40,14 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
             {
                 _dapperCRUDService.UserCode = Convert.ToInt32(userClaims.FirstOrDefault(c => c.Type == JwtTokenStorage.UserID)?.Value);
             }
-
-           
-
         }
         [HttpPost]
         [Route("Save")]
         public async Task<IActionResult> SaveYarnProductSetup(dynamic entity)
         {
-
-
-
             YarnProductSetup model = JsonConvert.DeserializeObject<YarnProductSetup>(Convert.ToString(entity));
-
-
             var yarnProductSetupModel = await _dapperCRUDService.SaveEntityAsync(model);
-
-
-
             return Ok(yarnProductSetupModel.SetupMasterID);
-       
         }
 
         //[Route("ewo-list/{buyerIds}")]
@@ -71,13 +61,10 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
         [Route("fiberType/{getall}")]
         public async Task<IActionResult> GetAllFiberType()
         {
-            var paginationInfo = new PaginationInfo() { GridType = "ej2", PageBy = "Offset 0 Rows Fetch Next 3 Rows Only", PageByNew = "R_No_New BETWEEN 0 AND 3" };
+            var paginationInfo = new PaginationInfo() { GridType = "ej2", PageBy = "Offset 0 Rows Fetch Next 10 Rows Only", PageByNew = "R_No_New BETWEEN 0 AND 3" };
             //var paginationInfo = Request.GetPaginationInfo();
             var records = await _yarnProductSetupService.GetAllFiberType(paginationInfo);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
-            
         }
-
-
     }
 }

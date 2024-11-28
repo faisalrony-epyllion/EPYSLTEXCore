@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System.Text;
+using System.Text.Json;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache(opt =>
 {
     opt.SizeLimit = 100; // Set the caching key limit
+});
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
 
 builder.Services.AddApplication(); // Services LifeTime

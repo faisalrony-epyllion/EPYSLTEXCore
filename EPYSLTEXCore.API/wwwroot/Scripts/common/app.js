@@ -475,6 +475,7 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
 function GetMenus(applicationId) {
     axios.get("/api/MenuAPI/GetAllMenu/" + applicationId)
         .then(function (response) {
+            
             generateMenu(response.data);
             $(".sidebar-menu").append(template);
             $(".sidebar-menu").tree();
@@ -486,30 +487,28 @@ function GetMenus(applicationId) {
 }
 
 function generateMenu(menuList) {
-
-
-
+    
     $.each(menuList, function (i, item) {
-        if (!item.childs.length) {
+        if (!item.Childs.length) {
 
-            if (!item.navigateUrl) return true;
-            var navProperties = item.navigateUrl.split('/');
+            if (!item.NavigateUrl) return true;
+            var navProperties = item.NavigateUrl.split('/');
 
             // Replace all occurrences of '/' with '_'
-            var updatednavigateUrl = item.navigateUrl.replace(/\//g, '_');
+            var updatednavigateUrl = item.NavigateUrl.replace(/\//g, '_');
 
             if (navProperties[1] == 'notfoundpartial') {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
-            else if (item.useCommonInterface) {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
+            else if (item.UseCommonInterface) {
+                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
-            else if (item.pageName == 'ReportViewer') {
+            else if (item.PageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';
-                template += '<li><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else {
-                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
+                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
 
             activeMenu = false;
@@ -517,11 +516,11 @@ function generateMenu(menuList) {
         }
         else {
 
-            activeMenu = item.menuId == 509 ? true : false;
+            activeMenu = item.MenuId == 509 ? true : false;
             var active = activeMenu ? "active" : "";
             template += '<li class="nav-item' + active + '">';
             template += '<a href="#" class="nav-link">'
-                + '<i class="nav-icon fa fa-circle"></i><p>' + item.menuCaption + '<i class="right fa fa-angle-left"></i></p>'
+                + '<i class="nav-icon fa fa-circle"></i><p>' + item.MenuCaption + '<i class="right fa fa-angle-left"></i></p>'
                 //    + '<p class="pull-right-container">'
 
                 //  + '</p>'
@@ -530,7 +529,7 @@ function generateMenu(menuList) {
             activeMenu = false;
         }
 
-        generateMenu(item.childs);
+        generateMenu(item.Childs);
 
         template += '</ul></li>';
 

@@ -43,7 +43,7 @@ namespace EPYSLTEXCore.Application.Services
 
             var query = $@"
                 With F As (
-                Select SetupMasterID, FiberTypeID, b.SegmentValue FiberType  
+                        Select SetupMasterID, FiberTypeID, b.SegmentValue FiberType  
                             From YarnProductSetupMaster a
                         Inner Join   {DbNames.EPYSL}..ItemSegmentValue b on b.SegmentValueID = a.FiberTypeID
                  )

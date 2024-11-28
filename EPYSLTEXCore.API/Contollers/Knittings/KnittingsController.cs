@@ -43,15 +43,8 @@ namespace EPYSLTEXCore.API.Contollers
     [Route("knitting-unit")]
     public async Task<IActionResult> SaveKnittingUnit(KnittingUnit model)
     {
-
             var knittingUnitModel = await _dapperCRUDService.SaveEntityAsync(model);
-           
-            
-           
             return Ok(knittingUnitModel.KnittingUnitID);
     }
-
-
-   
 }
 }

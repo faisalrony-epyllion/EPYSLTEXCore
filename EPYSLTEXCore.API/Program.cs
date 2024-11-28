@@ -97,16 +97,10 @@ var app = builder.Build();
 
 // Enable CORS
 app.UseCors("AllowSpecificOrigin");
-
+app.UseResponseCaching();
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseHttpsRedirection();
-app.UseStaticFiles(new StaticFileOptions
-{
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers.Append("Content-Type", "font/woff2");
-    }
-});
+app.UseStaticFiles();
 
 
 // Authentication and Authorization

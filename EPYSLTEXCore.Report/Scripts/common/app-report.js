@@ -270,7 +270,7 @@ function generateMenu(menuList) {
 
     $.each(menuList, function (i, item) {
         if (!item.childs.length) {
-            template += '<li><a href="#!" class="nav-link" data-report-id="' + item.reportId + '" data-has-external-report="' + item.hasExternalReport + '"><i class="nav-icon fa fa-circle-o"></i><p title="' + item.node_Text + '">' + item.node_Text + '</p></a></li>';
+            template += '<li><a href="#!" class="nav-link" data-report-id="' + item.reportId + '" data-has-external-report="' + item.hasExternalReport + '"><i class="nav-icon far fa-dot-circle"></i><p title="' + item.node_Text + '">' + item.node_Text + '</p></a></li>';
             activeMenu = false;
             return true;
         }

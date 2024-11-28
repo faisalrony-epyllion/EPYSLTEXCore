@@ -17,12 +17,12 @@ var activeMenu = false;
 const FILTERCONTROLPLACEHOLDER = "Type & Enter for Search";
 var $mainTab;
 var $mainTabContent;
- 
+
 var globalControllerName = 'home';
 var globalActionName = 'index';
 
 $(document).ready(function () {
-  
+
 
     rootPath = window.location.protocol + '//' + window.location.host;
     apiRootPath = "https://localhost:7053/";
@@ -39,7 +39,7 @@ $(document).ready(function () {
 
     //getBookingAnalysisBookingAcknowledgementCountALL();
     loadProgressBar();
- 
+
     axios.interceptors.request.use(function (config) {
         if (config.method === "post") {
             HoldOn.open({
@@ -60,7 +60,7 @@ $(document).ready(function () {
         HoldOn.close();
         return Promise.reject(error);
     });
- 
+
     GetMenus(constants.APPLICATION_ID);
 
     $('[data-toggle="tooltip"]').tooltip({ html: true });
@@ -81,6 +81,7 @@ $(document).ready(function () {
         $(this).parent().addClass("active");
         $(this).parent().addClass("bg-info");
     });
+
 
     registerCloseEvent();
 });
@@ -239,11 +240,11 @@ function reloadTableData(type, tableId) {
 
         $(this.element).on('click', this.options.trigger, function (event) {
             that.toggle($(this), event);
-          
-            if ($(this).parent().hasClass("nav-item")) {            
+
+            if ($(this).parent().hasClass("nav-item")) {
                 return;
             }
-                
+
 
             $('.treeview li').removeClass('active');
             $(this).parent().addClass("active");
@@ -371,7 +372,13 @@ function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption,
     $($mainTab[0]).children().removeClass('bg-info');
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     axios.get(url).then(function (response) {
-        $mainTab.append('<li class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '&nbsp;<span class="close closeTab fa fa-times fa-lg pt-1"  type="button"><i class="icon-remove fa-lg"></i></span></a></li>');
+        $mainTab.append(`<li class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                            <a href="#` + pageName + `">` + tabCaption + `&nbsp;
+                                <span class="close closeTab fa fa-times fa-lg pt-1" type="button" title='Close this tab'>
+                                    <i class="icon-remove fa-lg"></i>
+                                </span>
+                            </a>
+                         </li>`);
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
         $mainTabContent.append(markup);
         showTab(pageName);
@@ -429,7 +436,7 @@ function GetNotFoundViewMarkup(tabid, tabCaption) {
     $($mainTab[0]).children().removeClass('bg-info');
     axios.get("/home/notfoundpartial")
         .then(function (response) {
-         
+
             $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times fa-lg pt-1" type="button"><i class="icon-remove"></i></span></a></li>');
             var markup = '<div class="tab-pane" id="' + tabid + '">' + response.data + '</div>';
             $mainTabContent.append(markup);
@@ -444,7 +451,7 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
     $($mainTab[0]).children().removeClass('bg-info');
     localStorage.setItem("current_common_interface_menuid", menuId);
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
-   // var url = `/admin/${actionName}?menuId=${menuId}`;
+    // var url = `/admin/${actionName}?menuId=${menuId}`;
     axios.get(url).then(function (response) {
         $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times fa-lg p-1" type="button"><i class="icon-remove fa-lg pt-1"></i></span></a></li>');
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
@@ -456,7 +463,7 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
         var folderName = result[0];
         var jsFileName = result[1];
         var scriptPath = '/Scripts/' + folderName + '/' + jsFileName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
-      
+
         if ($('script[src="' + scriptPath + '"]').length === 0) {
             var s = document.createElement('script');
             s.setAttribute('src', scriptPath);
@@ -468,11 +475,12 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
 function GetMenus(applicationId) {
     axios.get("/api/MenuAPI/GetAllMenu/" + applicationId)
         .then(function (response) {
-
             generateMenu(response.data);
             $(".sidebar-menu").append(template);
-
             $(".sidebar-menu").tree();
+            //$(".sidebar-menu").css({
+            //    "font-size": "12px !important"
+            //});
         })
         .catch(showResponseError);
 }
@@ -480,16 +488,16 @@ function GetMenus(applicationId) {
 function generateMenu(menuList) {
 
 
-  
+
     $.each(menuList, function (i, item) {
         if (!item.childs.length) {
-            
+
             if (!item.navigateUrl) return true;
             var navProperties = item.navigateUrl.split('/');
 
             // Replace all occurrences of '/' with '_'
             var updatednavigateUrl = item.navigateUrl.replace(/\//g, '_');
-         
+
             if (navProperties[1] == 'notfoundpartial') {
                 template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
@@ -503,36 +511,36 @@ function generateMenu(menuList) {
             else {
                 template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.pageName + '" data-menu-id="' + item.menuId + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.menuCaption + '</p></a></li>';
             }
-       
+
             activeMenu = false;
             return true;
         }
         else {
-  
+
             activeMenu = item.menuId == 509 ? true : false;
             var active = activeMenu ? "active" : "";
             template += '<li class="nav-item' + active + '">';
             template += '<a href="#" class="nav-link">'
                 + '<i class="nav-icon fa fa-circle"></i><p>' + item.menuCaption + '<i class="right fa fa-angle-left"></i></p>'
-            //    + '<p class="pull-right-container">'
-           
-              //  + '</p>'
+                //    + '<p class="pull-right-container">'
+
+                //  + '</p>'
                 + '</a>';
             template += '<ul class="nav nav-treeview treeview-menu">';
             activeMenu = false;
         }
 
         generateMenu(item.childs);
-    
+
         template += '</ul></li>';
 
-        
+
     });
 }
 
 // #region Constants
 var constants = Object.freeze({
-    APPLICATION_ID:11,
+    APPLICATION_ID: 11,
     LOAD_ERROR_MESSAGE: "An error occured in fetching your data",
     SUCCESS_MESSAGE: "Your record saved successfully!",
     PROPOSE_SUCCESSFULLY: "Your record has been sent for approval!",

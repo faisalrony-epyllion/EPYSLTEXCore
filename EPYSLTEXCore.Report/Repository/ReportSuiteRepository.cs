@@ -36,7 +36,17 @@ namespace EPYSLTEXCore.Report.Repositories
             return reportSuite;
             
         }
+        public  ReportSuite GetById(int id)
+        {
+            var sql = "SELECT * FROM ReportSuite WHERE REPORTID = @Id and isapi=1";
 
+
+            _connection.Open();
+            var reportSuite =  _connection.QuerySingleOrDefault<ReportSuite>(sql, new { Id = id });
+            _connection.Close();
+            return reportSuite;
+
+        }
         public async Task<ReportSuite> GetByNameAsync(string name)
         {
             var sql = "SELECT * FROM ReportSuite WHERE REPORT_NAME = @name";

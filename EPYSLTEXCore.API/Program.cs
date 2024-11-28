@@ -100,8 +100,14 @@ app.UseCors("AllowSpecificOrigin");
 
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseHttpsRedirection();
-app.UseStaticFiles();
- 
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Content-Type", "font/woff2");
+    }
+});
+
 
 // Authentication and Authorization
 app.UseAuthentication();

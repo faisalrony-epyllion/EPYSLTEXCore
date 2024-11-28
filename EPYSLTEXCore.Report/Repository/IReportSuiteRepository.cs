@@ -9,6 +9,7 @@ namespace EPYSLTEXCore.Report.Repositories
     public interface IReportSuiteRepository
     {
         Task<ReportSuite> GetByIdAsync(int id);
+        ReportSuite GetById(int id);
         Task<ReportSuite> GetByNameAsync(string name);
         Task<List<dynamic>> GetDynamicDataDapperAsync(string query);
         DataSet LoadReportSourceDataSet(CommandType cmdType, string strCmdText, IDbDataParameter[] sqlParam);

@@ -17,12 +17,13 @@
 
         <script type="text/javascript">
             (function () {
-                var isWebKit = !!window.webkitURL;
-                var element = document.getElementById("rpViewer_ReportViewer");
-                console.log("Is WebKit: " + isWebKit); // Debugging output
+                var isWebKit = !!window.webkitURL; console.log(window.webkitURL);
+                var element = document.getElementById("rpViewer_ctl09");
+                console.log(element); // Debugging output
                 if (isWebKit) {
                     if (element) {
-                        element.style.overflow = "visible"; console.log("Element found and style updated."); 
+                        element.style.overflow = "visible";
+                        console.log("Element found and style updated."); 
                     }
                 }
             })();

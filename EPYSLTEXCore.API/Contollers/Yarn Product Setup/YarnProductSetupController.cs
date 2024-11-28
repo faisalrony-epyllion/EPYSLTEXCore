@@ -61,8 +61,8 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
         [Route("fiberType/{getall}")]
         public async Task<IActionResult> GetAllFiberType()
         {
-            var paginationInfo = new PaginationInfo() { GridType = "ej2", PageBy = "Offset 0 Rows Fetch Next 10 Rows Only", PageByNew = "R_No_New BETWEEN 0 AND 3" };
-            //var paginationInfo = Request.GetPaginationInfo();
+          
+            var paginationInfo = Request.GetPaginationInfo();
             var records = await _yarnProductSetupService.GetAllFiberType(paginationInfo);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
         }

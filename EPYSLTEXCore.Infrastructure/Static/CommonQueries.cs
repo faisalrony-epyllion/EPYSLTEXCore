@@ -36,6 +36,12 @@ namespace EPYSLTEXCore.Infrastructure.Static
             return $@"SELECT CAST(UnitID AS VARCHAR) AS id, DisplayUnitDesc AS text
                   FROM Unit";
         }
+        public static string GetAllFiberType()
+        {
+            return $@"  Select SetupMasterID, FiberTypeID, b.SegmentValue FiberType  
+                            From YarnProductSetupMaster a
+                        Inner Join  {DbNames.EPYSL}..ItemSegmentValue b on b.SegmentValueID = a.FiberTypeID";
+        }
         public static string GetEntityTypesByEntityTypeName(string segmentName)
         {
             /* return
@@ -56,5 +62,6 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 Inner Join {DbNames.EPYSL}..ItemSegmentName ISN On ISV.SegmentNameID = ISN.SegmentNameID
                 Where ISN.SegmentName = '{segmentName}'";
         }
+        
     }
 }

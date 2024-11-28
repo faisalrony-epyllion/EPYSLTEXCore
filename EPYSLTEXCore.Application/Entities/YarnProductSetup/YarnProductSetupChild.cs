@@ -34,6 +34,7 @@ namespace EPYSLTEXCore.Application.Entities
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified;
         #endregion Additional Properties
     }
+ 
 
     [Table("YarnProductSetupMaster")]
     public class YarnProductSetup : DapperBaseEntity

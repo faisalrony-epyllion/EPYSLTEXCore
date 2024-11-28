@@ -97,11 +97,11 @@ var app = builder.Build();
 
 // Enable CORS
 app.UseCors("AllowSpecificOrigin");
-
+app.UseResponseCaching();
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
- 
+
 
 // Authentication and Authorization
 app.UseAuthentication();

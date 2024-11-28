@@ -5,6 +5,7 @@ using EPYSLTEXCore.Report.Service;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -250,6 +251,28 @@ namespace EPYSLTEXCore.Report.Controllers
 
         #endregion Pdf Report View
 
+
+
+        [HttpGet]
+        public ActionResult GetFilterColumnOptions()
+        {
+            var parameters = new List<SqlParameter>();
+            var isSP = false;
+            foreach (var key in Request.QueryString.AllKeys)
+            {
+                if (key.Equals("IsSP"))
+                    isSP = Request.QueryString[key].ToBoolean();
+                if (key.Equals("ReportId") || key.Equals("MethodName") || key.Equals("IsSP"))
+                    continue;
+
+                var param = new SqlParameter($"@{key}", Request.QueryString[key]);
+                parameters.Add(param);
+            }
+
+            var data = _reportSuiteRepository.GetDynamicData(Request.QueryString["MethodName"], isSP, parameters.ToArray());
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
     }
 
 }

@@ -8,6 +8,7 @@ namespace EPYSLTEXCore.Report.Repositories
     public interface IReportSuiteExternalSetupRepository
     {
         Task<ReportSuiteExternalSetup> GetByIdAndBuyerAsync(int Reportid, int ExternalId);
+       ReportSuiteExternalSetup GetByIdAndBuyer(int Reportid, int ExternalId);
 
     }
 

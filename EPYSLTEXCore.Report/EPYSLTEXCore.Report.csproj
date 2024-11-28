@@ -189,6 +189,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CacheController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Entities\FilterSets.cs" />
     <Compile Include="Entities\RDLColumn.cs" />
@@ -231,15 +232,14 @@
     <Content Include="Content\Images\user.png" />
     <Content Include="Content\lib\font-awesome\css\font-awesome.css" />
     <Content Include="Content\lib\font-awesome\css\font-awesome.min.css" />
-    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-brands-400.svg" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-regular-400.svg" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-solid-900.svg" />
+    <Content Include="Content\lib\syncfusion\bootstrap4.css" />
+    <Content Include="Content\lib\syncfusion\ej2.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\lib\font-awesome\css\font-awesome.css.map" />
-    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.eot" />
-    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.ttf" />
-    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.woff" />
-    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.woff2" />
-    <Content Include="Content\lib\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="Reports\ReportView.aspx" />
     <Content Include="Scripts\common\app-report.js" />
     <Content Include="Web.config" />
@@ -251,13 +251,24 @@
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\lib\font-awesome\fonts\fa-brands-400.eot" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-brands-400.ttf" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-brands-400.woff" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-brands-400.woff2" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-regular-400.eot" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-regular-400.ttf" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-regular-400.woff" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-regular-400.woff2" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-solid-900.eot" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-solid-900.ttf" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-solid-900.woff" />
+    <Content Include="Content\lib\font-awesome\fonts\fa-solid-900.woff2" />
     <None Include="packages.config" />
     <Content Include="Views\Shared\_LayoutReport.cshtml" />
     <Content Include="Views\Web.config" />

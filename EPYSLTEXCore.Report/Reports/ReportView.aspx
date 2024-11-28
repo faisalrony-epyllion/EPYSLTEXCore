@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ReportView.aspx.cs" Inherits="EPYSLTEX.Web.Reports.ReportView" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ReportView.aspx.cs" Inherits="EPYSLTEXCore.Report.Reports.ReportView" %>
 <%@ Register Assembly="Microsoft.ReportViewer.WebForms" Namespace="Microsoft.Reporting.WebForms" TagPrefix="rsweb" %>
 
 <!DOCTYPE html>
@@ -17,11 +17,13 @@
 
         <script type="text/javascript">
             (function () {
-                var isWebKit = !!window.webkitURL;
+                var isWebKit = !!window.webkitURL; console.log(window.webkitURL);
                 var element = document.getElementById("rpViewer_ctl09");
+                console.log(element); // Debugging output
                 if (isWebKit) {
                     if (element) {
                         element.style.overflow = "visible";
+                        console.log("Element found and style updated."); 
                     }
                 }
             })();

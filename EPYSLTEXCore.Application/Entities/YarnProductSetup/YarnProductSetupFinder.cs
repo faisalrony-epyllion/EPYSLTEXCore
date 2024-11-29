@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Entities
 {
-    public class YarnProductSetupFinder   
+    public class YarnProductSetupFinder : DapperBaseEntity
     {
         public int SetupMasterID { get; set; }
         public int FiberTypeID { get; set; }
         public string FiberType { get; set; }
- 
- 
 
+        public override bool IsModified => false;
     }
 }

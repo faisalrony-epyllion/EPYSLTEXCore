@@ -7,7 +7,7 @@ $(function () {
         e.preventDefault();
 
         var data = $("#login-form").serialize();
-
+    
         axios.post('/account/login', data)
 
             .then(function (response) {

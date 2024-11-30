@@ -4,8 +4,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>@ViewBag.Title | Textile ERP</title>
-    <link href="~/Bundle/css/site-bundle.min.css" rel="stylesheet" />
-
+    <link href="~/bundle/css/site-bundle.min.css" rel="stylesheet" />
+    <link href="~/app_themes/customcss/index.css" rel="stylesheet" />
+    <script src="~/bundle/js/site-bundle.min.js"></script>
+    <script src="~/Scripts/Account/Login.js"></script>
 </head>
 <body>
     <!--Main Navigation-->
@@ -15,22 +17,42 @@
     <!--Main layout-->
 
     <section id="main-content">
-        <div class="container">
-            @RenderBody()
+        <div class="app-container app-theme-white body-tabs-shadow">
+            <div class="app-container">
+                <div class="h-100">
+                    <div class="h-100 no-gutters row">
+                        <div class="d-none d-lg-block col-lg-4">
+                            <div class="slider-light">
+                                <div class="slick-slider">
+                                    <div>
+                                        <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-plum-plate" tabindex="-1">
+                                            <div class="slide-img-bg" style="background-image: url('@Url.Content("~/Images/2.jpg")');"></div>                                        
+                                        </div>
+                                    </div>
+                                 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-100 d-flex bg-white justify-content-center align-items-center col-md-12 col-lg-8">
+                           
+                            <div class="mx-auto app-login-box col-sm-12 col-md-10 col-lg-9">
+                                <div class="pb-5">
+                                    <img src="~/Images/Logo.png" alt="AdminLTELogo" height="80" width="160">
+                                </div>
+                                @* <div class="app-logo" style="background-image: url('@Url.Content("~/Images/logo.png")');"></div> *@
+                        @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!--Main layout-->
-    <!--Footer-->
-    <footer class="bg-light py-4">
-        <div class="container text-center text-muted">
-            © Copyright <a target="_blank" href="https://www.epylliongroup.com" class="text-decoration-none">Epyllion Group</a>. All rights reserved.
-        </div>
-    </footer>
+  
 
     <!--Footer-->
     <!--  Scripts-->
-    <script src="~/bundle/js/site-bundle.min.js"></script>
-    <script src="~/Scripts/Account/Login.js"></script>
+
 </body>
 </html>

@@ -24,9 +24,12 @@
 .treeview-menu li a {
     padding: 4px 0 0 13px !important;
 }
-/*#mainTab li a {
-    line-height: 30px !important;
+/*#mainTab li.active {
+    border-bottom-color: transparent !important;
 }*/
+#mainTab li a {
+    padding-left: 10px;
+}
 .user-panel {
     position: relative;
     width: 100%;
@@ -135,7 +138,7 @@
 
 .skin-grey .sidebar-menu > li:hover > a, .skin-grey .sidebar-menu > li.active > a, .skin-grey .sidebar-menu > li.menu-open > a {
     color: #fff;
-    background: #1e282c
+    background: #1e282c;
 }
 
 .skin-grey .sidebar-menu > li.active > a {
@@ -382,11 +385,14 @@
         font-weight: bold;
     }*/
 
-.closeTab{
-    margin-left:10px;
+.closeTab {
+    font-size: 10px;
+    padding: 0px !important;
+    color: #ffffff;
+    margin-left: 10px;
 }
 .bg-info {
-    background-color: #2f4166 !important;
+    background-color: #3B7947 !important;
 }
 @media(max-width:767px) {
     .skin-grey .main-header > .logo {

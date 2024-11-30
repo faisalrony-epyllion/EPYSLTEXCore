@@ -52,14 +52,22 @@ namespace System.Net.Http
             }
             else
             {
+                /*
+                  (((FabricBookingDate gt datetime'2023-02-22T17:59:59.999Z') and (FabricBookingDate lt datetime'2023-02-23T18:00:00.000Z')) 
+               or ((FabricBookingDate gt datetime'2023-02-23T17:59:59.999Z') and (FabricBookingDate lt datetime'2023-02-24T18:00:00.000Z'))) 
+                and (tolower(YBookingNo) ne '233692-fbr-yb')
+
+                */
+
                 var filterValue = keyValuePairs.FirstOrDefault(x => x.Key.Equals("$filter", StringComparison.OrdinalIgnoreCase));
-                if (!string.IsNullOrEmpty(filterValue.Value))
+                if (filterValue.Value.NotNullOrEmpty())
                 {
                     var filterValueString = filterValue.Value;
+
                     var split2FinalString = string.Empty;
                     bool isApplySplite2FinalString = false;
 
-                    // Check and process the filter string for date ranges
+                    #region check is select equal date
                     var filterValues1 = filterValueString.Split(new string[] { "or" }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (var fv in filterValues1)
                     {
@@ -67,6 +75,7 @@ namespace System.Net.Http
                         {
                             isApplySplite2FinalString = true;
                             var split2 = fv.Split(new string[] { "and" }, StringSplitOptions.RemoveEmptyEntries);
+
                             foreach (var splitObj in split2)
                             {
                                 if (splitObj.Contains("lt datetime"))
@@ -74,7 +83,7 @@ namespace System.Net.Http
                                     var value1 = splitObj.Split(new string[] { " lt datetime" }, StringSplitOptions.RemoveEmptyEntries);
                                     string fieldName = ReplaceUselessStrings(value1[0]).Trim();
 
-                                    if (!string.IsNullOrEmpty(split2FinalString))
+                                    if (split2FinalString.IsNotNullOrEmpty())
                                     {
                                         if (split2FinalString.Contains(fieldName))
                                         {
@@ -109,14 +118,16 @@ namespace System.Net.Http
                         }
                         else
                         {
-                            if (!string.IsNullOrEmpty(split2FinalString)) split2FinalString += " and ";
+                            if (split2FinalString.IsNotNullOrEmpty()) split2FinalString += " and ";
                             split2FinalString += fv;
                         }
                     }
-                    if (!string.IsNullOrEmpty(split2FinalString) && isApplySplite2FinalString)
+                    if (split2FinalString.IsNotNullOrEmpty() && isApplySplite2FinalString)
                     {
                         filterValueString = split2FinalString;
                     }
+                    #endregion
+
 
                     var filterValueList = new List<string>();
                     var filterValues = filterValueString.Split(new string[] { "and" }, StringSplitOptions.RemoveEmptyEntries);
@@ -128,18 +139,153 @@ namespace System.Net.Http
                             filterValueList.Add(fValueStr);
                         }
                         else if (fValue.Contains(" gt datetime") ||
-                                 fValue.Contains(" lt datetime") ||
-                                 fValue.Contains(" eq datetime") ||
-                                 fValue.Contains(" le datetime") ||
-                                 fValue.Contains(" ge datetime"))
+                            fValue.Contains(" lt datetime") ||
+                            fValue.Contains(" eq datetime") ||
+                            fValue.Contains(" le datetime") ||
+                            fValue.Contains(" ge datetime"))
                         {
                             var fValueStr = RequestExtension.GetDateCondition(fValue);
                             filterValueList.Add(fValueStr);
                         }
+                        else if (fValue.ToLower() == "eq") //fValue.Contains("eq")
+                        {
+                            var fValueStr = fValue.Replace("eq", "=").Replace("tolower(", "").Replace(")", "").Replace("(", "");
+                            filterValueList.Add(fValueStr);
+                        }
+                        else if (fValue.Contains(" eq false"))
+                        {
+                            var fValueStr = fValue.Replace(" eq false", " = 0");
+                            filterValueList.Add(fValueStr);
+                        }
+                        else if (fValue.Contains(" eq true"))
+                        {
+                            var fValueStr = fValue.Replace(" eq true", " = 1");
+                            filterValueList.Add(fValueStr);
+                        }
                         else
                         {
-                            var fValueStr = ReplaceUselessStrings2(fValue);
-                            filterValueList.Add(fValueStr);
+                            var fValueParts = fValue.Split(',');
+                            bool isBetweenFilter = false;
+
+                            var indexF = fValueParts.ToList().FindIndex(x => x.Contains("_St"));
+                            if (indexF > -1)
+                            {
+                                isBetweenFilter = true;
+                            }
+
+                            if (fValueParts.Length == 1 && !isBetweenFilter)
+                            {
+                                if (fValue.Contains(" ne "))
+                                {
+                                    var fValue1 = ReplaceUselessStrings2(fValue);
+                                    var fValueStr = fValue1.Replace("ne", "!=");
+                                    fValueStr = "(" + fValueStr + ")";
+                                    filterValueList.Add(fValueStr);
+                                }
+                                else if (fValue.Contains(" eq "))
+                                {
+                                    var fValue1 = ReplaceUselessStrings2(fValue);
+                                    var fValueStr = fValue1.Replace("eq", "=");
+                                    fValueStr = "(" + fValueStr + ")";
+                                    filterValueList.Add(fValueStr);
+                                }
+                            }
+                            else if (fValueParts.Length == 2 && !isBetweenFilter)
+                            {
+                                string fieldName = "";
+                                string fieldValue = "";
+
+                                var splitValue = fValue.Split(',');
+                                if (splitValue[0].Contains("tolower"))
+                                {
+                                    fieldName = ReplaceUselessStrings(splitValue[0]);
+                                    fieldValue = ReplaceUselessStrings(splitValue[1]);
+                                }
+                                else if (splitValue[1].Contains("tolower"))
+                                {
+                                    fieldName = ReplaceUselessStrings(splitValue[1]);
+                                    fieldValue = ReplaceUselessStrings(splitValue[0]);
+                                }
+                                filterValueList.Add($"{fieldName} Like '%{fieldValue.Trim()}%'");
+                            }
+                            else if (fValueParts.Length > 2 || isBetweenFilter)
+                            {
+                                bool isSkipNextOperation = false;
+                                string fieldName = "";
+                                List<string> fieldValues = new List<string>();
+
+                                var splitValue = fValue.Split(',');
+                                int index = splitValue.ToList().FindIndex(x => x.Contains("tolower"));
+                                fieldName = ReplaceUselessStrings(splitValue[index]);
+
+                                bool isDateField = false;
+                                if (fieldName.ToLower().Contains("date"))
+                                {
+                                    isDateField = true;
+                                    fieldName = fieldName.Remove(fieldName.Length - 3);
+                                }
+
+                                for (int i = 0; i < fValueParts.Length; i++)
+                                {
+                                    if (i != index)
+                                    {
+                                        fieldValues.Add(ReplaceUselessStrings(splitValue[i]));
+                                    }
+                                }
+                                string queryString = "";
+                                int countFV = 0;
+                                fieldValues.ForEach(x =>
+                                {
+                                    countFV++;
+
+                                    if (countFV == 1)
+                                    {
+                                        if (!isDateField)
+                                        {
+                                            queryString += " ( ";
+                                        }
+                                        else if (isDateField)
+                                        {
+                                            queryString += $"({fieldName} BETWEEN ";
+                                        }
+                                    }
+
+                                    if (!isDateField)
+                                    {
+                                        queryString += $"{fieldName} Like '%{x.Trim()}%' ";
+                                    }
+                                    else
+                                    {
+                                        queryString += $"'{x.Trim()}'";
+
+                                        if (fieldValues.Count() == 1)
+                                        {
+                                            queryString += $" AND '{x.Trim()}'";
+                                            isSkipNextOperation = true;
+                                        }
+                                    }
+
+
+                                    if (!isSkipNextOperation && countFV != fieldValues.Count())
+                                    {
+                                        if (!isDateField)
+                                        {
+                                            queryString += " OR ";
+                                        }
+                                        else if (isDateField)
+                                        {
+                                            queryString += $" AND ";
+                                        }
+                                    }
+
+                                    if (countFV == fieldValues.Count() || isSkipNextOperation)
+                                    {
+                                        queryString += " ) ";
+                                    }
+                                });
+
+                                filterValueList.Add(queryString);
+                            }
                         }
                     }
 
@@ -147,13 +293,12 @@ namespace System.Net.Http
                 }
 
                 var orderBy = keyValuePairs.FirstOrDefault(x => x.Key.Equals("$orderby", StringComparison.OrdinalIgnoreCase));
-                if (!string.IsNullOrEmpty(orderBy.Value))
-                    paginationInfo.OrderBy = $"Order By {orderBy.Value}";
+                if (orderBy.Value.NotNullOrEmpty()) paginationInfo.OrderBy = $"Order By {orderBy.Value}";
 
                 var skip = keyValuePairs.FirstOrDefault(x => x.Key.Equals("$skip", StringComparison.OrdinalIgnoreCase));
                 var take = keyValuePairs.FirstOrDefault(x => x.Key.Equals("$top", StringComparison.OrdinalIgnoreCase));
 
-                if (!string.IsNullOrEmpty(skip.Value) && !string.IsNullOrEmpty(take.Value))
+                if (skip.Value.IsNotNullOrEmpty() && take.Value.IsNotNullOrEmpty())
                 {
                     paginationInfo.PageBy = $"Offset {skip.Value} Rows Fetch Next {take.Value} Rows Only";
                     paginationInfo.PageByNew = $"R_No_New BETWEEN {Convert.ToInt32(skip.Value)} AND {Convert.ToInt32(skip.Value) - 1 + Convert.ToInt32(take.Value)} ";

@@ -66,5 +66,7 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
             var records = await _yarnProductSetupService.GetAllFiberType(paginationInfo);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
         }
+
+      
     }
 }

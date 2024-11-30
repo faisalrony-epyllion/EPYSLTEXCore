@@ -360,10 +360,27 @@ function removeCurrentTab() {
 
 function registerCloseEvent() {
     $(".closeTab").click(function () {
+        var tabIndex = $(this).closest('li').attr("tabIndex");
+        var preTabIndex = tabIndex - 1;
+        var isActive = $(this).closest('li').hasClass("active");
+
         var tabContentId = $(this).parent().attr("href");
         $(this).parent().parent().remove(); //remove li of tab
         $('#mainTab a:last').tab('show'); // Select first tab
         $(tabContentId).remove(); //remove respective tab content
+        resetTabIndex();
+
+        if (isActive) {
+            $("#mainTab").find("li").removeClass("bg-info").removeClass("active");
+            $("#mainTab").find("li[tabIndex=" + preTabIndex + "]").addClass("bg-info").addClass("active");
+        }
+    });
+}
+function resetTabIndex() {
+    var tabIndex = 0;
+    $("#mainTab").find("li").each(function () {
+        $(this).attr("tabIndex", tabIndex);
+        tabIndex++;
     });
 }
 
@@ -371,8 +388,11 @@ function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption,
     $($mainTab[0]).children().removeClass('active');
     $($mainTab[0]).children().removeClass('bg-info');
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
+
     axios.get(url).then(function (response) {
-        $mainTab.append(`<li class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+        var len = $("#mainTab").find("li").length;
+
+        $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
                             <a href="#` + pageName + `">` + tabCaption + `&nbsp;
                                 <span class="close closeTab fa fa-times fa-lg pt-1" type="button" title='Close this tab'>
                                     <i class="icon-remove fa-lg"></i>
@@ -403,8 +423,16 @@ function clickAccountNavigation(event) {
     $($mainTab[0]).children().removeClass('bg-info');
     var isExists = $('#mainTab a[href="#' + actionName + '"]');
     if (isExists.length === 0) {
+        var len = $("#mainTab").find("li").length;
+
         var tabCaption = target.innerText.trim();
-        $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + actionName + '">' + tabCaption + '<span class="close closeTab fa fa-times" type="button"><i class="icon-remove"></i></span></a></li>');
+        $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                            <a href="#` + actionName + `">` + tabCaption + `
+                                <span class="close closeTab fa fa-times" type="button">
+                                    <i class="icon-remove"></i>
+                                </span>
+                            </a>
+                          </li>`);
 
         var controllerName = target.dataset.controllerName;
         getAccountViewMarkup(controllerName, actionName);
@@ -436,8 +464,17 @@ function GetNotFoundViewMarkup(tabid, tabCaption) {
     $($mainTab[0]).children().removeClass('bg-info');
     axios.get("/home/notfoundpartial")
         .then(function (response) {
+            var len = $("#mainTab").find("li").length;
 
-            $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times fa-lg pt-1" type="button"><i class="icon-remove"></i></span></a></li>');
+            $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                                <a href="#` + pageName + `">` + tabCaption + `
+                                    <span class="close closeTab fa fa-times fa-lg pt-1" type="button">
+                                        <i class="icon-remove"></i>
+                                    </span>
+                                </a>
+                             </li>`);
+
+
             var markup = '<div class="tab-pane" id="' + tabid + '">' + response.data + '</div>';
             $mainTabContent.append(markup);
             showTab(tabid);
@@ -453,7 +490,16 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     // var url = `/admin/${actionName}?menuId=${menuId}`;
     axios.get(url).then(function (response) {
-        $mainTab.append('<li  class="p-1 bg-info active" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"><a href="#' + pageName + '">' + tabCaption + '<span class="close closeTab fa fa-times fa-lg p-1" type="button"><i class="icon-remove fa-lg pt-1"></i></span></a></li>');
+        var len = $("#mainTab").find("li").length;
+
+        $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                            <a href="#` + pageName + `">` + tabCaption + `
+                                <span class="close closeTab fa fa-times fa-lg p-1" type="button">
+                                    <i class="icon-remove fa-lg pt-1"></i>
+                                </span>
+                            </a>
+                         </li>`);
+
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
 
         $mainTabContent.append(markup);
@@ -475,7 +521,7 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
 function GetMenus(applicationId) {
     axios.get("/api/MenuAPI/GetAllMenu/" + applicationId)
         .then(function (response) {
-            
+
             generateMenu(response.data);
             $(".sidebar-menu").append(template);
             $(".sidebar-menu").tree();
@@ -487,7 +533,7 @@ function GetMenus(applicationId) {
 }
 
 function generateMenu(menuList) {
-    
+
     $.each(menuList, function (i, item) {
         if (!item.Childs.length) {
 

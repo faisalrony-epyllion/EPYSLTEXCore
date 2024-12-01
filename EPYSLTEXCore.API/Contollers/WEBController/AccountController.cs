@@ -101,7 +101,7 @@ namespace EPYSLTEXCore.API.Contollers
             //}
             #endregion
 
-            //AppUser = null;
+            
 
             return RedirectToAction("Login");
         }

@@ -120,12 +120,20 @@ namespace EPYSLTEX.Infrastructure.Services
             }
         }
 
-        public async Task<int> UpdatePasswordAsync(int userCode, string password)
+        public async Task<int> UpdateUserPasswordAsync(int userCode, string password)
         {
             var query = $@"
             Update LoginUser Set Password = '{password}' Where UserCode = @userCode";
 
             return await _service.ExecuteAsync(query, new { userCode});
+        }
+
+        public async Task<int> UpdateEmailPasswordAsync(int userCode, string password)
+        {
+            var query = $@"
+            Update LoginUser Set EmailPassword = '{password}' Where UserCode = @userCode";
+
+            return await _service.ExecuteAsync(query, new { userCode });
         }
     }
 }

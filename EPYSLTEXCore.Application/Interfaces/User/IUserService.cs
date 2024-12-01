@@ -14,7 +14,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
         Task<bool> IsValidLoginAsync(string username, string password);
 
-        Task<int> UpdatePasswordAsync(int userCode, string password);
+        Task<int> UpdateUserPasswordAsync(int userCode, string password);
+        Task<int> UpdateEmailPasswordAsync(int userCode, string password);
 
         Task SaveAsync(LoginUser user);
     }

@@ -127,6 +127,9 @@ namespace EPYSLTEXCore.API.Contollers
             return loginHistory;
         }
 
-
+        public ActionResult ChangePassword()
+        {
+            return PartialView("~/Views/Account/_ChangePassword.cshtml");
+        }
     }
 }

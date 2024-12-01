@@ -48,6 +48,7 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
             YarnProductSetup model = JsonConvert.DeserializeObject<YarnProductSetup>(Convert.ToString(entity));
             var yarnProductSetupModel = await _dapperCRUDService.SaveEntityAsync(model);
             return Ok(yarnProductSetupModel.SetupMasterID);
+          //  return Ok();
         }
 
         //[Route("ewo-list/{buyerIds}")]

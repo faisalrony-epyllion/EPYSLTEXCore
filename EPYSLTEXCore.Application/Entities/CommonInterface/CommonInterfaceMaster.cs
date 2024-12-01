@@ -52,6 +52,7 @@ namespace EPYSLTEX.Core.Entities.Tex
 
         public string UpdateSql { get; set; }
         public string SaveApiUrl { get; set; }
+        public string ConName { get; set; }
 
         #region Additional Fields
 

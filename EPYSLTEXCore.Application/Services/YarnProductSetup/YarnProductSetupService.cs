@@ -1,8 +1,6 @@
-﻿using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Entities.PaginationInfo;
-using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
+﻿using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;

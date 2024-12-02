@@ -6,7 +6,6 @@ using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
 using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;

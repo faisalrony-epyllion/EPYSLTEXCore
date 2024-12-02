@@ -255,10 +255,10 @@ namespace EPYSLTEXCore.Application.Services.Select
             var query = $@"{CommonQueries.GetEntityTypesByEntityTypeName(entityTypeName)}";
             return await _gmtService.GetDataAsync<Select2OptionModel>(query);
         }
-        public async Task<IList<YarnProductSetupFinder>> GetAllFiberType()
+        public async Task<IList<YarnProductSetup>> GetAllFiberType()
         {
             var query = $@"{CommonQueries.GetAllFiberType()}";
-            return await _gmtService.GetDataAsync<YarnProductSetupFinder>(query);
+            return await _gmtService.GetDataAsync<YarnProductSetup>(query);
         }
 
         Task<IList<Select2OptionModel>> ISelect2Service.GetExportLCForTextileAsync()

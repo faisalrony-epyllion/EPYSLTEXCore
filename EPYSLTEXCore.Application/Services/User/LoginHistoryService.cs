@@ -1,9 +1,9 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Entities;
+
 using EPYSLTEX.Core.Services;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
-using EPYSLTEXCore.Infrastructure.Interfaces;
+using EPYSLTEXCore.Infrastructure.Entities;
 using System.Data.Entity;
 using System.Data.SqlClient;
 
@@ -19,7 +19,7 @@ namespace EPYSLTEX.Infrastructure.Services
           /* , ISignatureService signatureRepository*/)
         {
             _service = service;
-            //_signatureRepository = signatureRepository;
+           // _signatureRepository = signatureRepository;
             _connection = service.Connection;
         }
 
@@ -32,7 +32,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 transaction = _connection.BeginTransaction();
                 if (entity.EntityState == EntityState.Added)
                 {
-                    entity.LoginHistoryID = await _signatureRepository.GetMaxIdAsync(TableNames.LOGIN_HISTORY);
+                   // entity.LoginHistoryID = await _signatureRepository.GetMaxIdAsync(TableNames.LOGIN_HISTORY);
                 }
                 await _service.SaveSingleAsync(entity, transaction);
                 transaction.Commit();

@@ -22,7 +22,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities
         public DateTime? DateAdded { get; set; }
         public DateTime? DateUpdated { get; set; }
 
-
+        [Write(false)]
+        public string FiberType { get; set; }
 
         [Write(false)]
         [ChildEntity]

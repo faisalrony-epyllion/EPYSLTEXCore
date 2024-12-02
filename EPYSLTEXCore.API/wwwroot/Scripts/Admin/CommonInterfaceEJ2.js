@@ -613,7 +613,9 @@
                     .then(function (response) {
                         masterData = response.data;
                         if (masterData.length === 0) {
-                            toastr.error("You must add an empty child item in your api.");
+                            
+                            //initChildGrid([]);
+                           // toastr.error("You must add an empty child item in your api.");
                             return;
                         }
                         childObject = masterData;
@@ -879,7 +881,7 @@
 
     // #region Save
     function saveMaster(e) {
-   
+        debugger;
         e.preventDefault();
        // if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
@@ -925,6 +927,7 @@
     }
 
     function saveChild() {
+        debugger;
         if (!validateChildForm()) {
             return;
         }

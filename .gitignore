@@ -114,18 +114,7 @@
 /EPYSLTEXCore.Report/obj/Debug/EPYSLTEXCore.Report.csproj.CoreCompileInputs.cache
 /EPYSLTEXCore.Report/obj/Debug/EPYSLTEXCore.Report.csproj.FileListAbsolute.txt
 /EPYSLTEXCore.Report/obj/Debug/EPYSLTEXCore.Report.pdb
-*.xml
-*.p7s
-*.nupkg
-/packages/Autofac.8.1.1/lib/net6.0/Autofac.xml
-/packages/Autofac.8.1.1/lib/net7.0/Autofac.xml
-/packages/Autofac.8.1.1/lib/net8.0/Autofac.xml
-/EPYSLTEXCore.Report/.vs/EPYSLTEXCore.Report.csproj.dtbcache.json
-/packages
-*.xdt
-/packages/Microsoft.AspNet.Mvc.5.3.0/lib/net45
-/packages/Microsoft.AspNet.Mvc.5.3.0
-/packages
+
 /.vs/ProjectEvaluation/epysltexcore.metadata.v8.bin
 /.vs/ProjectEvaluation/epysltexcore.projects.v8.bin
 /EPYSLTEXCore.API/bin/Debug/net8.0/Azure.Identity.dll
@@ -144,3 +133,5 @@
 /EPYSLTEXCore.API/bin/Debug/net8.0/runtimes/win/lib/net8.0/Microsoft.Data.SqlClient.dll
 /EPYSLTEXCore.API/bin/Debug/net8.0/zh-Hans/Microsoft.Data.SqlClient.resources.dll
 /EPYSLTEXCore.API/bin/Debug/net8.0/zh-Hant/Microsoft.Data.SqlClient.resources.dll
+*.nupkg
+*.p7s

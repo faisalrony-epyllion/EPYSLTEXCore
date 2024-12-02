@@ -1,16 +1,16 @@
 
-using EPYSLTEXCore.Application.DataAccess.Interfaces;
-using EPYSLTEXCore.Application.DataAccess;
-using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Services;
-using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Infrastructure.Services;
-using EPYSLTEX.Web.Services;
-using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEX.Web.Extends.Helpers;
-using AutoMapper;
+using EPYSLTEX.Web.Services;
+using EPYSLTEXCore.Application.DataAccess;
+using EPYSLTEXCore.Application.DataAccess.Interfaces;
+using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
+using EPYSLTEXCore.Application.Services;
+using EPYSLTEXCore.Application.Services.Select;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Interfaces;
 
 namespace EPYSLTEXCore.API.Extension
 {
@@ -31,6 +31,7 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<ICommonHelpers, CommonHelpers>();
             service.AddTransient<IYarnProductSetupService, YarnProductSetupService>();
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
+            service.AddTransient<ISignatureService, SignatureService>();
 
         }
     }

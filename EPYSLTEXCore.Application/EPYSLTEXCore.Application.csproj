@@ -7,6 +7,39 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Entities\Base\**" />
+    <Compile Remove="Entities\CommonInterface\**" />
+    <Compile Remove="Entities\Knitting\**" />
+    <Compile Remove="Entities\Menu\**" />
+    <Compile Remove="Entities\PaginationInfo\**" />
+    <Compile Remove="Entities\ReportAPI\**" />
+    <Compile Remove="Entities\YarnProductSetup\**" />
+    <Compile Remove="Interfaces\Repository\**" />
+    <EmbeddedResource Remove="Entities\Base\**" />
+    <EmbeddedResource Remove="Entities\CommonInterface\**" />
+    <EmbeddedResource Remove="Entities\Knitting\**" />
+    <EmbeddedResource Remove="Entities\Menu\**" />
+    <EmbeddedResource Remove="Entities\PaginationInfo\**" />
+    <EmbeddedResource Remove="Entities\ReportAPI\**" />
+    <EmbeddedResource Remove="Entities\YarnProductSetup\**" />
+    <EmbeddedResource Remove="Interfaces\Repository\**" />
+    <None Remove="Entities\Base\**" />
+    <None Remove="Entities\CommonInterface\**" />
+    <None Remove="Entities\Knitting\**" />
+    <None Remove="Entities\Menu\**" />
+    <None Remove="Entities\PaginationInfo\**" />
+    <None Remove="Entities\ReportAPI\**" />
+    <None Remove="Entities\YarnProductSetup\**" />
+    <None Remove="Interfaces\Repository\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Entities\LoginHistory.cs" />
+    <Compile Remove="Entities\LoginUser.cs" />
+    <Compile Remove="Services\User\LoginHistoryService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="EntityFramework" Version="6.5.1" />
   </ItemGroup>
@@ -16,13 +49,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\CommonInterface\" />
-    <Folder Include="Entities\Knitting\" />
-    <Folder Include="Entities\Base\" />
+    <Folder Include="Entities\" />
     <Folder Include="Interfaces\CommonInterface\" />
     <Folder Include="Interfaces\Base\" />
     <Folder Include="Interfaces\Select2\" />
-    <Folder Include="Interfaces\Repository\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\CommonInterface\" />
     <Folder Include="Services\User\" />

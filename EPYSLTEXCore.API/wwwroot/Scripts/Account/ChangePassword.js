@@ -20,6 +20,11 @@ $(function () {
             toastr.error("Confirm password can't be null!", 'Error'); return;
         }
 
+        if (!(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test($("#changePasswordAcForm #NewPassword").val()))) {
+        
+            toastr.error("Validation", 'At least one uppercase,one lower case,one numeric number and length between 6-20');
+            return;
+        }
       
         if ($("#changePasswordAcForm #ConfirmPassword").val() === $("#changePasswordAcForm #NewPassword").val()) {
             $(this).addClass("disabled");
@@ -66,7 +71,7 @@ $(function () {
             toastr.error("Confirm password can't be null!", 'Error'); return;
         }
 
-
+   
         
         if ($("#changePasswordEmForm #ConfirmPassword").val() === $("#changePasswordEmForm #NewPassword").val()) {
             $(this).addClass("disabled");

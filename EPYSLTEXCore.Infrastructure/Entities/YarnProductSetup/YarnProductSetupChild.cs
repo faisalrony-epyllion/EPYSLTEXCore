@@ -1,5 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLEMSCore.Infrastructure.CustomeAttribute;
+using EPYSLTEXCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Data;
 
 

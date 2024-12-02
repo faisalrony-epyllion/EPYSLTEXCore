@@ -35,7 +35,7 @@
             <ul class="navbar-nav ml-auto">
                 <!-- Navbar Search -->
                 <li class="nav-item">
-                    <a class="nav-link text-info" href="#" role="button" title="Info">
+                    <a class="nav-link text-primary" href="#" role="button" title="Info">
                         <i class="fas fa-question"></i>
                     </a>
                   
@@ -43,7 +43,7 @@
 
           
                 <li class="nav-item">
-                    <a class="nav-link text-danger" data-widget="fullscreen" href="#" role="button" title="Fullscreen">
+                    <a class="nav-link text-primary" data-widget="fullscreen" href="#" role="button" title="Fullscreen">
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
                 </li>
@@ -60,13 +60,20 @@
                            onclick="clickAccountNavigation(event);">
                             <i class="fa fa-user text-info mr-2"></i> Profile
                         </a>
-                        <a href="#!"
-                           class="dropdown-item"
-                           data-controller-name="Account"
-                           data-action-name="ChangePassword"
-                           onclick="clickAccountNavigation(event);">
-                            <i class="fa fa-user-secret text-warning mr-2"></i> Change Password
-                        </a>
+                        @{
+                            if (!(ViewBag.IsSuperUser ?? false)) // Ensure IsSuperUser has a value
+                            {
+                                <a href="#!"
+                                   class="dropdown-item"
+                                   data-controller-name="Account"
+                                   data-action-name="ChangePassword"
+                                   onclick="clickAccountNavigation(event);">
+                                    <i class="fa fa-user-secret text-warning mr-2"></i> Change Password
+                                </a>
+                            }
+                        }
+
+                    
                         <div class="dropdown-divider"></div>
                         <a role="button" class="dropdown-item" onclick="logout()">
                            <i class=" fas fa-sign-out-alt text-danger mr-2"></i>Logout

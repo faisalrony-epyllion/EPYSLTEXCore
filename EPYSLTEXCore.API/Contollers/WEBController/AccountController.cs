@@ -133,6 +133,11 @@ namespace EPYSLTEXCore.API.Contollers
         {
             LoginUser user = await _userService.FindUserForLoginAsync(AppUser.UserName);
 
+            if (model.NewPassword == user.UserName)
+                return Ok(new { message = "Username And New Password Cannot be Same", StatusCode = 404 });
+
+            if (user.IsSuperUser)
+                return Ok(new { message = "Contact DB Administrator for updating Password", StatusCode = 404 });
             try
             {
 

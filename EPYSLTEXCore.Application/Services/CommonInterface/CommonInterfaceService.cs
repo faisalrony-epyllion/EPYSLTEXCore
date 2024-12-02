@@ -2,8 +2,6 @@
 using EPYSLTEX.Core.Entities;
 using EPYSLTEX.Core.Entities.Tex;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities.PaginationInfo;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;

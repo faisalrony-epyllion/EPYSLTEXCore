@@ -1,8 +1,5 @@
 using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEX.Core.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Data;
-using System.Collections.Generic;
 
 namespace EPYSLTEXCore.Infrastructure.Entities
 {

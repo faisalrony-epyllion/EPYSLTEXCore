@@ -881,7 +881,7 @@
 
     // #region Save
     function saveMaster(e) {
-        debugger;
+     
         e.preventDefault();
        // if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
@@ -927,7 +927,7 @@
     }
 
     function saveChild() {
-        debugger;
+     
         if (!validateChildForm()) {
             return;
         }

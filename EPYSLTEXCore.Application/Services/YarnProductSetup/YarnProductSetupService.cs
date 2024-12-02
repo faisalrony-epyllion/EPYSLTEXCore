@@ -56,7 +56,21 @@ namespace EPYSLTEXCore.Application.Services
             return await _gmtService.GetDataAsync<YarnProductSetupFinder>(query);
 
         }
+        public async Task<List<YarnProductSetupChild>> GetAlYarnProductSetupChildBySetupMasterID(int setupMasterID)
+        {
+            
 
-        
+            var query =@"Select SetupChildID,SetupMasterID,BlendTypeID,YarnTypeID,ProgramID,SubProgramID,CertificationsID,TechnicalParameterID,CompositionsID,ShadeID,ManufacturingLineID,
+                        ManufacturingProcessID,ManufacturingSubProcessID,YarnColorID,ColorGradeID  
+                            From YarnProductSetupChild  where SetupMasterID=@SetupMasterID";
+
+
+          
+
+            return await _gmtService.GetDataAsync<YarnProductSetupChild>(query, new { setupMasterID });
+
+        }
+
+       
     }
 }

@@ -68,6 +68,15 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
         }
 
-      
+        [Route("GetChildBySetupMasterID/{setupMasterID}")]
+        public async Task<IActionResult> GetAlYarnProductSetupChildBySetupMasterID( int setupMasterID)
+        {
+
+            
+            var records = await _yarnProductSetupService.GetAlYarnProductSetupChildBySetupMasterID(setupMasterID);
+            return Ok(records);
+        }
+
+
     }
 }

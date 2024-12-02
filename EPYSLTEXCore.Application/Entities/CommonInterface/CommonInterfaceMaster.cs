@@ -37,7 +37,8 @@ namespace EPYSLTEX.Core.Entities.Tex
         public int? MasterColNum { get; set; }
 
         public bool IsInsertAllow { get; set; }
-
+        public bool IsAllowAddNew { get; set; }
+        
         public bool IsUpdateAllow { get; set; }
 
         public bool IsDeleteAllow { get; set; }

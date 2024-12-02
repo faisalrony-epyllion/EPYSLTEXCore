@@ -54,6 +54,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             return Ok();
         }
 
+
    
         [Route("finderdata/{menuId}")]
         public async Task<IActionResult> GetFinderData(int menuId)

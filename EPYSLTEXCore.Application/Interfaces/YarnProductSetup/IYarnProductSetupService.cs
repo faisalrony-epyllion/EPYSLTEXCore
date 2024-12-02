@@ -15,5 +15,6 @@ namespace EPYSLTEXCore.Application.Interfaces.YarnProductSetup
         
 
         Task<List<YarnProductSetupFinder>> GetAllFiberType(PaginationInfo paginationInfo);
+        Task<List<YarnProductSetupChild>> GetAlYarnProductSetupChildBySetupMasterID(int setupMasterID);  
     }
 }

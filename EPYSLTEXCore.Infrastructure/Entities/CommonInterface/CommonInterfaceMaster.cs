@@ -1,4 +1,5 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities

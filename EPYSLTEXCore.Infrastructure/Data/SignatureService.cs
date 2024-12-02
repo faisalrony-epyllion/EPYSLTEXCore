@@ -1,6 +1,6 @@
 ﻿using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Interfaces;
 using EPYSLTEXCore.Infrastructure.Static;
 
 namespace EPYSLTEXCore.Application.Services

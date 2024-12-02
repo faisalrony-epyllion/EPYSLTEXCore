@@ -11,6 +11,7 @@ using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEX.Web.Extends.Helpers;
 using AutoMapper;
 using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
+using EPYSLTEXCore.Infrastructure.Interfaces;
 
 namespace EPYSLTEXCore.API.Extension
 {
@@ -31,6 +32,7 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<ICommonHelpers, CommonHelpers>();
             service.AddTransient<IYarnProductSetupService, YarnProductSetupService>();
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
+            service.AddTransient<ISignatureService, SignatureService>();
 
         }
     }

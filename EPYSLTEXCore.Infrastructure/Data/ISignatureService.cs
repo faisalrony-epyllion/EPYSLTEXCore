@@ -1,11 +1,8 @@
 ﻿using EPYSLTEXCore.Infrastructure.Static;
 
-namespace EPYSLTEXCore.Application.Interfaces
+namespace EPYSLTEXCore.Infrastructure.Interfaces
 {
-    /// <summary>
-    /// ISignatureService
-    /// </summary>
-    public interface ISignatureService 
+    public interface ISignatureService
     {
         /// <summary>
         /// Get Max Id Async
@@ -27,4 +24,3 @@ namespace EPYSLTEXCore.Application.Interfaces
         //Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter);
     }
 }
-

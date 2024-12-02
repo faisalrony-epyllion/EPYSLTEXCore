@@ -1,4 +1,5 @@
-﻿using EPYSLTEXCore.Infrastructure.Static;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Static;
 using System.Data;
 using System.Data.SqlClient;
 

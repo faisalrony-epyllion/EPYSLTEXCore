@@ -1,15 +1,13 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
-using System.Text.Json;
 
 namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
 {

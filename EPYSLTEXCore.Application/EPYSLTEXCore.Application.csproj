@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Remove="Entities\LoginHistory.cs" />
     <Compile Remove="Entities\LoginUser.cs" />
+    <Compile Remove="Interfaces\Base\IBaseEntity.cs" />
     <Compile Remove="Services\User\LoginHistoryService.cs" />
   </ItemGroup>
 

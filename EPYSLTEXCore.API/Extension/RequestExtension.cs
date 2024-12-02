@@ -1,8 +1,5 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEXCore.Application.DTO;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace System.Net.Http
 {

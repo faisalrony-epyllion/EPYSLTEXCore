@@ -1,11 +1,6 @@
 ﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEXCore.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using EPYSLTEXCore.Infrastructure.Entities;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace EPYSLTEX.Core.Interfaces.Repositories
 {

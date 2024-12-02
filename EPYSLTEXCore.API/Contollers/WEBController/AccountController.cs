@@ -1,10 +1,8 @@
 ﻿using EPYSL.Encription;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEX.Core.Entities.Gmt;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Web.Services;
-using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Models.Security;
+using EPYSLTEXCore.Infrastructure.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;

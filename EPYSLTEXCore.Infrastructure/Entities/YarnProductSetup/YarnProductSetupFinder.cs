@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLTEXCore.Application.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     public class YarnProductSetupFinder : DapperBaseEntity
     {

@@ -1,18 +1,9 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DTO;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using EPYSLTEXCore.Infrastructure.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Configuration;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EPYSLTEXCore.API.Contollers.CommonInterface
 {

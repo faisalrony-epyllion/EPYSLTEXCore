@@ -1,7 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEXCore.Application.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     [Table("Signature")]
     public class Signatures : DapperBaseEntity

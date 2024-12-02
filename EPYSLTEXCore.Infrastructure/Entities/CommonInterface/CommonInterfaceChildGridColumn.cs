@@ -1,7 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     public class CommonInterfaceChildGridColumn : DapperBaseEntity
     {

@@ -1,5 +1,5 @@
-﻿using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Infrastructure.Data;
+﻿using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Interfaces;
 using EPYSLTEXCore.Infrastructure.Static;
 

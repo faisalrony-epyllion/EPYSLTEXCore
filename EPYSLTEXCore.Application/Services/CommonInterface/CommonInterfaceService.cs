@@ -1,8 +1,7 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEX.Core.Entities.Tex;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
@@ -70,7 +69,7 @@ namespace EPYSLTEX.Infrastructure.Services
             var query = $"Select * From CommonInterfaceMaster Where MenuId = {menuId}";
             return await _service.GetFirstOrDefaultAsync(query);
         }
-        public async Task<dynamic> GetFinderData(string sqlQuery,string conKey, string primaryKeyColumn, EPYSLTEXCore.Application.DTO.PaginationInfo paginationInfo)
+        public async Task<dynamic> GetFinderData(string sqlQuery,string conKey, string primaryKeyColumn,PaginationInfo paginationInfo)
         {
             var query = sqlQuery;
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By LEN({primaryKeyColumn}), {primaryKeyColumn} ASC" : paginationInfo.OrderBy;

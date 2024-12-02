@@ -1,5 +1,4 @@
-﻿using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEXCore.Application.Entities;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEX.Core.Interfaces.Services
 {

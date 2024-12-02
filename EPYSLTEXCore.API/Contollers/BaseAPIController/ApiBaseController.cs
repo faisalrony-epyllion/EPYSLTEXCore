@@ -1,8 +1,7 @@
-﻿using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EPYSLTEXCore.API.Contollers.APIBaseController

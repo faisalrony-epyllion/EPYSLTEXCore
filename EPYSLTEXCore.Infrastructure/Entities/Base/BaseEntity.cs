@@ -1,10 +1,8 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEXCore.Core.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 
-namespace EPYSLTEXCore.Application.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     public abstract class BaseEntity : IBaseEntity
     {

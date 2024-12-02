@@ -1,7 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEXCore.Application.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     public class Menu: DapperBaseEntity
     {

@@ -3,7 +3,7 @@ using EPYSLTEXCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Data;
 
 
-namespace EPYSLTEXCore.Application.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     [Table("YarnProductSetupChild")]
     public class YarnProductSetupChild : DapperBaseEntity

@@ -1,7 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEXCore.Application.Entities.ReportAPI
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     [Table("ReportAPISetupUserPermission")]
     public class ReportAPISetupUserPermission : DapperBaseEntity

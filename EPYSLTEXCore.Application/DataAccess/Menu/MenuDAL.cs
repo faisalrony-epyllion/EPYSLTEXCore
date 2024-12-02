@@ -1,10 +1,9 @@
 ﻿using Dapper;
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
-using System.Configuration;
 using System.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.DataAccess

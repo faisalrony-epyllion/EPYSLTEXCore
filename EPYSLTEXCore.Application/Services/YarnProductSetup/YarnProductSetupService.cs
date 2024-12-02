@@ -1,17 +1,9 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
+﻿using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Services
 {
@@ -37,7 +29,7 @@ namespace EPYSLTEXCore.Application.Services
         }
 
   
-        public async Task<List<YarnProductSetupFinder>> GetAllFiberType(PaginationInfo paginationInfo)
+        public async Task<List<YarnProductSetupFinder>> GetAllFiberType(Infrastructure.Entities.PaginationInfo paginationInfo)
         {
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By LEN(FiberType), FiberType ASC" : paginationInfo.OrderBy;
 

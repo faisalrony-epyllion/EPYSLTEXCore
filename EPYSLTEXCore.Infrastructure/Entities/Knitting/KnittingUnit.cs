@@ -3,7 +3,7 @@ using EPYSLTEXCore.Infrastructure.Data;
 using System.Data.Entity;
 using System.Runtime.Serialization;
 
-namespace EPYSLTEXCore.Application.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     [Table("KnittingUnit")]
     public class KnittingUnit : DapperBaseEntity

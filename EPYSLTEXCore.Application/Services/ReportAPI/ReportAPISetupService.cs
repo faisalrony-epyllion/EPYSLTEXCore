@@ -1,8 +1,7 @@
-﻿using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Entities.ReportAPI;
-using EPYSLTEXCore.Application.Interfaces;
+﻿using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.CustomException;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using System.Data;
 using System.Text.RegularExpressions;

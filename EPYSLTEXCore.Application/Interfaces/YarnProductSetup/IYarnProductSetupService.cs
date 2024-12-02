@@ -1,5 +1,4 @@
-﻿using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEXCore.Application.Interfaces.YarnProductSetup
 {

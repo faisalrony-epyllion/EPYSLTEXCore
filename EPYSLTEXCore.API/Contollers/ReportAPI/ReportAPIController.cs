@@ -1,6 +1,5 @@
-﻿
-using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Interfaces;
+﻿using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;

@@ -1,7 +1,7 @@
 ﻿using System.Data.Entity;
 
 
-namespace EPYSLTEXCore.Infrastructure.Data
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     public interface IDapperBaseEntity
     {

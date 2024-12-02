@@ -1,7 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Gmt
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     [Table("LoginUser")]
     public class LoginUser : DapperBaseEntity

@@ -1,8 +1,7 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Entities.Gmt;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using System.Data.SqlClient;
 

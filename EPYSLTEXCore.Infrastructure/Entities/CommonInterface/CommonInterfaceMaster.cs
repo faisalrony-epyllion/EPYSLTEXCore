@@ -2,7 +2,7 @@ using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
 using System.Collections.Generic;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     public class CommonInterfaceMaster : DapperBaseEntity
     {

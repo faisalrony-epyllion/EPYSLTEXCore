@@ -2,7 +2,7 @@
 using EPYSLTEXCore.Infrastructure.Data;
 
 
-namespace EPYSLTEXCore.Application.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     [Table("ReportAPISetup")]
     public class ReportAPISetup : DapperBaseEntity

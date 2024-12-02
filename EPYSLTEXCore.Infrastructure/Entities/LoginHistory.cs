@@ -2,7 +2,7 @@
 using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities
+namespace EPYSLTEXCore.Infrastructure.Entities
 {
     [Table("LoginHistory")]
     public class LoginHistory : DapperBaseEntity

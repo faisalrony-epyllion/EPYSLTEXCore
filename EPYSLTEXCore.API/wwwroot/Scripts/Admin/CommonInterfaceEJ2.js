@@ -883,11 +883,14 @@
     function saveMaster(e) {
      
         e.preventDefault();
-       // if (!validateMasterForm()) return;
+        //if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
-        var data = formDataToJson($formEl.serializeArray());
+      
+        // var data =   formDataToJson($formEl.serializeArray()) ;
+        /*i f IsAllowAddNew=false bind only child not parent */
+        var data = interfaceConfigs.IsAllowAddNew ? formDataToJson($formEl.serializeArray()) : {};
          if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
          if ($tblChildEl  ) data["Childs"] = $tblChildEl.getCurrentViewRecords();
          
@@ -914,8 +917,9 @@
     }
 
     function validateMasterForm() {
+         
         initializeValidation($formEl, constraints);
-
+     
         if (!isValidForm($formEl, constraints)) {
             toastr.error("Please correct all validation ")
             return false;

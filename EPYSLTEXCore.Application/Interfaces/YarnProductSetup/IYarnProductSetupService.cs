@@ -1,4 +1,6 @@
-﻿using EPYSLTEXCore.Infrastructure.Entities;
+﻿using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Application.Entities.PaginationInfo;
+using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEXCore.Application.Interfaces.YarnProductSetup
 {

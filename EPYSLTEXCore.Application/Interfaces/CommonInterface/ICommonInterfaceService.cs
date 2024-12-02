@@ -1,4 +1,5 @@
-﻿using EPYSLTEXCore.Infrastructure.Entities;
+﻿using EPYSLTEXCore.Application.Entities.PaginationInfo;
+using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEX.Core.Interfaces.Services
 {

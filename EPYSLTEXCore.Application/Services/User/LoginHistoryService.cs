@@ -12,14 +12,14 @@ namespace EPYSLTEX.Infrastructure.Services
     public class LoginHistoryService : ILoginHistoryService
     {
         private readonly IDapperCRUDService<LoginHistory> _service;
-        private readonly ISignatureService _signatureRepository;
+        //private readonly ISignatureService _signatureRepository;
         private readonly SqlConnection _connection;
 
         public LoginHistoryService(IDapperCRUDService<LoginHistory> service
-           , ISignatureService signatureRepository)
+          /* , ISignatureService signatureRepository*/)
         {
             _service = service;
-            _signatureRepository = signatureRepository;
+            //_signatureRepository = signatureRepository;
             _connection = service.Connection;
         }
 

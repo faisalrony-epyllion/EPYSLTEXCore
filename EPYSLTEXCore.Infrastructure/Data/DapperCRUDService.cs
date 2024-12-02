@@ -18,7 +18,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public int UserCode { get; set; }
         private readonly ISignatureService _signatureRepository;
 
-        public DapperCRUDService(IConfiguration configuration ,ISignatureService signatureRepository)
+        public DapperCRUDService(IConfiguration configuration, ISignatureService signatureRepository)
         {
             this._configuration = configuration;
             this._connectionString = this._configuration.GetConnectionString("GmtConnection");
@@ -892,9 +892,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                 ).ConfigureAwait(false);
 
-                int newId = await _signatureRepository.GetMaxIdAsync(tableName);
-              
-                //int newId = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
+                //int newId = await _signatureRepository.GetMaxIdAsync(tableName);
+
+                int newId = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
 
                 //newId++; // Increment the ID for the new entity
 

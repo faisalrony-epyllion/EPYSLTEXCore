@@ -16,13 +16,13 @@ namespace EPYSLTEXCore.Infrastructure.Data
         private readonly string _connectionString;
         public SqlConnection Connection { get; set; }
         public int UserCode { get; set; }
-        private readonly ISignatureService _signatureRepository;
+        //private readonly ISignatureService _signatureRepository;
 
-        public DapperCRUDService(IConfiguration configuration, ISignatureService signatureRepository)
+        public DapperCRUDService(IConfiguration configuration/*, ISignatureService signatureRepository*/)
         {
             this._configuration = configuration;
             this._connectionString = this._configuration.GetConnectionString("GmtConnection");
-            _signatureRepository = signatureRepository;
+            //_signatureRepository = signatureRepository;
             Connection = new SqlConnection(this._connectionString);
         }
 

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EPYSLTEXCore.Application.DTO
+﻿namespace EPYSLTEXCore.Infrastructure.DTOs
 {
 
-        public class MenuDTO
+    public class MenuDTO
         {
             public MenuDTO()
             {

@@ -17,14 +17,15 @@ namespace EPYSLTEXCore.Infrastructure.Data
         private readonly string _connectionString;
         public SqlConnection Connection { get; set; }
         public int UserCode { get; set; }
-        //private readonly ISignatureService _signatureRepository;
+        //private readonly ISignatureService _signatureService;
 
-        public DapperCRUDService(IConfiguration configuration/*, ISignatureService signatureRepository*/)
+        public DapperCRUDService(IConfiguration configuration/*, ISignatureService signatureService*/)
         {
             this._configuration = configuration;
             this._connectionString = this._configuration.GetConnectionString("GmtConnection");
-            //_signatureRepository = signatureRepository;
+            //_signatureService = signatureService;
             Connection = new SqlConnection(this._connectionString);
+            //_signatureService = signatureService;
         }
 
         public SqlConnection GetConnection(string connectionName = AppConstants.DB_CONNECTION)
@@ -911,7 +912,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                 ).ConfigureAwait(false);
 
-                //int newId = await _signatureRepository.GetMaxIdAsync(tableName);
+                //int newId = await _signatureService.GetMaxIdAsync(tableName);
 
                 int newId = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
 

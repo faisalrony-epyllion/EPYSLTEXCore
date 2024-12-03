@@ -8,6 +8,7 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Interfaces;
 
 namespace EPYSLTEXCore.API.Extension
 {
@@ -28,7 +29,7 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<ICommonHelpers, CommonHelpers>();
             service.AddTransient<IYarnProductSetupService, YarnProductSetupService>();
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
-            //service.AddTransient<ISignatureService, SignatureService>();
+            service.AddTransient<ISignatureService, SignatureService>();
 
         }
     }

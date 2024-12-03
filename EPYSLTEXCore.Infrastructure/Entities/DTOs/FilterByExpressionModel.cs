@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EPYSLTEX.Core.DTOs
+namespace EPYSLTEXCore.Infrastructure.DTOs
 {
     public class FilterByExpressionModel
     {

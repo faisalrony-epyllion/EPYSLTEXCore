@@ -1,6 +1,6 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.DTO;
+using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;

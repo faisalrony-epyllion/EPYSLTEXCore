@@ -22,9 +22,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public DapperCRUDService(IConfiguration configuration)
         {
             this._configuration = configuration;
-            this._connectionString = this._configuration.GetConnectionString("GmtConnection");           
+            this._connectionString = this._configuration.GetConnectionString("GmtConnection");
             Connection = new SqlConnection(this._connectionString);
-        
+
         }
 
         public SqlConnection GetConnection(string connectionName = AppConstants.DB_CONNECTION)
@@ -100,7 +100,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-        public async Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param, CommandType commandType=CommandType.StoredProcedure)
+        public async Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param, CommandType commandType = CommandType.StoredProcedure)
         {
             try
             {
@@ -898,17 +898,13 @@ namespace EPYSLTEXCore.Infrastructure.Data
             var existingEntity = await Connection.QueryFirstOrDefaultAsync(selectQuery, new { Key = keyValue }, transaction);
 
             if (existingEntity == null)
-
             {
 
                 // Generate primary key for new entity
 
                 var result = await Connection.QueryAsync<dynamic>(
-
                     $"SELECT TOP 1 {keyPropertyName} AS ID FROM {tableName} ORDER BY {keyPropertyName} DESC",
-
                     transaction: transaction
-
                 ).ConfigureAwait(false);
 
                 //int newId = await _signatureService.GetMaxIdAsync(tableName);
@@ -928,25 +924,17 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 // Insert the new entity dynamically
 
                 string insertQuery = GenerateInsertQuery(entity, tableName);
-
                 await Connection.ExecuteAsync(insertQuery, entity, transaction);
-
                 keyValue = newId; // Refresh keyValue for foreign key assignment
-
             }
-
             else
-
             {
 
                 entity.GetType().GetProperty("UpdatedBy")?.SetValue(entity, UserCode);
-
                 entity.GetType().GetProperty("DateUpdated")?.SetValue(entity, DateTime.UtcNow);
 
                 // Update the existing entity dynamically
-
                 string updateQuery = GenerateUpdateQuery(entity, tableName, keyPropertyName);
-
                 await Connection.ExecuteAsync(updateQuery, entity, transaction);
 
             }
@@ -954,11 +942,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
             // Handle child entities
 
             var childProperties = entity.GetType()
-
                 .GetProperties()
-
                 .Where(prop => prop.GetCustomAttributes(typeof(ChildEntityAttribute), true).Any())
-
                 .ToList();
 
             foreach (var prop in childProperties)
@@ -1418,7 +1403,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             else
             {
                 signature.LastNumber++;
-                await Connection.InsertAsync(signature);
+                await Connection.UpdateAsync(signature);
             }
 
             return (int)signature.LastNumber;
@@ -1442,7 +1427,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             else
             {
                 signature.LastNumber += increment;
-                await Connection.InsertAsync(signature);
+                await Connection.UpdateAsync(signature);
             }
 
             return (int)(signature.LastNumber - increment + 1);
@@ -1466,7 +1451,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             else
             {
                 signature.LastNumber++;
-                await Connection.InsertAsync(signature);
+                await Connection.UpdateAsync(signature);
             }
 
             var datePart = DateTime.Now.ToString("yyMMdd");
@@ -1512,7 +1497,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 Connection.Close();
             }
 
-            
+
         }
 
 
@@ -1616,29 +1601,45 @@ namespace EPYSLTEXCore.Infrastructure.Data
         #endregion
 
 
+        #region Table Max Number without signature table
+        public async Task<int> GetUniqueCodeWithoutSignatureAsync(
+            IDbConnection connection,
+            IDbTransaction transaction,
+            string tableName,
+            string fieldName)
+        {
+            // Call the main method with an empty prefix
+            return await GetUniqueCodeWithoutSignatureAsync(connection, transaction, tableName, fieldName, "");
+        }
 
+        public async Task<int> GetUniqueCodeWithoutSignatureAsync(
+            IDbConnection connection,
+            IDbTransaction transaction,
+            string tableName,
+            string fieldName,
+            string prefix)
+        {
+            try
+            {
+                // Define stored procedure name and parameters
+                string storedProcedure = "spGetIDWithoutSignature";
 
+                // Execute stored procedure
+                var result = await connection.QueryAsync<int>(
+                    storedProcedure,
+                    new { TableName = tableName, FieldName = fieldName, Prefix = prefix },
+                    transaction,
+                    commandType: CommandType.StoredProcedure);
 
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
+                // Retrieve and return the unique code
+                return result.FirstOrDefault(); // Returns 0 if no rows are found
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error while fetching unique code.", ex);
+            }
         }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue, int fifthParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, FifthParamValue = fifthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
+        #endregion
 
     }
 }

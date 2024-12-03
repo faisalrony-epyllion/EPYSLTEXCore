@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLTEXCore.Infrastructure.Static
+namespace EPYSLTEXCore.Infrastructure.Statics
 {
     public enum Status
     {

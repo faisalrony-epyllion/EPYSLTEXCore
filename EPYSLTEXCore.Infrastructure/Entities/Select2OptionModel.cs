@@ -1,6 +1,4 @@
-﻿using Dapper.Contrib.Extensions;
-
-namespace EPYSLTEX.Core.DTOs
+﻿namespace EPYSLTEXCore.Infrastructure.Entities
 {
     public class Select2OptionModel
     {

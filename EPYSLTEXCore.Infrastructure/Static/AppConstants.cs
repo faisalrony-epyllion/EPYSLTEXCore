@@ -9,6 +9,8 @@
         public const string SPECIAL_CHARACTER_TO_REMOVE_IN_UPLOAD = "['<>&]|[\n]{2}";
         public const string GMT_CONNECTION = "GmtConnection";
         public const string TEXTILE_CONNECTION = "TexConnection";
+        public const int ITEM_SUB_GROUP_YARN_NEW = 102;
+        public const int ITEM_SUB_GROUP_YARN = 39;
     }
     public static class DbNames
     {
@@ -168,6 +170,19 @@
     public static class InMemoryCacheKeys
     {
         public const string APIReports = "DynamicAPIReports";
+    }
+    public static class CompnayIDConstants
+    {
+        public const int EFL = 6;
+    }
+    public static class EnumBaseType // EntityTypeValue
+    {
+        public const int None = 0;
+        public const int ProjectionBasedBulk = 2161;
+        public const int ProjectionBasedSample = 2162;
+        public const int OrderBasedBulk = 2163;
+        public const int OrderBasedSample = 2164;
+        public const int GiftYarnReceive = 2165;
     }
 
 }

@@ -1,5 +1,4 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Interfaces.Repositories;
+﻿using EPYSLTEX.Core.Interfaces.Repositories;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;

@@ -1,6 +1,8 @@
-﻿using EPYSLTEXCore.Infrastructure.Entities;
+﻿
 
-namespace EPYSLTEXCore.Application.DTO
+using EPYSLTEXCore.Infrastructure.Entities;
+
+namespace EPYSLTEXCore.Infrastructure.DTOs
 {
     public class TableResponseModel
     {

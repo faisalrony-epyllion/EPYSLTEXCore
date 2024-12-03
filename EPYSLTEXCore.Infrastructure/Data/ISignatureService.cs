@@ -1,4 +1,4 @@
-﻿using EPYSLTEXCore.Infrastructure.Static;
+﻿using EPYSLTEXCore.Infrastructure.Statics;
 
 namespace EPYSLTEXCore.Infrastructure.Interfaces
 {

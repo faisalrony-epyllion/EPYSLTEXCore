@@ -23,7 +23,6 @@ var globalActionName = 'index';
 
 $(document).ready(function () {
 
-
     rootPath = window.location.protocol + '//' + window.location.host;
     apiRootPath = "https://localhost:7053/";
     toastr.options.escapeHtml = true;
@@ -76,14 +75,21 @@ $(document).ready(function () {
 
         var menuLink = e.target.hash.split('#')[1];
         var el = $("[data-action-name='" + menuLink + "']");
-        $(this).parent().siblings().removeClass('active');
-        $(this).parent().siblings().removeClass('bg-info');
-        $(this).parent().addClass("active");
-        $(this).parent().addClass("bg-info");
+        $(this).closest("li").siblings().removeClass('active');
+        $(this).closest("li").siblings().removeClass('bg-info');
+        $(this).closest("li").addClass("active");
+        $(this).closest("li").addClass("bg-info");
     });
 
-
     registerCloseEvent();
+
+    $("#btnRightMenu").click(function () {
+        setAnimate(false);
+    });
+
+    $("#btnLeftMenu").click(function () {
+        setAnimate(true);
+    });
 });
 
 function logout() {
@@ -348,37 +354,83 @@ function craeteNewTabAndLoadUrl(parms, url, loadDivSelector) {
 function getElement(selector) {
     var tabContentId = $currentTab.attr("href");
     return $("" + tabContentId).find("" + selector);
-
 }
 
 function removeCurrentTab() {
     var tabContentId = $currentTab.attr("href");
     $currentTab.parent().remove(); //remove li of tab
-    $('#mainTab a:last').tab('show'); // Select first tab
+    $('#mainTab').find('a:last').tab('show'); // Select first tab
     $(tabContentId).remove(); //remove respective tab content
 }
 
-function registerCloseEvent() {
-    $(".closeTab").click(function () {
+function registerCloseEvent(menuId) {
+    $(".closeTab" + menuId).click(function () {
+        debugger;
         var tabIndex = $(this).closest('li').attr("tabIndex");
         var preTabIndex = tabIndex - 1;
         var isActive = $(this).closest('li').hasClass("active");
-
-        var tabContentId = $(this).parent().attr("href");
-        $(this).parent().parent().remove(); //remove li of tab
-        $('#mainTab a:last').tab('show'); // Select first tab
+        var tabContentId = $(this).parent().find("a").attr("href");
+        //$(this).parent().parent().remove(); //remove li of tab
+        $('#mainTab').find('a:last').tab('show'); // Select first tab
         $(tabContentId).remove(); //remove respective tab content
-        resetTabIndex();
-
+        $("#mainTab").find("li[tabIndex=" + tabIndex + "]").remove();
         if (isActive) {
             $("#mainTab").find("li").removeClass("bg-info").removeClass("active");
             $("#mainTab").find("li[tabIndex=" + preTabIndex + "]").addClass("bg-info").addClass("active");
         }
+        $('#mainTab a[href="#' + pageName + '"]').tab('show');
+        resetTabIndex();
+
+        setAnimate(true);
     });
+
+    //$(".closeTab").click(function () {
+    //    debugger;
+    //    var tabIndex = $(this).closest('li').attr("tabIndex");
+    //    var preTabIndex = tabIndex - 1;
+    //    var isActive = $(this).closest('li').hasClass("active");
+
+    //     var tabContentId = $(this).parent().find("a").attr("href");
+    //    //$(this).parent().parent().remove(); //remove li of tab
+    //    $('#mainTab a:last').tab('show'); // Select first tab
+    //    $(tabContentId).remove(); //remove respective tab content
+    //    $("#mainTab").find("li[tabIndex=" + tabIndex + "]").remove();
+    //    if (isActive) {
+    //        $("#mainTab").find("li").removeClass("bg-info").removeClass("active");
+    //        $("#mainTab").find("li[tabIndex=" + preTabIndex + "]").addClass("bg-info").addClass("active");
+    //    }
+    //    resetTabIndex();
+    //});
+}
+
+
+function setAnimate(isRightBtnClick) {
+    var leftC = 100;
+    var maxLeftC = 600;
+    var leftValue = 0;
+
+    if (!isRightBtnClick) {
+        leftValue = parseInt($(".menu-box").css("left"));
+        leftValue += leftC;
+        if (leftValue > 0) {
+            leftValue = 0;
+        }
+    }
+    else {
+        var tabLi = $("#mainTab").find(".tabLi").length;
+        if (tabLi * leftC > maxLeftC) {
+            leftValue = parseInt($(".menu-box").css("left"));
+            if (isRightBtnClick) {
+                leftValue += -leftC;
+            }
+        }
+    }
+    leftValue = leftValue + "px";
+    $(".menu-box").animate({ left: leftValue });
 }
 function resetTabIndex() {
     var tabIndex = 0;
-    $("#mainTab").find("li").each(function () {
+    $("#mainTab").find(".tabLi").each(function () {
         $(this).attr("tabIndex", tabIndex);
         tabIndex++;
     });
@@ -388,21 +440,24 @@ function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption,
     $($mainTab[0]).children().removeClass('active');
     $($mainTab[0]).children().removeClass('bg-info');
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
-
+    
     axios.get(url).then(function (response) {
         var len = $("#mainTab").find("li").length;
 
-        $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-                            <a href="#` + pageName + `">` + tabCaption + `&nbsp;
-                                <span class="close closeTab fa fa-times fa-lg pt-1" type="button" title='Close this tab'>
+        $mainTab.append(`<li class="p-1 tabLi bg-info active" tabIndex=` + len + ` menu-id=` + menuId + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                         
+                                <a href="#` + pageName + `">` + tabCaption + `&nbsp;</a>
+                         
+                            <div>
+                                 <span class="close closeTab closeTab` + menuId + ` fa fa-times fa-lg pt-1" type="button" title='Close this tab'>
                                     <i class="icon-remove fa-lg"></i>
                                 </span>
-                            </a>
+                            </div>
                          </li>`);
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
         $mainTabContent.append(markup);
         showTab(pageName);
-        registerCloseEvent();
+        registerCloseEvent(menuId);
 
         var scriptPath = '/Scripts/' + controllerName + '/' + actionName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
         if ($('script[src="' + scriptPath + '"]').length === 0) {
@@ -426,12 +481,15 @@ function clickAccountNavigation(event) {
         var len = $("#mainTab").find("li").length;
 
         var tabCaption = target.innerText.trim();
-        $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-                            <a href="#` + actionName + `">` + tabCaption + `
-                                <span class="close closeTab fa fa-times" type="button">
+        $mainTab.append(`<li class="p-1 tabLi bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                      
+                                <a href="#` + actionName + `">` + tabCaption + `</a>
+                       
+                            <div>
+                                <span class="close closeTab closeTab` + menuId + ` fa fa-times" type="button">
                                     <i class="icon-remove"></i>
                                 </span>
-                            </a>
+                            </div>
                           </li>`);
 
         var controllerName = target.dataset.controllerName;
@@ -443,12 +501,11 @@ function clickAccountNavigation(event) {
 }
 
 function getAccountViewMarkup(controller, actionName) {
-
     $.get("/" + controller + "/" + actionName, function (htmlResponse) {
         var markup = '<div class="tab-pane" id="' + actionName + '">' + htmlResponse + '</div>';
         $mainTabContent.append(markup);
         showTab(actionName);
-        registerCloseEvent();
+        registerCloseEvent(0);
 
         var scriptPath = '/Scripts/' + controller + '/' + actionName + '.js' + "?version=" + $("#versionNumer").val();
         if ($('script[src="' + scriptPath + '"]').length === 0) {
@@ -466,19 +523,22 @@ function GetNotFoundViewMarkup(tabid, tabCaption) {
         .then(function (response) {
             var len = $("#mainTab").find("li").length;
 
-            $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-                                <a href="#` + pageName + `">` + tabCaption + `
-                                    <span class="close closeTab fa fa-times fa-lg pt-1" type="button">
+            $mainTab.append(`<li class="p-1 tabLi bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                           
+                                    <a href="#` + pageName + `">` + tabCaption + `</a>
+                         
+                                <div>
+                                    <span class="close closeTab closeTab` + menuId + ` fa fa-times fa-lg pt-1" type="button">
                                         <i class="icon-remove"></i>
                                     </span>
-                                </a>
+                                </div>
                              </li>`);
 
 
             var markup = '<div class="tab-pane" id="' + tabid + '">' + response.data + '</div>';
             $mainTabContent.append(markup);
             showTab(tabid);
-            registerCloseEvent();
+            registerCloseEvent(menuId);
         })
         .catch(showResponseError);
 }
@@ -489,22 +549,27 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
     localStorage.setItem("current_common_interface_menuid", menuId);
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
     // var url = `/admin/${actionName}?menuId=${menuId}`;
+
     axios.get(url).then(function (response) {
         var len = $("#mainTab").find("li").length;
-
-        $mainTab.append(`<li class="p-1 bg-info active" tabIndex=` + len + ` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-                            <a href="#` + pageName + `">` + tabCaption + `
-                                <span class="close closeTab fa fa-times fa-lg p-1" type="button">
-                                    <i class="icon-remove fa-lg pt-1"></i>
+ 
+        $mainTab.append(`<li class="p-1 tabLi bg-info active" tabIndex=` + len + ` menu-id=` + menuId + ` pageName = ` + pageName +` style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                   
+                                <a href="#` + pageName + `">` + tabCaption + `</a>
+                 
+                            <div>
+                                <span class="close closeTab closeTab` + menuId + ` fa fa-times fa-lg p-1" type="button">
+                                        <i class="icon-remove fa-lg pt-1"></i>
                                 </span>
-                            </a>
+                            </div>
                          </li>`);
 
         var markup = '<div class="tab-pane" id="' + pageName + '">' + response.data + '</div>';
 
         $mainTabContent.append(markup);
         showTab(pageName);
-        registerCloseEvent();
+        registerCloseEvent(menuId);
+        resetTabIndex();
         const result = navUrlName.split("_");
         var folderName = result[0];
         var jsFileName = result[1];
@@ -519,6 +584,7 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
 }
 
 function GetMenus(applicationId) {
+
     axios.get("/api/MenuAPI/GetAllMenu/" + applicationId)
         .then(function (response) {
 
@@ -528,6 +594,13 @@ function GetMenus(applicationId) {
             //$(".sidebar-menu").css({
             //    "font-size": "12px !important"
             //});
+            $(".menuLI").each(function () {
+                var menuId = $(this).attr("menu-id");
+                $(".menuLI[menu-id=" + menuId + "]").click(function () {
+                    $("#mainTab").find("li").removeClass("bg-info").removeClass("active");
+                    $("#mainTab").find("li[menu-id=" + menuId + "]").addClass("bg-info").addClass("active");
+                });
+            });
         })
         .catch(showResponseError);
 }
@@ -536,7 +609,6 @@ function generateMenu(menuList) {
 
     $.each(menuList, function (i, item) {
         if (!item.Childs.length) {
-
             if (!item.NavigateUrl) return true;
             var navProperties = item.NavigateUrl.split('/');
 
@@ -544,17 +616,17 @@ function generateMenu(menuList) {
             var updatednavigateUrl = item.NavigateUrl.replace(/\//g, '_');
 
             if (navProperties[1] == 'notfoundpartial') {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else if (item.UseCommonInterface) {
-                template += '<li><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else if (item.PageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';
-                template += '<li><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else {
-                template += '<li><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
 
             activeMenu = false;
@@ -564,7 +636,7 @@ function generateMenu(menuList) {
 
             activeMenu = item.MenuId == 509 ? true : false;
             var active = activeMenu ? "active" : "";
-            template += '<li class="nav-item' + active + '">';
+            template += '<li menu-id=' + item.MenuId + ' class="nav-item' + active + '">';
             template += '<a href="#" class="nav-link">'
                 + '<i class="nav-icon fa fa-circle"></i><p>' + item.MenuCaption + '<i class="right fa fa-angle-left"></i></p>'
                 //    + '<p class="pull-right-container">'

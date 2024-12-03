@@ -1,4 +1,4 @@
-﻿using EPYSLTEX.Core.DTOs;
+﻿
 using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEX.Core.Interfaces.Services

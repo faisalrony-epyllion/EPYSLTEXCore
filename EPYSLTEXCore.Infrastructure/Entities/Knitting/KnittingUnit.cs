@@ -1,7 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
-using System.Data.Entity;
-using System.Runtime.Serialization;
 
 namespace EPYSLTEXCore.Infrastructure.Entities
 {

@@ -1,6 +1,5 @@
-﻿using EPYSLTEX.Core.DTOs;
+﻿using EPYSLTEXCore.Infrastructure.DTOs;
 using Newtonsoft.Json;
-using System;
 using System.Text;
 
 namespace EPYSLTEX.Web.Extends.Helpers

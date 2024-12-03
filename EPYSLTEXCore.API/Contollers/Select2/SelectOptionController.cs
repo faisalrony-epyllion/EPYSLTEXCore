@@ -1,8 +1,5 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Infrastructure.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EPYSLTEX.Web.Controllers.Apis

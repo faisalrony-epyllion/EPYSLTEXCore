@@ -1,16 +1,14 @@
-﻿using Dapper.Contrib.Extensions;
+﻿
+
+
+using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Infrastructure.Entities
 {
-    [Table("YarnProductSetupMaster")]
+    [Table(TableNames.YARN_PRODUCT_SETUP_MASTER)]
     public class YarnProductSetup : DapperBaseEntity
     {
 

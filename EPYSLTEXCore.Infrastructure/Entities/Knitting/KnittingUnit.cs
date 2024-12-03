@@ -1,11 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
-using System.Data.Entity;
-using System.Runtime.Serialization;
 
 namespace EPYSLTEXCore.Infrastructure.Entities
 {
-    [Table("KnittingUnit")]
+    [Table(TableNames.KNITTING_UNIT)]
     public class KnittingUnit : DapperBaseEntity
     {
         [ExplicitKey]

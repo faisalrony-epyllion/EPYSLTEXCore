@@ -2,6 +2,7 @@
 using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Interfaces;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Collections;
@@ -16,14 +17,15 @@ namespace EPYSLTEXCore.Infrastructure.Data
         private readonly string _connectionString;
         public SqlConnection Connection { get; set; }
         public int UserCode { get; set; }
-        //private readonly ISignatureService _signatureRepository;
+        //private readonly ISignatureService _signatureService;
 
-        public DapperCRUDService(IConfiguration configuration/*, ISignatureService signatureRepository*/)
+        public DapperCRUDService(IConfiguration configuration/*, ISignatureService signatureService*/)
         {
             this._configuration = configuration;
             this._connectionString = this._configuration.GetConnectionString("GmtConnection");
-            //_signatureRepository = signatureRepository;
+            //_signatureService = signatureService;
             Connection = new SqlConnection(this._connectionString);
+            //_signatureService = signatureService;
         }
 
         public SqlConnection GetConnection(string connectionName = AppConstants.DB_CONNECTION)
@@ -96,6 +98,24 @@ namespace EPYSLTEXCore.Infrastructure.Data
             finally
             {
                 Connection.Close();
+            }
+        }
+
+        public async Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param, CommandType commandType=CommandType.StoredProcedure)
+        {
+            try
+            {
+                await connection.OpenAsync();
+                var records = await connection.QueryAsync<dynamic>(query, param, commandType: commandType);
+                return records.AsList();
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection.Close();
             }
         }
 
@@ -892,7 +912,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                 ).ConfigureAwait(false);
 
-                //int newId = await _signatureRepository.GetMaxIdAsync(tableName);
+                //int newId = await _signatureService.GetMaxIdAsync(tableName);
 
                 int newId = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
 
@@ -964,15 +984,15 @@ namespace EPYSLTEXCore.Infrastructure.Data
                             .Select(child => (int)child.GetType().GetProperty(EntityReflectionHelper.GetKeyPropertyName(childEntityType)).GetValue(child))
                             .ToList();
 
-                        var existingChildIds = existingChildEntities.Select(e => (int)e[EntityReflectionHelper.GetKeyPropertyName(childEntityType)]).ToList();
+                        //var existingChildIds = existingChildEntities.Select(e => (int)e[EntityReflectionHelper.GetKeyPropertyName(childEntityType)]).ToList();
 
-                        var idsToDelete = existingChildIds.Except(currentChildIds).ToList();
+                        //var idsToDelete = existingChildIds.Except(currentChildIds).ToList();
 
-                        foreach (var id in idsToDelete)
-                        {
-                            string deleteQuery = $"DELETE FROM {childTableName} WHERE {EntityReflectionHelper.GetKeyPropertyName(childEntityType)} = @Id";
-                            await Connection.ExecuteAsync(deleteQuery, new { Id = id }, transaction);
-                        }
+                        //foreach (var id in idsToDelete)
+                        //{
+                        //    string deleteQuery = $"DELETE FROM {childTableName} WHERE {EntityReflectionHelper.GetKeyPropertyName(childEntityType)} = @Id";
+                        //    await Connection.ExecuteAsync(deleteQuery, new { Id = id }, transaction);
+                        //}
 
                         // Step 3: Save or update current child entities
                         foreach (var childEntity in currentChildEntities)

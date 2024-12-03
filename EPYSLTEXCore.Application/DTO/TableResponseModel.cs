@@ -1,7 +1,4 @@
-﻿using EPYSLTEX.Web.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEXCore.Application.DTO
 {

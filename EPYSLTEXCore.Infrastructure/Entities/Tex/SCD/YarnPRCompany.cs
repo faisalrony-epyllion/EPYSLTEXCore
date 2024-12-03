@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("T_YarnPRCompany")]
+    [Table(TableNames.YARN_PR_COMPANY)]
     public class YarnPRCompany : DapperBaseEntity
     {
         [ExplicitKey]

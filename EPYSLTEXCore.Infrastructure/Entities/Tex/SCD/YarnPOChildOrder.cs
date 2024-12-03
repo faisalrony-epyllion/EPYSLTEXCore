@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("T_YarnPOChildOrder")]
+    [Table(TableNames.YarnPOChildOrder)]
     public class YarnPOChildOrder : DapperBaseEntity
     {
         [ExplicitKey]

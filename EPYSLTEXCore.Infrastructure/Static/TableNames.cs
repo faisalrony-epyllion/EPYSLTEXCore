@@ -198,11 +198,15 @@
         public const string YarnAllowanceSetup = "YarnAllowanceSetup";
         public const string YarnAllowanceSetupChild = "YarnAllowanceSetupChild";
         public const string YarnBookingChild = "YarnBookingChild";
+        public const string YarnBookingChild_New = "T_YarnBookingChild_New";
         public const string YarnBookingChild_18_05_17 = "YarnBookingChild_18_05_17";
         public const string YarnBookingChild_Bk = "YarnBookingChild_Bk";
         public const string YarnBookingChildGarmentPart = "YarnBookingChildGarmentPart";
+        public const string YarnBookingChildGarmentPart_New = "T_YarnBookingChildGarmentPart_New";
         public const string YarnBookingChildGarmentPart_Bk = "YarnBookingChildGarmentPart_Bk";
         public const string YarnBookingChildItem = "YarnBookingChildItem";
+        public const string YarnBookingChildItem_New = "T_YarnBookingChildItem_New";
+        public const string YarnBookingChildItem_New_Revision = "T_YarnBookingChildItem_New_Revision";
         public const string BulkBookingFinishFabricUtilization = "BulkBookingFinishFabricUtilization";
         public const string FBookingAcknowledgeChildGFUtilization = "FBookingAcknowledgeChildGFUtilization";
         public const string FBookingAcknowledgeChildReplacement = "FBookingAcknowledgeChildReplacement";
@@ -228,15 +232,19 @@
         public const string YarnBookingChildItem_YarnCategory_Viscose_1 = "YarnBookingChildItem_YarnCategory_Viscose_1";
         public const string YarnBookingChildItem_YarnCategory_Viscose_BK_1 = "YarnBookingChildItem_YarnCategory_Viscose_BK_1";
         public const string YarnBookingChildItemYarnSubBrand = "YarnBookingChildItemYarnSubBrand";
+        public const string YarnBookingChildItemYarnSubBrand_New = "T_YarnBookingChildItemYarnSubBrand_New";
         public const string YarnBookingChildItemYarnSubBrand_Bk = "YarnBookingChildItemYarnSubBrand_Bk";
         public const string YarnBookingChildYarnSubBrand = "YarnBookingChildYarnSubBrand";
+        public const string YarnBookingChildYarnSubBrand_New = "T_YarnBookingChildYarnSubBrand_New";
         public const string YarnBookingChildYarnSubBrand_Bk = "YarnBookingChildYarnSubBrand_Bk";
         public const string YarnBookingMaster = "YarnBookingMaster";
+        public const string YarnBookingMaster_New = "T_YarnBookingMaster_New";
         public const string YarnBookingMaster_18_05_17 = "YarnBookingMaster_18_05_17";
         public const string YarnBookingMaster_Bk = "YarnBookingMaster_Bk";
         public const string YarnBookingQuery = "YarnBookingQuery";
         public const string YarnBookingQuery_Bk = "YarnBookingQuery_Bk";
         public const string YarnBookingReason = "YarnBookingReason";
+        public const string YarnBookingReason_New = "T_YarnBookingReason_New";
         public const string YarnBookingReason_Bk = "YarnBookingReason_Bk";
         public const string YarnBookingMaster_New_RevisionReason = "YarnBookingMaster_New_RevisionReason";
 
@@ -409,6 +417,8 @@
         public const string RND_FREE_CONCEPT_MASTER = "FreeConceptMaster";
         public const string RND_FREE_CONCEPT_CHILD_COLOR = "FreeConceptChildColor";
         public const string RND_FREE_CONCEPT_STATUS = "FreeConceptStatus";
+        public const string RND_FREE_CONCEPT_SET = "T_FreeConceptSet";
+        public const string RND_FREE_CONCEPT_SET_ITEM = "T_FreeConceptSetItem";
         public const string RND_FREE_CONCEPT_MR_MASTER = "FreeConceptMRMaster";
         public const string RND_FREE_CONCEPT_MR_CHILD = "FreeConceptMRChild";
         public const string RND_KNITTING_PRODUCTION = "KnittingProduction";
@@ -845,7 +855,7 @@
         public const string Yarn_RnD_Receive_Child = "YarnRnDReceiveChild_tex";
         #endregion
 
-
-
+        public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
+        public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
     }
 }

@@ -22,6 +22,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<List<dynamic>> GetDynamicDataAsync(string query, object param);
 
         Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param);
+        Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param, CommandType commandType = CommandType.StoredProcedure);
 
         Task<int> GetSingleIntFieldAsync(string query);
 

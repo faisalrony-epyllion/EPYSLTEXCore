@@ -1,10 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
 {
-    [Table("T_KnittingMachine")]
+    [Table(TableNames.KNITTING_MACHINE)]
     public class KnittingMachine : DapperBaseEntity
     {
         [ExplicitKey]

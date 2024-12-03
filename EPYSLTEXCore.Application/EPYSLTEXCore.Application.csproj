@@ -8,14 +8,8 @@
 
   <ItemGroup>
     <Compile Remove="Entities\**" />
-    <Compile Remove="Interfaces\Base\**" />
-    <Compile Remove="Interfaces\Repository\**" />
     <EmbeddedResource Remove="Entities\**" />
-    <EmbeddedResource Remove="Interfaces\Base\**" />
-    <EmbeddedResource Remove="Interfaces\Repository\**" />
     <None Remove="Entities\**" />
-    <None Remove="Interfaces\Base\**" />
-    <None Remove="Interfaces\Repository\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +27,9 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\CommonInterface\" />
+    <Folder Include="Interfaces\Base\" />
     <Folder Include="Interfaces\Select2\" />
+    <Folder Include="Interfaces\Repository\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\CommonInterface\" />
     <Folder Include="Services\User\" />

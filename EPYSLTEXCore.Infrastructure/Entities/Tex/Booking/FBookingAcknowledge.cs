@@ -1,5 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
-
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
@@ -13,7 +13,7 @@ using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_FBookingAcknowledge")]
+    [Table(TableNames.FBBOOKING_ACKNOWLEDGE)]
     public class FBookingAcknowledge : DapperBaseEntity
     {
         [ExplicitKey]

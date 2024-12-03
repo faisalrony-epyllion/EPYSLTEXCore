@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
@@ -10,7 +11,7 @@ using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_YarnBookingMaster_New")]
+    [Table(TableNames.YarnBookingMaster_New)]
     public class YarnBookingMaster : DapperBaseEntity
     {
         [ExplicitKey]

@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
 {
-    [Table("T_FabricWastageGrid")]
+    [Table(TableNames.FABRIC_WASTAGE_GRID)]
     public class FabricWastageGrid : DapperBaseEntity
     {
         [ExplicitKey]

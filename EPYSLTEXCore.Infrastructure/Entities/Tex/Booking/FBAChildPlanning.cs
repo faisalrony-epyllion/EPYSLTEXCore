@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_FBAChildPlanning")]
+    [Table(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING)]
     public class FBAChildPlanning : DapperBaseEntity
     {
         [ExplicitKey]

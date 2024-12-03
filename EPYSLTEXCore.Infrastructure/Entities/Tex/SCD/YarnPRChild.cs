@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Static;
 using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("T_YarnPRChild")]
+    [Table(TableNames.YARN_PR_CHILD)]
     public class YarnPRChild : YarnItemMaster, IDapperBaseEntity
     {
         public YarnPRChild()

@@ -1,7 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Static;
-using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
@@ -159,20 +158,20 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 
     #region Validators
 
-    public class YarnPOChildValidator : AbstractValidator<YarnPOChild>
-    {
-        public YarnPOChildValidator()
-        {
-            RuleFor(x => x.UnitID).NotEmpty();
-            //RuleFor(x => x.PoForId).NotEmpty().WithMessage("PO for Field is required.");
-            RuleFor(x => x.PoQty).NotEmpty().WithMessage("Yarn PO Qty must be greater than zero");
-            RuleFor(x => x.Rate).NotEmpty().WithMessage("Yarn PO Rate must be greater than zero");
-            RuleFor(x => x.Remarks).MaximumLength(200);
-            RuleFor(x => x.YarnLotNo).MaximumLength(50);
-            //RuleFor(x => x.HSCode).NotEmpty().WithMessage("HS Code is required.");
-            RuleFor(x => x.Segment4ValueDesc).MaximumLength(50);
-        }
-    }
+    //public class YarnPOChildValidator : AbstractValidator<YarnPOChild>
+    //{
+    //    public YarnPOChildValidator()
+    //    {
+    //        RuleFor(x => x.UnitID).NotEmpty();
+    //        //RuleFor(x => x.PoForId).NotEmpty().WithMessage("PO for Field is required.");
+    //        RuleFor(x => x.PoQty).NotEmpty().WithMessage("Yarn PO Qty must be greater than zero");
+    //        RuleFor(x => x.Rate).NotEmpty().WithMessage("Yarn PO Rate must be greater than zero");
+    //        RuleFor(x => x.Remarks).MaximumLength(200);
+    //        RuleFor(x => x.YarnLotNo).MaximumLength(50);
+    //        //RuleFor(x => x.HSCode).NotEmpty().WithMessage("HS Code is required.");
+    //        RuleFor(x => x.Segment4ValueDesc).MaximumLength(50);
+    //    }
+    //}
 
     #endregion Validators
 }

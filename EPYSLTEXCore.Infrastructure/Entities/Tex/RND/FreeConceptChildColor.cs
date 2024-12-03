@@ -1,7 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
@@ -131,13 +130,13 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 
     #region Validator
 
-    public class FreeConceptChildColorValidator : AbstractValidator<FreeConceptChildColor>
-    {
-        public FreeConceptChildColorValidator()
-        {
-            RuleFor(x => x.ColorId).NotEmpty();
-        }
-    }
+    //public class FreeConceptChildColorValidator : AbstractValidator<FreeConceptChildColor>
+    //{
+    //    public FreeConceptChildColorValidator()
+    //    {
+    //        RuleFor(x => x.ColorId).NotEmpty();
+    //    }
+    //}
 
     #endregion Validator
 }

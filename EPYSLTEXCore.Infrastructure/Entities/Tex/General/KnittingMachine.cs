@@ -1,7 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
 {
@@ -249,21 +248,21 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
         }
     }
 
-    public class KnittingMachineValidator : AbstractValidator<KnittingMachine>
-    {
-        public KnittingMachineValidator()
-        {
-            RuleFor(x => x.KnittingUnitID).NotEmpty();
-            RuleFor(x => x.MachineNo).NotEmpty().MaximumLength(50);
-            RuleFor(x => x.SerialNo).MaximumLength(50);
-            RuleFor(x => x.MachineNatureID).NotEmpty();
-            RuleFor(x => x.MachineTypeID).NotEmpty();
-            RuleFor(x => x.MachineSubClassID).NotEmpty();
-            RuleFor(x => x.GG).NotEmpty();
-            RuleFor(x => x.Dia).NotEmpty();
-            RuleFor(x => x.BrandID).NotEmpty();
-            RuleFor(x => x.OriginID).NotEmpty();
-            RuleFor(x => x.Remarks).MaximumLength(500);
-        }
-    }
+    //public class KnittingMachineValidator : AbstractValidator<KnittingMachine>
+    //{
+    //    public KnittingMachineValidator()
+    //    {
+    //        RuleFor(x => x.KnittingUnitID).NotEmpty();
+    //        RuleFor(x => x.MachineNo).NotEmpty().MaximumLength(50);
+    //        RuleFor(x => x.SerialNo).MaximumLength(50);
+    //        RuleFor(x => x.MachineNatureID).NotEmpty();
+    //        RuleFor(x => x.MachineTypeID).NotEmpty();
+    //        RuleFor(x => x.MachineSubClassID).NotEmpty();
+    //        RuleFor(x => x.GG).NotEmpty();
+    //        RuleFor(x => x.Dia).NotEmpty();
+    //        RuleFor(x => x.BrandID).NotEmpty();
+    //        RuleFor(x => x.OriginID).NotEmpty();
+    //        RuleFor(x => x.Remarks).MaximumLength(500);
+    //    }
+    //}
 }

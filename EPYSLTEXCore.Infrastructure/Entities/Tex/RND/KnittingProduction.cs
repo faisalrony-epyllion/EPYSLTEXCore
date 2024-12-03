@@ -2,7 +2,6 @@
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
-using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
@@ -355,32 +354,32 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 
     #region Validator
 
-    public class KnittingProductionBindingModelValidator : AbstractValidator<KnittingProductionBindingModel>
-    {
-        public KnittingProductionBindingModelValidator()
-        {
-            RuleFor(x => x.ProdQty).GreaterThan(0);
+    //public class KnittingProductionBindingModelValidator : AbstractValidator<KnittingProductionBindingModel>
+    //{
+    //    public KnittingProductionBindingModelValidator()
+    //    {
+    //        RuleFor(x => x.ProdQty).GreaterThan(0);
 
-            When(x => x.List.Any(), () =>
-            {
-                RuleForEach(x => x.List).SetValidator(new KnittingProductionModelValidator());
-            });
-            //When(x => x.QCChilds.Any(), () =>
-            //{
-            //    RuleForEach(x => x.QCChilds).SetValidator(new KnittingProductionQCBindingModelValidator());
-            //});
-        }
-    }
+    //        When(x => x.List.Any(), () =>
+    //        {
+    //            RuleForEach(x => x.List).SetValidator(new KnittingProductionModelValidator());
+    //        });
+    //        //When(x => x.QCChilds.Any(), () =>
+    //        //{
+    //        //    RuleForEach(x => x.QCChilds).SetValidator(new KnittingProductionQCBindingModelValidator());
+    //        //});
+    //    }
+    //}
 
-    public class KnittingProductionModelValidator : AbstractValidator<KnittingProduction>
-    {
-        public KnittingProductionModelValidator()
-        {
-            //RuleFor(x => x.RollQty).NotEmpty();
-            //RuleFor(x => x.OperatorID).NotEmpty();
-            //RuleFor(x => x.ShiftID).NotEmpty();
-        }
-    }
+    //public class KnittingProductionModelValidator : AbstractValidator<KnittingProduction>
+    //{
+    //    public KnittingProductionModelValidator()
+    //    {
+    //        //RuleFor(x => x.RollQty).NotEmpty();
+    //        //RuleFor(x => x.OperatorID).NotEmpty();
+    //        //RuleFor(x => x.ShiftID).NotEmpty();
+    //    }
+    //}
 
     #endregion Validator
 

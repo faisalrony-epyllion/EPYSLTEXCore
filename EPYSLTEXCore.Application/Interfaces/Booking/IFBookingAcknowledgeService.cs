@@ -3,6 +3,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Statics;
@@ -72,5 +73,6 @@ namespace EPYSLTEXCore.Application.Interfaces.Booking
         Task UnAckFabricBooking(String Sql);
         Task<List<FBookingAcknowledge>> GetBookingByBookingNo(string bookingNo);
         Task<int> CheckIsBookingApprovedAsync(string bookingNo);
+        Task<List<FabricWastageGrid>> GetFabricWastageGridAsync(string wastageFor);
     }
 }

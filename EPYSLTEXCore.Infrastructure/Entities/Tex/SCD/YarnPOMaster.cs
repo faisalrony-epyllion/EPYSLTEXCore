@@ -2,7 +2,6 @@
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
@@ -433,35 +432,35 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 
     #region Validator
 
-    public class YarnPOMasterValidator : AbstractValidator<YarnPOMaster>
-    {
-        public YarnPOMasterValidator()
-        {
-            RuleFor(x => x.PoDate).NotEmpty();
-            RuleFor(x => x.CompanyId).NotEmpty();
-            RuleFor(x => x.SupplierId).NotEmpty().WithMessage("Supplier field is required.");
-            RuleFor(x => x.CurrencyId).NotEmpty();
-            RuleFor(x => x.QuotationRefNo).MaximumLength(100);
-            RuleFor(x => x.DeliveryStartDate).NotEmpty();
-            RuleFor(x => x.DeliveryEndDate).NotEmpty();
-            RuleFor(x => x.Remarks).MaximumLength(500);
-            RuleFor(x => x.InternalNotes).MaximumLength(500);
-            RuleFor(x => x.IncoTermsId).NotEmpty().WithMessage("Inco Terms field is required.");
-            RuleFor(x => x.PaymentTermsId).NotEmpty().WithMessage("Payment Terms field is required.");
-            RuleFor(x => x.ReImbursementCurrencyId).NotEmpty();
-            RuleFor(x => x.Charges).MaximumLength(500);
-            RuleFor(x => x.ShippingTolerance).Must(x => x >= 0 && x <= 10);
-            RuleFor(x => x.CountryOfOriginId).NotEmpty();
-            RuleFor(x => x.UnapproveReason).MaximumLength(300);
-            RuleFor(x => x.OfferValidity).NotEmpty();
+    //public class YarnPOMasterValidator : AbstractValidator<YarnPOMaster>
+    //{
+    //    public YarnPOMasterValidator()
+    //    {
+    //        RuleFor(x => x.PoDate).NotEmpty();
+    //        RuleFor(x => x.CompanyId).NotEmpty();
+    //        RuleFor(x => x.SupplierId).NotEmpty().WithMessage("Supplier field is required.");
+    //        RuleFor(x => x.CurrencyId).NotEmpty();
+    //        RuleFor(x => x.QuotationRefNo).MaximumLength(100);
+    //        RuleFor(x => x.DeliveryStartDate).NotEmpty();
+    //        RuleFor(x => x.DeliveryEndDate).NotEmpty();
+    //        RuleFor(x => x.Remarks).MaximumLength(500);
+    //        RuleFor(x => x.InternalNotes).MaximumLength(500);
+    //        RuleFor(x => x.IncoTermsId).NotEmpty().WithMessage("Inco Terms field is required.");
+    //        RuleFor(x => x.PaymentTermsId).NotEmpty().WithMessage("Payment Terms field is required.");
+    //        RuleFor(x => x.ReImbursementCurrencyId).NotEmpty();
+    //        RuleFor(x => x.Charges).MaximumLength(500);
+    //        RuleFor(x => x.ShippingTolerance).Must(x => x >= 0 && x <= 10);
+    //        RuleFor(x => x.CountryOfOriginId).NotEmpty();
+    //        RuleFor(x => x.UnapproveReason).MaximumLength(300);
+    //        RuleFor(x => x.OfferValidity).NotEmpty();
 
-            RuleFor(x => x.YarnPOChilds).Must(x => x.Count() > 0).WithMessage("You must add at least one Yarn Child Item.");
-            When(x => x.YarnPOChilds.Any(), () =>
-            {
-                RuleForEach(x => x.YarnPOChilds).SetValidator(new YarnPOChildValidator());
-            });
-        }
-    }
+    //        RuleFor(x => x.YarnPOChilds).Must(x => x.Count() > 0).WithMessage("You must add at least one Yarn Child Item.");
+    //        When(x => x.YarnPOChilds.Any(), () =>
+    //        {
+    //            RuleForEach(x => x.YarnPOChilds).SetValidator(new YarnPOChildValidator());
+    //        });
+    //    }
+    //}
 
     #endregion Validator
 }

@@ -1,6 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
-using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory
@@ -141,14 +140,14 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory
 
     #region Validator
 
-    public class SFDChildValidator : AbstractValidator<SFDChild>
-    {
-        public SFDChildValidator()
-        {
-            //RuleFor(x => x.ReqQty).GreaterThan(0);
-            //RuleFor(x => x.ReqCone).GreaterThan(0);
-        }
-    }
+    //public class SFDChildValidator : AbstractValidator<SFDChild>
+    //{
+    //    public SFDChildValidator()
+    //    {
+    //        //RuleFor(x => x.ReqQty).GreaterThan(0);
+    //        //RuleFor(x => x.ReqCone).GreaterThan(0);
+    //    }
+    //}
 
     #endregion Validator
 }

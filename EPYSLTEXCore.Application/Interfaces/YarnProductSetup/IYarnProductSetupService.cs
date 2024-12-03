@@ -1,13 +1,13 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
 
-namespace EPYSLTEXCore.Application.Interfaces.YarnProductSetup
+namespace EPYSLTEXCore.Application.Interfaces
 {
     public interface IYarnProductSetupService
     {
 
         
 
-        Task<List<YarnProductSetupFinder>> GetAllFiberType(PaginationInfo paginationInfo);
+        Task<List<YarnProductSetup>> GetAllFiberType(PaginationInfo paginationInfo);
         Task<List<YarnProductSetupChild>> GetAlYarnProductSetupChildBySetupMasterID(int setupMasterID);  
     }
 }

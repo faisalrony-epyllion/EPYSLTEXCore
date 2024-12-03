@@ -7,36 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\Base\**" />
-    <Compile Remove="Entities\CommonInterface\**" />
-    <Compile Remove="Entities\Knitting\**" />
-    <Compile Remove="Entities\Menu\**" />
-    <Compile Remove="Entities\PaginationInfo\**" />
-    <Compile Remove="Entities\ReportAPI\**" />
-    <Compile Remove="Entities\YarnProductSetup\**" />
+    <Compile Remove="Entities\**" />
+    <Compile Remove="Interfaces\Base\**" />
     <Compile Remove="Interfaces\Repository\**" />
-    <EmbeddedResource Remove="Entities\Base\**" />
-    <EmbeddedResource Remove="Entities\CommonInterface\**" />
-    <EmbeddedResource Remove="Entities\Knitting\**" />
-    <EmbeddedResource Remove="Entities\Menu\**" />
-    <EmbeddedResource Remove="Entities\PaginationInfo\**" />
-    <EmbeddedResource Remove="Entities\ReportAPI\**" />
-    <EmbeddedResource Remove="Entities\YarnProductSetup\**" />
+    <EmbeddedResource Remove="Entities\**" />
+    <EmbeddedResource Remove="Interfaces\Base\**" />
     <EmbeddedResource Remove="Interfaces\Repository\**" />
-    <None Remove="Entities\Base\**" />
-    <None Remove="Entities\CommonInterface\**" />
-    <None Remove="Entities\Knitting\**" />
-    <None Remove="Entities\Menu\**" />
-    <None Remove="Entities\PaginationInfo\**" />
-    <None Remove="Entities\ReportAPI\**" />
-    <None Remove="Entities\YarnProductSetup\**" />
+    <None Remove="Entities\**" />
+    <None Remove="Interfaces\Base\**" />
     <None Remove="Interfaces\Repository\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\LoginHistory.cs" />
-    <Compile Remove="Entities\LoginUser.cs" />
-    <Compile Remove="Interfaces\Base\IBaseEntity.cs" />
     <Compile Remove="Services\User\LoginHistoryService.cs" />
   </ItemGroup>
 
@@ -50,9 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
     <Folder Include="Interfaces\CommonInterface\" />
-    <Folder Include="Interfaces\Base\" />
     <Folder Include="Interfaces\Select2\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\CommonInterface\" />

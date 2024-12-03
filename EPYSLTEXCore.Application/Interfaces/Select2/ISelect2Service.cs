@@ -1,4 +1,4 @@
-﻿using EPYSLTEXCore.Application.DTO;
+﻿
 using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEX.Core.Interfaces.Services
@@ -242,7 +242,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
         Task<IList<Select2OptionModel>> GetColorListAsync(string filterQuery);
 
         Task<IList<Select2OptionModel>> GetShadeListAsync(string filterQuery);
-        Task<IList<YarnProductSetupFinder>> GetAllFiberType();
+        Task<IList<YarnProductSetup>> GetAllFiberType();
         
     }
 }

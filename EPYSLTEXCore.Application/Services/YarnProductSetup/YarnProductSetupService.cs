@@ -1,4 +1,4 @@
-﻿using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
+﻿using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
@@ -29,7 +29,7 @@ namespace EPYSLTEXCore.Application.Services
         }
 
   
-        public async Task<List<YarnProductSetupFinder>> GetAllFiberType(Infrastructure.Entities.PaginationInfo paginationInfo)
+        public async Task<List<YarnProductSetup>> GetAllFiberType(PaginationInfo paginationInfo)
         {
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By LEN(FiberType), FiberType ASC" : paginationInfo.OrderBy;
 
@@ -45,7 +45,7 @@ namespace EPYSLTEXCore.Application.Services
                 {paginationInfo.PageBy}";
 
 
-            return await _gmtService.GetDataAsync<YarnProductSetupFinder>(query);
+            return await _gmtService.GetDataAsync<YarnProductSetup>(query);
 
         }
         public async Task<List<YarnProductSetupChild>> GetAlYarnProductSetupChildBySetupMasterID(int setupMasterID)

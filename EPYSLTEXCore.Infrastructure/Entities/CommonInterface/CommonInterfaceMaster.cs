@@ -1,6 +1,6 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Data;
-using System.Collections.Generic;
 
 namespace EPYSLTEXCore.Infrastructure.Entities
 {

@@ -2,6 +2,7 @@
 using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Interfaces;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Collections;

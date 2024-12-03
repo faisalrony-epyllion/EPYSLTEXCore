@@ -1,7 +1,7 @@
 ﻿using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Interfaces;
-using EPYSLTEXCore.Infrastructure.Statics;
+using EPYSLTEXCore.Infrastructure.Static;
 
 namespace EPYSLTEXCore.Application.Services
 {

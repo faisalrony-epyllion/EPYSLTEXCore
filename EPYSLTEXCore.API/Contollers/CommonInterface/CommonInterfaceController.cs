@@ -65,47 +65,26 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
            return Ok();
            
         }
-        [Route("details/{menuId}/{id}")]
-        public async Task<IActionResult> GetCommonInterfaceDetails(int menuId, int id)
+
+        [Route("selectfinderdata/{menuId}/{childId}")]
+        public async Task<IActionResult> SelectFinderData(int menuId,int childId)
         {
-            var interfaceInfo = await _service.GetMasterDetailsAsync(menuId);
 
-            var query = $@"Select * From {interfaceInfo.TableName} Where {interfaceInfo.PrimaryKeyColumn} = {id}";
-            //dynamic entity = await _sqlQueryRepository.GetFirstOrDefaultDynamicDataDapperAsync(query);
-            //Dictionary<string, object> record = ExtensionMethods.ToDictionary(entity);
-
-            //if (entity != null)
-            //{
-            //    var childTableInfo = interfaceInfo.ChildGrids.FirstOrDefault();
-            //    var childQuery = $@"Select * From {childTableInfo.TableName} Where {childTableInfo.ParentColumn} = {id}";
-            //    var childRecords = await _sqlQueryRepository.GetDynamicDataDapperAsync(childQuery);
-            //    record.Add("Childs", childRecords);
-            //}
-            //else record.Add("Childs", Array.Empty<object>());
-
-            //foreach (var item in interfaceInfo.Childs)
-            //{
-            //    if (!item.EntryType.Equals("select", StringComparison.OrdinalIgnoreCase)) continue;
-
-            //    var key = Regex.Replace(item.ColumnName, "Id", "", RegexOptions.IgnoreCase);
-            //    key += "List";
-
-            //    var records = await _sqlQueryRepository.GetDynamicDataDapperAsync(item.SelectSql);
-            //    record.Add(key, records);
-            //}
-
-            //foreach (var item in interfaceInfo.ChildGridColumns)
-            //{
-            //    if (!item.EntryType.Equals("select", StringComparison.OrdinalIgnoreCase)) continue;
-
-            //    var key = Regex.Replace(item.ColumnName, "Id", "", RegexOptions.IgnoreCase);
-            //    key += "List";
-
-            //    var records = await _sqlQueryRepository.GetDynamicDataDapperAsync(item.SelectSql);
-            //    record.Add(key, records);
-            //}
+            var paginationInfo = Request.GetPaginationInfo();
+            CommonInterfaceMaster commonInterfaceMaster = await _service.GetCommonInterfaceMasterChildAsync(menuId);
+            string connKey = commonInterfaceMaster.ConName;
+            
+           var commonInterfaceChild = commonInterfaceMaster.Childs.Where(p => p.FinderSql != null).FirstOrDefault();
+            if (commonInterfaceChild != null && !string.IsNullOrWhiteSpace(connKey))
+            {
+                string selectSql = commonInterfaceChild.SelectSql;
+                var records = await _service.GetSelectedItemFinderData(selectSql, connKey);
+                return Ok(records);
+            }
 
             return Ok();
+
         }
+ 
     }
 }

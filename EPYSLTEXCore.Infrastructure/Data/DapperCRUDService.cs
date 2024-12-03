@@ -100,6 +100,24 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
+        public async Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param, CommandType commandType=CommandType.StoredProcedure)
+        {
+            try
+            {
+                await connection.OpenAsync();
+                var records = await connection.QueryAsync<dynamic>(query, param, commandType: commandType);
+                return records.AsList();
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
         public async Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param)
         {
             try
@@ -965,15 +983,15 @@ namespace EPYSLTEXCore.Infrastructure.Data
                             .Select(child => (int)child.GetType().GetProperty(EntityReflectionHelper.GetKeyPropertyName(childEntityType)).GetValue(child))
                             .ToList();
 
-                        var existingChildIds = existingChildEntities.Select(e => (int)e[EntityReflectionHelper.GetKeyPropertyName(childEntityType)]).ToList();
+                        //var existingChildIds = existingChildEntities.Select(e => (int)e[EntityReflectionHelper.GetKeyPropertyName(childEntityType)]).ToList();
 
-                        var idsToDelete = existingChildIds.Except(currentChildIds).ToList();
+                        //var idsToDelete = existingChildIds.Except(currentChildIds).ToList();
 
-                        foreach (var id in idsToDelete)
-                        {
-                            string deleteQuery = $"DELETE FROM {childTableName} WHERE {EntityReflectionHelper.GetKeyPropertyName(childEntityType)} = @Id";
-                            await Connection.ExecuteAsync(deleteQuery, new { Id = id }, transaction);
-                        }
+                        //foreach (var id in idsToDelete)
+                        //{
+                        //    string deleteQuery = $"DELETE FROM {childTableName} WHERE {EntityReflectionHelper.GetKeyPropertyName(childEntityType)} = @Id";
+                        //    await Connection.ExecuteAsync(deleteQuery, new { Id = id }, transaction);
+                        //}
 
                         // Step 3: Save or update current child entities
                         foreach (var childEntity in currentChildEntities)

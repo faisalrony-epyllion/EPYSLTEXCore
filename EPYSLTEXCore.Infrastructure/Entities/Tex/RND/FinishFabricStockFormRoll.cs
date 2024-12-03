@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_FinishFabricStockFormRoll")]
+    [Table(TableNames.FinishFabricStockFormRoll)]
     public class FinishFabricStockFormRoll : DapperBaseEntity
     {
         #region Table Properties

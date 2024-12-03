@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
 using FluentValidation;
@@ -6,7 +7,7 @@ using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_KnittingProduction")]
+    [Table(TableNames.RND_KNITTING_PRODUCTION)]
     public class KnittingProduction : DapperBaseEntity
     {
         #region Table Properties

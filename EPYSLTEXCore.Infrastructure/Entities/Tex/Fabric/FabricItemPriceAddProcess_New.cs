@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric
 {
-    [Table("T_FabricItemPriceAddProcess")]
+    [Table(TableNames.FabricItemPriceAddProcess)]
     public class FabricItemPriceAddProcess_New : DapperBaseEntity
     {
         #region Table property

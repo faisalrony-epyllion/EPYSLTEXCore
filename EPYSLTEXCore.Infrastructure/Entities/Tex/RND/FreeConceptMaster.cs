@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
 using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_FreeConceptMaster")]
+    [Table(TableNames.RND_FREE_CONCEPT_MASTER)]
     public class FreeConceptMaster : DapperBaseEntity
     {
         public List<Select2OptionModel> FormList;

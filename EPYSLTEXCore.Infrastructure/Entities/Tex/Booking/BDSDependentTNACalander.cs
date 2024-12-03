@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_BDSDependentTNACalander")]
+    [Table(TableNames.BDS_Dependent_TNA_Calander)]
     public class BDSDependentTNACalander : DapperBaseEntity
     {
         [ExplicitKey]

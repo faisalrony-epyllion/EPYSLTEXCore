@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
 using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("T_YarnPOMaster")]
+    [Table(TableNames.YarnPOMaster)]
     public class YarnPOMaster : DapperBaseEntity
     {
         public YarnPOMaster()

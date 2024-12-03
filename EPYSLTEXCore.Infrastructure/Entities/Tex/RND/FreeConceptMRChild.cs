@@ -1,10 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_FreeConceptMRChild")]
+    [Table(TableNames.RND_FREE_CONCEPT_MR_CHILD)]
     public class FreeConceptMRChild : YarnItemMaster, IDapperBaseEntity
     {
         #region Table Properties

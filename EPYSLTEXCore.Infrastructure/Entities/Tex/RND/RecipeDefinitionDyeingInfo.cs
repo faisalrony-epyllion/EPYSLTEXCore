@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_RecipeDefinitionDyeingInfo")]
+    [Table(TableNames.RND_RECIPE_DEFINITION_DYEING_INFO)]
     public class RecipeDefinitionDyeingInfo : DapperBaseEntity
     {
         public RecipeDefinitionDyeingInfo()

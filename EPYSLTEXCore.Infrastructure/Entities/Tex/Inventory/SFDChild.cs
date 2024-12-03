@@ -1,10 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory
 {
-    [Table("T_SFDChild")]
+    [Table(TableNames.SFD_CHILD)]
     public class SFDChild : IDapperBaseEntity
     {
         #region Table Properties

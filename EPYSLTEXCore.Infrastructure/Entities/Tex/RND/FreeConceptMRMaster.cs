@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
@@ -6,7 +7,7 @@ using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_FreeConceptMRMaster")]
+    [Table(TableNames.RND_FREE_CONCEPT_MR_MASTER)]
     public class FreeConceptMRMaster : DapperBaseEntity
     {
         #region Table Properties

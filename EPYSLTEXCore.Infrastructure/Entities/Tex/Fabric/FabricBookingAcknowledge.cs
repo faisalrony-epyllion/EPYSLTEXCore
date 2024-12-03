@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
@@ -6,7 +7,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric
 {
-    [Table("T_FabricBookingAcknowledge")]
+    [Table(TableNames.FabricBookingAcknowledge)]
     public class FabricBookingAcknowledge : DapperBaseEntity
     {
         #region Table properties

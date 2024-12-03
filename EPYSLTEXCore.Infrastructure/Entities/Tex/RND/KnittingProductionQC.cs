@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_KnittingProductionQC")]
+    [Table(TableNames.RND_KNITTING_PRODUCTION_QC)]
     public class KnittingProductionQC : BaseEntity
     {
         #region Table Properties

@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_FBookingAckChildFinishingProcessItem")]
+    [Table(TableNames.FBookingAckChildFinishingProcessItem)]
     public class FBookingAckChildFinishingProcessItem : DapperBaseEntity
     {
         public FBookingAckChildFinishingProcessItem()

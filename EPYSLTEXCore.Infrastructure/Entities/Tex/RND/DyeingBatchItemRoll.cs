@@ -1,10 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Production;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_DyeingBatchItemRoll")]
+    [Table(TableNames.DYEING_BATCH_ITEM_ROLL)]
     public class DyeingBatchItemRoll : DapperBaseEntity
     {
         [ExplicitKey]

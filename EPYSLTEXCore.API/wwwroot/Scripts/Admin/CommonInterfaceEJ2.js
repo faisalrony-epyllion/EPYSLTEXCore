@@ -571,7 +571,6 @@
         });
     }
     function openSingleSelectFinder() {
-        debugger;
         var finder = new commonFinder({
             title: "Select " + selectedChild.Label,
             pageId: "divCommonInterface-" + menuId,
@@ -591,7 +590,6 @@
                 finder.hideModal();
                 var data = res.rowData;                 
                 for (var p in data) {
-                    var aaa = data[p];
                     $formEl.find("#" + p).val(data[p]).trigger("change");
                 }
                 //setFormData($formEl, data);

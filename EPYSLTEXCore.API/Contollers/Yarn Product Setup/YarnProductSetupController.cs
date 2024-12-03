@@ -44,8 +44,8 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
         public async Task<IActionResult> SaveYarnProductSetup(dynamic entity)
         {
             YarnProductSetup model = JsonConvert.DeserializeObject<YarnProductSetup>(Convert.ToString(entity));
-            var yarnProductSetupModel = await _dapperCRUDService.SaveEntityAsync(model);
-            return Ok(yarnProductSetupModel.SetupMasterID);
+            var objYarnProductSetup = await _dapperCRUDService.SaveEntityAsync(model);
+            return Ok(objYarnProductSetup.SetupMasterID);
           //  return Ok();
         }
 

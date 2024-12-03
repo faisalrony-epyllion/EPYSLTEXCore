@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
@@ -6,7 +7,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("T_YarnPRMaster")]
+    [Table(TableNames.YARN_PR_MASTER)]
     public class YarnPRMaster : DapperBaseEntity
     {
         public YarnPRMaster()

@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_FreeConceptStatus")]
+    [Table(TableNames.RND_FREE_CONCEPT_STATUS)]
     public class ConceptStatus : DapperBaseEntity
     {
         public ConceptStatus()

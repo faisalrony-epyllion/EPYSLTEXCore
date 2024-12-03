@@ -1,4 +1,4 @@
-﻿using EPYSLTEX.Core.DTOs;
+﻿using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 using System.Linq.Expressions;
 

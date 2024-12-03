@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_BulkBookingFinishFabricUtilization")]
+    [Table(TableNames.BulkBookingFinishFabricUtilization)]
     public class BulkBookingFinishFabricUtilization : DapperBaseEntity
     {
         #region Main property

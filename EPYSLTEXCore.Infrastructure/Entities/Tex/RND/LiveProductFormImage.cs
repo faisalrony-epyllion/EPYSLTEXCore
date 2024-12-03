@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("T_LiveProductFormImage")]
+    [Table(TableNames.LIVE_PRODUCT_FORM_IMAGE)]
     public class LiveProductFormImage : DapperBaseEntity
     {
         [ExplicitKey]

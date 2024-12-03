@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
 {
-    [Table("T_FabricComponentMappingSetup")]
+    [Table(TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP)]
     public class FabricComponentMappingSetup : DapperBaseEntity
     {
         [ExplicitKey]

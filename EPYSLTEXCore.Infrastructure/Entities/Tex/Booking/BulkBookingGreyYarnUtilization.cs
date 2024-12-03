@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_BulkBookingGreyYarnUtilization")]
+    [Table(TableNames.BulkBookingGreyYarnUtilization)]
     public class BulkBookingGreyYarnUtilization : DapperBaseEntity
     {
         #region properties

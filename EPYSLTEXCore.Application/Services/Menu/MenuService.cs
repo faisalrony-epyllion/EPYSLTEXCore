@@ -1,7 +1,7 @@
 ﻿
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
-using EPYSLTEXCore.Application.DTO;
 using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEXCore.Application.Services

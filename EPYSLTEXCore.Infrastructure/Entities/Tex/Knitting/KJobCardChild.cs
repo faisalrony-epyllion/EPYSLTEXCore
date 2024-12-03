@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting
 {
-    [Table("T_KJobCardChild")]
+    [Table(TableNames.KNITTING_JOB_CARD_Child)]
     public class KJobCardChild : DapperBaseEntity
     {
         #region Table Properties

@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_YarnBookingChildItemYarnSubBrand_New")]
+    [Table(TableNames.YarnBookingChildItemYarnSubBrand_New)]
     public class YarnBookingChildItemYarnSubBrand : IDapperBaseEntity
     {
         [ExplicitKey]

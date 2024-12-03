@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
 {
-    [Table("T_KnittingMachineOption")]
+    [Table(TableNames.KNITTING_MACHINE_OPTION)]
     public class KnittingMachineOption : DapperBaseEntity
     {
         [ExplicitKey]

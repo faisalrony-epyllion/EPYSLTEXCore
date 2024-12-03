@@ -1,5 +1,4 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
-
 namespace EPYSLTEXCore.Application.Interfaces
 {
     public interface IYarnProductSetupService

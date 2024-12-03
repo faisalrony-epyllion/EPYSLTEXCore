@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_YarnBookingChildItem_New_Revision")]
+    [Table(TableNames.YarnBookingChildItem_New_Revision)]
     public class YarnBookingChildItemRevision : BaseChildItemMaster, IDapperBaseEntity//: DapperBaseEntity 
     {
         [ExplicitKey]

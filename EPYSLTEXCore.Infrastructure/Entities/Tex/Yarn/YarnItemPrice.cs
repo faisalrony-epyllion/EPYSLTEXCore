@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
 {
-    [Table("T_YarnItemPrice")]
+    [Table(TableNames.YarnItemPrice)]
     public class YarnItemPrice : YarnItemMaster, IDapperBaseEntity//AuditFields, IBaseEntity
     {
         [ExplicitKey]

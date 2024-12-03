@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_YarnBookingMaster_New_RevisionReason")]
+    [Table(TableNames.YarnBookingMaster_New_RevisionReason)]
     public class YarnBookingMaster_New_RevisionReason : DapperBaseEntity
     {
         [ExplicitKey]

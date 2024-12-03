@@ -1,10 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_FBookingAcknowledgeChild")]
+    [Table(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD)]
     public class FBookingAcknowledgeChild : DapperBaseEntity
     {
         [ExplicitKey]

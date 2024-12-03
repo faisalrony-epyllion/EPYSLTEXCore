@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
-using EPYSLTEXCore.Application.DTO;
+using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;

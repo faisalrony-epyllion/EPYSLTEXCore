@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_FBookingAcknowledgeChildItemNetReqQTY")]
+    [Table(TableNames.FBookingAcknowledgeChildItemNetReqQTY)]
     public class FBookingAcknowledgeChildItemNetReqQTY : DapperBaseEntity
     {
         #region Table Propertise

@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("T_YarnPOChildBuyer")]
+    [Table(TableNames.YarnPOChildBuyer)]
     public class YarnPOChildBuyer : DapperBaseEntity
     {
         public YarnPOChildBuyer()

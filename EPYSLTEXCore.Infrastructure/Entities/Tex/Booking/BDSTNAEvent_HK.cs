@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_BDSTNAEvent_HK")]
+    [Table(TableNames.BDS_TNA_EVENT_HK)]
     public class BDSTNAEvent_HK : DapperBaseEntity
     {
         [ExplicitKey]

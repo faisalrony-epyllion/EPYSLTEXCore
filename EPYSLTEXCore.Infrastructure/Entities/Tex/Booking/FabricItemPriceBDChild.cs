@@ -1,10 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
     //[Table("FabricItemPriceBD")]
-    [Table("T_FabricItemPriceBDChild")]
+    [Table(TableNames.FabricItemPriceBDChild)]
     public class FabricItemPriceBDChild : DapperBaseEntity
     {
         #region Table properties

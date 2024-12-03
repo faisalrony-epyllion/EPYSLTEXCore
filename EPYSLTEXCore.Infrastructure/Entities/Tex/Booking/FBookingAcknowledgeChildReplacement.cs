@@ -1,9 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
-    [Table("T_FBookingAcknowledgeChildReplacement")]
+    [Table(TableNames.FBookingAcknowledgeChildReplacement)]
     public class FBookingAcknowledgeChildReplacement : DapperBaseEntity
     {
         #region Table Propertise

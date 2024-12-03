@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Data;
 
 
 namespace EPYSLTEXCore.Infrastructure.Entities
 {
-    [Table("YarnProductSetupChild")]
+    [Table(TableNames.YARN_PRODUCT_SETUP_CHILD)]
     public class YarnProductSetupChild : DapperBaseEntity
     {
         [ExplicitKey]

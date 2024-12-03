@@ -1,10 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
 {
-    [Table("T_YarnItemApprovalReason ")]
+    [Table(TableNames.YarnItemApprovalReason)]
     public class YarnItemApprovalReason : DapperBaseEntity
     {
         [ExplicitKey]

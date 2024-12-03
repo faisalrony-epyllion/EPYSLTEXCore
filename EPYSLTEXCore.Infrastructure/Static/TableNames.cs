@@ -176,8 +176,30 @@
 
         public const string YARN_PURCHASE_MASTER = "T_YarnPurchaseReturnMaster";
         public const string YARN_PURCHASE_CHILD = "T_YarnPurchaseReturnChild";
-        public const string YARN_PURCHASE_RETURN_CHILD_RACK_BIN_MAPPING = "T_YarnPurchaseReturnChildRackBinMapping";
-
+        public const string YARN_PURCHASE_RETURN_CHILD_RACK_BIN_MAPPING = "T_YarnPurchaseReturnChildRackBinMapping"        
+        
+       
+        public const string YarnBookingChild_New = "T_YarnBookingChild_New";
+        
+        public const string YarnBookingChildGarmentPart_New = "T_YarnBookingChildGarmentPart_New";       
+        public const string YarnBookingChildItem_New = "T_YarnBookingChildItem_New";
+        public const string YarnBookingChildItem_New_Revision = "T_YarnBookingChildItem_New_Revision";
+        
+        
+        
+        
+        
+        
+       
+        
+        
+        
+        
+        public const string YarnBookingChildItemYarnSubBrand_New = "T_YarnBookingChildItemYarnSubBrand_New";
+        
+        
+        public const string YarnBookingChildYarnSubBrand_New = "T_YarnBookingChildYarnSubBrand_New";
+        
         public const string RollAdjustChild = "T_RollAdjustChild";
         public const string RollAdjustChildRoll = "T_RollAdjustChildRoll";
         public const string RollAdjustMaster = "T_RollAdjustMaster";
@@ -232,6 +254,14 @@
         public const string YarnBookingChildYarnSubBrand = "T_YarnBookingChildYarnSubBrand";
         public const string YarnBookingChildYarnSubBrand_Bk = "T_YarnBookingChildYarnSubBrand_Bk";
         public const string YarnBookingMaster = "YarnBookingMaster";
+        public const string YarnBookingMaster_New = "T_YarnBookingMaster_New";
+        
+        
+        
+        
+        public const string YarnBookingReason_New = "T_YarnBookingReason_New";
+        
+        
         //public const string YarnBookingMaster_18_05_17 = "YarnBookingMaster_18_05_17";
         public const string YarnBookingMaster_Bk = "T_YarnBookingMaster_Bk";
         public const string YarnBookingQuery = "T_YarnBookingQuery";
@@ -406,6 +436,28 @@
         #region RND
         public const string RND_CONCEPTNO = "ConceptNo";
         public const string RND_GROUP_CONCEPTNO = "GroupConceptNo";
+        
+        
+        
+        public const string RND_FREE_CONCEPT_SET = "T_FreeConceptSet";
+        public const string RND_FREE_CONCEPT_SET_ITEM = "T_FreeConceptSetItem";
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+       
+        
+        
+        
+        
         public const string RND_FREE_CONCEPT_MASTER = "T_FreeConceptMaster";
         public const string RND_FREE_CONCEPT_CHILD_COLOR = "T_FreeConceptChildColor";
         public const string RND_FREE_CONCEPT_STATUS = "T_FreeConceptStatus";
@@ -845,7 +897,7 @@
         //public const string Yarn_RnD_Receive_Child = "YarnRnDReceiveChild_tex";
         #endregion
 
-
-
+        public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
+        public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
     }
 }

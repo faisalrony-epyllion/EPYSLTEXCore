@@ -365,7 +365,7 @@ function removeCurrentTab() {
 
 function registerCloseEvent(menuId) {
     $(".closeTab" + menuId).click(function () {
-        debugger;
+ 
         var tabIndex = $(this).closest('li').attr("tabIndex");
         var preTabIndex = tabIndex - 1;
         var isActive = $(this).closest('li').hasClass("active");
@@ -378,6 +378,7 @@ function registerCloseEvent(menuId) {
             $("#mainTab").find("li").removeClass("bg-info").removeClass("active");
             $("#mainTab").find("li[tabIndex=" + preTabIndex + "]").addClass("bg-info").addClass("active");
         }
+        var pageName = $("#mainTab").find("li.active").attr("pageName");
         $('#mainTab a[href="#' + pageName + '"]').tab('show');
         resetTabIndex();
 

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="DTO\BaseModel.cs" />
     <Compile Remove="Services\User\LoginHistoryService.cs" />
   </ItemGroup>
 

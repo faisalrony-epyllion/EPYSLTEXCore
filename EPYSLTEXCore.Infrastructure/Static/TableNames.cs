@@ -857,5 +857,15 @@
 
         public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
         public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
+
+        #region Garments Table
+        public const string SAMPLE_BOOKING_MASTER = "SampleBookingMaster";//Garments Table
+        public const string SAMPLE_BOOKING_CONSUMPTION = "SampleBookingConsumption";//Garments Table
+        public const string SAMPLE_BOOKING_CONSUMPTION_CHILD = "SampleBookingConsumptionChild";//Garments Table
+        public const string BOOKING_MASTER = "BookingMaster";//Garments Table
+        public const string BOOKING_CHILD = "BookingChild";//Garments Table
+        public const string BOOKING_ITEM_ACKNOWLEDGE = "BookingItemAcknowledge";//Garments Table
+        #endregion
+
     }
 }

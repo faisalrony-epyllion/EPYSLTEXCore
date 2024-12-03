@@ -62,6 +62,67 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 Inner Join {DbNames.EPYSL}..ItemSegmentName ISN On ISV.SegmentNameID = ISN.SegmentNameID
                 Where ISN.SegmentName = '{segmentName}'";
         }
-        
+        public static string GetSampleTypeByBookingID(int bookingID)
+        {
+            return $@"Select SM.SampleID [id], ST.SampleTypeName [text]
+                    From {DbNames.EPYSL}..SampleBookingMaster SM
+                    Inner Join {DbNames.EPYSL}..SampleType ST On ST.SampleTypeID = SM.SampleID
+                    Where SM.BookingID = {bookingID}";
+        }
+        public static string GetImagePathQuery(string bookingNos, string imageType = "")
+        {
+            if (bookingNos.IsNotNullOrEmpty())
+            {
+                bookingNos = "'" + bookingNos + "'";
+                bookingNos = $@" AND BM.BookingNo IN ({bookingNos}) ";
+            }
+
+            if (imageType == "TP") imageType = $@" AND ImagePath LIKE '%TechPackImage%' ";
+            else if (imageType == "BK") imageType = $@" AND ImagePath NOT LIKE '%TechPackImage%' ";
+
+            string sql = $@"WITH IPathF AS
+                        (
+	                        SELECT BM.BookingNo, BCI.ImagePath, ImageType='BK'
+	                        FROM {DbNames.EPYSL}..BookingMaster BM
+	                        INNER JOIN {DbNames.EPYSL}..BookingChildImage BCI ON BCI.BookingID = BM.BookingID
+	                        WHERE 1=1 {bookingNos}
+	                        GROUP BY BM.BookingNo, BCI.ImagePath
+
+	                        UNION
+
+	                        SELECT BM.BookingNo, TPI.ImagePath, ImageType='TP'
+	                        FROM {DbNames.EPYSL}..BookingMaster BM
+	                        INNER JOIN {DbNames.EPYSL}..ExportOrderMaster EOM ON EOM.ExportOrderID = BM.ExportOrderID
+	                        INNER JOIN {DbNames.EPYSL}..TechPackMaster TPM ON TPM.StyleMasterID = EOM.StyleMasterID
+	                        INNER JOIN {DbNames.EPYSL}..TechPackImage TPI ON TPI.TechPackID = TPM.TechPackID
+	                        WHERE 1=1 AND TPI.ImagePath NOT LIKE '%Chart%' {bookingNos}
+	                        GROUP BY BM.BookingNo, TPI.ImagePath
+
+	                        UNION 
+
+	                        SELECT BM.BookingNo, BCI.ImagePath, ImageType='BK'
+	                        FROM {DbNames.EPYSL}..SampleBookingMaster BM
+	                        INNER JOIN {DbNames.EPYSL}..SampleBookingChildImage BCI ON BCI.BookingID = BM.BookingID
+	                        WHERE 1=1 {bookingNos}
+	                        GROUP BY BM.BookingNo, BCI.ImagePath
+
+	                        UNION
+
+	                        SELECT BM.BookingNo, TPI.ImagePath, ImageType='TP'
+	                        FROM {DbNames.EPYSL}..SampleBookingMaster BM
+	                        INNER JOIN {DbNames.EPYSL}..TechPackMaster TPM ON TPM.StyleMasterID = BM.StyleMasterID
+	                        INNER JOIN {DbNames.EPYSL}..TechPackImage TPI ON TPI.TechPackID = TPM.TechPackID
+	                        WHERE 1=1 AND TPI.ImagePath NOT LIKE '%Chart%' {bookingNos}
+	                        GROUP BY BM.BookingNo, TPI.ImagePath
+                        ),
+                        IPath AS
+                        (
+	                        SELECT IPathF.BookingNo, ImagePath = ISNULL(IPathF.ImagePath,'')
+	                        FROM IPathF
+	                        WHERE ISNULL(ImagePath,'') <> '' {imageType}
+                        )
+                        SELECT * FROM IPath";
+            return sql;
+        }
     }
 }

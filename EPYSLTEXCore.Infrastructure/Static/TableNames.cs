@@ -847,6 +847,8 @@
 
         public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
         public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
+        public const string CONCEPT_PENDING_STATUS_HK = "T_ConceptPendingStatus_HK";
+
 
         #region Garments Table
         public const string SAMPLE_BOOKING_MASTER = "SampleBookingMaster";//Garments Table

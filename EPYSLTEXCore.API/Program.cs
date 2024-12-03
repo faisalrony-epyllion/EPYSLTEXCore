@@ -7,7 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
+using System.Reflection;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);

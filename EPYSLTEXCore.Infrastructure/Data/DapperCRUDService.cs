@@ -2,13 +2,14 @@
 using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.CustomeAttribute;
 using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Interfaces;
 using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Extensions.Configuration;
 using System.Collections;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using static Dapper.SqlMapper;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -17,15 +18,13 @@ namespace EPYSLTEXCore.Infrastructure.Data
         private readonly string _connectionString;
         public SqlConnection Connection { get; set; }
         public int UserCode { get; set; }
-        //private readonly ISignatureService _signatureService;
 
-        public DapperCRUDService(IConfiguration configuration/*, ISignatureService signatureService*/)
+        public DapperCRUDService(IConfiguration configuration)
         {
             this._configuration = configuration;
             this._connectionString = this._configuration.GetConnectionString("GmtConnection");
-            //_signatureService = signatureService;
             Connection = new SqlConnection(this._connectionString);
-            //_signatureService = signatureService;
+
         }
 
         public SqlConnection GetConnection(string connectionName = AppConstants.DB_CONNECTION)
@@ -101,7 +100,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-        public async Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param, CommandType commandType=CommandType.StoredProcedure)
+        public async Task<List<dynamic>> GetDynamicDataAsync(string query, SqlConnection connection, object param, CommandType commandType = CommandType.StoredProcedure)
         {
             try
             {
@@ -899,17 +898,13 @@ namespace EPYSLTEXCore.Infrastructure.Data
             var existingEntity = await Connection.QueryFirstOrDefaultAsync(selectQuery, new { Key = keyValue }, transaction);
 
             if (existingEntity == null)
-
             {
 
                 // Generate primary key for new entity
 
                 var result = await Connection.QueryAsync<dynamic>(
-
                     $"SELECT TOP 1 {keyPropertyName} AS ID FROM {tableName} ORDER BY {keyPropertyName} DESC",
-
                     transaction: transaction
-
                 ).ConfigureAwait(false);
 
                 //int newId = await _signatureService.GetMaxIdAsync(tableName);
@@ -929,25 +924,17 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 // Insert the new entity dynamically
 
                 string insertQuery = GenerateInsertQuery(entity, tableName);
-
                 await Connection.ExecuteAsync(insertQuery, entity, transaction);
-
                 keyValue = newId; // Refresh keyValue for foreign key assignment
-
             }
-
             else
-
             {
 
                 entity.GetType().GetProperty("UpdatedBy")?.SetValue(entity, UserCode);
-
                 entity.GetType().GetProperty("DateUpdated")?.SetValue(entity, DateTime.UtcNow);
 
                 // Update the existing entity dynamically
-
                 string updateQuery = GenerateUpdateQuery(entity, tableName, keyPropertyName);
-
                 await Connection.ExecuteAsync(updateQuery, entity, transaction);
 
             }
@@ -955,11 +942,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
             // Handle child entities
 
             var childProperties = entity.GetType()
-
                 .GetProperties()
-
                 .Where(prop => prop.GetCustomAttributes(typeof(ChildEntityAttribute), true).Any())
-
                 .ToList();
 
             foreach (var prop in childProperties)
@@ -1396,6 +1380,266 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
 
 
+
+
+
+        #region signature Methods
+
+
+        public async Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
+        {
+            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter);
+
+            if (signature == null)
+            {
+                signature = new Signatures
+                {
+                    Field = field,
+                    Dates = DateTime.Today,
+                    LastNumber = 1
+                };
+                await Connection.InsertAsync(signature);
+            }
+            else
+            {
+                signature.LastNumber++;
+                await Connection.UpdateAsync(signature);
+            }
+
+            return (int)signature.LastNumber;
+        }
+
+        public async Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
+        {
+            if (increment == 0) return 0;
+            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter);
+
+            if (signature == null)
+            {
+                signature = new Signatures
+                {
+                    Field = field,
+                    Dates = DateTime.Today,
+                    LastNumber = increment
+                };
+                await Connection.InsertAsync(signature);
+            }
+            else
+            {
+                signature.LastNumber += increment;
+                await Connection.UpdateAsync(signature);
+            }
+
+            return (int)(signature.LastNumber - increment + 1);
+        }
+
+        public async Task<int> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
+        {
+            var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter);
+
+            if (signature == null)
+            {
+                signature = new Signatures
+                {
+                    Field = field,
+                    Dates = DateTime.Today,
+                    CompanyId = companyId.ToString(),
+                    LastNumber = 1
+                };
+                await Connection.InsertAsync(signature);
+            }
+            else
+            {
+                signature.LastNumber++;
+                await Connection.UpdateAsync(signature);
+            }
+
+            var datePart = DateTime.Now.ToString("yyMMdd");
+            var numberPart = signature.LastNumber.ToString(padWith);
+            return Convert.ToInt32($"{companyId}{datePart}{numberPart}");
+        }
+
+        private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
+        {
+            string query = @"SELECT TOP 1 * FROM Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
+            var parameters = new
+            {
+                Field = field,
+                CompanyId = companyId.ToString(),
+                SiteId = siteId.ToString()
+            };
+
+            switch (repeatAfter)
+            {
+                case RepeatAfterEnum.EveryYear:
+                    query += " AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryMonth:
+                    query += " AND MONTH(Dates) = MONTH(GETDATE()) AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryDay:
+                    query += " AND CAST(Dates AS DATE) = CAST(GETDATE() AS DATE)";
+                    break;
+            }
+
+            try
+            {
+                await Connection.OpenAsync();
+                var records = await Connection.QueryFirstOrDefaultAsync(query, parameters);
+                return records.ToList();
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                Connection.Close();
+            }
+
+
+        }
+
+
+        #endregion
+
+
+        #region Dynamic Table Save
+        // Get Column Names from Schema
+        private async Task<List<string>> GetColumnNamesAsync(string tableName, IDbTransaction transaction = null)
+        {
+            var sql = @"
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = @TableName;";
+            return (await Connection.QueryAsync<string>(sql, new { TableName = tableName }, transaction)).ToList();
+        }
+
+        // Add or Insert
+        public async Task<int> AddDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null)
+        {
+            var columns = await GetColumnNamesAsync(tableName, transaction);
+
+            // Use reflection to extract properties and their values
+            var data = dataObject.GetType()
+                                 .GetProperties()
+                                 .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+                                 .ToDictionary(p => p.Name, p => p.GetValue(dataObject));
+
+            if (!data.Any())
+            {
+                throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+            }
+
+            var columnNames = string.Join(", ", data.Keys);
+            var parameters = string.Join(", ", data.Keys.Select(x => "@" + x));
+            var sql = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameters});";
+
+            return await Connection.ExecuteAsync(sql, data, transaction);
+        }
+
+        public async Task<int> UpdateDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
+        {
+            var columns = await GetColumnNamesAsync(tableName, transaction);
+
+            // Use reflection to extract properties and their values
+            var data = dataObject.GetType()
+                                 .GetProperties()
+                                 .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+                                 .ToDictionary(p => p.Name, p => p.GetValue(dataObject));
+
+            if (!data.Any())
+            {
+                throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+            }
+
+            // Separate key columns and update columns
+            var keyData = primaryKeyColumns
+                .ToDictionary(pk => pk, pk => data.ContainsKey(pk) ? data[pk] : throw new ArgumentException($"Primary key '{pk}' is missing in the object."));
+
+            var updateColumns = data.Keys
+                .Except(primaryKeyColumns, StringComparer.OrdinalIgnoreCase)
+                .Select(col => $"{col} = @{col}");
+
+            var setClause = string.Join(", ", updateColumns);
+            var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
+
+            var sql = $"UPDATE {tableName} SET {setClause} WHERE {whereClause};";
+
+            return await Connection.ExecuteAsync(sql, data, transaction);
+        }
+        public async Task<int> DeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
+        {
+            var columns = await GetColumnNamesAsync(tableName, transaction);
+
+            // Use reflection to extract properties and their values
+            var data = dataObject.GetType()
+                                 .GetProperties()
+                                 .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+                                 .ToDictionary(p => p.Name, p => p.GetValue(dataObject));
+
+            if (!data.Any())
+            {
+                throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+            }
+
+            // Ensure primary key values exist in the object
+            foreach (var pk in primaryKeyColumns)
+            {
+                if (!data.ContainsKey(pk))
+                {
+                    throw new ArgumentException($"Primary key '{pk}' is missing in the object.");
+                }
+            }
+
+            var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
+            var sql = $"DELETE FROM {tableName} WHERE {whereClause};";
+
+            return await Connection.ExecuteAsync(sql, data, transaction);
+        }
+
+        #endregion
+
+
+        #region Table Max Number without signature table
+        public async Task<int> GetUniqueCodeWithoutSignatureAsync(
+            IDbConnection connection,
+            IDbTransaction transaction,
+            string tableName,
+            string fieldName)
+        {
+            // Call the main method with an empty prefix
+            return await GetUniqueCodeWithoutSignatureAsync(connection, transaction, tableName, fieldName, "");
+        }
+
+        public async Task<int> GetUniqueCodeWithoutSignatureAsync(
+            IDbConnection connection,
+            IDbTransaction transaction,
+            string tableName,
+            string fieldName,
+            string prefix)
+        {
+            try
+            {
+                // Define stored procedure name and parameters
+                string storedProcedure = "spGetIDWithoutSignature";
+
+                // Execute stored procedure
+                var result = await connection.QueryAsync<int>(
+                    storedProcedure,
+                    new { TableName = tableName, FieldName = fieldName, Prefix = prefix },
+                    transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                // Retrieve and return the unique code
+                return result.FirstOrDefault(); // Returns 0 if no rows are found
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error while fetching unique code.", ex);
+            }
+        }
+        #endregion
 
     }
 }

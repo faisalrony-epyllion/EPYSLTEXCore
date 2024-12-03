@@ -1,5 +1,4 @@
-﻿using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEXCore.Application.Entities;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

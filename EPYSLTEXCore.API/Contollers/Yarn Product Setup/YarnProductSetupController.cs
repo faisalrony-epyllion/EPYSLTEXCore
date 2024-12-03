@@ -1,15 +1,13 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
+using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
-using System.Text.Json;
 
 namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
 {
@@ -48,6 +46,7 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
             YarnProductSetup model = JsonConvert.DeserializeObject<YarnProductSetup>(Convert.ToString(entity));
             var yarnProductSetupModel = await _dapperCRUDService.SaveEntityAsync(model);
             return Ok(yarnProductSetupModel.SetupMasterID);
+          //  return Ok();
         }
 
         //[Route("ewo-list/{buyerIds}")]
@@ -66,5 +65,16 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
             var records = await _yarnProductSetupService.GetAllFiberType(paginationInfo);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
         }
+
+        [Route("GetChildBySetupMasterID/{setupMasterID}")]
+        public async Task<IActionResult> GetAlYarnProductSetupChildBySetupMasterID( int setupMasterID)
+        {
+
+            
+            var records = await _yarnProductSetupService.GetAlYarnProductSetupChildBySetupMasterID(setupMasterID);
+            return Ok(records);
+        }
+
+
     }
 }

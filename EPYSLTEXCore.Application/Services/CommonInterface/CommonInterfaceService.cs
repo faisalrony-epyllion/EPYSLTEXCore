@@ -1,9 +1,7 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEX.Core.Entities.Tex;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEXCore.Application.DTO;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
@@ -13,14 +11,15 @@ namespace EPYSLTEX.Infrastructure.Services
     public class CommonInterfaceService : ICommonInterfaceService
     {
         private readonly IDapperCRUDService<CommonInterfaceMaster> _service;
+        
         private readonly IConfiguration _configuration;
         private readonly SqlConnection _connection = null;
 
-        public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service, IConfiguration configuration)
+        public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service,  IConfiguration configuration)
         {
-            _configuration = configuration;
+            _configuration = configuration;         
             _service = service;
-            _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION)); ;
+           _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION)); ;
         }
 
       
@@ -70,19 +69,30 @@ namespace EPYSLTEX.Infrastructure.Services
             var query = $"Select * From CommonInterfaceMaster Where MenuId = {menuId}";
             return await _service.GetFirstOrDefaultAsync(query);
         }
-
-        public async Task<List<dynamic>> GetPagedAsync(string query, PaginationInfo paginationInfo)
+        public async Task<dynamic> GetFinderData(string sqlQuery,string conKey, string primaryKeyColumn,PaginationInfo paginationInfo)
         {
-            var orderBy = string.IsNullOrEmpty(paginationInfo.OrderBy) ? "" : paginationInfo.OrderBy;
-
-            string sql = $@"
-                {query}
+            var query = sqlQuery;
+            string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By LEN({primaryKeyColumn}), {primaryKeyColumn} ASC" : paginationInfo.OrderBy;
+            
+              query = $@"
+                 {sqlQuery}
                 {paginationInfo.FilterBy}
                 {orderBy}
-                {paginationInfo.OrderBy}";
-
-            return await _service.GetDynamicDataAsync(sql);
+                {paginationInfo.PageBy}";
+           
+            SqlConnection conn =  new SqlConnection(_configuration.GetConnectionString(conKey));
+          
+            var records = await _service.GetDynamicDataAsync(query,conn);
+            
+            return records;
         }
+        public async Task<CommonInterfaceMaster> GeCommonInterfaceChildAsync(int menuId)
+        {
+            var query = $"Select * From CommonInterfaceChild Where MenuId = {menuId}";
+            return await _service.GetFirstOrDefaultAsync(query);
+        }
+        
+       
 
         public async Task<int> ExecuteAsync(string query, object param)
         {

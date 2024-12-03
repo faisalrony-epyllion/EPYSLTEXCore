@@ -260,6 +260,7 @@ function getMenus() {
     
         .then(function (response) {
             generateMenu(response.data);
+       
             $(".sidebar-menu").append(template);
             $(".sidebar-menu").tree();
         })
@@ -267,19 +268,19 @@ function getMenus() {
 }
 
 function generateMenu(menuList) {
-
+    
     $.each(menuList, function (i, item) {
-        if (!item.childs.length) {
-            template += '<li><a href="#!" class="nav-link" data-report-id="' + item.reportId + '" data-has-external-report="' + item.hasExternalReport + '"><i class="nav-icon far fa-dot-circle"></i><p title="' + item.node_Text + '">' + item.node_Text + '</p></a></li>';
+        if (!item.Childs.length) {
+            template += '<li><a href="#!" class="nav-link" data-report-id="' + item.ReportId + '" data-has-external-report="' + item.HasExternalReport + '"><i class="nav-icon far fa-dot-circle"></i><p title="' + item.Node_Text + '">' + item.Node_Text + '</p></a></li>';
             activeMenu = false;
             return true;
         }
         else {
-            activeMenu = item.menuId == 509 ? true : false;
+            activeMenu = item.MenuId == 509 ? true : false;
             var active = activeMenu ? "active" : "";
             template += '<li class="nav-item' + active + '">';
             template += '<a href="#" class="nav-link">'   
-                + '<i class="nav-icon fa fa-circle"></i><p>' + item.node_Text + '<i class="right fa fa-angle-left"></i></p>'            
+                + '<i class="nav-icon fa fa-circle"></i><p>' + item.Node_Text + '<i class="right fa fa-angle-left"></i></p>'            
                 + '</a>';
             template += '<ul class="nav nav-treeview treeview-menu">';
             activeMenu = false;
@@ -287,7 +288,7 @@ function generateMenu(menuList) {
 
         }
         
-        generateMenu(item.childs);
+        generateMenu(item.Childs);
         template += '</ul></li>';
     });
 }

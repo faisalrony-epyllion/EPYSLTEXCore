@@ -1,17 +1,9 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
-using EPYSLTEXCore.Application.Interfaces.YarnProductSetup;
+﻿using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Services
 {
@@ -37,7 +29,7 @@ namespace EPYSLTEXCore.Application.Services
         }
 
   
-        public async Task<List<YarnProductSetupFinder>> GetAllFiberType(PaginationInfo paginationInfo)
+        public async Task<List<YarnProductSetup>> GetAllFiberType(PaginationInfo paginationInfo)
         {
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By LEN(FiberType), FiberType ASC" : paginationInfo.OrderBy;
 
@@ -53,10 +45,24 @@ namespace EPYSLTEXCore.Application.Services
                 {paginationInfo.PageBy}";
 
 
-            return await _gmtService.GetDataAsync<YarnProductSetupFinder>(query);
+            return await _gmtService.GetDataAsync<YarnProductSetup>(query);
+
+        }
+        public async Task<List<YarnProductSetupChild>> GetAlYarnProductSetupChildBySetupMasterID(int setupMasterID)
+        {
+            
+
+            var query =@"Select SetupChildID,SetupMasterID,BlendTypeID,YarnTypeID,ProgramID,SubProgramID,CertificationsID,TechnicalParameterID,CompositionsID,ShadeID,ManufacturingLineID,
+                        ManufacturingProcessID,ManufacturingSubProcessID,YarnColorID,ColorGradeID  
+                            From YarnProductSetupChild  where SetupMasterID=@SetupMasterID";
+
+
+          
+
+            return await _gmtService.GetDataAsync<YarnProductSetupChild>(query, new { setupMasterID });
 
         }
 
-        
+       
     }
 }

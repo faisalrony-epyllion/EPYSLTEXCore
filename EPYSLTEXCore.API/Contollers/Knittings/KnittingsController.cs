@@ -1,8 +1,8 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;

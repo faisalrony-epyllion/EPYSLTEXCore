@@ -1,9 +1,9 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEX.Core.Interfaces.Repositories;
+
 using EPYSLTEX.Core.Services;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using System.Data.Entity;
 using System.Data.SqlClient;
 
@@ -12,14 +12,14 @@ namespace EPYSLTEX.Infrastructure.Services
     public class LoginHistoryService : ILoginHistoryService
     {
         private readonly IDapperCRUDService<LoginHistory> _service;
-        private readonly ISignatureRepository _signatureRepository;
+        //private readonly ISignatureService _signatureRepository;
         private readonly SqlConnection _connection;
 
         public LoginHistoryService(IDapperCRUDService<LoginHistory> service
-           , ISignatureRepository signatureRepository)
+          /* , ISignatureService signatureRepository*/)
         {
             _service = service;
-            _signatureRepository = signatureRepository;
+           // _signatureRepository = signatureRepository;
             _connection = service.Connection;
         }
 
@@ -32,7 +32,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 transaction = _connection.BeginTransaction();
                 if (entity.EntityState == EntityState.Added)
                 {
-                    entity.LoginHistoryID = await _signatureRepository.GetMaxIdAsync(TableNames.LOGIN_HISTORY);
+                   // entity.LoginHistoryID = await _signatureRepository.GetMaxIdAsync(TableNames.LOGIN_HISTORY);
                 }
                 await _service.SaveSingleAsync(entity, transaction);
                 transaction.Commit();

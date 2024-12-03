@@ -1,24 +1,18 @@
 ﻿using EPYSL.Encription;
-using EPYSLTEX.Core.Entities.Gmt;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.API.Models.Security;
-using EPYSLTEXCore.Application.Entities;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using EPYSLTEXCore.Infrastructure.Entities;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.HttpSys;
 using System.Net;
 using System.Security.Claims;
-using System.Data.Entity;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEXCore.Infrastructure.Static;
-using Microsoft.AspNetCore.Http;
-using NLog.Web.LayoutRenderers;
 
 namespace EPYSLTEXCore.API.Contollers
 {
+
     public class AccountController : BaseController
     {
         private readonly IUserService _userService;
@@ -40,15 +34,7 @@ namespace EPYSLTEXCore.API.Contollers
             _deSerializeJwtToken = deSerializeJwtToken;
         }
 
-        [HttpGet, AllowAnonymous]
-        public ActionResult Login(string returnUrl)
-        {
-            if (User.Identity.IsAuthenticated) return RedirectToAction(actionName: "Index", controllerName: "Dashboard");
-            ViewBag.ReturnUrl = returnUrl;
-
-            return View();
-        }
-
+   
         [HttpPost]
         public async Task<ActionResult> Login(LoginBindingModel model)
         {
@@ -82,7 +68,7 @@ namespace EPYSLTEXCore.API.Contollers
             //loginHistory.EntityState = EntityState.Added;
             //await _loginHistoryService.SaveAsync(loginHistory);
 
-            return Json(new { statusCode = HttpStatusCode.OK, accessToken = token });
+            return Ok(new { statusCode = HttpStatusCode.OK, accessToken = token });
 
         }
         [HttpGet]
@@ -101,11 +87,23 @@ namespace EPYSLTEXCore.API.Contollers
             //}
             #endregion
 
-            //AppUser = null;
+            
 
             return RedirectToAction("Login");
         }
+        public ActionResult ChangePassword()
+        {
+            return PartialView("~/Views/Account/_ChangePassword.cshtml");
+        }
 
+        [HttpGet, AllowAnonymous]
+        public ActionResult Login(string returnUrl)
+        {
+            if (User.Identity.IsAuthenticated) return RedirectToAction(actionName: "Index", controllerName: "Dashboard");
+            ViewBag.ReturnUrl = returnUrl;
+
+            return View("~/Views/Account/Login.cshtml");
+        }
         private LoginHistory GetLoginHistory(int userCode)
         {
             LoginHistory loginHistory = new LoginHistory();
@@ -128,5 +126,57 @@ namespace EPYSLTEXCore.API.Contollers
         }
 
 
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword(ChangePasswordBindingModel model)
+        {
+            LoginUser user = await _userService.FindUserForLoginAsync(AppUser.UserName);
+
+            if (model.NewPassword == user.UserName)
+                return Ok(new { message = "Username And New Password Cannot be Same", StatusCode = 404 });
+
+            if (user.IsSuperUser)
+                return Ok(new { message = "Contact DB Administrator for updating Password", StatusCode = 404 });
+            try
+            {
+
+                if (model.IsMailPassword == 1)
+                {
+                    var password = _encryption.Encrypt(model.OldPassword, AppUser.UserName);
+
+                    if (password != user.EmailPassword)
+                        return Ok(new { message = "Old password doesn't match", StatusCode = 404 });
+
+                    if (model.NewPassword != model.ConfirmPassword)
+                        return Ok(new { message = "New password and Confirm Password doesn't match", StatusCode = 404 });
+
+                    if (model.NewPassword == model.OldPassword)
+                        return Ok(new { message = "New password can't be same as Old Password", StatusCode = 404 });
+
+                    await _userService.UpdateEmailPasswordAsync(AppUser.UserCode, _encryption.Encrypt(model.NewPassword, AppUser.UserName));
+                    return Ok(new { message = "Email Password Updated Successfully", StatusCode = 200 });
+                }
+                else
+                {
+                    var password = _encryption.Encrypt(model.OldPassword, AppUser.UserName);
+
+                    if (password != user.Password)
+                        return Ok(new { message = "Old password doesn't match", StatusCode = 404 });
+
+                    if (model.NewPassword != model.ConfirmPassword)
+                        return Ok(new { message = "New password and Confirm Password doesn't match", StatusCode = 404 });
+
+                    if (model.NewPassword == model.OldPassword)
+                        return Ok(new { message = "New password can't be same as Old Password", StatusCode = 404 });
+
+                    await _userService.UpdateUserPasswordAsync(AppUser.UserCode, _encryption.Encrypt(model.NewPassword, AppUser.UserName));
+                    return Ok(new { message = "User Password Updated Successfully", StatusCode = 200 });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { message = "Password Updating Failed due to  "+ ex.Message, StatusCode = 404 });
+            }
+        }
     }
 }

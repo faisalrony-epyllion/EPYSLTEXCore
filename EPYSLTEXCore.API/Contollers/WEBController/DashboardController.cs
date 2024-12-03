@@ -19,7 +19,8 @@ namespace EPYSLTEXCore.API.Contollers.WEBController
 
             ViewBag.ProfilePic = "/images/user.png";
             ViewBag.EmployeeName =  AppUser.Name;
-             return View();
+            ViewBag.ViewBag =  AppUser.IsSuperUser;
+            return View();
         }
     }
 }

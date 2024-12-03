@@ -1,6 +1,5 @@
 ﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEX.Core.Interfaces.Services
 {
@@ -191,7 +190,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
         Task<IList<Select2OptionModel>> GetCDASuppliersAsync(int SubGroupId);
 
         Task<IList<Select2OptionModel>> GetRawCDAItemByTypeAsync(int particularId);
-        Task<IList<Select2OptionModel>> GetRawCDAItemByTypeAsyncFinder(int particularId, PaginationInfo paginationInfo);
+        Task<IList<Select2OptionModel>> GetRawCDAItemByTypeAsyncFinder(int particularId, EPYSLTEXCore.Infrastructure.Entities.PaginationInfo paginationInfo);
         Task<IList<Select2OptionModel>> GetRawUnitByType(int rackId);
 
         Task<IList<Select2OptionModel>> GetAdditionalBookingAsync();
@@ -243,7 +242,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
         Task<IList<Select2OptionModel>> GetColorListAsync(string filterQuery);
 
         Task<IList<Select2OptionModel>> GetShadeListAsync(string filterQuery);
-        Task<IList<YarnProductSetupFinder>> GetAllFiberType();
+        Task<IList<YarnProductSetup>> GetAllFiberType();
         
     }
 }

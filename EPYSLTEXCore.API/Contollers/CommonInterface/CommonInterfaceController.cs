@@ -1,14 +1,9 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Application.DTO;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using EPYSLTEXCore.Infrastructure.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EPYSLTEXCore.API.Contollers.CommonInterface
 {
@@ -20,9 +15,11 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
        // private readonly ISqlQueryRepository<BaseDTO> _sqlQueryRepository;
         private readonly IUserService _userService;
         private readonly ICommonInterfaceService _service;
+        private readonly IConfiguration _configuration;
         public CommonInterfaceController(IUserService userService,  ICommonInterfaceService service
         ) : base(userService)
         {
+             
             _service = service;
             _userService = userService;
            // _sqlQueryRepository = sqlQueryRepository;
@@ -43,11 +40,30 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         [Route("list")]
         public async Task<IActionResult> GetList(int menuId)
         {
-            //var interfaceInfo = await _service.GetMasterDetailsAsync(menuId);
-            //var paginationInfo = new PaginationInfo();
-            //var records = await _service.GetPagedAsync(interfaceInfo.SelectSql, paginationInfo);
-            //return Ok(new TableResponseModel(records, paginationInfo.GridType));
+             var menuData = await _service.GetConfigurationAsync(menuId);
+           // return Ok(JsonSerializer.Serialize(menuData, options));
             return Ok();
+        }
+
+
+   
+        [Route("finderdata/{menuId}")]
+        public async Task<IActionResult> GetFinderData(int menuId)
+        {
+
+            var paginationInfo = Request.GetPaginationInfo();
+            CommonInterfaceMaster commonInterfaceMaster = await _service.GetConfigurationAsync(menuId);
+            string connKey = commonInterfaceMaster.ConName;
+            CommonInterfaceChild commonInterfaceChild = commonInterfaceMaster.Childs.Where(p=>p.FinderSql!=null).FirstOrDefault();
+            if (commonInterfaceChild != null && !string.IsNullOrWhiteSpace(connKey))
+            {
+                string finderSql = commonInterfaceChild.FinderSql;
+               var records = await _service.GetFinderData(finderSql, connKey, commonInterfaceMaster.PrimaryKeyColumn, paginationInfo);
+                return Ok(new TableResponseModel(records, paginationInfo.GridType));
+            }
+             
+           return Ok();
+           
         }
         [Route("details/{menuId}/{id}")]
         public async Task<IActionResult> GetCommonInterfaceDetails(int menuId, int id)

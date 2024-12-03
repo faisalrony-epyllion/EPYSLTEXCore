@@ -1,13 +1,13 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
-using EPYSLEMSCore.Infrastructure.CustomeAttribute;
+using EPYSLTEXCore.Infrastructure.CustomeAttribute;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Collections;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
-
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -16,9 +16,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
         private readonly string _connectionString;
         public SqlConnection Connection { get; set; }
         public int UserCode { get; set; }
-        //private readonly ISignatureRepository _signatureRepository;
+        //private readonly ISignatureService _signatureRepository;
 
-        public DapperCRUDService(IConfiguration configuration)
+        public DapperCRUDService(IConfiguration configuration/*, ISignatureService signatureRepository*/)
         {
             this._configuration = configuration;
             this._connectionString = this._configuration.GetConnectionString("GmtConnection");
@@ -892,9 +892,11 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                 ).ConfigureAwait(false);
 
+                //int newId = await _signatureRepository.GetMaxIdAsync(tableName);
+
                 int newId = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
 
-                newId++; // Increment the ID for the new entity
+                //newId++; // Increment the ID for the new entity
 
                 // Set the new ID value on the entity
 

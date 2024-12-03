@@ -1,11 +1,10 @@
 ﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Gmt;
-using EPYSLTEXCore.Infrastructure.Data;
-using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEX.Core.Interfaces.Repositories;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.Application.DTO;
-using EPYSLTEXCore.Application.Entities;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Static;
 namespace EPYSLTEXCore.Application.Services.Select
 {
     public class Select2Service:ISelect2Service
@@ -256,10 +255,10 @@ namespace EPYSLTEXCore.Application.Services.Select
             var query = $@"{CommonQueries.GetEntityTypesByEntityTypeName(entityTypeName)}";
             return await _gmtService.GetDataAsync<Select2OptionModel>(query);
         }
-        public async Task<IList<YarnProductSetupFinder>> GetAllFiberType()
+        public async Task<IList<YarnProductSetup>> GetAllFiberType()
         {
             var query = $@"{CommonQueries.GetAllFiberType()}";
-            return await _gmtService.GetDataAsync<YarnProductSetupFinder>(query);
+            return await _gmtService.GetDataAsync<YarnProductSetup>(query);
         }
 
         Task<IList<Select2OptionModel>> ISelect2Service.GetExportLCForTextileAsync()
@@ -397,7 +396,7 @@ namespace EPYSLTEXCore.Application.Services.Select
             throw new NotImplementedException();
         }
 
-        Task<IList<Select2OptionModel>> ISelect2Service.GetMachineByContactKnittingTypeGaugeDiaAsyncFinder(int MCSubClassID, int BrandID, int ContactID, int MachineKnittingTypeID, int MachineDia, PaginationInfo paginationInfo)
+        Task<IList<Select2OptionModel>> ISelect2Service.GetMachineByContactKnittingTypeGaugeDiaAsyncFinder(int MCSubClassID, int BrandID, int ContactID, int MachineKnittingTypeID, int MachineDia, Infrastructure.Entities.PaginationInfo paginationInfo)
         {
             throw new NotImplementedException();
         }
@@ -482,7 +481,7 @@ namespace EPYSLTEXCore.Application.Services.Select
             throw new NotImplementedException();
         }
 
-        Task<IList<Select2OptionModel>> ISelect2Service.GetRawCDAItemByTypeAsyncFinder(int particularId, PaginationInfo paginationInfo)
+        Task<IList<Select2OptionModel>> ISelect2Service.GetRawCDAItemByTypeAsyncFinder(int particularId, Infrastructure.Entities.PaginationInfo paginationInfo)
         {
             throw new NotImplementedException();
         }

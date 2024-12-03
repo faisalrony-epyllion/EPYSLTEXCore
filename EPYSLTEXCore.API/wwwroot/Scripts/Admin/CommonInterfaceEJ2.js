@@ -94,13 +94,14 @@
             .catch(showResponseError);
     }
     async function initChildGrid(data) {
-
+      
         if (interfaceConfigs.HasGrid) {
         
             if (interfaceConfigs.ApiUrl.length == 0) {
                 toastr.error("Api URL is missing.");
                 return;
             }
+          
             var allSelectListObj = await executeSelectApis();
             if ($tblChildEl) $tblChildEl.destroy();
             var columns = [];
@@ -220,6 +221,7 @@
         return objList;
     }
     function generateParams(columnName, dataObj) {
+      
         var paramArray = [];
         var obj = interfaceConfigs.Childs.find(x => x.ColumnName = columnName);
         if (obj) {
@@ -384,6 +386,7 @@
         return null;
     }
     function getGridEditSettings() {
+      
         var obj = {
             allowAdding: interfaceConfigs.IsInsertAllow,
             allowEditing: interfaceConfigs.IsUpdateAllow,
@@ -423,7 +426,7 @@
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" readonly />                                        
-                                          ${adNew(interfaceConfigs.IsInsertAllow, menuId, value.ChildID)}                  
+                                          ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID)}                  
                                        
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
@@ -532,9 +535,9 @@
         return colName;
     }
 
-    function adNew(IsInsertAllow, menuId, childID) {
+    function adNew(IsAllowAddNew, menuId, childID) {
        
-        if (IsInsertAllow) {
+        if (IsAllowAddNew) {
             return `<span class="input-group-btn">
                         <button type="button" class="btn btn-success ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     </span>`;
@@ -571,6 +574,7 @@
         });
     }
     function openSingleSelectFinder() {
+      
         var finder = new commonFinder({
             title: "Select " + selectedChild.Label,
             pageId: "divCommonInterface-" + menuId,
@@ -586,21 +590,46 @@
             lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
-
+              
                 finder.hideModal();
                 var data = res.rowData;                 
                 for (var p in data) {
-                    $formEl.find("#" + p).val(data[p]).trigger("change");
+
+                    $formEl.find("#" + p).is('select') ? $formEl.find("#" + p).val(data[p]).trigger("change") : $formEl.find("#" + p).val(data[p]);
                 }
                 //setFormData($formEl, data);
                 //$formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
                 //$formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
                 //$formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
-               // loadGrid(generateParams(selectedChild.ColumnName, data));
-                if (data.Childs) {
-                    initChildGrid(data.Childs);
-                    $tblChildEl.bootstrapTable('load', data.Childs);
-                }
+              
+          
+                var finderElement = interfaceConfigs.Childs.filter(function (a) {
+                    return a.FinderApiUrl != null && a.FinderApiUrl.length > 0;
+                });
+                var selectApiUrl = finderElement.length > 0 ? finderElement[0].SelectApiUrl : "";
+                var primaryKeyValue = data[interfaceConfigs.PrimaryKeyColumn]
+                selectApiUrl = selectApiUrl + primaryKeyValue;
+                axios.get(selectApiUrl)
+                    .then(function (response) {
+                        masterData = response.data;
+                        if (masterData.length === 0) {
+                            
+                            //initChildGrid([]);
+                           // toastr.error("You must add an empty child item in your api.");
+                            return;
+                        }
+                        childObject = masterData;
+                        generateChildGrid();
+                        initChildGrid(childObject);
+                    })
+                    .catch(showResponseError);
+               // initChildGrid(interfaceConfigs.Childs);
+
+              //  loadGrid(generateParams(selectedChild.ColumnName, data));
+                //if (data.Childs) {
+                //    initChildGrid(data.Childs);
+                //    $tblChildEl.bootstrapTable('load', data.Childs);
+                //}
             }
         });
         finder.showModal();
@@ -852,13 +881,16 @@
 
     // #region Save
     function saveMaster(e) {
-   
+     
         e.preventDefault();
-       // if (!validateMasterForm()) return;
+        //if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
-        var data = formDataToJson($formEl.serializeArray());
+      
+        // var data =   formDataToJson($formEl.serializeArray()) ;
+        /*i f IsAllowAddNew=false bind only child not parent */
+        var data = interfaceConfigs.IsAllowAddNew ? formDataToJson($formEl.serializeArray()) : {};
          if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
          if ($tblChildEl  ) data["Childs"] = $tblChildEl.getCurrentViewRecords();
          
@@ -885,8 +917,9 @@
     }
 
     function validateMasterForm() {
+         
         initializeValidation($formEl, constraints);
-
+     
         if (!isValidForm($formEl, constraints)) {
             toastr.error("Please correct all validation ")
             return false;
@@ -898,6 +931,7 @@
     }
 
     function saveChild() {
+     
         if (!validateChildForm()) {
             return;
         }

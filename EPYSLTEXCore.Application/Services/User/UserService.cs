@@ -1,8 +1,7 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Entities.Gmt;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEXCore.Application.Entities;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using System.Data.SqlClient;
 
@@ -120,12 +119,20 @@ namespace EPYSLTEX.Infrastructure.Services
             }
         }
 
-        public async Task<int> UpdatePasswordAsync(int userCode, string password)
+        public async Task<int> UpdateUserPasswordAsync(int userCode, string password)
         {
             var query = $@"
             Update LoginUser Set Password = '{password}' Where UserCode = @userCode";
 
             return await _service.ExecuteAsync(query, new { userCode});
+        }
+
+        public async Task<int> UpdateEmailPasswordAsync(int userCode, string password)
+        {
+            var query = $@"
+            Update LoginUser Set EmailPassword = '{password}' Where UserCode = @userCode";
+
+            return await _service.ExecuteAsync(query, new { userCode });
         }
     }
 }

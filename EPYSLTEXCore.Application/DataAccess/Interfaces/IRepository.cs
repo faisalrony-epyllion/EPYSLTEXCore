@@ -1,6 +1,4 @@
-﻿using EPYSLTEX.Core.Entities;
-using EPYSLTEXCore.Core.Entities;
-using System.Collections.Generic;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEX.Core.Interfaces.Repositories
 {

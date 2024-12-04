@@ -103,6 +103,14 @@ namespace EPYSLTEX.Infrastructure.Services
             return records;
         }
 
+        public async Task<dynamic> GetSelectedItemFinderData(string sqlQuery, string conKey,object param)
+        {
+            SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
+             
+            var records = await _service.GetDynamicDataAsync(sqlQuery, conn, param);
+
+            return records;
+        }
         public async Task<dynamic> GetSelectedItemFinderData(string sqlQuery, string conKey)
         {
             SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));

@@ -8,6 +8,7 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Booking;
 using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces.RND;
+using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.General;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
@@ -19,7 +20,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.Entity;
-namespace EPYSLTEXCore.API.Contollers.Booking
+namespace EPYSLTEXCore.API.Contollers.RND
 {
 
     [Route("api/rnd-free-concept")]
@@ -31,7 +32,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         private readonly IFreeConceptService _service;
         private readonly IMapper _mapper;
         private readonly ICommonHelperService _commonService;
-        private readonly ISignatureRepository _signatureRepository;
+        private readonly IDapperCRUDService<FreeConceptMaster> _signatureRepository;
         private bool isModified;
         //IUserService _userService;
 
@@ -39,7 +40,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             , IGmtEfRepository<ItemSegmentValue> itemSegmentRepository
             , IFreeConceptService freeConceptService
             , ICommonHelperService commonService
-            , ISignatureRepository signatureRepository
+            , IDapperCRUDService<FreeConceptMaster> signatureRepository
             , IMapper mapper) : base(userService)
         {
             _itemSegmentNameRepository = itemSegmentNameRepository;

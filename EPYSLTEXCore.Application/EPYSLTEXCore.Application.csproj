@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\Repositories\ISignatureRepository.cs" />
     <Compile Remove="Services\User\LoginHistoryService.cs" />
   </ItemGroup>
 

@@ -365,4 +365,22 @@
         public const string CONCEPT_STATUS = "Concept Status";
         public const string CONFIRMATION_STATUS = "Confirmation Status";
     }
+    public static class PRFromName
+    {
+        public const string CONCEPT = "Concept";
+        public const string BDS = "BDS";
+        public const string BULK_BOOKING = "Bulk Booking";
+        public const string PROJECTION_YARN_BOOKING = "Projection Yarn Booking";
+        public const string FABRIC_PROJECTION_YARN_BOOKING = "Fabric Projection Yarn Booking";
+    }
+
+    public static class PRFrom
+    {
+        public const int CONCEPT = 1;
+        public const int BDS = 2;
+        public const int BULK_BOOKING = 3;
+        public const int PROJECTION_YARN_BOOKING = 4;
+        public const int FABRIC_PROJECTION_YARN_BOOKING = 5;
+    }
+
 }

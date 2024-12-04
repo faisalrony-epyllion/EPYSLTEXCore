@@ -2,6 +2,9 @@
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Infrastructure.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
@@ -18,7 +21,8 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
     public class YarnPRController : ApiBaseController
     {
         private readonly IYarnPRService _service;
-        private readonly ItemMasterRepository<YarnPRChild> _itemMasterRepository;
+        IDapperCRUDService<YarnPRChild> _itemMasterService;
+        
         //private readonly IEmailService _emailService;
         //private readonly IReportingService _reportingService;
         private readonly ICommonHelperService _commonService;
@@ -26,13 +30,13 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
         private static Logger _logger;
 
         public YarnPRController(IUserService userService, IYarnPRService service
-            , ItemMasterRepository<YarnPRChild> itemMasterRepository
+            , IDapperCRUDService<YarnPRChild> itemMasterService
 
         , ICommonHelperService commonService
             , IFreeConceptMRService serviceMR) : base(userService)
         {
             _service = service;
-            _itemMasterRepository = itemMasterRepository;
+            _itemMasterService = itemMasterService;
             _logger = LogManager.GetCurrentClassLogger();
             _commonService = commonService;
             _serviceMR = serviceMR;
@@ -277,7 +281,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
             //25-8-22
 
             entity.EntityState = EntityState.Modified;
-            entity.Childs.();
+            entity.Childs.SetUnchanged();
             foreach (YarnPRChild item in model.Childs)
             {
                 YarnPRChild yPRC = entity.Childs.FirstOrDefault(i => i.YarnPRChildID == item.YarnPRChildID && i.FPRCompanyID != item.FPRCompanyID);
@@ -396,71 +400,71 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
 
                 #region Send Mail
 
-                string EditType = entity.RevisionNo > 0 ? "Revise " : "";
-                string conceptNoTextSubject = "R&D Concept No";
-                string conceptNoTextBody = "concept no";
+                //string EditType = entity.RevisionNo > 0 ? "Revise " : "";
+                //string conceptNoTextSubject = "R&D Concept No";
+                //string conceptNoTextBody = "concept no";
 
-                if (entity.ConceptNo.StartsWith("PB-"))
-                {
-                    conceptNoTextSubject = "Projection Fabric Booking No";
-                    conceptNoTextBody = "Projection Fabric Booking No";
-                }
+                //if (entity.ConceptNo.StartsWith("PB-"))
+                //{
+                //    conceptNoTextSubject = "Projection Fabric Booking No";
+                //    conceptNoTextBody = "Projection Fabric Booking No";
+                //}
 
-                var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "PR R&D");
-                var uInfo = await _emailService.GetUserEmailInfoAsync(UserId);
-                var attachment = await _reportingService.GetPdfBytePR(1303, UserId, entity.YarnPRNo);
-                String subject = $@"{EditType}Yarn Purchase Requisition For {conceptNoTextSubject} {entity.ConceptNo}";
-                String toMailID = "";
-                String ccMailID = "";
-                String bccMailID = "";
-                String body = "";
+                ////var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "PR R&D");// email service will be written
+                ////var uInfo = await _emailService.GetUserEmailInfoAsync(UserId);
+                ////var attachment = await _reportingService.GetPdfBytePR(1303, UserId, entity.YarnPRNo);
+                //String subject = $@"{EditType}Yarn Purchase Requisition For {conceptNoTextSubject} {entity.ConceptNo}";
+                //String toMailID = "";
+                //String ccMailID = "";
+                //String bccMailID = "";
+                //String body = "";
 
 
-                if (uInfo.IsNotNull())
-                {
-                    body = String.Format(@"Dear Sir,
-                                             <br/><br/>
-                                             Please see the attached file of Yarn Purchase Requisition for {4} : {0}. For any further instruction or query regarding this purchase please feel free to contact.
-                                             <br/><br/>
-                                             Thanks & Regards
-                                             <br/>
-                                             {1}
-                                             <br/>
-                                             {2}
-                                             <br/>
-                                             {3}
-                                             <br/><br/>
-                                             <br/><br/>
-                                             <small>This is an ERP generated automatic mail, you can also access the requisition by Textile ERP access.</small>
-                                            ", entity.ConceptNo, AppUser.EmployeeName, uInfo.Designation, uInfo.Department, conceptNoTextBody);
-                }
-                if (isgDTO.IsNotNull())
-                {
-                    toMailID = isgDTO.ToMailID;
-                    ccMailID = isgDTO.CCMailID;
-                    bccMailID = isgDTO.BCCMailID;
-                }
-                if (HttpContext.Request.Host.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
-                {
-                    if (ccMailID.IsNullOrEmpty())
-                        ccMailID = AppUser.Email;
-                    else
-                    {
-                        ccMailID = ccMailID + ";" + AppUser.Email;
-                    }
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
-                    //await _emailService.SendAutoEmailAsync(AppUser.Email, password, toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
-                }
-                else
-                {
-                    toMailID = "mutasim@epylliongroup.com";
-                    ccMailID = "";
-                    bccMailID = "";
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
-                   // await _emailService.SendAutoEmailAsync("Erp No Reply", "", toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
-                }
+                //if (uInfo.IsNotNull())
+                //{
+                //    body = String.Format(@"Dear Sir,
+                //                             <br/><br/>
+                //                             Please see the attached file of Yarn Purchase Requisition for {4} : {0}. For any further instruction or query regarding this purchase please feel free to contact.
+                //                             <br/><br/>
+                //                             Thanks & Regards
+                //                             <br/>
+                //                             {1}
+                //                             <br/>
+                //                             {2}
+                //                             <br/>
+                //                             {3}
+                //                             <br/><br/>
+                //                             <br/><br/>
+                //                             <small>This is an ERP generated automatic mail, you can also access the requisition by Textile ERP access.</small>
+                //                            ", entity.ConceptNo, AppUser.EmployeeName, uInfo.Designation, uInfo.Department, conceptNoTextBody);
+                //}
+                //if (isgDTO.IsNotNull())
+                //{
+                //    toMailID = isgDTO.ToMailID;
+                //    ccMailID = isgDTO.CCMailID;
+                //    bccMailID = isgDTO.BCCMailID;
+                //}
+                //if (HttpContext.Request.Host.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
+                //{
+                //    if (ccMailID.IsNullOrEmpty())
+                //        ccMailID = AppUser.Email;
+                //    else
+                //    {
+                //        ccMailID = ccMailID + ";" + AppUser.Email;
+                //    }
+                //    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+                //    string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
+                //    await _emailService.SendAutoEmailAsync(AppUser.Email, password, toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
+                //}
+                //else
+                //{
+                //    toMailID = "mutasim@epylliongroup.com";
+                //    ccMailID = "";
+                //    bccMailID = "";
+                //    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+                //    string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
+                //    await _emailService.SendAutoEmailAsync("Erp No Reply", "", toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
+                //}
 
                 #endregion Send Mail
             }
@@ -521,94 +525,96 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
             return 0;
         }
 
-        [HttpGet]
-        [Route("smail/{prMasterID}")]
-        public async Task<IActionResult> SendMail(int prMasterID)
-        {
-            bool IsSendMail = false;
-            try
-            {
-                YarnPRMaster entity = await _service.GetAllByIDAsync(prMasterID);
+        #region mail will be updated after service integration
+        //[HttpGet]
+        //[Route("smail/{prMasterID}")]
+        //public async Task<IActionResult> SendMail(int prMasterID)
+        //{
+        //    bool IsSendMail = false;
+        //    try
+        //    {
+        //        YarnPRMaster entity = await _service.GetAllByIDAsync(prMasterID);
 
-                string EditType = entity.RevisionNo > 0 ? "Revise " : "";
-                string conceptNoTextSubject = "R&D Concept No";
-                string conceptNoTextBody = "concept no";
+        //        string EditType = entity.RevisionNo > 0 ? "Revise " : "";
+        //        string conceptNoTextSubject = "R&D Concept No";
+        //        string conceptNoTextBody = "concept no";
 
-                //if (entity.ConceptNo.StartsWith("PB-"))
-                if(entity.YarnPRFromID == PRFrom.FABRIC_PROJECTION_YARN_BOOKING)
-                {
-                    conceptNoTextSubject = "Projection Fabric Booking No";
-                    conceptNoTextBody = "Projection Fabric Booking No";
-                }
+        //        //if (entity.ConceptNo.StartsWith("PB-"))
+        //        if(entity.YarnPRFromID == PRFrom.FABRIC_PROJECTION_YARN_BOOKING)
+        //        {
+        //            conceptNoTextSubject = "Projection Fabric Booking No";
+        //            conceptNoTextBody = "Projection Fabric Booking No";
+        //        }
 
-                var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "PR R&D");
-                var uInfo = await _emailService.GetUserEmailInfoAsync(UserId);
-                var attachment = await _reportingService.GetPdfBytePR(1303, UserId, entity.YarnPRNo);
-                String subject = $@"{EditType}Yarn Purchase Requisition For {conceptNoTextSubject} {entity.ConceptNo}";
-                String toMailID = "";
-                String ccMailID = "";
-                String bccMailID = "";
-                String body = "";
+        //        var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "PR R&D");
+        //        var uInfo = await _emailService.GetUserEmailInfoAsync(UserId);
+        //        var attachment = await _reportingService.GetPdfBytePR(1303, UserId, entity.YarnPRNo);
+        //        String subject = $@"{EditType}Yarn Purchase Requisition For {conceptNoTextSubject} {entity.ConceptNo}";
+        //        String toMailID = "";
+        //        String ccMailID = "";
+        //        String bccMailID = "";
+        //        String body = "";
 
 
-                if (uInfo.IsNotNull())
-                {
-                    body = String.Format(@"Dear Sir,
-                                             <br/><br/>
-                                             Please see the attached file of Yarn Purchase Requisition for {4} : {0}. For any further instruction or query regarding this purchase please feel free to contact.
-                                             <br/><br/>
-                                             Thanks & Regards
-                                             <br/>
-                                             {1}
-                                             <br/>
-                                             {2}
-                                             <br/>
-                                             {3}
-                                             <br/><br/>
-                                             <br/><br/>
-                                             <small>This is an ERP generated automatic mail, you can also access the requisition by Textile ERP access.</small>
-                                            ", entity.ConceptNo, AppUser.EmployeeName, uInfo.Designation, uInfo.Department, conceptNoTextBody);
-                }
-                if (isgDTO.IsNotNull())
-                {
-                    toMailID = isgDTO.ToMailID;
-                    ccMailID = isgDTO.CCMailID;
-                    bccMailID = isgDTO.BCCMailID;
-                }
+        //        if (uInfo.IsNotNull())
+        //        {
+        //            body = String.Format(@"Dear Sir,
+        //                                     <br/><br/>
+        //                                     Please see the attached file of Yarn Purchase Requisition for {4} : {0}. For any further instruction or query regarding this purchase please feel free to contact.
+        //                                     <br/><br/>
+        //                                     Thanks & Regards
+        //                                     <br/>
+        //                                     {1}
+        //                                     <br/>
+        //                                     {2}
+        //                                     <br/>
+        //                                     {3}
+        //                                     <br/><br/>
+        //                                     <br/><br/>
+        //                                     <small>This is an ERP generated automatic mail, you can also access the requisition by Textile ERP access.</small>
+        //                                    ", entity.ConceptNo, AppUser.EmployeeName, uInfo.Designation, uInfo.Department, conceptNoTextBody);
+        //        }
+        //        if (isgDTO.IsNotNull())
+        //        {
+        //            toMailID = isgDTO.ToMailID;
+        //            ccMailID = isgDTO.CCMailID;
+        //            bccMailID = isgDTO.BCCMailID;
+        //        }
 
-                if (HttpContext.Request.Host.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
-                {
-                    if (ccMailID.IsNullOrEmpty())
-                        ccMailID = AppUser.Email;
-                    else
-                    {
-                        ccMailID = ccMailID + ";" + AppUser.Email;
-                    }
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
-                  //  await _emailService.SendAutoEmailAsync(AppUser.Email, password, toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
-                    IsSendMail = true;
-                }
-                else
-                {
-                    MailBasicProps mailBasicProps = new MailBasicProps();
-                    //string fromMailID = mailBasicProps.DefaultFromEmailId;
-                    //string password = mailBasicProps.DefaultPassword;
-                    toMailID = mailBasicProps.DefaultToEmailIds;
-                    ccMailID = mailBasicProps.DefaultCCEmailIds;
-                    bccMailID = mailBasicProps.DefaultBCCEmailIds;
+        //        if (HttpContext.Request.Host.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
+        //        {
+        //            if (ccMailID.IsNullOrEmpty())
+        //                ccMailID = AppUser.Email;
+        //            else
+        //            {
+        //                ccMailID = ccMailID + ";" + AppUser.Email;
+        //            }
+        //            EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+        //            string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
+        //          //  await _emailService.SendAutoEmailAsync(AppUser.Email, password, toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
+        //            IsSendMail = true;
+        //        }
+        //        else
+        //        {
+        //            MailBasicProps mailBasicProps = new MailBasicProps();
+        //            //string fromMailID = mailBasicProps.DefaultFromEmailId;
+        //            //string password = mailBasicProps.DefaultPassword;
+        //            toMailID = mailBasicProps.DefaultToEmailIds;
+        //            ccMailID = mailBasicProps.DefaultCCEmailIds;
+        //            bccMailID = mailBasicProps.DefaultBCCEmailIds;
 
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
-                //    await _emailService.SendAutoEmailAsync("Erp No Reply", "", toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
-                    IsSendMail = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                IsSendMail = false;
-            }
-            return Ok(IsSendMail);
-        }
+        //            EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+        //            string password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
+        //        //    await _emailService.SendAutoEmailAsync("Erp No Reply", "", toMailID, ccMailID, bccMailID, subject, body, $"{entity.YarnPRNo}.pdf", attachment);// email service will be written
+        //            IsSendMail = true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IsSendMail = false;
+        //    }
+        //    return Ok(IsSendMail);
+        //}
+        #endregion
     }
 }

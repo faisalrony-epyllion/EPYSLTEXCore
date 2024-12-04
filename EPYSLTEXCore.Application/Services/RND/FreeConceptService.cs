@@ -1,46 +1,32 @@
 ﻿using Dapper;
 using EPYSLTEX.Core.Statics;
-using EPYSLTEXCore.Application.Interfaces.Booking;
 using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Services.RND
 {
     public class FreeConceptService : IFreeConceptService
     {
-        private readonly ISignatureRepository _signatureRepository;
+        
         private readonly IDapperCRUDService<FreeConceptMaster> _service;
         private readonly SqlConnection _connection;
         private SqlTransaction transaction = null;
 
-        public FreeConceptService(ISignatureRepository signatureRepository
-             , IDapperCRUDService<FreeConceptMaster> service)
+        public FreeConceptService(
+             IDapperCRUDService<FreeConceptMaster> service)
         {
-            _signatureRepository = signatureRepository;
+            
             _service = service;
             _connection = service.Connection;
         }
@@ -1036,9 +1022,9 @@ namespace EPYSLTEXCore.Application.Services.RND
 
         private async Task<List<FreeConceptMaster>> AddManyAsync(List<FreeConceptMaster> entities, List<ConceptPendingStatus_HK> conceptPendingStatusList)
         {
-            int conceptId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entities.Count);
-            int maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.Sum(x => x.ChildColors.Count));
-            int maxStatusChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_STATUS, (entities.Count * conceptPendingStatusList.Count));
+            int conceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entities.Count);
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.Sum(x => x.ChildColors.Count));
+            int maxStatusChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_STATUS, (entities.Count * conceptPendingStatusList.Count));
             List<ConceptStatus> freeConceptStatusList = new List<ConceptStatus>();
 
             int slNo = 0;

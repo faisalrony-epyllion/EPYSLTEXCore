@@ -1,5 +1,6 @@
 using Dapper;
 using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;

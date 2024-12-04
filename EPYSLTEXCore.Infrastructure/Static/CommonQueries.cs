@@ -189,7 +189,35 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
                 Group By EV.ValueID,EV.ValueName";
         }
-
+        public static string GetYarnAndCDAUsersForYarnPR()
+        {
+            return $@"Select UserCode[id], EmployeeName[text]
+                From {DbNames.EPYSL}..Employee E
+                Inner Join {DbNames.EPYSL}..LoginUser L ON L.EmployeeCode = E.EmployeeCode
+                Inner Join {DbNames.EPYSL}..EmployeeDepartment DPT ON E.DepertmentID = DPT.DepertmentID
+                Where DPT.DepertmentDisplayName In ('Knitting', 'R&D', 'Production Management Control','Operation[Textile]','Operation','Planning, Monitoring & Control') Or UserName = 'EPYMis'
+                Order By EmployeeName";
+        }
+        public static string GetYarnAndCDAUsers()
+        {
+            return $@"Select UserCode[id], EmployeeName[text]
+                From {DbNames.EPYSL}..Employee E
+                Inner Join {DbNames.EPYSL}..LoginUser L ON L.EmployeeCode = E.EmployeeCode
+                Inner Join {DbNames.EPYSL}..EmployeeDepartment DPT ON E.DepertmentID = DPT.DepertmentID
+                Where DPT.DepertmentDisplayName In ('Knitting', 'R&D') Or UserName = 'EPYMis'
+                Order By EmployeeName";
+        }
+        public static string GetYarnSpinners()
+        {
+            return $@"Select Cast(C.ContactID as varchar) [id], C.ShortName [text]
+          From {DbNames.EPYSL}..SupplierItemGroupStatus ST
+          Inner Join {DbNames.EPYSL}..Contacts C On C.ContactID = ST.ContactID
+          Inner Join {DbNames.EPYSL}..ContactCategoryChild CCC On CCC.ContactID = ST.ContactID
+          Inner Join {DbNames.EPYSL}..ContactCategoryHK CHK On CHK.ContactCategoryID = CCC.ContactCategoryID
+          Inner Join {DbNames.EPYSL}..ItemSubGroup I ON I.SubGroupID = ST.SubGroupID
+          Where CHK.ContactCategoryName = '{ContactCategoryNames.SPINNER}' AND I.SubGroupName = 'Yarn'
+          ORDER BY C.ShortName";
+        }
         public static string GetSubPrograms()
         {
             return $@"SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc],isnull(CAST(FCMS.FiberID As varchar),'0')additionalValue

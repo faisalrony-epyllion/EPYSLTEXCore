@@ -316,13 +316,13 @@
             .catch(function (err) {
                 toastr.error(err.response.data.Message);
             });
-
+/*
         loadListCountMethod({
             ToolbarId: toolbarId,
             URL: `/api/fab-acknowledge/bulk/fabric-booking-acknowledge/get-list-count`,
             CountTagProps: `NewCount,Revision,Pending2,Acknowledged,UnAcknowledged,Cancel,AllCount`,
             IsDefaultAllCount: false
-        });
+        });*/
     });
 
     function getValidFinishQty(selectedRow) {

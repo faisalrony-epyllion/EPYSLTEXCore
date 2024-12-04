@@ -71,8 +71,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
         public int FIPriceID { get; set; } = 0;
         [Write(false)]
         public int BookingID { get; set; } = 0;
-        [Write(false)]
-        public int SubGroupID { get; set; } = 0;
+        //[Write(false)]
+        //public int SubGroupID { get; set; } = 0;
         [Write(false)]
         public int StyleMasterID { get; set; } = 0;
         [Write(false)]

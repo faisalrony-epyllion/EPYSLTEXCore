@@ -127,8 +127,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         [Write(false)]
         public string BookingNo { get; set; }
 
-        [Write(false)]
-        public int ColorId { get; set; }
+        //[Write(false)]
+        //public int ColorId { get; set; }
 
         [Write(false)]
         public string ColorName { get; set; }

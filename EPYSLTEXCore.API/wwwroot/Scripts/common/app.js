@@ -460,7 +460,11 @@ function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption,
         showTab(pageName);
         registerCloseEvent(menuId);
 
-        var scriptPath = '/Scripts/' + controllerName + '/' + actionName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
+        const result = navUrlName.split("_");
+        var folderName = result[0];
+        var jsFileName = result[1];
+        var scriptPath = '/Scripts/' + folderName + '/' + jsFileName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
+
         if ($('script[src="' + scriptPath + '"]').length === 0) {
             var s = document.createElement('script');
             s.setAttribute('src', scriptPath);
@@ -508,7 +512,12 @@ function getAccountViewMarkup(controller, actionName) {
         showTab(actionName);
         registerCloseEvent(0);
 
-        var scriptPath = '/Scripts/' + controller + '/' + actionName + '.js' + "?version=" + $("#versionNumer").val();
+      
+        const result = navUrlName.split("_");
+        var folderName = result[0];
+        var jsFileName = result[1];
+        var scriptPath = '/Scripts/' + folderName + '/' + jsFileName + '.js?menuId=' + menuId + '&version=' + $("#versionNumer").val();
+
         if ($('script[src="' + scriptPath + '"]').length === 0) {
             var s = document.createElement('script');
             s.setAttribute('src', scriptPath);

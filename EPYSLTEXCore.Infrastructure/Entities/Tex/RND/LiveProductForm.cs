@@ -1,7 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
@@ -120,13 +119,13 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         }
     }
 
-    public class LiveProductFormValidator : AbstractValidator<LiveProductForm>
-    {
-        public LiveProductFormValidator()
-        {
-            RuleFor(x => x.FirmConceptMasterID).NotEmpty().WithMessage("Firm Concept Master is required.");
-            RuleFor(x => x.FormID).NotEmpty().WithMessage("Form ID is required.");
-            RuleFor(x => x.QtyinKG).NotEmpty().WithMessage("Quantity in KG is required.");
-        }
-    }
+    //public class LiveProductFormValidator : AbstractValidator<LiveProductForm>
+    //{
+    //    public LiveProductFormValidator()
+    //    {
+    //        RuleFor(x => x.FirmConceptMasterID).NotEmpty().WithMessage("Firm Concept Master is required.");
+    //        RuleFor(x => x.FormID).NotEmpty().WithMessage("Form ID is required.");
+    //        RuleFor(x => x.QtyinKG).NotEmpty().WithMessage("Quantity in KG is required.");
+    //    }
+    //}
 }

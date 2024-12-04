@@ -1,6 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
@@ -35,12 +34,12 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
     }
 
     #region Validator
-    public class KnittingProductionQCValidator : AbstractValidator<KnittingProductionQC>
-    {
-        public KnittingProductionQCValidator()
-        {
-            RuleFor(x => x.QCValue).NotEmpty();
-        }
-    }
+    //public class KnittingProductionQCValidator : AbstractValidator<KnittingProductionQC>
+    //{
+    //    public KnittingProductionQCValidator()
+    //    {
+    //        RuleFor(x => x.QCValue).NotEmpty();
+    //    }
+    //}
     #endregion
 }

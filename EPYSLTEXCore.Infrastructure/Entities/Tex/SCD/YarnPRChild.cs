@@ -1,7 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Static;
-using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
@@ -113,18 +112,18 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         #endregion Additional Property
     }
 
-    public class YarnPRChildValidator : AbstractValidator<YarnPRChild>
-    {
-        public YarnPRChildValidator()
-        {
-            //RuleFor(x => x.Segment1ValueId).NotEmpty().WithMessage("Composition is required!");
-            //RuleFor(x => x.Segment2ValueId).NotEmpty().WithMessage("Yarn type is required!");
-            //RuleFor(x => x.Segment3ValueId).NotEmpty().WithMessage("Manufacturing process is required!");
-            //RuleFor(x => x.Segment5ValueId).NotEmpty().WithMessage("Yarn count is required!");
-            //RuleFor(x => x.Segment7ValueId).NotEmpty().WithMessage("Yarn count is required!");
-            RuleFor(x => x.CompanyIDs).NotEmpty().WithMessage("Company field is required!");
-            RuleFor(x => x.ReqQty).NotEmpty().WithMessage("Req Qty is required!");
-            //RuleFor(x => x.HSCode).NotEmpty().WithMessage("HS Code is required!").MaximumLength(20).WithMessage("HS code can not be more than 20 characters.");
-        }
-    }
+    //public class YarnPRChildValidator : AbstractValidator<YarnPRChild>
+    //{
+    //    public YarnPRChildValidator()
+    //    {
+    //        //RuleFor(x => x.Segment1ValueId).NotEmpty().WithMessage("Composition is required!");
+    //        //RuleFor(x => x.Segment2ValueId).NotEmpty().WithMessage("Yarn type is required!");
+    //        //RuleFor(x => x.Segment3ValueId).NotEmpty().WithMessage("Manufacturing process is required!");
+    //        //RuleFor(x => x.Segment5ValueId).NotEmpty().WithMessage("Yarn count is required!");
+    //        //RuleFor(x => x.Segment7ValueId).NotEmpty().WithMessage("Yarn count is required!");
+    //        RuleFor(x => x.CompanyIDs).NotEmpty().WithMessage("Company field is required!");
+    //        RuleFor(x => x.ReqQty).NotEmpty().WithMessage("Req Qty is required!");
+    //        //RuleFor(x => x.HSCode).NotEmpty().WithMessage("HS Code is required!").MaximumLength(20).WithMessage("HS code can not be more than 20 characters.");
+    //    }
+    //}
 }

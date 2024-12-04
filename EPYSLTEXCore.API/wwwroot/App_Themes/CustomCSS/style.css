@@ -10,7 +10,7 @@
 
 
 .tab-content {
-    font-size: 14px !important;
+    font-size: 12px !important;
     font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
 
@@ -57,31 +57,31 @@
 
     #mainTab li {
         white-space: nowrap;
-        color: #0056b3 !important;
-        background-color: aliceblue;
+        color: #000 !important;
     }
 
         #mainTab li a {
             padding-left: 10px;
             line-height: 38px;
+            color: #000 !important;
         }
 
         #mainTab li.active {
-            border-top: 2px solid #EEA41C;
+            border-top: 2px solid #3c8dbc;
         }
 
-            #mainTab li.active a {
-                color: #fff !important;
+/*            #mainTab li.active a {
+                color: #000000 !important;
             }
 
             #mainTab li.active .closeTab {
-                color: #fff !important;
-            }
+                color: #000000 !important;
+            }*/
 
 .tabLi {
     height: 50px !important;
     text-align: center;
-    font-size: 14px !important;
+    font-size: 12px !important;
 }
 
     .tabLi div, .tabLi a {
@@ -125,7 +125,7 @@
 }
 
 .sidebar-menu {
-    font-size: 14px !important;
+    font-size: 12px !important;
     font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -319,7 +319,7 @@
         .treeview-menu > li > a {
             padding: 5px 5px 5px 15px;
             display: block;
-            font-size: 14px
+            font-size: 12px;
         }
 
             .treeview-menu > li > a > .fa, .treeview-menu > li > a > .glyphicon, .treeview-menu > li > a > .ion {
@@ -475,7 +475,7 @@
 
 
 .bg-info {
-    background-color: #3B7947 !important;
+    background-color: #f0f8ff !important;
 }
 
 @media(max-width:767px) {

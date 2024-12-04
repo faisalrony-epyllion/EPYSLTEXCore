@@ -184,5 +184,126 @@
         public const int OrderBasedSample = 2164;
         public const int GiftYarnReceive = 2165;
     }
+    public static class InterfaceFrom
+    {
+        public const string FreeConcept = "FreeConcept";
+        public const string MaterialRequirement = "MaterialRequirement";
+        public const string KnittingProgram = "KnittingProgram";
+        public const string KnittingConfirmation = "KnittingConfirmation";
+        public const string KnittingProduction = "KnittingProduction";
+        public const string GrayQC = "GrayQC";
+        public const string RecipeRequest = "RecipeRequest";
 
+        public const string YDRecipeRequest = "YDRecipeRequest";
+
+        public const string RecipeDefinition = "RecipeDefinition";
+        public const string FinishingProcess = "FinishingProcess";
+        public const string FinishingProcessProduction = "FinishingProcessProduction";
+        public const string BatchPlan = "BatchPlan";
+        public const string BatchPreparation = "BatchPreparation";
+        public const string DyeingBatchItem = "DyeingBatchItem";
+        public const string LabTestRequisition = "LabTestRequisition";
+        public const string LabTestResult = "LabTestResult";
+        public const string FirmConcept = "FirmConcept";
+        public const string FBookingAcknowledge = "FBookingAcknowledge";
+        public const string SampleBooking = "SampleBooking";
+        public const string DyeingBatch = "DyeingBatch";
+        public const string DyeingProduction = "DyeingProduction";
+        public const string YarnPR = "YarnPR";
+        public const string YDBooking = "YDBooking";
+        public const string LiveProduct = "LiveProduct";
+    }
+    public static class YarnPRFromTable
+    {
+        public const int NONE = 0;
+        public const int FreeConceptMRBDS = 1;
+        public const int ProjectionYarnBookingMaster = 2;
+        public const int YarnBookingMaster = 3;
+        public const int FBookingAcknowledge = 4;
+        public const int YarnAllocationMaster = 5;
+        public const int FreeConceptMRMaster = 6;
+    }
+    public static class EnumFromMenuType
+    {
+        public const int None = 0;
+        public const int PO = 1;
+        public const int YarnReceive = 2;
+        public const int MRIR = 3;
+        public const int YarnQCIssue = 4;
+        public const int YarnQCReturnReceive = 5;
+        public const int YarnAllocation = 6;
+        public const int YarnAllocationAck = 7;
+        public const int YarnAllocationUnAck = 8;
+        public const int YarnRnDIssueMaster = 9;
+        public const int KYIssueMaster = 10;
+        public const int KnittingLeftOverReturnReceive = 11;
+        public const int FBookingAcknowledgementYarnLiability = 12;
+        public const int YarnAllocationReject = 13;
+        public const int YarnAllocationReallocation = 14;
+
+        public const int YDReqIssueRAndD = 15; //Not Used
+        public const int YDReqIssueBulk = 16; //Not Used
+
+        public const int KnittingSubContractIssueRAndD = 17; //Not Used
+        public const int KnittingSubContractIssueBulk = 18; //Not Used
+
+        public const int YarnRnDLeftOverReturnReceive = 19;
+        public const int YarnYDLeftOverReturnReceiveRnD = 20;
+        public const int YarnYDLeftOverReturnReceiveBulk = 21;
+
+        public const int YarnAllocationUnAckRevision = 22;
+
+        public const int RnDYarnRequisitionApp = 23;
+
+        public const int KSCLOReturnReceive = 24;
+
+        public const int KYReqMasterApp = 25;
+
+        public const int KnittingSubContractReqApp = 26;
+        public const int KnittingSubContractIssueApp = 27;
+
+        public const int YDReqApp = 28;
+        public const int YDIssueApp = 29;
+
+        public const int YarnYDLeftOverReturnReceive_RnD_Bulk = 30;
+    }
+    public static class EnumStockFromTable
+    {
+        public const int None = 0;
+        public const int YarnPOChild = 1;
+        public const int YarnReceiveChild = 2;
+        public const int YarnMRIRChild = 3;
+        public const int YarnQCIssueChildRackBinMapping = 4;
+        public const int YarnQCReturnReceiveChildRackBinMapping = 5;
+        public const int YarnAllocationChildItem = 6;
+        public const int YarnAllocationChildPipelineItem = 7;
+        public const int YarnRnDIssueChildRackBinMapping = 8;
+        public const int KYIssueChildRackBinMapping = 9;
+        public const int KYLOReturnReceiveChildRackBinMapping = 10;
+        public const int FBookingAcknowledgementYarnLiability = 11;
+        public const int YDReqIssueChildRackBinMapping = 12;
+        public const int KnittingSubContractIssueChildRackBinMapping = 13;
+        public const int YarnRNDReturnReceiveChildRackBinMapping = 14;
+        public const int YDLeftOverReturnReceiveChildRackBinMapping = 15;
+        public const int YarnStockAdjustmentChildItem = 16;
+        public const int YarnRnDReqChild = 17;
+        public const int KSCLOReturnReceiveChildRackBinMapping = 18;
+        public const int KYReqChild = 19;
+        public const int KnittingSubContractReqChild = 20;
+        public const int YDReqChild = 21;
+    }
+    public enum EnumOperationTypes
+    {
+        None = 0,
+        INSERT = 1,
+        UPDATE = 2,
+        DELETE = 3,
+        PROPOSE = 4,
+        APPROVE = 5,
+        REJECT = 6,
+        Acknowledge = 7,
+        UnAcknowledge = 8,
+        Reallocation = 9,
+        Revision = 10
+    }
 }

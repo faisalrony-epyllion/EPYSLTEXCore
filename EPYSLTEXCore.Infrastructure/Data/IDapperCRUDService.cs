@@ -1,6 +1,7 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 
 namespace EPYSLTEXCore.Infrastructure.Data

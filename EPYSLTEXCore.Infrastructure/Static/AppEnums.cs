@@ -66,4 +66,19 @@ namespace EPYSLTEXCore.Infrastructure.Statics
         /// </summary>
         EveryDay = 4
     }
+    public enum FreeConceptStatus
+    {
+        All = 1,
+        Live = 2,
+        Preserved = 3,
+        Dropped = 4,
+        SourcingPending = 5,
+        YDPending = 6,
+        KnitPending = 7,
+        BatchPending = 8,
+        DyeingPending = 9,
+        FinishPending = 10,
+        TestPending = 11,
+        WaitingForLivePending = 12
+    }
 }

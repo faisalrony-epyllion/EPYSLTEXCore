@@ -152,3 +152,10 @@
 /EPYSLTEXCore.Report/.vs/VSWorkspaceState.json
 /packages
 /EPYSLTEXCore.API/wwwroot/App_Themes/lib
+/EPYSLTEXCore.API/bin/Debug/net8.0/appsettings.Development.json
+/EPYSLTEXCore.API/bin/Debug/net8.0/EPYSLTEXCore.API.runtimeconfig.json
+/EPYSLTEXCore.API/obj/Debug/net8.0/EPYSLTEX.EE23597E.Up2Date
+/EPYSLTEXCore.API/obj/Debug/net8.0/EPYSLTEXCore.API.MvcApplicationPartsAssemblyInfo.cache
+/EPYSLTEXCore.API/obj/Debug/net8.0/EPYSLTEXCore.API.MvcApplicationPartsAssemblyInfo.cs
+/EPYSLTEXCore.API/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.EPYSLTEXCore.API.props
+/EPYSLTEXCore.API/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.EPYSLTEXCore.API.props

@@ -3,7 +3,6 @@ using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
@@ -417,16 +416,16 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 
     #region Validator
 
-    public class FreeConceptMRMasterValidator : AbstractValidator<FreeConceptMRMaster>
-    {
-        public FreeConceptMRMasterValidator()
-        {
-            //When(x => x.ChildColors.Any(), () =>
-            //{
-            //    RuleForEach(x => x.ChildColors).SetValidator(new FreeConceptChildColorValidator());
-            //});
-        }
-    }
+    //public class FreeConceptMRMasterValidator : AbstractValidator<FreeConceptMRMaster>
+    //{
+    //    public FreeConceptMRMasterValidator()
+    //    {
+    //        //When(x => x.ChildColors.Any(), () =>
+    //        //{
+    //        //    RuleForEach(x => x.ChildColors).SetValidator(new FreeConceptChildColorValidator());
+    //        //});
+    //    }
+    //}
 
     #endregion Validator
 }

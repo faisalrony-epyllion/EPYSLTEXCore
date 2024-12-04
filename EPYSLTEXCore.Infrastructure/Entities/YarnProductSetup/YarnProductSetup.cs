@@ -23,6 +23,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities
         [Write(false)]
         public string FiberType { get; set; }
 
+     
+
         [Write(false)]
         [ChildEntity]
         public List<YarnProductSetupChild> Childs { get; set; }

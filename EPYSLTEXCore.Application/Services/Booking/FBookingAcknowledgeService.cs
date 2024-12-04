@@ -30,17 +30,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
     public class FBookingAcknowledgeService : IFBookingAcknowledgeService
     {
         private readonly IDapperCRUDService<FBookingAcknowledge> _service;
-        private readonly ISignatureRepository _signatureRepository;
         private readonly SqlConnection _connection;
         private readonly IDapperCRUDService<SampleBookingMaster> _gmtservice;
         string _startingDate = "17-Feb-2024";
-
+        //
         public FBookingAcknowledgeService(IDapperCRUDService<SampleBookingMaster> gmtservice
-            , IDapperCRUDService<FBookingAcknowledge> service
-            , ISignatureRepository signatureRepository)
+            , IDapperCRUDService<FBookingAcknowledge> service)
         {
             _service = service;
-            _signatureRepository = signatureRepository;
             _connection = service.Connection;
             _gmtservice = gmtservice;
             _gmtservice.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
@@ -7870,7 +7867,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 transaction = _connection.BeginTransaction();
 
                 if (entity.FBAckID > 0) entity.EntityState = EntityState.Modified;
-                else entity.FBAckID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE);
+                else entity.FBAckID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE);
 
                 if (entityFBA == null) entityFBA = new List<FabricBookingAcknowledge>();
                 if (entityChildsLiabilitiesDistribution == null) entityChildsLiabilitiesDistribution = new List<FBookingAcknowledgementLiabilityDistribution>();
@@ -7878,7 +7875,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 if (entityFBA.Count > 0)
                 {
                     if (entityFBA[0].AcknowledgeID > 0) entity.EntityState = EntityState.Modified;
-                    else entityFBA[0].AcknowledgeID = await _signatureRepository.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
+                    else entityFBA[0].AcknowledgeID = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
                 }
                 if (entityFBYL == null) entityFBYL = new List<FBookingAcknowledgementYarnLiability>();
                 int maxConceptMRId = 0;
@@ -7897,21 +7894,21 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     List<FreeConceptMRMaster> newFreeConceptMRList = new List<FreeConceptMRMaster>();
                     List<FreeConceptMRChild> newFreeConceptMRChildList = new List<FreeConceptMRChild>();
 
-                    int maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildAddProcessId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildDetailsId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildGarmentPartId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildProcessId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildTextId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildDistributionId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildYarnSubBrandId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count(x => x.EntityState == EntityState.Added));
-                    int maxPlanningId = await _signatureRepository.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count(y => y.EntityState == EntityState.Added)));
-                    int maxBDSEventID = await _signatureRepository.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count(x => x.EntityState == EntityState.Added));
-                    int maxLCID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
-                    int maxYLID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildAddProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildGarmentPartId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildTextId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildDistributionId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildYarnSubBrandId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count(x => x.EntityState == EntityState.Added));
+                    int maxPlanningId = await _service.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count(y => y.EntityState == EntityState.Added)));
+                    int maxBDSEventID = await _service.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count(x => x.EntityState == EntityState.Added));
+                    int maxLCID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
+                    int maxYLID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
 
-                    maxConceptId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count(x => x.EntityState == EntityState.Added));
-                    maxConceptChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count(x => x.EntityState == EntityState.Added));
+                    maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count(x => x.EntityState == EntityState.Added));
+                    maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count(x => x.EntityState == EntityState.Added));
 
                     foreach (var item in entityChilds)
                     {
@@ -8065,23 +8062,23 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 }
                 else
                 {
-                    int maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count);
-                    int maxChildAddProcessId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count);
-                    int maxChildDetailsId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count);
-                    int maxChildGarmentPartId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count);
-                    int maxChildProcessId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count);
-                    int maxChildTextId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count);
-                    int maxChildDistributionId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count);
-                    int maxChildYarnSubBrandId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count);
-                    int maxImageId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_IMAGE, entityChildsImage.Count);
-                    int maxLCID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
-                    int maxPlanningId = await _signatureRepository.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count));
-                    int maxBDSEventID = await _signatureRepository.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count);
-                    int maxYLID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count);
+                    int maxChildAddProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count);
+                    int maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count);
+                    int maxChildGarmentPartId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count);
+                    int maxChildProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count);
+                    int maxChildTextId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count);
+                    int maxChildDistributionId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count);
+                    int maxChildYarnSubBrandId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count);
+                    int maxImageId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_IMAGE, entityChildsImage.Count);
+                    int maxLCID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
+                    int maxPlanningId = await _service.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count));
+                    int maxBDSEventID = await _service.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count);
+                    int maxYLID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
                     if (isBDS == 1 || isBDS == 3)
                     {
-                        maxConceptId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count);
-                        maxConceptChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count);
+                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count);
+                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count);
                     }
                     entityFreeConcepts = new List<FreeConceptMaster>();
                     entityFreeMRs = new List<FreeConceptMRMaster>();
@@ -8281,15 +8278,15 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             }
                         }
 
-                        maxConceptId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, tempObjList.Count);
-                        maxConceptChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, tempObjList.Count);
+                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, tempObjList.Count);
+                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, tempObjList.Count);
 
                         if (isBDS == 2)
                         {
                             entityChildDetails = new List<FBookingAcknowledgeChildDetails>();
-                            maxConceptMRId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, tempObjList.Count);
-                            maxConceptMRChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, maxChildCount);
-                            maxFBAckChildDetailId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, maxChildCount);
+                            maxConceptMRId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, tempObjList.Count);
+                            maxConceptMRChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, maxChildCount);
+                            maxFBAckChildDetailId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, maxChildCount);
                         }
                         i = 0;
                         foreach (var tempObj in tempObjList)
@@ -8604,7 +8601,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {
                     if (item.AcknowledgeID == 0)
                     {
-                        item.AcknowledgeID = await _signatureRepository.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
+                        item.AcknowledgeID = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
                         item.EntityState = EntityState.Added;
                     }
                     else
@@ -8622,7 +8619,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 Boolean IsNew = false;
                 if (entityFBookingA.Count(x => x.FBAckID == 0) > 0)
                 {
-                    maxFBAId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBookingA.Count(x => x.FBAckID == 0));
+                    maxFBAId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBookingA.Count(x => x.FBAckID == 0));
                 }
                 foreach (FBookingAcknowledge item in entityFBookingA)
                 {
@@ -8729,7 +8726,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {
                     if (item.AcknowledgeID == 0)
                     {
-                        item.AcknowledgeID = await _signatureRepository.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
+                        item.AcknowledgeID = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
                         item.EntityState = EntityState.Added;
                     }
                     else
@@ -8750,7 +8747,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 Boolean IsNew = false;
                 if (entityFBookingA.Count(x => x.FBAckID == 0) > 0)
                 {
-                    maxFBAId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBookingA.Count(x => x.FBAckID == 0));
+                    maxFBAId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBookingA.Count(x => x.FBAckID == 0));
                 }
                 foreach (FBookingAcknowledge item in entityFBookingA)
                 {
@@ -8848,7 +8845,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {
                     if (item.AcknowledgeID == 0)
                     {
-                        item.AcknowledgeID = await _signatureRepository.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
+                        item.AcknowledgeID = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
 
                         item.EntityState = EntityState.Added;
                     }
@@ -8890,7 +8887,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {
                     if (item.FBAckID == 0)
                     {
-                        item.FBAckID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE);
+                        item.FBAckID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE);
 
                         item.EntityState = EntityState.Added;
                         IsNew = true;
@@ -8906,7 +8903,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {
                     if (item.BookingChildID > 0 && item.AcknowledgeID == 0)
                     {
-                        //item.FBAckID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE);
+                        //item.FBAckID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE);
                         FBookingAcknowledge objItem = entityFBA.Find(j => j.BookingID == item.BookingID);
                         item.AcknowledgeID = objItem.IsNotNull() ? objItem.FBAckID : entityFBA[0].FBAckID;
                         item.EntityState = EntityState.Added;
@@ -8922,7 +8919,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {
                     if (item.BookingChildID > 0 && item.LChildID == 0)
                     {
-                        item.LChildID = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION);
+                        item.LChildID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION);
                         FBookingAcknowledge objItem = entityFBA.Find(j => j.BookingID == item.BookingID);
                         item.AcknowledgeID = objItem.IsNotNull() ? objItem.FBAckID : entityFBA[0].FBAckID;
                         item.EntityState = EntityState.Added;
@@ -8984,7 +8981,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 int maxFBId = 0, maxFBAId = 0, maxFBCId = 0, maxLDId = 0, maxYLDId = 0;
 
                 #endregion
-                maxFBId = await _signatureRepository.GetMaxIdAsync(TableNames.FabricBookingAcknowledge, entityFB.Count(x => x.AcknowledgeID == 0));
+                maxFBId = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge, entityFB.Count(x => x.AcknowledgeID == 0));
                 entityFB.ForEach(item =>
                 {
                     if (item.AcknowledgeID == 0)
@@ -9001,7 +8998,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     }
                 });
 
-                maxFBAId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBA.Count(x => x.EntityState == EntityState.Added));
+                maxFBAId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBA.Count(x => x.EntityState == EntityState.Added));
                 for (int i = 0; i < entityFBA.Count(); i++)
                 {
                     var item = entityFBA[i];
@@ -9032,7 +9029,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //    }
                 //});
 
-                maxFBCId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityFBC.Count(x => x.EntityState == EntityState.Added));
+                maxFBCId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityFBC.Count(x => x.EntityState == EntityState.Added));
                 entityFBC.Where(x => x.EntityState != EntityState.Deleted).ToList().ForEach(item =>
                 {
                     if (item.EntityState == EntityState.Added)
@@ -9048,7 +9045,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     item.AcknowledgeID = objItem.IsNotNull() ? objItem.FBAckID : entityFBA[0].FBAckID;
                 });
 
-                maxLDId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityLD.Count(x => x.LChildID == 0));
+                maxLDId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityLD.Count(x => x.LChildID == 0));
                 entityLD.Where(x => (x.BookingChildID > 0 || x.ConsumptionID > 0) && x.LChildID == 0).ToList().ForEach(item =>
                 {
                     item.LChildID = maxLDId;
@@ -9058,7 +9055,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     maxLDId++;
                 });
 
-                maxYLDId = await _signatureRepository.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityYLD.Count(x => x.YLChildID == 0));
+                maxYLDId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityYLD.Count(x => x.YLChildID == 0));
                 entityYLD.Where(x => (x.BookingChildID > 0 || x.ConsumptionID > 0) && x.YLChildID == 0).ToList().ForEach(item =>
                 {
                     item.YLChildID = maxYLDId;

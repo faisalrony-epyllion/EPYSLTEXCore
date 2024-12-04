@@ -1,0 +1,478 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("bulkBookingAckPage", "@ViewBag.BulkBookingAckPage");
+</script>
+<style type="text/css">
+    .hide_IMG {
+        display: none;
+    }
+
+    .div-criteria label {
+        margin: 8px;
+        font-size: 12px;
+    }
+    .tblItemDetails tr td {
+        padding: 0 !important;
+    }
+</style>
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+
+    var tblChildId = "tblChild" + pageId;
+    var tblChildIdDI = "tblChildDI" + pageId;
+
+    var tblChildCollarId = "tblChildCollarId" + pageId;
+    var tblChildCollarIdDI = "tblChildCollarIdDI" + pageId;
+
+    var tblChildCuffId = "tblChildCuffId" + pageId;
+    var tblChildCuffIdDI = "tblChildCuffIdDI" + pageId;
+
+    var tblYarnChildId = "tblYarnChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblPlanningId = "tblPlanning" + pageId;
+    var modalPlanningId = "modalPlanning" + pageId;
+    var modalCriteriaId = "modalCriteria" + pageId;
+    var tblCriteriaId = "tblCriteria" + pageId;
+    var itemDetailsId = "itemDetailsId" + pageId;
+}
+
+<div id="@pageId">
+    <style>
+        .negative-booking {
+            background-color: red;
+            color: white;
+        }
+
+            .negative-booking:hover {
+                background-color: red;
+                color: white;
+                font-weight: bold
+            }
+    </style>
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                @*<button id="btnPendingList" class="btn btn-success text-white btn-sm">
+            <i class="fa fa-list"></i>&nbsp;Pending List
+        </button>
+        <button id="btnBookingList" class="btn btn-sm">
+            <i class="fa fa-list"></i>&nbsp;Booking List
+        </button>
+
+        <button id="btnRcvList" class="btn btn-success text-white btn-sm">
+            <i class="fa fa-hourglass"></i>&nbsp;Yet To Swatch Receive List
+        </button>*@
+                @*<button id="btnList" class="btn btn-default btn-sm">
+            <i class="fa fa-hourglass"></i>&nbsp;Acknowledged List
+        </button>*@
+                <button id="btnList" class="btn btn-default btn-sm btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;New Acknowledgement List
+                </button>
+                <button id="btnRevisionAckList" class="btn btn-default text-grey btn-sm btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp; Revision Acknowledgement List
+                </button>
+                <button id="btnMktAckList" class="btn btn-default text-grey btn-sm btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp; Pending Mkt Acknowledgement List
+                </button>
+                <button id="btnAcknowledgedList" class="btn btn-default btn-sm btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledged List
+                </button>
+                @*<button id="btnDeliveredList" class="btn btn-default btn-sm">
+            <i class="fa fa-check-square-o"></i>&nbsp;Delivered List
+        </button>*@
+                <button id="btnUnAcknowledgedList" class="btn btn-default btn-sm btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;UnAcknowledged List
+                </button>
+                <button id="btnCancelList" class="btn btn-default btn-sm btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;M&M Cancel List
+                </button>
+                <button id="btnAllList" class="btn btn-default btn-sm btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;All List
+                </button>
+                @*<button id="btnRefreshList" class="btn btn-default text-grey btn-sm">
+            <i class="fa fa-refresh"></i>&nbsp;
+        </button>*@
+            </div>
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="text" style="display:none" id="FBAckID" name="FBAckID" value="-1111" />
+            <input type="text" style="display:none" id="BookingID" name="BookingID" />
+            <input type="text" style="display:none" id="BuyerID" name="BuyerID" />
+            <input type="text" style="display:none" id="BuyerTeamID" name="BuyerTeamID" />
+            <input type="text" style="display:none" id="ExecutionCompanyID" name="ExecutionCompanyID" />
+            <input type="text" style="display:none" id="SupplierID" name="SupplierID" />
+            <input type="text" style="display:none" id="StyleMasterID" name="StyleMasterID" />
+            <input type="text" style="display:none" id="SeasonID" name="SeasonID" />
+            <input type="text" style="display:none" id="FinancialYearID" name="FinancialYearID" />
+            <input type="text" style="display:none" id="SubGroupID" name="SubGroupID" />
+            <input type="text" style="display:none" id="ItemGroupId" name="ItemGroupId" />
+            <input type="text" style="display:none" id="ExportOrderID" name="ExportOrderID" />
+            <input type="text" style="display:none" id="BookingBy" name="BookingBy" />
+            @*<input type="text" style="display:none" id="RevisionNo" name="RevisionNo" />*@
+            <input type="text" style="display:none" id="PreRevisionNo" name="PreRevisionNo" />
+            <input type="text" style="display:none" id="BomMasterId" name="BomMasterId" />
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <input type="hidden" id="GroupConceptNo" name="GroupConceptNo" />
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking No</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divRevisionNo">
+                                        <label class="control-label col-sm-4 small">Revision No</label>
+                                        <div class="col-sm-8">
+                                            <input id="RevisionNo" name="RevisionNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display:none;">
+                                        <label class="control-label col-sm-4 small">SL No</label>
+                                        <div class="col-sm-8">
+                                            <input id="SLNo" name="SLNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Season Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SeasonName" name="SeasonName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Team</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerTeamName" name="BuyerTeamName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Company</label>
+                                        <div class="col-sm-8">
+                                            <input id="CompanyName" name="CompanyName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <textarea id="Remarks" name="Remarks" class="form-control input-sm" readonly rows="4" cols="10"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Style No</label>
+                                        <div class="col-sm-8">
+                                            <input id="StyleNo" name="StyleNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Order Qty (KG)</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingQty" name="BookingQty" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Gmt Qty (PCS)</label>
+                                        <div class="col-sm-8">
+                                            <input id="GmtQtyPcs" name="GmtQtyPcs" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Supplier Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divUnAcknowledgeReason" style="display:none;">
+                                        <label class="control-label col-sm-4 small">Un-Ack Reason</label>
+                                        <div class="col-sm-8">
+                                            <input id="UnAcknowledgeReason" name="UnAcknowledgeReason" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group deletedItemTable divColorDescription" style="display: none; margin: 10px 0 0 18px;">
+                    <div style="height: 14px; width: 14px; background-color: #9FD3F7; margin-top: 4px; float: left; "></div>
+                    <div><label style="margin: 4px; float: left; ">New Items</label></div>
+                    <div style="height: 14px; width: 14px; background-color: #ECA338; margin-top: 4px; float: left; "></div>
+                    <div><label style="margin: 4px; float: left; ">Updated Items</label></div>
+                    <div style="height: 14px; width: 14px; background-color: #F9A695; margin-top: 4px; float: left; "></div>
+                    <div><label style="margin: 4px; float: left; ">Deleted Items</label></div>
+                </div>
+
+                <div class="col-sm-12" id="divFabricInfo" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                        <div class="panel-heading">
+                            <label class="lblTableTitle">Fabric Booking Item Information</label>
+                            <button type="button" class="btn btn-success btn-xs deletedItemTable btnDeletedItemShow" group="1" style="display:none;" title="Show/Hide deleted items">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<table id="tblFabric-@pageId"></table>*@
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 deletedItemTable dTable" group="1" id="divFabricInfoDI" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                        <div class="panel-heading">
+                            <span>Deleted </span> <label class="lblTableTitle">Item Details</label>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildIdDI"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12" id="divCollarInfo" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            <label>Collar Information</label>
+                            <button type="button" class="btn btn-success btn-xs deletedItemTable btnDeletedItemShow" group="11" style="display:none;" title="Show/Hide deleted items">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<table id="tblCollar-@pageId"></table>*@
+                                        <table id="@tblChildCollarId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 deletedItemTable dTable" group="11" id="divCollarInfoDI" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                        <div class="panel-heading">
+                            Deleted Collar Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildCollarIdDI"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12" id="divCufInfo" style="display:none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            <label>Cuff Information</label>
+                            <button type="button" class="btn btn-success btn-xs deletedItemTable btnDeletedItemShow" group="12" style="display:none;" title="Show/Hide deleted items">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<table id="tblCuff-@pageId"></table>*@
+                                        <table id="@tblChildCuffId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 deletedItemTable dTable" group="12" id="divCuffInfoDI" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                        <div class="panel-heading">
+                            Deleted Cuff Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildCuffIdDI"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            @*<button type="button" class="btn btn-primary m-w-120" id="btnReceive"><i class="fa fa-save"></i>&nbsp;Receive</button>*@
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-danger m-w-120" id="btnUnAcknowledge" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;UnAcknowledge</button>
+                            @*<button type="button" class="btn btn-primary m-w-120" id="btnReceived"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+
+                                <button type="button" class="btn btn-primary m-w-120" id="btnCancelAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Accept</button>
+                                <button type="button" class="btn btn-danger m-w-120" id="btnCancelUnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Not Accept</button>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="@modalPlanningId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Liabilities Criteria
+                        </div>
+                        <div class="modal-body">
+                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-12 div-criteria">
+                                        <table id="@itemDetailsId" class="table table-bordered table-striped tblItemDetails">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="6" style="text-align:center;">Item Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><label id="lbl1" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl1Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl2" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl2Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl3" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl3Value" class="lblLibMasterInfo"></label></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label id="lbl4" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl4Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl5" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl5Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl6" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl6Value" class="lblLibMasterInfo"></label></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label id="lbl7" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl7Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl8" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl8Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl9" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl9Value" class="lblLibMasterInfo"></label></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label id="lbl10" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl10Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl11" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl11Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl12" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl12Value" class="lblLibMasterInfo"></label></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label id="lbl13" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl13Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl14" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl14Value" class="lblLibMasterInfo"></label></td>
+                                                    <td><label id="lbl15" class="lblLibMasterInfo" style="font-weight: normal;"></label></td>
+                                                    <td><label id="lbl15Value" class="lblLibMasterInfo"></label></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" id="divYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label class="lblTableTitle">Liabilities Informations</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    @*<table id="tblFabric-@pageId"></table>*@
+                                                    <table id="@tblPlanningId"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" id="divYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label class="lblTableTitle">Yarn Liabilities</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    @*<table id="tblFabric-@pageId"></table>*@
+                                                    <table id="@tblYarnChildId"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>

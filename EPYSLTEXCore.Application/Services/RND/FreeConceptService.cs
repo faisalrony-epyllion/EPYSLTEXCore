@@ -1,46 +1,32 @@
 ﻿using Dapper;
 using EPYSLTEX.Core.Statics;
-using EPYSLTEXCore.Application.Interfaces.Booking;
 using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Services.RND
 {
     public class FreeConceptService : IFreeConceptService
     {
-        private readonly ISignatureRepository _signatureRepository;
+        
         private readonly IDapperCRUDService<FreeConceptMaster> _service;
         private readonly SqlConnection _connection;
         private SqlTransaction transaction = null;
 
-        public FreeConceptService(ISignatureRepository signatureRepository
-             , IDapperCRUDService<FreeConceptMaster> service)
+        public FreeConceptService(
+             IDapperCRUDService<FreeConceptMaster> service)
         {
-            _signatureRepository = signatureRepository;
+            
             _service = service;
             _connection = service.Connection;
         }
@@ -819,7 +805,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                     case EntityState.Modified:
                         var addedChilds = entity.ChildColors.FindAll(x => x.EntityState == EntityState.Added);
-                        maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, addedChilds.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, addedChilds.Count);
 
                         foreach (var item in addedChilds)
                         {
@@ -887,10 +873,10 @@ namespace EPYSLTEXCore.Application.Services.RND
 
         private async Task<FreeConceptMaster> AddAsync(FreeConceptMaster entity, bool needNewConceptNo)
         {
-            entity.ConceptID = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER);
+            entity.ConceptID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER);
             if (needNewConceptNo) entity.ConceptNo = await GetMaxNoAsync();
 
-            int maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entity.ChildColors.Count);
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entity.ChildColors.Count);
             foreach (var item in entity.ChildColors)
             {
                 item.CCColorID = maxChildId++;
@@ -932,7 +918,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
         private async Task<string> GetMaxNoAsync()
         {
-            var id = await _signatureRepository.GetMaxIdAsync(TableNames.RND_CONCEPTNO, RepeatAfterEnum.EveryMonth);
+            var id = await _service.GetMaxIdAsync(TableNames.RND_CONCEPTNO, RepeatAfterEnum.EveryMonth);
             var datePart = DateTime.Now.ToString("yyMM");
             return $@"{datePart}{id:0000}";
         }
@@ -987,7 +973,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                         break;
 
                     case EntityState.Modified:
-                        entities = UpdateMany(entities);
+                        entities = await UpdateMany(entities);
                         break;
 
                     //case EntityState.Unchanged:
@@ -1036,9 +1022,9 @@ namespace EPYSLTEXCore.Application.Services.RND
 
         private async Task<List<FreeConceptMaster>> AddManyAsync(List<FreeConceptMaster> entities, List<ConceptPendingStatus_HK> conceptPendingStatusList)
         {
-            int conceptId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entities.Count);
-            int maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.Sum(x => x.ChildColors.Count));
-            int maxStatusChildId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_STATUS, (entities.Count * conceptPendingStatusList.Count));
+            int conceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entities.Count);
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.Sum(x => x.ChildColors.Count));
+            int maxStatusChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_STATUS, (entities.Count * conceptPendingStatusList.Count));
             List<ConceptStatus> freeConceptStatusList = new List<ConceptStatus>();
 
             int slNo = 0;
@@ -1074,7 +1060,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             return entities;
         }
 
-        private List<FreeConceptMaster> UpdateMany(List<FreeConceptMaster> entities)
+        private async Task<List<FreeConceptMaster>> UpdateMany(List<FreeConceptMaster> entities)
         {
             string conceptNo = entities.Where(x => x.EntityState == EntityState.Modified).FirstOrDefault().GroupConceptNo;
             int mConId = entities.Max(x => x.ConceptID);
@@ -1082,8 +1068,8 @@ namespace EPYSLTEXCore.Application.Services.RND
             int slNo = (entities.Where(x => x.ConceptID == mConId).FirstOrDefault().ConceptNo.Split('_').Length > 1) ?
                 entities.Where(x => x.ConceptID == mConId).FirstOrDefault().ConceptNo.Split('_')[1].ToInt() : 1;
 
-            int conceptId = _signatureRepository.GetMaxId(TableNames.RND_FREE_CONCEPT_MASTER, entities.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxChildId = _signatureRepository.GetMaxId(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.Sum(x => x.ChildColors.Where(y => y.EntityState == EntityState.Added).Count()));
+            int conceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entities.Where(x => x.EntityState == EntityState.Added).Count());
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.Sum(x => x.ChildColors.Where(y => y.EntityState == EntityState.Added).Count()));
 
             entities.ToList().ForEach(entity =>
             {
@@ -1132,7 +1118,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 await _connection.ExecuteAsync("spBackupFreeConcept_Full", new { ConceptNo = grpConceptNo }, transaction, 30, CommandType.StoredProcedure);
 
-                entities = UpdateMany(entities);
+                entities = await UpdateMany(entities);
 
                 await _service.SaveAsync(entities, transaction);
                 List<FreeConceptChildColor> childColors = new List<FreeConceptChildColor>();
@@ -1230,7 +1216,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 transaction = _connection.BeginTransaction();
                 int maxId = 0;
 
-                maxId = await _signatureRepository.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.FindAll(x => x.EntityState == EntityState.Added).Count());
+                maxId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.FindAll(x => x.EntityState == EntityState.Added).Count());
                 foreach (var item in entities.Where(x => x.EntityState == EntityState.Added))
                 {
                     item.CCColorID = maxId++;

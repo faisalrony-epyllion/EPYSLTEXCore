@@ -7,6 +7,7 @@
     var _conceptId = 9999;
 
     $(function () {
+
         if (!menuId) menuId = localStorage.getItem("menuId");
         if (!pageName) pageName = localStorage.getItem("pageName");
 

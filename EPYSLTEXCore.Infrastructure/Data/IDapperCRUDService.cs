@@ -1,5 +1,6 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -106,5 +107,11 @@ namespace EPYSLTEXCore.Infrastructure.Data
        // Task SaveNestedEntityAsync<T>(T entity, IDbTransaction transaction);
 
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);
+        #region signature Methods
+        Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
+        Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
+        Task<int> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000");
+        
+        #endregion
     }
 }

@@ -14,7 +14,7 @@
     var finderApiUrl = "";
     var childGridApiUrl = "";
     var selectedChild = null;
-    var changes = "changes";
+    var localstorageKey = "localstorageKey-";
     var editKey = "edit";
     var deleteKey = "delete";
     var addKey = "add";
@@ -35,6 +35,7 @@
         menuId = localStorage.getItem("current_common_interface_menuid");
 
         $formEl = $("#form-ci-" + menuId);
+        localstorageKey=localstorageKey+menuId;
         childForm = $("#form-ci-child-" + menuId);
         tblChildId = "#tabaleGridData-" + menuId;
         tblFinderId = "#tblSearchData-" + menuId;
@@ -46,7 +47,7 @@
             e.preventDefault();
             saveChild();
         });
-
+       
         $("#btnNewChildItem-" + menuId).click(function (e) {
 
             e.preventDefault();
@@ -213,7 +214,7 @@
     // Common function to save edited data to localStorage
     function saveEditedDataToLocalStorage(statusKey, data) {
         // Retrieve the existing edited data from localStorage, or initialize an empty array if none exists
-        var arreditedData = localStorage.getItem(changes) == null ? [] : JSON.parse(localStorage.getItem(changes));
+        var arreditedData = localStorage.getItem(localstorageKey) == null ? [] : JSON.parse(localStorage.getItem(localstorageKey));
      
 
         // Add the status key to the edited data
@@ -223,9 +224,14 @@
         arreditedData.push(data);
 
         // Save the updated array back to localStorage
-        window.localStorage.setItem(changes, JSON.stringify(arreditedData));
+        window.localStorage.setItem(localstorageKey, JSON.stringify(arreditedData));
     }
-
+        // Common function to save edited data to localStorage
+    function removeLocalStorage(key) {
+        
+             // Remove the key if it exists
+        window.localStorage.removeItem(key);
+    }
 
 
     async function executeSelectApis() {
@@ -650,7 +656,7 @@
                 //$formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
                 //$formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
                 //$formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
-              
+              removeLocalStorage(localstorageKey);
           
                 var finderElement = interfaceConfigs.Childs.filter(function (a) {
                     return a.FinderApiUrl != null && a.FinderApiUrl.length > 0;

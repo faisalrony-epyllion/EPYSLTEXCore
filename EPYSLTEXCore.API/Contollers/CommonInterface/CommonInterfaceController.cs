@@ -66,8 +66,8 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
            
         }
 
-        [Route("selectfinderdata/{menuId}/{childId}")]
-        public async Task<IActionResult> SelectFinderData(int menuId,int childId)
+        [Route("selectfinderdata/{menuId}/{id}")]
+        public async Task<IActionResult> SelectFinderData(int menuId,int id)
         {
 
             var paginationInfo = Request.GetPaginationInfo();
@@ -78,7 +78,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             if (commonInterfaceChild != null && !string.IsNullOrWhiteSpace(connKey))
             {
                 string selectSql = commonInterfaceChild.SelectSql;
-                var records = await _service.GetSelectedItemFinderData(selectSql, connKey);
+                var records = await _service.GetSelectedItemFinderData(selectSql, connKey, new { id });
                 return Ok(records);
             }
 

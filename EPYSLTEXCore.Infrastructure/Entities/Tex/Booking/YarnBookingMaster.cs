@@ -6,7 +6,6 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
-using FluentValidation;
 
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
@@ -574,13 +573,13 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
             CuffWeightInGm = 0;
         }
     }
-    public class YarnBookingMasterValidator : AbstractValidator<YarnBookingMaster>
-    {
-        public YarnBookingMasterValidator()
-        {
-            RuleForEach(x => x.Childs).SetValidator(new YarnBookingChildValidator());
-        }
-    }
+    //public class YarnBookingMasterValidator : AbstractValidator<YarnBookingMaster>
+    //{
+    //    public YarnBookingMasterValidator()
+    //    {
+    //        RuleForEach(x => x.Childs).SetValidator(new YarnBookingChildValidator());
+    //    }
+    //}
 
     public class LastAdditionalBookingList
     {

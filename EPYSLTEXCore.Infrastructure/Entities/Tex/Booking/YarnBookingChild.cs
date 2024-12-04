@@ -1,6 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
-using FluentValidation;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
@@ -360,11 +359,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
             BookingQtyKG = 0;
         }
     }
-    public class YarnBookingChildValidator : AbstractValidator<YarnBookingChild>
-    {
-        public YarnBookingChildValidator()
-        {
-            RuleFor(x => x.BookingQty).NotEmpty().WithMessage("Booking Qty is required.");
-        }
-    }
+    //public class YarnBookingChildValidator : AbstractValidator<YarnBookingChild>
+    //{
+    //    public YarnBookingChildValidator()
+    //    {
+    //        RuleFor(x => x.BookingQty).NotEmpty().WithMessage("Booking Qty is required.");
+    //    }
+    //}
 }

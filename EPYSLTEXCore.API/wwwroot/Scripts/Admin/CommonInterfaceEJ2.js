@@ -14,7 +14,10 @@
     var finderApiUrl = "";
     var childGridApiUrl = "";
     var selectedChild = null;
-
+    var changes = "changes";
+    var editKey = "edit";
+    var deleteKey = "delete";
+    var addKey = "add";
     var selectColumnList = [];
     var childSelectColumnList = [];
     var typeElements = [];
@@ -139,10 +142,36 @@
                 columns: columns,
                 allowResizing: true,
                 allowFiltering: true,
-
+                allowEditing: true,  // Enable editing
                 editSettings: getGridEditSettings(),
                 recordClick: function (args) {
 
+                },
+                
+                actionComplete: function (args) {
+                  
+                    if (args.action == addKey) {
+                        let newData = args.data;
+                       
+                        saveEditedDataToLocalStorage(addKey, newData); 
+                    }
+
+                    // Check if the action is 'edit'
+                    if (args.action == editKey) { 
+                       
+                        // Get the data to be edited from the arguments
+                        let editedData = args.rowData;
+                        saveEditedDataToLocalStorage(editKey, editedData); 
+                    }
+                    
+                    if (args.requestType == deleteKey) {
+                      
+                        // Get the edited data
+                        let deleteData = Array.isArray(args.data) && args.data.length>0 ? args.data[args.data.length-1]:args.data;
+                        saveEditedDataToLocalStorage(deleteKey, deleteData);
+                       
+ 
+                    }
                 },
                 actionBegin: function (args) {
                     if (args.requestType === "save") {
@@ -177,8 +206,28 @@
 
             $tblChildEl.refreshColumns;
             $tblChildEl.appendTo(tblChildId);
+ 
         }
     }
+ 
+    // Common function to save edited data to localStorage
+    function saveEditedDataToLocalStorage(statusKey, data) {
+        // Retrieve the existing edited data from localStorage, or initialize an empty array if none exists
+        var arreditedData = localStorage.getItem(changes) == null ? [] : JSON.parse(localStorage.getItem(changes));
+     
+
+        // Add the status key to the edited data
+        data['Status'] = statusKey;
+
+        // Push the edited data to the existing array
+        arreditedData.push(data);
+
+        // Save the updated array back to localStorage
+        window.localStorage.setItem(changes, JSON.stringify(arreditedData));
+    }
+
+
+
     async function executeSelectApis() {
         var objList = [],
             dependentColumnList = [],
@@ -386,7 +435,7 @@
         return null;
     }
     function getGridEditSettings() {
-      
+    
         var obj = {
             allowAdding: interfaceConfigs.IsInsertAllow,
             allowEditing: interfaceConfigs.IsUpdateAllow,
@@ -642,17 +691,19 @@
 
         $.each(selectColumnList, function (i, value) {
             var el = $formEl.find("#" + value.id);
-
+            
             if (value.hasDependentColumn > 0) {
                 $formEl.find("#" + value.dependentColumnName).on('select2:select', function (e) {
                     loadDependentSelection(el, value.apiUrl);
                 });
 
                 el.on('select2:select', function (e) {
+                    
+                    alert('e.params.data.desc')
                     setSelect2Combo($formEl.find("#" + dependentSegmentEl.Id), e.params.data.desc)
                 });
             }
-      
+           
             $.ajax({
                 type: 'GET',
                 url: value.apiUrl,
@@ -780,11 +831,13 @@
             allowResizing: true,
             allowFiltering: true,
             allowPaging: true,
+            allowEditing: true, // Enable editing
             pageSettings: { pageCount: 5 },
             toolbar: ['Add'],
             editSettings: { allowAdding: true, allowEditing: true, allowDeleting: true },
             columns: columnList
         });
+    
 
         $tblChildEl.appendTo(tblChildId);
     }
@@ -881,7 +934,7 @@
 
     // #region Save
     function saveMaster(e) {
-     
+    
         e.preventDefault();
         //if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
@@ -892,7 +945,13 @@
         /*i f IsAllowAddNew=false bind only child not parent */
         var data = interfaceConfigs.IsAllowAddNew ? formDataToJson($formEl.serializeArray()) : {};
          if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
-         if ($tblChildEl  ) data["Childs"] = $tblChildEl.getCurrentViewRecords();
+       // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
+     
+        
+        if (localStorage.getItem(changes)) data["Childs"] = JSON.parse(localStorage.getItem(changes));
+    
+        
+
          
         
         var config = {

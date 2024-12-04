@@ -9,7 +9,6 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
 {
@@ -699,26 +698,26 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
     }
     #region Validator
 
-    public class FBookingAcknowledgeValidator : AbstractValidator<FBookingAcknowledge>
-    {
-        public FBookingAcknowledgeValidator()
-        {
-            //RuleFor(x => x.AddedBy).GreaterThan(0).When(x => x.EntityState == EntityState.Added).WithMessage("Added by missing - FBookingAcknowledge");
-            //RuleFor(x => x.UpdatedBy).GreaterThan(0).When(x => x.EntityState == EntityState.Modified).WithMessage("Updated by missing - FBookingAcknowledge");
-            //RuleFor(x => x.KnittingTypeID).NotEmpty().When(x => x.KnittingTypeID == 0).WithMessage("Machine Type can not be empty!");
-            //RuleFor(x => x.ConceptDate).NotEmpty();
-            // RuleFor(x => x.Qty).GreaterThan(0).LessThanOrEqualTo(50);
-            //// RuleFor(x => x.TechnicalNameId).NotEmpty();
-            //RuleFor(x => x.GSMId).NotEmpty();
-            // RuleFor(x => x.SubGroupID).NotEmpty();
-            // RuleFor(x => x.MCSubClassID).NotEmpty();
-            //RuleFor(x => x.ChildColors).NotEmpty().When(x => x.ConceptFor == EntityTypeConstants.CONCEPT_FOR_COLOR_BASE).WithMessage("For color base concept you must add at least one Color Item.");
-            //When(x => x.ChildColors.Any(), () =>
-            //{
-            //    RuleForEach(x => x.ChildColors).SetValidator(new FreeConceptChildColorValidator());
-            //});
-        }
-    }
+    //public class FBookingAcknowledgeValidator : AbstractValidator<FBookingAcknowledge>
+    //{
+    //    public FBookingAcknowledgeValidator()
+    //    {
+    //        //RuleFor(x => x.AddedBy).GreaterThan(0).When(x => x.EntityState == EntityState.Added).WithMessage("Added by missing - FBookingAcknowledge");
+    //        //RuleFor(x => x.UpdatedBy).GreaterThan(0).When(x => x.EntityState == EntityState.Modified).WithMessage("Updated by missing - FBookingAcknowledge");
+    //        //RuleFor(x => x.KnittingTypeID).NotEmpty().When(x => x.KnittingTypeID == 0).WithMessage("Machine Type can not be empty!");
+    //        //RuleFor(x => x.ConceptDate).NotEmpty();
+    //        // RuleFor(x => x.Qty).GreaterThan(0).LessThanOrEqualTo(50);
+    //        //// RuleFor(x => x.TechnicalNameId).NotEmpty();
+    //        //RuleFor(x => x.GSMId).NotEmpty();
+    //        // RuleFor(x => x.SubGroupID).NotEmpty();
+    //        // RuleFor(x => x.MCSubClassID).NotEmpty();
+    //        //RuleFor(x => x.ChildColors).NotEmpty().When(x => x.ConceptFor == EntityTypeConstants.CONCEPT_FOR_COLOR_BASE).WithMessage("For color base concept you must add at least one Color Item.");
+    //        //When(x => x.ChildColors.Any(), () =>
+    //        //{
+    //        //    RuleForEach(x => x.ChildColors).SetValidator(new FreeConceptChildColorValidator());
+    //        //});
+    //    }
+    //}
 
     #endregion Validator
     public class FBookingAcknowledgeChildColor

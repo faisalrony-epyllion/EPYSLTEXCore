@@ -2,7 +2,6 @@
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
-using FluentValidation;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
@@ -275,26 +274,26 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 
     #region Validator
 
-    public class FreeConceptMasterValidator : AbstractValidator<FreeConceptMaster>
-    {
-        public FreeConceptMasterValidator()
-        {
-            //RuleFor(x => x.AddedBy).NotEmpty().When(x => x.AddedBy == 0).WithMessage("Added by missing - FreeConceptMaster");
-            //RuleFor(x => x.UpdatedBy).NotEmpty().When(x => x.UpdatedBy == 0 && x.EntityState==System.Data.Entity.EntityState.Modified).WithMessage("Updated by missing - FreeConceptMaster");
-            //RuleFor(x => x.KnittingTypeID).NotEmpty().When(x => x.KnittingTypeID == 0).WithMessage("Machine Type can not be empty!");
-            //RuleFor(x => x.ConceptDate).NotEmpty();
-            // RuleFor(x => x.Qty).GreaterThan(0).LessThanOrEqualTo(50);
-            //// RuleFor(x => x.TechnicalNameId).NotEmpty();
-            //RuleFor(x => x.GSMId).NotEmpty();
-            // RuleFor(x => x.SubGroupID).NotEmpty();
-            // RuleFor(x => x.MCSubClassID).NotEmpty();
-            //RuleFor(x => x.ChildColors).NotEmpty().When(x => x.ConceptFor == EntityTypeConstants.CONCEPT_FOR_COLOR_BASE).WithMessage("For color base concept you must add at least one Color Item.");
-            //When(x => x.ChildColors.Any(), () =>
-            //{
-            //    RuleForEach(x => x.ChildColors).SetValidator(new FreeConceptChildColorValidator());
-            //});
-        }
-    }
+    //public class FreeConceptMasterValidator : AbstractValidator<FreeConceptMaster>
+    //{
+    //    public FreeConceptMasterValidator()
+    //    {
+    //        //RuleFor(x => x.AddedBy).NotEmpty().When(x => x.AddedBy == 0).WithMessage("Added by missing - FreeConceptMaster");
+    //        //RuleFor(x => x.UpdatedBy).NotEmpty().When(x => x.UpdatedBy == 0 && x.EntityState==System.Data.Entity.EntityState.Modified).WithMessage("Updated by missing - FreeConceptMaster");
+    //        //RuleFor(x => x.KnittingTypeID).NotEmpty().When(x => x.KnittingTypeID == 0).WithMessage("Machine Type can not be empty!");
+    //        //RuleFor(x => x.ConceptDate).NotEmpty();
+    //        // RuleFor(x => x.Qty).GreaterThan(0).LessThanOrEqualTo(50);
+    //        //// RuleFor(x => x.TechnicalNameId).NotEmpty();
+    //        //RuleFor(x => x.GSMId).NotEmpty();
+    //        // RuleFor(x => x.SubGroupID).NotEmpty();
+    //        // RuleFor(x => x.MCSubClassID).NotEmpty();
+    //        //RuleFor(x => x.ChildColors).NotEmpty().When(x => x.ConceptFor == EntityTypeConstants.CONCEPT_FOR_COLOR_BASE).WithMessage("For color base concept you must add at least one Color Item.");
+    //        //When(x => x.ChildColors.Any(), () =>
+    //        //{
+    //        //    RuleForEach(x => x.ChildColors).SetValidator(new FreeConceptChildColorValidator());
+    //        //});
+    //    }
+    //}
 
     #endregion Validator
 }

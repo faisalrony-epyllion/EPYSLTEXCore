@@ -1,5 +1,6 @@
 using Dapper;
 using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
@@ -1350,7 +1351,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                         break;
 
                     case EntityState.Modified:
-                        entities = UpdateMany(entities, freeConceptStatusList);
+                        entities = await UpdateMany(entities, freeConceptStatusList);
                         break;
 
                     //case EntityState.Unchanged:
@@ -1482,7 +1483,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 var conceptIds = string.Join(",", entities.Select(x => x.ConceptID).Distinct());
                 var freeConceptStatusList = await _conceptStatusService.GetByCPSIDs("1,2", conceptIds);
 
-                entities = UpdateMany(entities, freeConceptStatusList);
+                entities = await UpdateMany(entities, freeConceptStatusList);
 
                 await _service.SaveAsync(entities, transaction);
                 List<FreeConceptMRChild> childs = new List<FreeConceptMRChild>();
@@ -1495,7 +1496,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 await _service.SaveAsync(childs, transaction);
                 foreach (FreeConceptMRChild item in childs)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild", item.EntityState, userId, item.FCMRChildID);
+                    
+                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(conceptStatusList, transaction);
                 if (!fcmrChildIds.IsNullOrEmpty())

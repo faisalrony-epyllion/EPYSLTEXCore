@@ -150,6 +150,7 @@
                 },
                 
                 actionComplete: function (args) {
+                   
                   var keyName='';
                   var keyValue='';
                     if (args.action == addKey) {
@@ -162,9 +163,9 @@
 
                     // Check if the action is 'edit'
                     if (args.action == editKey) { 
-                       
+                        
                         // Get the data to be edited from the arguments
-                        keyValue = args.rowData;
+                        keyValue = args.data;
                          keyName=editKey;
                            keyValue['Status']=editKey
                          addUniqueObjectToLocalStorage(keyValue);
@@ -180,7 +181,7 @@
  
                     }
                     
-                    //saveEditedDataToLocalStorage(keyName, keyValue);
+                   
                 },
                 actionBegin: function (args) {
                     if (args.requestType === "save") {
@@ -231,7 +232,7 @@
           var array = localStorage.getItem(localstorageKey) == null ? [] : JSON.parse(localStorage.getItem(localstorageKey));
         let indexToRemove = array.findIndex(p => p[interfaceConfigs.PrimaryKeyColumn] === obj[interfaceConfigs.PrimaryKeyColumn]);
         // Check if object already exists in the array
-        debugger;
+       
         
             if (indexToRemove !== -1 && obj['Status']!=addKey) {
               // Remove the object from the array
@@ -675,6 +676,7 @@
                 selectApiUrl = selectApiUrl + primaryKeyValue;
                 axios.get(selectApiUrl)
                     .then(function (response) {
+                        
                         masterData = response.data;
                         if (masterData.length === 0) {
                             
@@ -949,7 +951,7 @@
 
     // #region Save
     function saveMaster(e) {
-    
+ 
         e.preventDefault();
         //if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
@@ -963,11 +965,11 @@
        // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
      
         
-        if (localStorage.getItem(localstorageKey)) data["Childs"] = JSON.parse(localStorage.getItem(localstorageKey));
+        data["Childs"]=localStorage.getItem(localstorageKey)==null ? []: JSON.parse(localStorage.getItem(localstorageKey));
     
         
 
-         
+           
         
         var config = {
             headers: {

@@ -85,6 +85,16 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             return Ok();
 
         }
- 
+        [Route("save/{menuId}")]
+        public async Task<IActionResult> Save(int menuId, dynamic entity)
+        {
+
+           
+
+            return Ok();
+
+        }
+    
+
     }
 }

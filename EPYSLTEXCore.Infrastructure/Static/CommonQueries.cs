@@ -124,5 +124,97 @@ namespace EPYSLTEXCore.Infrastructure.Static
                         SELECT * FROM IPath";
             return sql;
         }
+        public static string GetItemSegmentValuesBySegmentNamesWithSegmentName()
+        {
+            return $@"SELECT CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                WHERE ISN.SegmentName In @SegmentNames And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                ORDER BY ISN.SegmentName";
+            /*return $@"SELECT CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc],CV.YarnTypeSegmentValueID [additionalValue]
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                Left Join {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup CV ON CV.SegmentValueID=ISV.SegmentValueID
+                WHERE ISN.SegmentName In @SegmentNames And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                ORDER BY ISN.SegmentName";*/
+        }
+        /// <summary>
+        /// Get entity type values by type name.
+        /// </summary>
+        /// <param name="entityTypeName"></param>
+        /// <returns>Returns array of entity type values.</returns>
+        public static string GetEntityTypeValuesOnly(string entityTypeName)
+        {
+            return $@"
+                Select EV.ValueName
+                From {DbNames.EPYSL}..EntityTypeValue EV
+                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+                Where ET.EntityTypeName = '{entityTypeName}'
+                Group By EV.ValueName";
+        }
+        /// <summary>
+        /// Get entity type values by type name.
+        /// </summary>
+        /// <param name="entityTypeName"></param>
+        /// <returns>Returns array of entity type values.</returns>
+        public static string GetFabricUsedPart()
+        {
+            return $@"
+                SELECT CAST(FUPartID AS varchar) [id], PartName [text], ConceptSubGroupID [desc]
+                FROM {DbNames.EPYSL}..FabricUsedPart WHERE ConceptSubGroupID <> 0";
+        }
+        public static string GetCertifications()
+        {
+            return $@"SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc],isnull(CAST(FCMS.SubProgramID As varchar),'0')additionalValue, isnull(CAST(FCMS.FiberID As varchar),'0')additionalValue2
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                LEFT JOIN {DbNames.EPYSL}..FabricComponentMappingSetup FCMS on FCMS.CertificationsID=ISV.SegmentValueID
+		        LEFT JOIN CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
+                WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+		        	AND ISNULL(CBS.IsInactive,0) = 0
+                ORDER BY ISV.SegmentValue";
+
+        }
+
+        public static string GetFabricComponents(string entityTypeName)
+        {
+            return $@"
+                 Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text]
+                From {DbNames.EPYSL}..EntityTypeValue EV
+                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+		        LEFT JOIN FiberBasicSetup FBS ON FBS.ValueID = EV.ValueID
+                Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
+                Group By EV.ValueID,EV.ValueName";
+        }
+
+        public static string GetSubPrograms()
+        {
+            return $@"SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc],isnull(CAST(FCMS.FiberID As varchar),'0')additionalValue
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                LEFT JOIN {DbNames.EPYSL}..FabricComponentMappingSetup FCMS on FCMS.SubProgramID=ISV.SegmentValueID
+		        LEFT JOIN SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
+                WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+			        AND ISNULL(SBS.IsInactive,0) = 0 
+                ORDER BY ISV.SegmentValue";
+
+        }
+
+
+        public static string GetYarnShadeBooks()
+        {
+            return $@"SELECT ShadeCode [id], ShadeCode [text], ContactID [additionalValue] FROM YarnShadeBook";
+        }
+
+
+
+        public static object GetDayValidDurations()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

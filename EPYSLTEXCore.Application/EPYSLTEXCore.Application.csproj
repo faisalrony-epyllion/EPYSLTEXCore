@@ -19,6 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Reporting\RDLReportDocument.cs" />
+    <Compile Remove="Services\Reporting\ReportingService.cs" />
     <Compile Remove="Services\User\LoginHistoryService.cs" />
   </ItemGroup>
 

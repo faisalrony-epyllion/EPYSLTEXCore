@@ -81,4 +81,10 @@ namespace EPYSLTEXCore.Infrastructure.Statics
         TestPending = 11,
         WaitingForLivePending = 12
     }
+    public enum KnittingProgramType
+    {
+        Concept = 1,
+        BDS = 2,
+        Bulk = 3
+    }
 }

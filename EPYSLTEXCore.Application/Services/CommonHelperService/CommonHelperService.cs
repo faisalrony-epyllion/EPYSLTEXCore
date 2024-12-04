@@ -232,5 +232,9 @@ namespace EPYSLTEX.Infrastructure.Services
             return await _service.GetDataAsync<FabricWastageGrid>(sql);
         }
 
+        public async Task UpdateFreeConceptStatus(string interfaceFrom, int conceptID = 0, string groupConceptNo = "", int bookingID = 0, int isBDS = 0, int ccColorID = 0, int colorID = 0, int itemMasterID = 0, string conceptIDs = "")
+        {
+            await _service.ExecuteAsync("spUpdateFreeConceptStatus", new { InterfaceFrom = interfaceFrom, ConceptID = conceptID, GroupConceptNo = groupConceptNo, BookingID = bookingID, IsBDS = isBDS, CCColorID = ccColorID, ColorID = colorID, ItemMasterID = itemMasterID, ConceptIDs = conceptIDs }, 30, CommandType.StoredProcedure);
+        }
     }
 }

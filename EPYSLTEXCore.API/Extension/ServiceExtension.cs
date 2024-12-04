@@ -5,7 +5,11 @@ using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.Application.DataAccess;
 using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Interfaces.Booking;
+using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Application.Services;
+using EPYSLTEXCore.Application.Services.Booking;
+using EPYSLTEXCore.Application.Services.RND;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
 namespace EPYSLTEXCore.API.Extension
@@ -26,6 +30,10 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<ICommonHelpers, CommonHelpers>();
             service.AddTransient<IYarnProductSetupService, YarnProductSetupService>();
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
+
+            service.AddTransient<IFreeConceptService, FreeConceptService>();
+            service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
+
             //service.AddTransient<ISignatureService, SignatureService>();
 
             //foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())

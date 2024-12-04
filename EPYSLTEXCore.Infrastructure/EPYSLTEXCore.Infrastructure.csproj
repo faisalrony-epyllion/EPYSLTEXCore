@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="CustomAttributes\" />
+    <Folder Include="Entities\Gmt\Security\" />
   </ItemGroup>
 
 </Project>

@@ -38,6 +38,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             , IDapperCRUDService<FBookingAcknowledge> service)
         {
             _service = service;
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
             _gmtservice = gmtservice;
             _gmtservice.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
@@ -1454,7 +1455,6 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {paginationInfo.PageBy}";
 
             sql += $@" DROP TABLE #TempTable{tempGuid} ";
-
             var fBookingAcknowledges = await _service.GetDataAsync<FBookingAcknowledge>(sql);
 
             if (isNeedImage)

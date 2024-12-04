@@ -28,8 +28,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
 
         public SqlConnection GetConnection(string connectionName = AppConstants.DB_CONNECTION)
-        {
-            return new SqlConnection(this._connectionString);
+        {//This Method modified by Saif
+            var connectionString = this._configuration.GetConnectionString(connectionName);
+            return new SqlConnection(connectionString);
         }
 
         public async Task<SqlConnection> OpenTexConnectionAsync()

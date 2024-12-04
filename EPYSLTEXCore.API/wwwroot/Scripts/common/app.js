@@ -379,6 +379,7 @@ function registerCloseEvent(menuId) {
             $("#mainTab").find("li[tabIndex=" + preTabIndex + "]").addClass("bg-info").addClass("active");
         }
         var pageName = $("#mainTab").find("li.active").attr("pageName");
+        if (typeof pageName === "undefined") pageName = "dashboard";
         $('#mainTab a[href="#' + pageName + '"]').tab('show');
         resetTabIndex();
 
@@ -407,7 +408,7 @@ function registerCloseEvent(menuId) {
 
 function setAnimate(isRightBtnClick) {
     var leftC = 100;
-    var maxLeftC = 600;
+    var maxLeftC = 650;
     var leftValue = 0;
 
     if (!isRightBtnClick) {

@@ -128,11 +128,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         [Write(false)]
         public int KnittingTypeID { get; set; }
 
-        [Write(false)]
-        public int ConstructionId { get; set; }
+        //[Write(false)]
+        //public int ConstructionId { get; set; }
 
-        [Write(false)]
-        public int TechnicalNameId { get; set; }
+        //[Write(false)]
+        //public int TechnicalNameId { get; set; }
 
         [Write(false)]
         public int CompositionId { get; set; }

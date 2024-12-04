@@ -28,8 +28,9 @@ namespace EPYSLTEXCore.Infrastructure.Entities
         public int? ManufacturingSubProcessID { get; set; }
         public int? YarnColorID { get; set; }
         public int? ColorGradeID { get; set; }
-         
 
+        [Write(false)]
+        public string Status { get; set; }
         #region Additional Properties
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified;

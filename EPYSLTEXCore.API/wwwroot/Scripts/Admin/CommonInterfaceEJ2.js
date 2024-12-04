@@ -231,8 +231,9 @@
           var array = localStorage.getItem(localstorageKey) == null ? [] : JSON.parse(localStorage.getItem(localstorageKey));
         let indexToRemove = array.findIndex(p => p[interfaceConfigs.PrimaryKeyColumn] === obj[interfaceConfigs.PrimaryKeyColumn]);
         // Check if object already exists in the array
+        debugger;
         
-            if (indexToRemove !== -1) {
+            if (indexToRemove !== -1 && obj['Status']!=addKey) {
               // Remove the object from the array
               array.splice(indexToRemove, 1);
             }        
@@ -962,7 +963,7 @@
        // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
      
         
-        if (localStorage.getItem(changes)) data["Childs"] = JSON.parse(localStorage.getItem(changes));
+        if (localStorage.getItem(localstorageKey)) data["Childs"] = JSON.parse(localStorage.getItem(localstorageKey));
     
         
 

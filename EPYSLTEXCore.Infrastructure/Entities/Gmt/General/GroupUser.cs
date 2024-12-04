@@ -1,4 +1,5 @@
-﻿using EPYSLTEXCore.Infrastructure.Entities.Gmt.Security;
+﻿
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.Security;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General

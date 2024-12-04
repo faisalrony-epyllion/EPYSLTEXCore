@@ -1,46 +1,62 @@
-﻿using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.Interfaces;
+﻿using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces.Booking;
-using Microsoft.AspNetCore.Components;
+using EPYSLTEXCore.Application.Interfaces.RND;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.Entity;
+
+
+
 namespace EPYSLTEXCore.API.Contollers.Booking
 {
 
     [Route("api/fab-acknowledge")]
-    public class FBookingAcknowledgeController// : ApiBaseController
-    {/*
+    public class FBookingAcknowledgeController : ApiBaseController
+    {
         bool _isValidMailSending = true;
         private readonly IFBookingAcknowledgeService _service;
         private readonly IFreeConceptService _fcService;
 
-        private readonly IEmailService _emailService;
-        private readonly IReportingService _reportingService;
+        //private readonly IEmailService _emailService;// OFF Report Mail in CORE
+        //private readonly IReportingService _reportingService;// OFF Report Mail in CORE
 
         //private static Logger _logger;
         //private readonly ICommonService _commonService;
 
-        private readonly IFreeConceptMRService _serviceFreeConceptMR;
+        //private readonly IFreeConceptMRService _serviceFreeConceptMR;
 
-        public FBookingAcknowledgeController(IEmailService emailService
-            , IReportingService reportingService
+        public FBookingAcknowledgeController(IUserService userService
+            //IEmailService emailService // OFF Report Mail in CORE
+            //, IReportingService reportingService// OFF Report Mail in CORE
             , IFBookingAcknowledgeService KnittingProgramBDSService
             , IFreeConceptService FreeConceptService
-            , IFreeConceptMRService serviceFreeConceptMR
-            //, ICommonService commonService
-            )
+            //, IFreeConceptMRService serviceFreeConceptMR
+        //, ICommonService commonService
+            ) : base(userService)
         {
             _service = KnittingProgramBDSService;
             _fcService = FreeConceptService;
-            _emailService = emailService;
-            _reportingService = reportingService;
+            //_emailService = emailService;// OFF Report Mail in CORE
+            //_reportingService = reportingService;// OFF Report Mail in CORE
             //_commonService = commonService;
-            _serviceFreeConceptMR = serviceFreeConceptMR;
+            //_serviceFreeConceptMR = serviceFreeConceptMR;
             //_logger = LogManager.GetCurrentClassLogger();
         }
 
         [Route("bulkfabric/list")]
-        public async Task<IHttpActionResult> GetBulkFabricList(Status status)
+        public async Task<IActionResult> GetBulkFabricList(Status status)
         {
             var paginationInfo = Request.GetPaginationInfo();
             List<FBookingAcknowledge> records = await _service.GetBulkFabricAckPagedAsync(status, paginationInfo, AppUser);
@@ -49,7 +65,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
         [HttpGet]
         [Route("bulk/fabric-booking-acknowledge/get-list-count")]
-        public async Task<IHttpActionResult> GetListCount()
+        public async Task<IActionResult> GetListCount()
         {
             CountListItem data = await _service.GetListCount();
             return Ok(data);
@@ -57,14 +73,14 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
         [HttpGet]
         [Route("bulk/new/{bookingNo}")]
-        public async Task<IHttpActionResult> GetNewBulk(string bookingNo)
+        public async Task<IActionResult> GetNewBulk(string bookingNo)
         {
             FBookingAcknowledge data = await _service.GetNewBulkFAsync(bookingNo);
             return Ok(data);
         }
         [HttpGet]
         [Route("bulk/slist/{bookingNo}/{withoutOB}/{isRevised}")]
-        public async Task<IHttpActionResult> GetNewBulkFabric(string bookingNo, int withoutOB, bool isRevised)
+        public async Task<IActionResult> GetNewBulkFabric(string bookingNo, int withoutOB, bool isRevised)
         {
             List<BookingChild> updatedDataNew = new List<BookingChild>();
             if (bookingNo.IsNotNullOrEmpty())
@@ -99,7 +115,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
         [HttpGet]
         [Route("bulk/smail/{bookingNo}/{withoutOB}/{saveType}/{listTypeMasterGrid}")]
-        public async Task<IHttpActionResult> SendMail(string bookingNo, int withoutOB, string saveType, string listTypeMasterGrid)
+        public async Task<IActionResult> SendMail(string bookingNo, int withoutOB, string saveType, string listTypeMasterGrid)
         {
             List<BookingChild> updatedDataNew = new List<BookingChild>();
             if (bookingNo.IsNotNullOrEmpty())
@@ -142,7 +158,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         bmList.Add(bm);
                         unAckBy = bm.OrderBankMasterID;
                     }
-                    IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
+                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
                 }
             }
             else
@@ -156,7 +172,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         bmList.Add(bm);
                         unAckBy = bm.LabdipUnAcknowledgeBY;
                     }
-                    IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
+                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
                 }
             }
             return Ok(IsSendMail);
@@ -164,7 +180,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
         [HttpGet]
         [Route("bulk/list/{ExportOrderNo}/{SubGroupID}")]
-        public async Task<IHttpActionResult> CheckRevisionStatus(string ExportOrderNo, string SubGroupID)
+        public async Task<IActionResult> CheckRevisionStatus(string ExportOrderNo, string SubGroupID)
         {
             FBookingAcknowledge data = await _service.GetAllRevisionStatusByExportOrderIDAndSubGroupID(ExportOrderNo, SubGroupID);
             if (data.IsNull())
@@ -173,7 +189,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         }
         [HttpGet]
         [Route("{fbAckId}")]
-        public async Task<IHttpActionResult> GetData(int fbAckId)
+        public async Task<IActionResult> GetData(int fbAckId)
         {
             FBookingAcknowledge data = await _service.GetDataAsync(fbAckId);
             return Ok(data);
@@ -182,7 +198,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> Save(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> Save(FBookingAcknowledge modelDynamic)
         {
             FBookingAcknowledge entity = modelDynamic;// models.FirstOrDefault();
             string grpConceptNo = modelDynamic.grpConceptNo;
@@ -200,7 +216,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             //var BDSTNAEvent = await _service.GetAllAsyncBDSTNAEvent_HK();
 
             entity.IsSample = false;
-            entity.AddedBy = UserId;
+            entity.AddedBy = AppUser.UserCode;
 
             if (entity.IsUnAcknowledge)
             {
@@ -222,13 +238,13 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 if (ActionStatus == "30" || ActionStatus == "3")
                 {
                     ObjEntityChild.IsTxtAck = true;
-                    ObjEntityChild.TxtAcknowledgeBy = UserId;
+                    ObjEntityChild.TxtAcknowledgeBy = AppUser.UserCode;
                     ObjEntityChild.TxtAcknowledgeDate = DateTime.Now;
                 }
                 else if (ActionStatus == "10")
                 {
                     ObjEntityChild.SendToMktAck = true;
-                    ObjEntityChild.AcknowledgeBy = UserId;
+                    ObjEntityChild.AcknowledgeBy = AppUser.UserCode;
                     ObjEntityChild.AcknowledgeDate = DateTime.Now;
                 }
                 ObjEntityChild.AcknowledgeID = item.AcknowledgeID;
@@ -411,7 +427,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 if (entity.IsUnAcknowledge)
                 {
                     fbaMaster.UnAcknowledge = true;
-                    fbaMaster.UnAcknowledgeBy = UserId;
+                    fbaMaster.UnAcknowledgeBy = AppUser.UserCode;
                     fbaMaster.UnAcknowledgeDate = DateTime.Now;
                 }
                 entityFBA.Add(fbaMaster);
@@ -1062,7 +1078,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             }
             List<FreeConceptMaster> entityFreeConcepts = new List<FreeConceptMaster>();
             List<FreeConceptMRMaster> entityFreeMR = new List<FreeConceptMRMaster>();
-            await _service.SaveAsync(UserId, entity, entityChilds, entityChildAddProcess, entityChildDetails, entityChildsGpart, entityChildsProcess, entityChildsText, entityChildsDistribution, entityChildsYarnSubBrand, entityChildsImage, BDCalander, isBDS, entityFreeConcepts, entityFreeMR, entityChildsLiabilitiesDistribution, entityFBA, entityFBYL);
+            await _service.SaveAsync(AppUser.UserCode, entity, entityChilds, entityChildAddProcess, entityChildDetails, entityChildsGpart, entityChildsProcess, entityChildsText, entityChildsDistribution, entityChildsYarnSubBrand, entityChildsImage, BDCalander, isBDS, entityFreeConcepts, entityFreeMR, entityChildsLiabilitiesDistribution, entityFBA, entityFBYL);
 
             //await _commonService.UpdateFreeConceptStatus(InterfaceFrom.FBookingAcknowledge, 0, grpConceptNo, entity.BookingID);
             return Ok();
@@ -1106,13 +1122,13 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
             if (fba.AcknowledgeID == 0)
             {
-                fba.AddedBy = UserId;
+                fba.AddedBy = AppUser.UserCode;
                 fba.DateAdded = DateTime.Now;
                 fba.EntityState = EntityState.Added;
             }
             else
             {
-                fba.UpdatedBy = UserId;
+                fba.UpdatedBy = AppUser.UserCode;
                 fba.DateUpdated = DateTime.Now;
                 fba.EntityState = EntityState.Modified;
             }
@@ -1120,7 +1136,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             if (isUnAcknowledge)
             {
                 fba.Status = false;
-                fba.UnAcknowledgeBy = UserId;
+                fba.UnAcknowledgeBy = AppUser.UserCode;
                 fba.UnAcknowledgeDate = DateTime.Now;
                 fba.UnAcknowledge = true;
                 if (revisionNo > 0)
@@ -1178,13 +1194,13 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
             if (fba.FBAckID == 0)
             {
-                fba.AddedBy = UserId;
+                fba.AddedBy = AppUser.UserCode;
                 fba.DateAdded = DateTime.Now;
                 fba.EntityState = EntityState.Added;
             }
             else
             {
-                fba.UpdatedBy = UserId;
+                fba.UpdatedBy = AppUser.UserCode;
                 fba.DateUpdated = DateTime.Now;
                 fba.EntityState = EntityState.Modified;
             }
@@ -1193,7 +1209,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             {
                 fba.Status = false;
                 fba.IsUnAcknowledge = true;
-                fba.UnAcknowledgeBy = UserId;
+                fba.UnAcknowledgeBy = AppUser.UserCode;
                 fba.UnAcknowledgeDate = DateTime.Now;
                 fba.UnAcknowledgeReason = isSample ? sampleBookingMaster.UnAcknowledgeReason : bookingMaster.UnAcknowledgeReason;
                 fba.AcknowledgeDate = null;
@@ -1212,7 +1228,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("acknowledge")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> Acknowledge(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> Acknowledge(FBookingAcknowledge modelDynamic)
         {
             await _service.CheckIsBookingApprovedAsync(modelDynamic.BookingNo);
 
@@ -1622,7 +1638,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     });
                     savedFBA.FabricBookingAcknowledgeList.ForEach(x => x.MenuId = menuId);
 
-                    await _service.SaveAsync(UserId, saveBookingItemAcknowledgeList, savedFBA.FabricBookingAcknowledgeList, saveFBookingAcknowledge, saveBookingMasterList, WithoutOB, isRevised, SaveType);
+                    await _service.SaveAsync(AppUser.UserCode, saveBookingItemAcknowledgeList, savedFBA.FabricBookingAcknowledgeList, saveFBookingAcknowledge, saveBookingMasterList, WithoutOB, isRevised, SaveType);
 
                     #region RollBack Booking
                     //if (BookingNo.IsNotNullOrEmpty())
@@ -1647,11 +1663,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingNo(BookingNo);
-                                    IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                                 }
                                 else
                                 {
-                                    IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1667,11 +1683,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingIDAndWithOutOB(selectedbookingID == "" ? "0" : selectedbookingID);
-                                    IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                                 }
                                 else
                                 {
-                                    IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1703,7 +1719,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         }
                     });
                     savedFBA.FabricBookingAcknowledgeList.ForEach(x => x.MenuId = menuId);
-                    await _service.SaveAsync(UserId, saveBookingItemAcknowledgeList, savedFBA.FabricBookingAcknowledgeList, saveFBookingAcknowledge, saveSampleBookingMasterList, isRevised, SaveType);
+                    await _service.SaveAsync(AppUser.UserCode, saveBookingItemAcknowledgeList, savedFBA.FabricBookingAcknowledgeList, saveFBookingAcknowledge, saveSampleBookingMasterList, isRevised, SaveType);
 
                     #region System Mail
 
@@ -1723,11 +1739,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingNo(BookingNo);
-                                    IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                                 }
                                 else
                                 {
-                                    IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1743,11 +1759,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingIDAndWithOutOB(selectedbookingID == "" ? "0" : selectedbookingID);
-                                    IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                                 }
                                 else
                                 {
-                                    IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1770,11 +1786,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingNo(BookingNo);
-                                    IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                                 }
                                 else
                                 {
-                                    IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1790,11 +1806,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingIDAndWithOutOB(selectedbookingID == "" ? "0" : selectedbookingID);
-                                    IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                                 }
                                 else
                                 {
-                                    IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -2013,7 +2029,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     if (EditType == "N")
                     {
                         ObjEntityChild.IsTxtAck = true;
-                        ObjEntityChild.TxtAcknowledgeBy = UserId;
+                        ObjEntityChild.TxtAcknowledgeBy = AppUser.UserCode;
                         ObjEntityChild.TxtAcknowledgeDate = currentDate;
                     }
                     if (EditType == "R" && ObjEntityChild.LiabilitiesBookingQty > 0)
@@ -2021,7 +2037,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         ObjEntityChild.SendToMktAck = true;
                         ObjEntityChild.IsMktAck = false;
 
-                        ObjEntityChild.AcknowledgeBy = UserId;
+                        ObjEntityChild.AcknowledgeBy = AppUser.UserCode;
                         ObjEntityChild.AcknowledgeDate = currentDate;
 
                         FabricBookingAcknowledge objFabricBookingItemAcknowledge = saveFabricBookingItemAcknowledge.Find(i => i.BookingID == ObjEntityChild.BookingID);
@@ -2033,7 +2049,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     else
                     {
                         ObjEntityChild.IsTxtAck = true;
-                        ObjEntityChild.TxtAcknowledgeBy = UserId;
+                        ObjEntityChild.TxtAcknowledgeBy = AppUser.UserCode;
                         ObjEntityChild.TxtAcknowledgeDate = currentDate;
                     }
                 }
@@ -2198,7 +2214,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
 
                             x.RevisionNoWhenDeleted = revisionNo;
-                            x.RevisionByWhenDeleted = UserId;
+                            x.RevisionByWhenDeleted = AppUser.UserCode;
                             x.RevisionDateWhenDeleted = currentDate;
 
                             x.IsDeleted = true;
@@ -2234,7 +2250,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 });
                 saveFabricBookingItemAcknowledge.ForEach(x => x.MenuId = menuId);
 
-                await _service.SaveAsync(UserId, EditType, BookingNo, saveFabricBookingItemAcknowledge, saveFBookingAcknowledge, saveFBookingAcknowledgeChild, entityDistributions, entityYarnLiabilities, isRevised, WithoutOB, styleMasterId, bomMasterId, userCode, SaveType);
+                await _service.SaveAsync(AppUser.UserCode, EditType, BookingNo, saveFabricBookingItemAcknowledge, saveFBookingAcknowledge, saveFBookingAcknowledgeChild, entityDistributions, entityYarnLiabilities, isRevised, WithoutOB, styleMasterId, bomMasterId, userCode, SaveType);
 
                 Boolean IsSendMail = true;
 
@@ -2258,11 +2274,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                             if (isUnAcknowledge)
                             {
                                 saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingNo(BookingNo);
-                                IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                // OFF FOR CORE //IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                             }
                             else
                             {
-                                IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                             }
                         }
                     }
@@ -2278,11 +2294,11 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                             if (isUnAcknowledge)
                             {
                                 saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingIDAndWithOutOB(selectedbookingID == "" ? "0" : selectedbookingID);
-                                IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
+                                // OFF FOR CORE //IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
                             }
                             else
                             {
-                                IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
+                                // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                             }
                         }
                     }
@@ -2293,987 +2309,984 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
             return Ok(SendMailTrueOrFalse);
         }
-        public async Task<bool> SystemMail(List<FabricBookingAcknowledge> saveFabricBookingItemAcknowledgeList, List<BookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, int unAckBy, string listTypeMasterGrid)
+        /* //OFF FOR CORE
+public async Task<bool> SystemMail(List<FabricBookingAcknowledge> saveFabricBookingItemAcknowledgeList, List<BookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, int unAckBy, string listTypeMasterGrid)
+{
+    if (_isValidMailSending)
+    {
+        try
         {
-            if (_isValidMailSending)
+            int revisionNo = 0;
+            var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
+            if (bookings.IsNotNull() && bookings.Count() > 0)
             {
-                try
+                revisionNo = bookings.Max(x => x.RevisionNo);
+            }
+
+            String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
+            EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+            ItemSubGroupMailSetupDTO isgDTO = new ItemSubGroupMailSetupDTO();
+            EmployeeMailSetupDTO emsDTO = new EmployeeMailSetupDTO();
+            if (SaveType != "UA")
+            {
+                isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK"); 
+            }
+            else
+            {
+                isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK");
+            }
+            //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
+            int addedBy = 0;
+            int updatedBy = 0;
+            int userCode = AppUser.UserCode;
+            if (saveFabricBookingItemAcknowledgeList.Count > 0)
+            {
+                addedBy = saveFabricBookingItemAcknowledgeList.First().AddedBy;
+                if (saveFabricBookingItemAcknowledgeList.First().UpdatedBy.IsNotNull())
                 {
-                    int revisionNo = 0;
-                    var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
-                    if (bookings.IsNotNull() && bookings.Count() > 0)
+                    updatedBy = (int)saveFabricBookingItemAcknowledgeList.First().UpdatedBy;
+                }
+            }
+            var uInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy); 
+            var rInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy); 
+            emsDTO = await _emailService.GetEmployeeMailSetupAsync(updatedBy > 0 ? updatedBy : addedBy, "FBKACK,FBK-UNACK");
+
+            var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy);
+            var ReceiverDetails1 = await _emailService.GetUserEmailInfoAsync(unAckBy); 
+
+            //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
+            String EditType = revisionNo > 0 ? "Revise " : "";
+
+            String BKRevision = String.Empty;
+            //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
+            BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
+            BuyerName = bmList[0].BuyerName;
+            BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
+
+            var attachment = new byte[] { 0 };
+            String fromMailID = "";
+            String toMailID = "";
+            String ccMailID = "";
+            String bccMailID = "";
+            String password = "";
+            String filePath = "";
+            if (SaveType != "UA")
+            {
+                #region Get Report Attachment 
+
+                filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
+                Dictionary<String, String> paraList = new Dictionary<String, String>();
+                paraList.Add("BookingNo", bmList[0].BookingNo);
+
+                //attachment = await _reportingService.GetPdfByte(1663, AppUser.UserCode, paraList);  //For local & Live // OFF FOR CORE
+                //attachment = await _reportingService.GetPdfByte(1328, UserId, paraList);  //Old mail
+
+                #endregion
+            }
+
+            if (uInfo.IsNotNull() && rInfo.IsNotNull())
+            {
+                List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
+                String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
+
+                List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
+
+                String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
+                String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
+
+                if (uInfo.Designation != "" && uInfo.Designation != null)
+                {
+                    Designation = "<BR>" + uInfo.Designation;
+                }
+                if (uInfo.Department != "" && uInfo.Department != null)
+                {
+                    Department = "<BR>" + uInfo.Department;
+                }
+                if (uInfo.Email != "" && uInfo.Email != null)
+                {
+                    EmailID = "<BR>" + uInfo.Email;
+                }
+
+                if (HttpContext.Request.Host.Host.ToUpper()== "texerp.epylliongroup.com".ToUpper())//--
+                {
+                    if (EmployeeMailSetupList.Count > 0)
                     {
-                        revisionNo = bookings.Max(x => x.RevisionNo);
+                        toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
+                        ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
+                        bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
                     }
 
-                    String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    Core.DTOs.ItemSubGroupMailSetupDTO isgDTO = new Core.DTOs.ItemSubGroupMailSetupDTO();
-                    Core.DTOs.EmployeeMailSetupDTO emsDTO = new Core.DTOs.EmployeeMailSetupDTO();
-                    if (SaveType != "UA")
+                    fromMailID = uInfo.Email;
+                    password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
+                    //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);//alamin
+                    toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email;//alamin
+                    if (ReceiverDetails1.IsNotNull())
                     {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK");
+                        toMailID += ReceiverDetails1.Email.IsNotNullOrEmpty() ? ";" + ReceiverDetails1.Email : "";
+                    }
+
+                    if (TeamHeadEmail.IsNotNullOrEmpty())
+                        toMailID += ";" + TeamHeadEmail;
+                    if (ccMailID.IsNullOrEmpty())
+                        ccMailID = AppUser.Email;
+                    else
+                    {
+                        ccMailID = ccMailID + ";";
+                    }
+
+                    if (isgDTO.IsNotNull())
+                    {
+                        toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
+                        ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
+                        bccMailID = isgDTO.BCCMailID;
+                    }
+                    if (emsDTO.IsNotNull())
+                    {
+                        toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
+                        ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
+                        bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
+                    }
+                }
+                else
+                {
+                    MailBasicProps mailBasicProps = new MailBasicProps();
+                    fromMailID = mailBasicProps.DefaultFromEmailId;
+                    password = mailBasicProps.DefaultPassword;
+                    toMailID = mailBasicProps.DefaultToEmailIds;
+                    ccMailID = mailBasicProps.DefaultCCEmailIds;
+                    bccMailID = mailBasicProps.DefaultBCCEmailIds;
+                }
+                if (HasLiabilities && SaveType != "UA")
+                {
+                    String selectedbookingID = String.Empty;
+                    var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
+                    selectedbookingID += string.Join(",", strArr.ToArray());
+                    List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+                    List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+
+                    String colData = "";
+                    foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
+                    {
+                        string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td><td>{item.UOM}</td>";
+                        colData += $@"<tr>{cellData}</tr>";
+                    }
+                    String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>Value</th><th>UOM</th></tr>{colData}</table>";
+
+                    String colYarnData = "";
+                    foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
+                    {
+                        string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td>";
+                        colYarnData += $@"<tr>{cellYarnData}</tr>";
+                    }
+                    String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th><th>Value</th></tr>{colYarnData}</table>";
+                    if (colYarnData == "")
+                    {
+                        tblYarnLD = "";
                     }
                     else
                     {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK");
+                        tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
                     }
-                    //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
-                    int addedBy = 0;
-                    int updatedBy = 0;
-                    int userCode = AppUser.UserCode;
-                    if (saveFabricBookingItemAcknowledgeList.Count > 0)
-                    {
-                        addedBy = saveFabricBookingItemAcknowledgeList.First().AddedBy;
-                        if (saveFabricBookingItemAcknowledgeList.First().UpdatedBy.IsNotNull())
-                        {
-                            updatedBy = (int)saveFabricBookingItemAcknowledgeList.First().UpdatedBy;
-                        }
-                    }
-                    var uInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy);
-                    var rInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy);
-                    emsDTO = await _emailService.GetEmployeeMailSetupAsync(updatedBy > 0 ? updatedBy : addedBy, "FBKACK,FBK-UNACK");
 
-                    var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy);
-                    var ReceiverDetails1 = await _emailService.GetUserEmailInfoAsync(unAckBy);
+                    MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3},{4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
 
-                    //var EmployeeMailSetupList = await _emailService.GetEmployeeMailSetupAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy, "FBKACK");
-                    //var uInfo = await _emailService.GetUserEmailInfoAsync(saveFabricBookingItemAcknowledgeList.Count > 0 ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.IsNotNull() ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.ToString().ToInt() : saveFabricBookingItemAcknowledgeList[0].AddedBy : AppUser.UserCode);
-                    //var rInfo = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy);
-                    //emsDTO = await _emailService.GetEmployeeMailSetupAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy, "FBKACK,FBK-UNACK");
-
-
-                    //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
-                    String EditType = revisionNo > 0 ? "Revise " : "";
-
-                    String BKRevision = String.Empty;
-                    //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
-                    BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
-                    BuyerName = bmList[0].BuyerName;
-                    BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
-
-                    var attachment = new byte[] { 0 };
-                    String fromMailID = "";
-                    String toMailID = "";
-                    String ccMailID = "";
-                    String bccMailID = "";
-                    String password = "";
-                    String filePath = "";
+                    MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                          <BR><BR>{1}Booking Number <b>{2}{3}</b> garments buyer: <b>{4}</b>, <b>{5}</b> has been sent to you for liability acceptance. 
+                           <BR><BR>Please accept it or stay as previous booking.
+                          <BR><BR>Liabilities Here-
+                          <BR><BR>
+                           {10}
+                           {11}
+                          <BR><BR>Any query please feel free to contact me.
+                          <BR><BR><BR>Thanks &amp; Best Regards,
+                          <BR><BR>{6}{7}{8}{9}
+                          <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                              uInfo.Name,
+                              Designation, Department, ExtensionNo, tblLD, tblYarnLD);
+                }
+                else
+                {
                     if (SaveType != "UA")
                     {
-                        #region Get Report Attachment 
+                        MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
 
-                        filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
-                        Dictionary<String, String> paraList = new Dictionary<String, String>();
-                        paraList.Add("BookingNo", bmList[0].BookingNo);
-
-                        attachment = await _reportingService.GetPdfByte(1663, UserId, paraList);  //For local & Live
-                        //attachment = await _reportingService.GetPdfByte(1328, UserId, paraList);  //Old mail
-
-                        #endregion
-                    }
-                    if (uInfo.IsNotNull() && rInfo.IsNotNull())
-                    {
-                        List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
-                        String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
-
-                        List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
-
-                        String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
-                        String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
-
-                        if (uInfo.Designation != "" && uInfo.Designation != null)
-                        {
-                            Designation = "<BR>" + uInfo.Designation;
-                        }
-                        if (uInfo.Department != "" && uInfo.Department != null)
-                        {
-                            Department = "<BR>" + uInfo.Department;
-                        }
-                        if (uInfo.Email != "" && uInfo.Email != null)
-                        {
-                            EmailID = "<BR>" + uInfo.Email;
-                        }
-
-                        if (Request.Headers.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())//--
-                        {
-                            if (EmployeeMailSetupList.Count > 0)
-                            {
-                                toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
-                                ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
-                                bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
-                            }
-
-                            fromMailID = uInfo.Email;
-                            password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
-                            //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);//alamin
-                            toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email;//alamin
-                            if (ReceiverDetails1.IsNotNull())
-                            {
-                                toMailID += ReceiverDetails1.Email.IsNotNullOrEmpty() ? ";" + ReceiverDetails1.Email : "";
-                            }
-
-                            if (TeamHeadEmail.IsNotNullOrEmpty())
-                                toMailID += ";" + TeamHeadEmail;
-                            if (ccMailID.IsNullOrEmpty())
-                                ccMailID = AppUser.Email;
-                            else
-                            {
-                                ccMailID = ccMailID + ";";
-                            }
-
-                            if (isgDTO.IsNotNull())
-                            {
-                                toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
-                                ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
-                                bccMailID = isgDTO.BCCMailID;
-                            }
-                            if (emsDTO.IsNotNull())
-                            {
-                                toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
-                                ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
-                                bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
-                            }
-                        }
-                        else
-                        {
-                            MailBasicProps mailBasicProps = new MailBasicProps();
-                            fromMailID = mailBasicProps.DefaultFromEmailId;
-                            password = mailBasicProps.DefaultPassword;
-                            toMailID = mailBasicProps.DefaultToEmailIds;
-                            ccMailID = mailBasicProps.DefaultCCEmailIds;
-                            bccMailID = mailBasicProps.DefaultBCCEmailIds;
-                        }
-                        if (HasLiabilities && SaveType != "UA")
-                        {
-                            String selectedbookingID = String.Empty;
-                            var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
-                            selectedbookingID += string.Join(",", strArr.ToArray());
-                            List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                            List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-
-                            String colData = "";
-                            foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
-                            {
-                                string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td><td>{item.UOM}</td>";
-                                colData += $@"<tr>{cellData}</tr>";
-                            }
-                            String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>Value</th><th>UOM</th></tr>{colData}</table>";
-
-                            String colYarnData = "";
-                            foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
-                            {
-                                string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td>";
-                                colYarnData += $@"<tr>{cellYarnData}</tr>";
-                            }
-                            String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th><th>Value</th></tr>{colYarnData}</table>";
-                            if (colYarnData == "")
-                            {
-                                tblYarnLD = "";
-                            }
-                            else
-                            {
-                                tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
-                            }
-
-                            MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3},{4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                            MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                  <BR><BR>{1}Booking Number <b>{2}{3}</b> garments buyer: <b>{4}</b>, <b>{5}</b> has been sent to you for liability acceptance. 
-                                   <BR><BR>Please accept it or stay as previous booking.
-                                  <BR><BR>Liabilities Here-
-                                  <BR><BR>
-                                   {10}
-                                   {11}
-                                  <BR><BR>Any query please feel free to contact me.
-                                  <BR><BR><BR>Thanks &amp; Best Regards,
-                                  <BR><BR>{6}{7}{8}{9}
-                                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                      uInfo.Name,
-                                      Designation, Department, ExtensionNo, tblLD, tblYarnLD);
-                        }
-                        else
-                        {
-                            if (SaveType != "UA")
-                            {
-                                MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                  <BR><BR>{1}Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
-                                  <BR><BR>Any query please feel free to contact me.
-                                  <BR><BR><BR>Thanks &amp; Best Regards,
-                                  <BR><BR>{6}{7}{8}{9}
-                                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo);
-                            }
-                            else
-                            {
-                                if (bmList[0].UnAcknowledgeReason.Length > 1)
-                                {
-                                    UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
-                                }
-
-                                MailSubject = String.Format(@"Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                  <BR><BR>Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
-                                  <BR><BR>Any query please feel free to contact me.
-                                  <BR><BR><BR>Thanks &amp; Best Regards,
-                                  <BR><BR>{6}{7}{8}{9}
-                                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo, UnAcknowledgeReason);
-                            }
-                        }
-
-                        //MailSubject = "Test Mail Please Ignore - " + MailSubject;
-                        await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
-                    }
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
-            }
-            return IsSendMail;
-        }
-        public async Task<bool> SystemMailUnAck(List<BookingItemAcknowledge> saveFabricBookingItemAcknowledgeList, List<BookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, string listTypeMasterGrid)
-        {
-            if (_isValidMailSending)
-            {
-                try
-                {
-                    int revisionNo = 0;
-                    var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
-                    if (bookings.IsNotNull() && bookings.Count() > 0)
-                    {
-                        revisionNo = bookings.Max(x => x.RevisionNo);
-                        if (listTypeMasterGrid == "RAL")
-                        {
-                            revisionNo = revisionNo + 1;
-                        }
-                    }
-
-                    String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    Core.DTOs.ItemSubGroupMailSetupDTO isgDTO = new Core.DTOs.ItemSubGroupMailSetupDTO();
-                    Core.DTOs.EmployeeMailSetupDTO emsDTO = new Core.DTOs.EmployeeMailSetupDTO();
-                    if (SaveType != "UA")
-                    {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK");
+                        MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                          <BR><BR>{1}Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
+                          <BR><BR>Any query please feel free to contact me.
+                          <BR><BR><BR>Thanks &amp; Best Regards,
+                          <BR><BR>{6}{7}{8}{9}
+                          <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                                  uInfo.Name,
+                                  Designation, Department, ExtensionNo);
                     }
                     else
                     {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK");
+                        if (bmList[0].UnAcknowledgeReason.Length > 1)
+                        {
+                            UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
+                        }
+
+                        MailSubject = String.Format(@"Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+                        MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                          <BR><BR>Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
+                          <BR><BR>Any query please feel free to contact me.
+                          <BR><BR><BR>Thanks &amp; Best Regards,
+                          <BR><BR>{6}{7}{8}{9}
+                          <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                                  uInfo.Name,
+                                  Designation, Department, ExtensionNo, UnAcknowledgeReason);
                     }
-                    //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
-
-                    int UnAcknowledgeBy = 0;
-                    int updatedBy = 0;
-                    int userCode = AppUser.UserCode;
-                    if (saveFabricBookingItemAcknowledgeList.Count > 0)
-                    {
-                        UnAcknowledgeBy = saveFabricBookingItemAcknowledgeList.First().UnAcknowledgeBy;
-
-                    }
-                    var uInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy);
-                    var rInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy);
-                    emsDTO = await _emailService.GetEmployeeMailSetupAsync(UnAcknowledgeBy, "FBKACK,FBK-UNACK");
-                    var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy);
-
-                    //var uInfo = await _emailService.GetUserEmailInfoAsync(saveFabricBookingItemAcknowledgeList.Count > 0 ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.IsNotNull() ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.ToString().ToInt() : saveFabricBookingItemAcknowledgeList[0].AddedBy : AppUser.UserCode);
-                    //var rInfo = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy);
-                    //emsDTO = await _emailService.GetEmployeeMailSetupAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy, "FBKACK,FBK-UNACK");
-
-                    //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
-                    String EditType = revisionNo > 0 ? "Revise " : "";
-
-                    String BKRevision = String.Empty;
-                    //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
-
-                    BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
-                    BuyerName = bmList[0].BuyerName;
-                    BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
-
-
-                    var attachment = new byte[] { 0 };
-                    String fromMailID = "";
-                    String toMailID = "";
-                    String ccMailID = "";
-                    String bccMailID = "";
-                    String password = "";
-                    String filePath = "";
-                    if (SaveType != "UA")
-                    {
-                        #region Get Report Attachment 
-
-                        filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
-                        Dictionary<String, String> paraList = new Dictionary<String, String>();
-                        paraList.Add("BookingNo", bmList[0].BookingNo);
-                        attachment = await _reportingService.GetPdfByte(1663, UserId, paraList);  //For local & Live
-                                                                                                  //attachment = await _reportingService.GetPdfByte(1328, UserId, paraList);  //Old mail
-
-                        #endregion
-                    }
-                    if (uInfo.IsNotNull() && rInfo.IsNotNull())
-                    {
-                        List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
-                        String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
-
-                        List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
-
-
-                        String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
-                        String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
-
-                        if (uInfo.Designation != "" && uInfo.Designation != null)
-                        {
-                            Designation = "<BR>" + uInfo.Designation;
-                        }
-                        if (uInfo.Department != "" && uInfo.Department != null)
-                        {
-                            Department = "<BR>" + uInfo.Department;
-                        }
-                        if (uInfo.Email != "" && uInfo.Email != null)
-                        {
-                            EmailID = "<BR>" + uInfo.Email;
-                        }
-                        if (Request.Headers.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
-                        {
-                            if (EmployeeMailSetupList.Count > 0)
-                            {
-                                toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
-                                ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
-                                bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
-                            }
-                            fromMailID = uInfo.Email;
-                            password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
-                            //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
-                            //toMailID = rInfo.Email.IsNullOrEmpty() ? AppUser.Email : rInfo.Email; //alamin
-                            toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email; //alamin
-
-                            if (TeamHeadEmail.IsNotNullOrEmpty())
-                                toMailID += ";" + TeamHeadEmail;
-                            if (ccMailID.IsNullOrEmpty())
-                                ccMailID = AppUser.Email;
-                            else
-                            {
-                                ccMailID = ccMailID + ";" + AppUser.Email;
-                            }
-
-                            if (isgDTO.IsNotNull())
-                            {
-                                toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
-                                ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
-                                bccMailID = isgDTO.BCCMailID;
-                            }
-                            if (emsDTO.IsNotNull())
-                            {
-                                toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
-                                ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
-                                bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
-                            }
-                        }
-                        else
-                        {
-                            MailBasicProps mailBasicProps = new MailBasicProps();
-                            fromMailID = mailBasicProps.DefaultFromEmailId;
-                            password = mailBasicProps.DefaultPassword;
-                            toMailID = mailBasicProps.DefaultToEmailIds;
-                            ccMailID = mailBasicProps.DefaultCCEmailIds;
-                            bccMailID = mailBasicProps.DefaultBCCEmailIds;
-                        }
-                        if (HasLiabilities && SaveType != "UA")
-                        {
-                            String selectedbookingID = String.Empty;
-                            var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
-                            selectedbookingID += string.Join(",", strArr.ToArray());
-                            List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                            List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                            String colData = "";
-                            foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
-                            {
-                                string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td><td>{item.UOM}</td>";
-                                colData += $@"<tr>{cellData}</tr>";
-                            }
-                            String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>Value</th><th>UOM</th></tr>{colData}</table>";
-
-                            String colYarnData = "";
-                            foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
-                            {
-                                string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td>";
-                                colYarnData += $@"<tr>{cellYarnData}</tr>";
-                            }
-                            String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th><th>Value</th></tr>{colYarnData}</table>";
-                            if (colYarnData == "")
-                            {
-                                tblYarnLD = "";
-                            }
-                            else
-                            {
-                                tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
-                            }
-
-                            MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3},{4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                            MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                  <BR><BR>{1}Booking Number <b>{2}{3}</b> garments buyer: <b>{4}<b>, <b>{5}<b> has been sent to you for liability acceptance. 
-                                       Please accept it or stay as previous booking.
-                                  <BR><BR>Liabilities Here-
-                                  <BR><BR>
-                                   {10}
-                                   {11}
-                                  <BR><BR>Any query please feel free to contact me.
-                                  <BR><BR><BR>Thanks &amp; Best Regards,
-                                  <BR><BR>{6}{7}{8}{9}
-                                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                      uInfo.Name,
-                                      Designation, Department, ExtensionNo, tblLD, tblYarnLD);
-                        }
-                        else
-                        {
-                            if (SaveType != "UA")
-                            {
-                                MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                  <BR><BR>{1}Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
-                                  <BR><BR>Any query please feel free to contact me.
-                                  <BR><BR><BR>Thanks &amp; Best Regards,
-                                  <BR><BR>{6}{7}{8}{9}
-                                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo);
-                            }
-                            else
-                            {
-                                if (bmList[0].UnAcknowledgeReason.Length > 1)
-                                {
-                                    UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
-                                }
-
-                                MailSubject = String.Format(@"Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                  <BR><BR>Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
-                                  <BR><BR>Any query please feel free to contact me.
-                                  <BR><BR><BR>Thanks &amp; Best Regards,
-                                  <BR><BR>{6}{7}{8}{9}
-                                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo, UnAcknowledgeReason);
-                            }
-                        }
-                        //MailSubject = "Test Mail Please Ignore - " + MailSubject;
-                        await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
-                    }
-
-                    return true;
                 }
-                catch (Exception ex)
-                {
-                    return false;
-                }
+
+                //MailSubject = "Test Mail Please Ignore - " + MailSubject;
+                await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
             }
-            return IsSendMail;
+
+            return true;
         }
-        public async Task<bool> SystemMailForSample(List<FabricBookingAcknowledge> saveFabricBookingItemAcknowledgeList, List<SampleBookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, int unAckBy, string listTypeMasterGrid)
+        catch (Exception ex)
         {
-            if (_isValidMailSending)
-            {
-                try
-                {
-                    int revisionNo = 0;
-                    var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
-                    if (bookings.IsNotNull() && bookings.Count() > 0)
-                    {
-                        revisionNo = bookings.Max(x => x.RevisionNo);
-                    }
-
-
-                    String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    Core.DTOs.ItemSubGroupMailSetupDTO isgDTO = new Core.DTOs.ItemSubGroupMailSetupDTO();
-                    Core.DTOs.EmployeeMailSetupDTO emsDTO = new Core.DTOs.EmployeeMailSetupDTO();
-                    if (SaveType != "UA")
-                    {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK");
-                    }
-                    else
-                    {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK");
-                    }
-                    //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
-                    int addedBy = 0;
-                    int updatedBy = 0;
-                    int userCode = AppUser.UserCode;
-                    if (saveFabricBookingItemAcknowledgeList.Count > 0)
-                    {
-                        addedBy = saveFabricBookingItemAcknowledgeList.First().AddedBy;
-                        if (saveFabricBookingItemAcknowledgeList.First().UpdatedBy.IsNotNull())
-                        {
-                            updatedBy = (int)saveFabricBookingItemAcknowledgeList.First().UpdatedBy;
-                        }
-                    }
-                    var uInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy);
-                    var rInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy);
-                    emsDTO = await _emailService.GetEmployeeMailSetupAsync(updatedBy > 0 ? updatedBy : addedBy, "FBKACK,FBK-UNACK");
-                    var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy);
-                    var ReceiverDetails1 = await _emailService.GetUserEmailInfoAsync(unAckBy);
-
-                    //var uInfo = await _emailService.GetUserEmailInfoAsync(saveFabricBookingItemAcknowledgeList.Count > 0 ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.IsNotNull() ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.ToString().ToInt() : saveFabricBookingItemAcknowledgeList[0].AddedBy : AppUser.UserCode);
-                    //var rInfo = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy);
-                    //emsDTO = await _emailService.GetEmployeeMailSetupAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy, "FBKACK,FBK-UNACK");
-
-                    //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
-                    String EditType = revisionNo > 0 ? "Revise " : "";
-
-                    String BKRevision = String.Empty;
-                    //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
-                    BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
-
-                    BuyerName = bmList[0].BuyerName;
-                    BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
-
-                    var attachment = new byte[] { 0 };
-                    String fromMailID = "";
-                    String toMailID = "";
-                    String ccMailID = "";
-                    String bccMailID = "";
-                    String password = "";
-                    String filePath = "";
-                    if (SaveType != "UA")
-                    {
-                        #region Get Report Attachment 
-
-                        filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
-                        Dictionary<String, String> paraList = new Dictionary<String, String>();
-                        paraList.Add("BookingNo", bmList[0].BookingNo);
-                        attachment = await _reportingService.GetPdfByte(1663, UserId, paraList);  //For local & Live
-                        //attachment = await _reportingService.GetPdfByte(406, UserId, paraList);  //Old mail
-
-                        #endregion
-                    }
-                    if (uInfo.IsNotNull() && rInfo.IsNotNull())
-                    {
-                        List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
-
-                        List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
-                        String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
-
-                        String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
-                        String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
-
-                        if (uInfo.Designation != "" && uInfo.Designation != null)
-                        {
-                            Designation = "<BR>" + uInfo.Designation;
-                        }
-                        if (uInfo.Department != "" && uInfo.Department != null)
-                        {
-                            Department = "<BR>" + uInfo.Department;
-                        }
-                        if (uInfo.Email != "" && uInfo.Email != null)
-                        {
-                            EmailID = "<BR>" + uInfo.Email;
-                        }
-                        if (Request.Headers.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
-                        {
-                            if (EmployeeMailSetupList.Count > 0)
-                            {
-                                toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
-                                ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
-                                bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
-                            }
-                            fromMailID = uInfo.Email;
-                            password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
-                            //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
-                            //toMailID = rInfo.Email.IsNullOrEmpty() ? AppUser.Email : rInfo.Email; //alamin
-                            toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email; //alamin
-                            if (ReceiverDetails1.IsNotNull())
-                            {
-                                toMailID += ReceiverDetails1.Email.IsNotNullOrEmpty() ? ";" + ReceiverDetails1.Email : "";//alamin
-                            }
-
-                            if (TeamHeadEmail.IsNotNullOrEmpty())
-                                toMailID += ";" + TeamHeadEmail;
-                            if (ccMailID.IsNullOrEmpty())
-                                ccMailID = AppUser.Email;
-                            else
-                            {
-                                ccMailID = ccMailID + ";" + AppUser.Email;
-                            }
-
-                            if (isgDTO.IsNotNull())
-                            {
-                                toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
-                                ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
-                                bccMailID = isgDTO.BCCMailID;
-                            }
-                            if (emsDTO.IsNotNull())
-                            {
-                                toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
-                                ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
-                                bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
-                            }
-                        }
-                        else
-                        {
-                            MailBasicProps mailBasicProps = new MailBasicProps();
-                            fromMailID = mailBasicProps.DefaultFromEmailId;
-                            password = mailBasicProps.DefaultPassword;
-                            toMailID = mailBasicProps.DefaultToEmailIds;
-                            ccMailID = mailBasicProps.DefaultCCEmailIds;
-                            bccMailID = mailBasicProps.DefaultBCCEmailIds;
-                        }
-                        if (HasLiabilities && SaveType != "UA")
-                        {
-                            String selectedbookingID = String.Empty;
-                            var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
-                            selectedbookingID += string.Join(",", strArr.ToArray());
-                            List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                            List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                            String colData = "";
-                            foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
-                            {
-                                string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.UOM}</td>";
-                                colData += $@"<tr>{cellData}</tr>";
-                            }
-                            String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>UOM</th></tr>{colData}</table>";
-
-                            String colYarnData = "";
-                            foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
-                            {
-                                string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td>";
-                                colYarnData += $@"<tr>{cellYarnData}</tr>";
-                            }
-                            String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th></tr>{colYarnData}</table>";
-                            if (colYarnData == "")
-                            {
-                                tblYarnLD = "";
-                            }
-                            else
-                            {
-                                tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
-                            }
-
-                            MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                            MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> garments buyer: <b>{4}<b>, <b>{5}<b> has been sent to you for liability acceptance. 
-                                       Please accept it or stay as previous booking.
-                                      <BR><BR>Liabilities Here-
-                                      <BR><BR>
-                                       {10}
-                                       {11}
-                                      <BR><BR>Any query please feel free to contact me.
-                                      <BR><BR><BR>Thanks &amp; Best Regards,
-                                      <BR><BR>{6}{7}{8}{9}
-                                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                      uInfo.Name,
-                                      Designation, Department, ExtensionNo, tblLD, tblYarnLD);
-                        }
-                        else
-                        {
-                            if (SaveType != "UA")
-                            {
-                                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
-                                      <BR><BR>Any query please feel free to contact me.
-                                      <BR><BR><BR>Thanks &amp; Best Regards,
-                                      <BR><BR>{6}{7}{8}{9}
-                                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo);
-                            }
-                            else
-                            {
-                                if (bmList[0].UnAcknowledgeReason.Length > 1)
-                                {
-                                    UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
-                                }
-
-                                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
-                                      <BR><BR>Any query please feel free to contact me.
-                                      <BR><BR><BR>Thanks &amp; Best Regards,
-                                      <BR><BR>{6}{7}{8}{9}
-                                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo, UnAcknowledgeReason);
-                            }
-                        }
-                        //MailSubject = "Test Mail Please Ignore - " + MailSubject;
-
-                        toMailID = this.ReplaceMailInvalidChar(toMailID);
-                        ccMailID = this.ReplaceMailInvalidChar(ccMailID);
-                        bccMailID = this.ReplaceMailInvalidChar(bccMailID);
-
-                        await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
-                    }
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
-            }
-            return IsSendMail;
+            return false;
         }
-        public async Task<bool> SystemMailForSampleUnAck(List<BookingItemAcknowledge> saveFabricBookingItemAcknowledgeList, List<SampleBookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, string listTypeMasterGrid)
+    }
+    return IsSendMail;
+}
+
+public async Task<bool> SystemMailUnAck(List<BookingItemAcknowledge> saveFabricBookingItemAcknowledgeList, List<BookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, string listTypeMasterGrid)
+{
+if (_isValidMailSending)
+{
+try
+{
+    int revisionNo = 0;
+    var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
+    if (bookings.IsNotNull() && bookings.Count() > 0)
+    {
+        revisionNo = bookings.Max(x => x.RevisionNo);
+        if (listTypeMasterGrid == "RAL")
         {
-            if (_isValidMailSending)
-            {
-                try
-                {
-                    int revisionNo = 0;
-                    var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
-                    if (bookings.IsNotNull() && bookings.Count() > 0)
-                    {
-                        revisionNo = bookings.Max(x => x.RevisionNo);
-                        if (listTypeMasterGrid == "RAL")
-                        {
-                            revisionNo = revisionNo + 1;
-                        }
-                    }
-
-                    String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
-                    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
-                    Core.DTOs.ItemSubGroupMailSetupDTO isgDTO = new Core.DTOs.ItemSubGroupMailSetupDTO();
-                    Core.DTOs.EmployeeMailSetupDTO emsDTO = new Core.DTOs.EmployeeMailSetupDTO();
-                    if (SaveType != "UA")
-                    {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK");
-                    }
-                    else
-                    {
-                        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK");
-                    }
-                    //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
-                    int UnAcknowledgeBy = 0;
-                    int updatedBy = 0;
-                    int userCode = AppUser.UserCode;
-                    if (saveFabricBookingItemAcknowledgeList.Count > 0)
-                    {
-                        UnAcknowledgeBy = saveFabricBookingItemAcknowledgeList.First().UnAcknowledgeBy;
-                        //addedBy = saveFabricBookingItemAcknowledgeList.First().AddedBy;
-                        //if (saveFabricBookingItemAcknowledgeList.First().UpdatedBy.IsNotNull())
-                        //{
-                        //    updatedBy = (int)saveFabricBookingItemAcknowledgeList.First().UpdatedBy;
-                        //}
-                    }
-                    var uInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy);
-                    var rInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy);
-                    emsDTO = await _emailService.GetEmployeeMailSetupAsync(UnAcknowledgeBy, "FBKACK,FBK-UNACK");
-                    var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy);
-
-                    //var uInfo = await _emailService.GetUserEmailInfoAsync(saveFabricBookingItemAcknowledgeList.Count > 0 ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.IsNotNull() ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.ToString().ToInt() : saveFabricBookingItemAcknowledgeList[0].AddedBy : AppUser.UserCode);
-                    //var rInfo = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy);
-                    //emsDTO = await _emailService.GetEmployeeMailSetupAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy, "FBKACK,FBK-UNACK");
-
-                    //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
-                    String EditType = revisionNo > 0 ? "Revise " : "";
-
-                    String BKRevision = String.Empty;
-                    //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
-                    BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
-
-                    BuyerName = bmList[0].BuyerName;
-                    BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
-
-                    var attachment = new byte[] { 0 };
-                    String fromMailID = "";
-                    String toMailID = "";
-                    String ccMailID = "";
-                    String bccMailID = "";
-                    String password = "";
-                    String filePath = "";
-                    if (SaveType != "UA")
-                    {
-                        #region Get Report Attachment 
-
-                        filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
-                        Dictionary<String, String> paraList = new Dictionary<String, String>();
-                        paraList.Add("BookingNo", bmList[0].BookingNo);
-
-                        attachment = await _reportingService.GetPdfByte(1663, UserId, paraList); //For local & Live
-                        //attachment = await _reportingService.GetPdfByte(406, UserId, paraList); //Old mail
-
-                        #endregion
-                    }
-                    if (uInfo.IsNotNull() && rInfo.IsNotNull())
-                    {
-                        List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
-
-                        List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
-                        String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
-
-
-                        String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
-                        String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
-
-                        if (uInfo.Designation != "" && uInfo.Designation != null)
-                        {
-                            Designation = "<BR>" + uInfo.Designation;
-                        }
-                        if (uInfo.Department != "" && uInfo.Department != null)
-                        {
-                            Department = "<BR>" + uInfo.Department;
-                        }
-                        if (uInfo.Email != "" && uInfo.Email != null)
-                        {
-                            EmailID = "<BR>" + uInfo.Email;
-                        }
-                        if (Request.Headers.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
-                        {
-                            if (EmployeeMailSetupList.Count > 0)
-                            {
-                                toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
-                                ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
-                                bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
-                            }
-                            fromMailID = uInfo.Email;
-                            password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
-                            //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
-                            //toMailID = rInfo.Email.IsNullOrEmpty() ? AppUser.Email : rInfo.Email; //alamin
-                            toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email; //alamin
-
-                            if (TeamHeadEmail.IsNotNullOrEmpty())
-                                toMailID += ";" + TeamHeadEmail;
-                            if (ccMailID.IsNullOrEmpty())
-                                ccMailID = AppUser.Email;
-                            else
-                            {
-                                ccMailID = ccMailID + ";" + AppUser.Email;
-                            }
-
-                            if (isgDTO.IsNotNull())
-                            {
-                                toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
-                                ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
-                                bccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
-                            }
-                            if (emsDTO.IsNotNull())
-                            {
-                                toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
-                                ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
-                                bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
-                            }
-                        }
-                        else
-                        {
-                            MailBasicProps mailBasicProps = new MailBasicProps();
-                            fromMailID = mailBasicProps.DefaultFromEmailId;
-                            password = mailBasicProps.DefaultPassword;
-                            toMailID = mailBasicProps.DefaultToEmailIds;
-                            ccMailID = mailBasicProps.DefaultCCEmailIds;
-                            bccMailID = mailBasicProps.DefaultBCCEmailIds;
-                        }
-                        if (HasLiabilities && SaveType != "UA")
-                        {
-                            String selectedbookingID = String.Empty;
-                            var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
-                            selectedbookingID += string.Join(",", strArr.ToArray());
-                            List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                            List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                            String colData = "";
-                            foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
-                            {
-                                string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.UOM}</td>";
-                                colData += $@"<tr>{cellData}</tr>";
-                            }
-                            String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>UOM</th></tr>{colData}</table>";
-
-                            String colYarnData = "";
-                            foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
-                            {
-                                string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td>";
-                                colYarnData += $@"<tr>{cellYarnData}</tr>";
-                            }
-                            String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th></tr>{colYarnData}</table>";
-                            if (colYarnData == "")
-                            {
-                                tblYarnLD = "";
-                            }
-                            else
-                            {
-                                tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
-                            }
-
-                            MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                            MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> garments buyer: <b>{4}<b>, <b>{5}<b> has been sent to you for liability acceptance. 
-                                       Please accept it or stay as previous booking..
-                                      <BR><BR>Liabilities Here-
-                                      <BR><BR>
-                                       {10}
-                                       {11}
-                                      <BR><BR>Any query please feel free to contact me.
-                                      <BR><BR><BR>Thanks &amp; Best Regards,
-                                      <BR><BR>{6}{7}{8}{9}
-                                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                      uInfo.Name,
-                                      Designation, Department, ExtensionNo, tblLD, tblYarnLD);
-                        }
-                        else
-                        {
-                            if (SaveType != "UA")
-                            {
-                                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
-                                      <BR><BR>Any query please feel free to contact me.
-                                      <BR><BR><BR>Thanks &amp; Best Regards,
-                                      <BR><BR>{6}{7}{8}{9}
-                                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo);
-                            }
-                            else
-                            {
-                                if (bmList[0].UnAcknowledgeReason.Length > 1)
-                                {
-                                    UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
-                                }
-
-                                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
-
-                                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
-                                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
-                                      <BR><BR>Any query please feel free to contact me.
-                                      <BR><BR><BR>Thanks &amp; Best Regards,
-                                      <BR><BR>{6}{7}{8}{9}
-                                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
-                                          uInfo.Name,
-                                          Designation, Department, ExtensionNo, UnAcknowledgeReason);
-                            }
-                        }
-                        //MailSubject = "Test Mail Please Ignore - " + MailSubject;
-                        await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
-                    }
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
-            }
-            return IsSendMail;
+            revisionNo = revisionNo + 1;
         }
+    }
 
+    String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
+    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+    ItemSubGroupMailSetupDTO isgDTO = new ItemSubGroupMailSetupDTO();
+    EmployeeMailSetupDTO emsDTO = new EmployeeMailSetupDTO();
+    if (SaveType != "UA")
+    {
+        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK"); 
+    }
+    else
+    {
+        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK"); 
+    }
+    //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
+
+    int UnAcknowledgeBy = 0;
+    int updatedBy = 0;
+    int userCode = AppUser.UserCode;
+    if (saveFabricBookingItemAcknowledgeList.Count > 0)
+    {
+        UnAcknowledgeBy = saveFabricBookingItemAcknowledgeList.First().UnAcknowledgeBy;
+
+    }
+    var uInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy); 
+    var rInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy); 
+    emsDTO = await _emailService.GetEmployeeMailSetupAsync(UnAcknowledgeBy, "FBKACK,FBK-UNACK"); 
+    var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy); 
+
+    //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
+    String EditType = revisionNo > 0 ? "Revise " : "";
+
+    String BKRevision = String.Empty;
+    //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
+
+    BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
+    BuyerName = bmList[0].BuyerName;
+    BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
+
+
+    var attachment = new byte[] { 0 };
+    String fromMailID = "";
+    String toMailID = "";
+    String ccMailID = "";
+    String bccMailID = "";
+    String password = "";
+    String filePath = "";
+    if (SaveType != "UA")
+    {
+        #region Get Report Attachment 
+
+        filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
+        Dictionary<String, String> paraList = new Dictionary<String, String>();
+        paraList.Add("BookingNo", bmList[0].BookingNo);
+        //attachment = await _reportingService.GetPdfByte(1663, AppUser.UserCode, paraList);  //For local & Live // OFF For CORE
+                                                                                  //attachment = await _reportingService.GetPdfByte(1328, UserId, paraList);  //Old mail
+
+        #endregion
+    }
+
+    if (uInfo.IsNotNull() && rInfo.IsNotNull())
+    {
+        List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
+        String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
+
+        List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
+
+
+        String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
+        String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
+
+        if (uInfo.Designation != "" && uInfo.Designation != null)
+        {
+            Designation = "<BR>" + uInfo.Designation;
+        }
+        if (uInfo.Department != "" && uInfo.Department != null)
+        {
+            Department = "<BR>" + uInfo.Department;
+        }
+        if (uInfo.Email != "" && uInfo.Email != null)
+        {
+            EmailID = "<BR>" + uInfo.Email;
+        }
+        if (HttpContext.Request.Host.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
+        {
+            if (EmployeeMailSetupList.Count > 0)
+            {
+                toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
+                ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
+                bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
+            }
+            fromMailID = uInfo.Email;
+            password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
+            //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
+            //toMailID = rInfo.Email.IsNullOrEmpty() ? AppUser.Email : rInfo.Email; //alamin
+            toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email; //alamin
+
+            if (TeamHeadEmail.IsNotNullOrEmpty())
+                toMailID += ";" + TeamHeadEmail;
+            if (ccMailID.IsNullOrEmpty())
+                ccMailID = AppUser.Email;
+            else
+            {
+                ccMailID = ccMailID + ";" + AppUser.Email;
+            }
+
+            if (isgDTO.IsNotNull())
+            {
+                toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
+                ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
+                bccMailID = isgDTO.BCCMailID;
+            }
+            if (emsDTO.IsNotNull())
+            {
+                toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
+                ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
+                bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
+            }
+        }
+        else
+        {
+            MailBasicProps mailBasicProps = new MailBasicProps();
+            fromMailID = mailBasicProps.DefaultFromEmailId;
+            password = mailBasicProps.DefaultPassword;
+            toMailID = mailBasicProps.DefaultToEmailIds;
+            ccMailID = mailBasicProps.DefaultCCEmailIds;
+            bccMailID = mailBasicProps.DefaultBCCEmailIds;
+        }
+        if (HasLiabilities && SaveType != "UA")
+        {
+            String selectedbookingID = String.Empty;
+            var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
+            selectedbookingID += string.Join(",", strArr.ToArray());
+            List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+            List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+            String colData = "";
+            foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
+            {
+                string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td><td>{item.UOM}</td>";
+                colData += $@"<tr>{cellData}</tr>";
+            }
+            String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>Value</th><th>UOM</th></tr>{colData}</table>";
+
+            String colYarnData = "";
+            foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
+            {
+                string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td><td>{item.TotalValue}</td>";
+                colYarnData += $@"<tr>{cellYarnData}</tr>";
+            }
+            String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th><th>Value</th></tr>{colYarnData}</table>";
+            if (colYarnData == "")
+            {
+                tblYarnLD = "";
+            }
+            else
+            {
+                tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
+            }
+
+            MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3},{4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+            MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                  <BR><BR>{1}Booking Number <b>{2}{3}</b> garments buyer: <b>{4}<b>, <b>{5}<b> has been sent to you for liability acceptance. 
+                       Please accept it or stay as previous booking.
+                  <BR><BR>Liabilities Here-
+                  <BR><BR>
+                   {10}
+                   {11}
+                  <BR><BR>Any query please feel free to contact me.
+                  <BR><BR><BR>Thanks &amp; Best Regards,
+                  <BR><BR>{6}{7}{8}{9}
+                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                      uInfo.Name,
+                      Designation, Department, ExtensionNo, tblLD, tblYarnLD);
+        }
+        else
+        {
+            if (SaveType != "UA")
+            {
+                MailSubject = String.Format(@"{0}Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                  <BR><BR>{1}Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
+                  <BR><BR>Any query please feel free to contact me.
+                  <BR><BR><BR>Thanks &amp; Best Regards,
+                  <BR><BR>{6}{7}{8}{9}
+                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                          uInfo.Name,
+                          Designation, Department, ExtensionNo);
+            }
+            else
+            {
+                if (bmList[0].UnAcknowledgeReason.Length > 1)
+                {
+                    UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
+                }
+
+                MailSubject = String.Format(@"Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                  <BR><BR>Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
+                  <BR><BR>Any query please feel free to contact me.
+                  <BR><BR><BR>Thanks &amp; Best Regards,
+                  <BR><BR>{6}{7}{8}{9}
+                  <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                          uInfo.Name,
+                          Designation, Department, ExtensionNo, UnAcknowledgeReason);
+            }
+        }
+        //MailSubject = "Test Mail Please Ignore - " + MailSubject;
+        await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
+    }
+
+    return true;
+}
+catch (Exception ex)
+{
+    return false;
+}
+}
+return IsSendMail;
+}
+
+public async Task<bool> SystemMailForSample(List<FabricBookingAcknowledge> saveFabricBookingItemAcknowledgeList, List<SampleBookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, int unAckBy, string listTypeMasterGrid)
+{
+if (_isValidMailSending)
+{
+try
+{
+    int revisionNo = 0;
+    var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
+    if (bookings.IsNotNull() && bookings.Count() > 0)
+    {
+        revisionNo = bookings.Max(x => x.RevisionNo);
+    }
+
+
+    String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
+    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+    ItemSubGroupMailSetupDTO isgDTO = new ItemSubGroupMailSetupDTO();
+    EmployeeMailSetupDTO emsDTO = new EmployeeMailSetupDTO();
+    if (SaveType != "UA")
+    {
+        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK");
+    }
+    else
+    {
+        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK");
+    }
+    //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
+    int addedBy = 0;
+    int updatedBy = 0;
+    int userCode = AppUser.UserCode;
+    if (saveFabricBookingItemAcknowledgeList.Count > 0)
+    {
+        addedBy = saveFabricBookingItemAcknowledgeList.First().AddedBy;
+        if (saveFabricBookingItemAcknowledgeList.First().UpdatedBy.IsNotNull())
+        {
+            updatedBy = (int)saveFabricBookingItemAcknowledgeList.First().UpdatedBy;
+        }
+    }
+    var uInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy);
+    var rInfo = await _emailService.GetUserEmailInfoAsync(updatedBy > 0 ? updatedBy : addedBy);
+    emsDTO = await _emailService.GetEmployeeMailSetupAsync(updatedBy > 0 ? updatedBy : addedBy, "FBKACK,FBK-UNACK");
+    var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy);
+    var ReceiverDetails1 = await _emailService.GetUserEmailInfoAsync(unAckBy);
+
+    //var uInfo = await _emailService.GetUserEmailInfoAsync(saveFabricBookingItemAcknowledgeList.Count > 0 ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.IsNotNull() ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.ToString().ToInt() : saveFabricBookingItemAcknowledgeList[0].AddedBy : AppUser.UserCode);
+    //var rInfo = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy);
+    //emsDTO = await _emailService.GetEmployeeMailSetupAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy, "FBKACK,FBK-UNACK");
+
+    //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
+    String EditType = revisionNo > 0 ? "Revise " : "";
+
+    String BKRevision = String.Empty;
+    //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
+    BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
+
+    BuyerName = bmList[0].BuyerName;
+    BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
+
+    var attachment = new byte[] { 0 };
+    String fromMailID = "";
+    String toMailID = "";
+    String ccMailID = "";
+    String bccMailID = "";
+    String password = "";
+    String filePath = "";
+    if (SaveType != "UA")
+    {
+        #region Get Report Attachment 
+
+        filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
+        Dictionary<String, String> paraList = new Dictionary<String, String>();
+        paraList.Add("BookingNo", bmList[0].BookingNo);
+        //attachment = await _reportingService.GetPdfByte(1663, UserId, paraList);  //For local & Live// OFF For CORE
+        //attachment = await _reportingService.GetPdfByte(406, UserId, paraList);  //Old mail
+
+        #endregion
+    }
+    if (uInfo.IsNotNull() && rInfo.IsNotNull())
+    {
+        List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
+
+        List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
+        String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
+
+        String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
+        String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
+
+        if (uInfo.Designation != "" && uInfo.Designation != null)
+        {
+            Designation = "<BR>" + uInfo.Designation;
+        }
+        if (uInfo.Department != "" && uInfo.Department != null)
+        {
+            Department = "<BR>" + uInfo.Department;
+        }
+        if (uInfo.Email != "" && uInfo.Email != null)
+        {
+            EmailID = "<BR>" + uInfo.Email;
+        }
+        if (HttpContext.Request.Host.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
+        {
+            if (EmployeeMailSetupList.Count > 0)
+            {
+                toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
+                ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
+                bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
+            }
+            fromMailID = uInfo.Email;
+            password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
+            //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
+            //toMailID = rInfo.Email.IsNullOrEmpty() ? AppUser.Email : rInfo.Email; //alamin
+            toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email; //alamin
+            if (ReceiverDetails1.IsNotNull())
+            {
+                toMailID += ReceiverDetails1.Email.IsNotNullOrEmpty() ? ";" + ReceiverDetails1.Email : "";//alamin
+            }
+
+            if (TeamHeadEmail.IsNotNullOrEmpty())
+                toMailID += ";" + TeamHeadEmail;
+            if (ccMailID.IsNullOrEmpty())
+                ccMailID = AppUser.Email;
+            else
+            {
+                ccMailID = ccMailID + ";" + AppUser.Email;
+            }
+
+            if (isgDTO.IsNotNull())
+            {
+                toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
+                ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
+                bccMailID = isgDTO.BCCMailID;
+            }
+            if (emsDTO.IsNotNull())
+            {
+                toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
+                ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
+                bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
+            }
+        }
+        else
+        {
+            MailBasicProps mailBasicProps = new MailBasicProps();
+            fromMailID = mailBasicProps.DefaultFromEmailId;
+            password = mailBasicProps.DefaultPassword;
+            toMailID = mailBasicProps.DefaultToEmailIds;
+            ccMailID = mailBasicProps.DefaultCCEmailIds;
+            bccMailID = mailBasicProps.DefaultBCCEmailIds;
+        }
+        if (HasLiabilities && SaveType != "UA")
+        {
+            String selectedbookingID = String.Empty;
+            var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
+            selectedbookingID += string.Join(",", strArr.ToArray());
+            List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+            List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+            String colData = "";
+            foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
+            {
+                string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.UOM}</td>";
+                colData += $@"<tr>{cellData}</tr>";
+            }
+            String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>UOM</th></tr>{colData}</table>";
+
+            String colYarnData = "";
+            foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
+            {
+                string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td>";
+                colYarnData += $@"<tr>{cellYarnData}</tr>";
+            }
+            String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th></tr>{colYarnData}</table>";
+            if (colYarnData == "")
+            {
+                tblYarnLD = "";
+            }
+            else
+            {
+                tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
+            }
+
+            MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+            MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> garments buyer: <b>{4}<b>, <b>{5}<b> has been sent to you for liability acceptance. 
+                       Please accept it or stay as previous booking.
+                      <BR><BR>Liabilities Here-
+                      <BR><BR>
+                       {10}
+                       {11}
+                      <BR><BR>Any query please feel free to contact me.
+                      <BR><BR><BR>Thanks &amp; Best Regards,
+                      <BR><BR>{6}{7}{8}{9}
+                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                      uInfo.Name,
+                      Designation, Department, ExtensionNo, tblLD, tblYarnLD);
+        }
+        else
+        {
+            if (SaveType != "UA")
+            {
+                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
+                      <BR><BR>Any query please feel free to contact me.
+                      <BR><BR><BR>Thanks &amp; Best Regards,
+                      <BR><BR>{6}{7}{8}{9}
+                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                          uInfo.Name,
+                          Designation, Department, ExtensionNo);
+            }
+            else
+            {
+                if (bmList[0].UnAcknowledgeReason.Length > 1)
+                {
+                    UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
+                }
+
+                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
+                      <BR><BR>Any query please feel free to contact me.
+                      <BR><BR><BR>Thanks &amp; Best Regards,
+                      <BR><BR>{6}{7}{8}{9}
+                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                          uInfo.Name,
+                          Designation, Department, ExtensionNo, UnAcknowledgeReason);
+            }
+        }
+        //MailSubject = "Test Mail Please Ignore - " + MailSubject;
+
+        toMailID = this.ReplaceMailInvalidChar(toMailID);
+        ccMailID = this.ReplaceMailInvalidChar(ccMailID);
+        bccMailID = this.ReplaceMailInvalidChar(bccMailID);
+
+        await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
+    }
+
+    return true;
+}
+catch (Exception ex)
+{
+    return false;
+}
+}
+return IsSendMail;
+}
+
+public async Task<bool> SystemMailForSampleUnAck(List<BookingItemAcknowledge> saveFabricBookingItemAcknowledgeList, List<SampleBookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, string listTypeMasterGrid)
+{
+if (_isValidMailSending)
+{
+try
+{
+    int revisionNo = 0;
+    var bookings = await _service.GetBookingByBookingNo(bmList.First().BookingNo);
+    if (bookings.IsNotNull() && bookings.Count() > 0)
+    {
+        revisionNo = bookings.Max(x => x.RevisionNo);
+        if (listTypeMasterGrid == "RAL")
+        {
+            revisionNo = revisionNo + 1;
+        }
+    }
+
+    String BuyerName = "", BuyerTeam = "", Salutation = "Dear Sir,";
+    EPYSL.Encription.Encryption objEncription = new EPYSL.Encription.Encryption();
+    ItemSubGroupMailSetupDTO isgDTO = new ItemSubGroupMailSetupDTO();
+    EmployeeMailSetupDTO emsDTO = new EmployeeMailSetupDTO();
+    if (SaveType != "UA")
+    {
+        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBKACK");
+    }
+    else
+    {
+        isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Fabric", "FBK-UNACK");
+    }
+    //var isgDTO = await _emailService.GetItemSubGroupMailSetupAsync("Yarn New", "BDS Ack");
+    int UnAcknowledgeBy = 0;
+    int updatedBy = 0;
+    int userCode = AppUser.UserCode;
+    if (saveFabricBookingItemAcknowledgeList.Count > 0)
+    {
+        UnAcknowledgeBy = saveFabricBookingItemAcknowledgeList.First().UnAcknowledgeBy;
+        //addedBy = saveFabricBookingItemAcknowledgeList.First().AddedBy;
+        //if (saveFabricBookingItemAcknowledgeList.First().UpdatedBy.IsNotNull())
+        //{
+        //    updatedBy = (int)saveFabricBookingItemAcknowledgeList.First().UpdatedBy;
+        //}
+    }
+    var uInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy);
+    var rInfo = await _emailService.GetUserEmailInfoAsync(UnAcknowledgeBy);
+    emsDTO = await _emailService.GetEmployeeMailSetupAsync(UnAcknowledgeBy, "FBKACK,FBK-UNACK");
+    var ReceiverDetails = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy : bmList[0].UpdatedBy);
+
+    //var uInfo = await _emailService.GetUserEmailInfoAsync(saveFabricBookingItemAcknowledgeList.Count > 0 ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.IsNotNull() ? saveFabricBookingItemAcknowledgeList[0].UpdatedBy.ToString().ToInt() : saveFabricBookingItemAcknowledgeList[0].AddedBy : AppUser.UserCode);
+    //var rInfo = await _emailService.GetUserEmailInfoAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy);
+    //emsDTO = await _emailService.GetEmployeeMailSetupAsync(bmList[0].UpdatedBy > 0 ? bmList[0].UpdatedBy : bmList[0].AddedBy, "FBKACK,FBK-UNACK");
+
+    //String EditType = bmList[0].RevisionNo > 0 ? "Revise " : "";
+    String EditType = revisionNo > 0 ? "Revise " : "";
+
+    String BKRevision = String.Empty;
+    //BKRevision = bmList[0].RevisionNo > 0 ? " Rev-" + bmList[0].RevisionNo.ToString() : "";
+    BKRevision = revisionNo > 0 ? " Rev-" + revisionNo.ToString() : "";
+
+    BuyerName = bmList[0].BuyerName;
+    BuyerTeam = bmList[0].BuyerTeamName == bmList[0].BuyerName ? "" : " " + bmList[0].BuyerTeamName;
+
+    var attachment = new byte[] { 0 };
+    String fromMailID = "";
+    String toMailID = "";
+    String ccMailID = "";
+    String bccMailID = "";
+    String password = "";
+    String filePath = "";
+    if (SaveType != "UA")
+    {
+        #region Get Report Attachment 
+
+        filePath = String.Format(@"{0} {1} {2}.PDF", EditType, bmList[0].BookingNo, BKRevision);
+        Dictionary<String, String> paraList = new Dictionary<String, String>();
+        paraList.Add("BookingNo", bmList[0].BookingNo);
+
+        //attachment = await _reportingService.GetPdfByte(1663, UserId, paraList); //For local & Live // OFF For CORE
+        //attachment = await _reportingService.GetPdfByte(406, UserId, paraList); //Old mail
+
+        #endregion
+    }
+    if (uInfo.IsNotNull() && rInfo.IsNotNull())
+    {
+        List<FabricBookingAcknowledge> EmployeeMailSetupList = await _service.GetAllEmployeeMailSetupByUserCodeAndSetupForName(bmList[0].UpdatedBy == 0 ? bmList[0].AddedBy.ToString() : bmList[0].UpdatedBy.ToString(), "FBKACK");
+
+        List<FabricBookingAcknowledge> fbaList = await _service.GetAllBuyerTeamHeadByBOMMasterID(saveFabricBookingItemAcknowledgeList[0].BOMMasterID.ToString());
+        String TeamHeadEmail = fbaList.Count > 0 ? fbaList[0].EmailID : "";
+
+
+        String Designation = "", Department = "", EmailID = "", ExtensionNo = "", MailSubject = "", MailBody = "", UnAcknowledgeReason = "";
+        String SenderList = "", ToMailList = "", CCMailList = "", BCCIDList = "";
+
+        if (uInfo.Designation != "" && uInfo.Designation != null)
+        {
+            Designation = "<BR>" + uInfo.Designation;
+        }
+        if (uInfo.Department != "" && uInfo.Department != null)
+        {
+            Department = "<BR>" + uInfo.Department;
+        }
+        if (uInfo.Email != "" && uInfo.Email != null)
+        {
+            EmailID = "<BR>" + uInfo.Email;
+        }
+        if (HttpContext.Request.Host.Host.ToUpper() == "texerp.epylliongroup.com".ToUpper())
+        {
+            if (EmployeeMailSetupList.Count > 0)
+            {
+                toMailID += EmployeeMailSetupList[0].ToMailID != "" ? EmployeeMailSetupList[0].ToMailID + ";" : "";
+                ccMailID += EmployeeMailSetupList[0].CCMailID != "" ? EmployeeMailSetupList[0].CCMailID + ";" : "";
+                bccMailID += EmployeeMailSetupList[0].BCCMailID != "" ? EmployeeMailSetupList[0].BCCMailID + ";" : "";
+            }
+            fromMailID = uInfo.Email;
+            password = objEncription.Decrypt(uInfo.EmailPassword, uInfo.UserName);
+            //password = objEncription.Decrypt(AppUser.EmailPassword, AppUser.UserName);
+            //toMailID = rInfo.Email.IsNullOrEmpty() ? AppUser.Email : rInfo.Email; //alamin
+            toMailID = ReceiverDetails.Email.IsNullOrEmpty() ? "" : ReceiverDetails.Email; //alamin
+
+            if (TeamHeadEmail.IsNotNullOrEmpty())
+                toMailID += ";" + TeamHeadEmail;
+            if (ccMailID.IsNullOrEmpty())
+                ccMailID = AppUser.Email;
+            else
+            {
+                ccMailID = ccMailID + ";" + AppUser.Email;
+            }
+
+            if (isgDTO.IsNotNull())
+            {
+                toMailID += isgDTO.ToMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.ToMailID;
+                ccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
+                bccMailID += isgDTO.CCMailID.IsNullOrEmpty() ? "" : ";" + isgDTO.CCMailID;
+            }
+            if (emsDTO.IsNotNull())
+            {
+                toMailID += emsDTO.ToMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.ToMailId;
+                ccMailID += emsDTO.CcMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.CcMailId;
+                bccMailID += emsDTO.BccMailId.IsNullOrEmpty() ? "" : ";" + emsDTO.BccMailId;
+            }
+        }
+        else
+        {
+            MailBasicProps mailBasicProps = new MailBasicProps();
+            fromMailID = mailBasicProps.DefaultFromEmailId;
+            password = mailBasicProps.DefaultPassword;
+            toMailID = mailBasicProps.DefaultToEmailIds;
+            ccMailID = mailBasicProps.DefaultCCEmailIds;
+            bccMailID = mailBasicProps.DefaultBCCEmailIds;
+        }
+        if (HasLiabilities && SaveType != "UA")
+        {
+            String selectedbookingID = String.Empty;
+            var strArr = saveFabricBookingItemAcknowledgeList.Select(i => i.BookingID.ToString()).Distinct().ToArray();
+            selectedbookingID += string.Join(",", strArr.ToArray());
+            List<FBookingAcknowledgementLiabilityDistribution> curLiabList = await _service.GetAllFBookingAckLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+            List<FBookingAcknowledgementYarnLiability> curYLiabList = await _service.GetAllFBookingAckYarnLiabilityByIDAsync(selectedbookingID == "" ? "0" : selectedbookingID);
+            String colData = "";
+            foreach (FBookingAcknowledgementLiabilityDistribution item in curLiabList)
+            {
+                string cellData = $@"<td>{item.SubGroupName}</td><td>{item.LiabilitiesName}</td><td>{item.LiabilityQty}</td><td>{item.UOM}</td>";
+                colData += $@"<tr>{cellData}</tr>";
+            }
+            String tblLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Item</th><th>Liabilities Name</th><th>Liability Qty</th><th>UOM</th></tr>{colData}</table>";
+
+            String colYarnData = "";
+            foreach (FBookingAcknowledgementYarnLiability item in curYLiabList)
+            {
+                string cellYarnData = $@"<td>{item._segment1ValueDesc}</td><td>{item._segment2ValueDesc}</td><td>{item._segment3ValueDesc}</td><td>{item._segment4ValueDesc}</td><td>{item._segment5ValueDesc}</td><td>{item._segment6ValueDesc}</td><td>{item.ShadeCode}</td><td>{item.DisplayUnitDesc}</td><td>{item.LiabilityQty}</td>";
+                colYarnData += $@"<tr>{cellYarnData}</tr>";
+            }
+            String tblYarnLD = $@"<table border='1' style='color:black;font-size:10pt;font-family:Tahoma;'><tr style='background-color:#dde9ed'><th>Composition</th><th>Yarn Type</th><th>Manufacturing Process</th><th>Sub Process</th><th>Quality Parameter</th><th>Count</th><th>Shade Code</th><th>UOM</th><th>Liability Qty</th></tr>{colYarnData}</table>";
+            if (colYarnData == "")
+            {
+                tblYarnLD = "";
+            }
+            else
+            {
+                tblYarnLD = $@"<BR><BR>Yarn Liabilities Here-<BR><BR>{tblYarnLD}";
+            }
+
+            MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Liabilities for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+            MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> garments buyer: <b>{4}<b>, <b>{5}<b> has been sent to you for liability acceptance. 
+                       Please accept it or stay as previous booking..
+                      <BR><BR>Liabilities Here-
+                      <BR><BR>
+                       {10}
+                       {11}
+                      <BR><BR>Any query please feel free to contact me.
+                      <BR><BR><BR>Thanks &amp; Best Regards,
+                      <BR><BR>{6}{7}{8}{9}
+                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                      uInfo.Name,
+                      Designation, Department, ExtensionNo, tblLD, tblYarnLD);
+        }
+        else
+        {
+            if (SaveType != "UA")
+            {
+                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] Acknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been acknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.
+                      <BR><BR>Any query please feel free to contact me.
+                      <BR><BR><BR>Thanks &amp; Best Regards,
+                      <BR><BR>{6}{7}{8}{9}
+                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                          uInfo.Name,
+                          Designation, Department, ExtensionNo);
+            }
+            else
+            {
+                if (bmList[0].UnAcknowledgeReason.Length > 1)
+                {
+                    UnAcknowledgeReason = String.Format(@"<BR>UnAcknowledge Reason: {0}", bmList[0].UnAcknowledgeReason);
+                }
+
+                MailSubject = String.Format(@"{0}Sample Fabric Booking [{1}{2}] UnAcknowledged for Garments Buyer {3} {4}", EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam);
+
+                MailBody = String.Format(@"<span style='font-size:10pt;font-family:Tahoma;'>{0}
+                      <BR><BR>{1}Sample Booking Number <b>{2}{3}</b> has been unacknowledged by textile PMC for garments buyer <b>{4}</b> <b>{5}</b>.{10}
+                      <BR><BR>Any query please feel free to contact me.
+                      <BR><BR><BR>Thanks &amp; Best Regards,
+                      <BR><BR>{6}{7}{8}{9}
+                      <BR><BR><BR>This is ERP generated mail</span>", Salutation, EditType, bmList[0].BookingNo, BKRevision, BuyerName, BuyerTeam,
+                          uInfo.Name,
+                          Designation, Department, ExtensionNo, UnAcknowledgeReason);
+            }
+        }
+        //MailSubject = "Test Mail Please Ignore - " + MailSubject;
+        await _emailService.SendAutoEmailAsync(fromMailID, password, toMailID, ccMailID, bccMailID, MailSubject, MailBody, filePath, attachment);
+    }
+
+    return true;
+}
+catch (Exception ex)
+{
+    return false;
+}
+}
+return IsSendMail;
+}
+*/
         private string ReplaceMailInvalidChar(string pValue)
         {
             pValue = pValue.Replace(";;;", ";").Replace(";;", ";").Replace(" ", "");
             return pValue;
-        }*/
+        }
     }
 }

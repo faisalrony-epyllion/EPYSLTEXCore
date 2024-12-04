@@ -8661,7 +8661,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(entityFBookingA, transaction);
                 foreach (FBookingAcknowledge item in entityFBookingA)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Add_RevisionWiseAcknowledge", item.EntityState, userId, item.FBAckID);
+                    await _connection.ExecuteAsync("sp_Add_RevisionWiseAcknowledge", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 await _gmtservice.SaveAsync(entityBIA, transaction1);
@@ -8796,7 +8796,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(entityFBookingA, transaction);
                 foreach (FBookingAcknowledge item in entityFBookingA)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Add_RevisionWiseAcknowledge", item.EntityState, userId, item.FBAckID);
+                    await _connection.ExecuteAsync("sp_Add_RevisionWiseAcknowledge", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 await _service.SaveAsync(entityFBA, transaction);
@@ -9127,8 +9127,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(entityFBA, transaction);
                 foreach (FBookingAcknowledge item in entityFBA)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_1", item.EntityState, userId, item.FBAckID);
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Add_RevisionWiseAcknowledge", item.EntityState, userId, item.FBAckID);
+                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync("sp_Add_RevisionWiseAcknowledge", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 var aaa = entityFBC.Where(x => x.SubGroupID == 11).ToList();
@@ -9138,22 +9138,22 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 foreach (FBookingAcknowledgeChild item in entityFBC)
                 {
                     sql = $"exec sp_Validation_FBookingAcknowledgeChild_1 {item.EntityState}, {userId},{item.BookingChildID}, {item.ConsumptionID}, {item.BookingID}, {item.ItemMasterID}, {item.AcknowledgeID}";
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID);
+                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 foreach (FBookingAcknowledge item in entityFBA)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_FBA", item.EntityState, userId, item.FBAckID);
+                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_FBA", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 await _service.SaveAsync(entityLD, transaction);
                 foreach (FBookingAcknowledgementLiabilityDistribution item in entityLD)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgementLiabilityDistribution_1", item.EntityState, userId, item.LChildID);
+                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgementLiabilityDistribution_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.LChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(entityYLD, transaction);
                 foreach (FBookingAcknowledgementYarnLiability item in entityYLD)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgementYarnLiability_1", item.EntityState, userId, item.YLChildID);
+                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgementYarnLiability_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YLChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 if (entityYLD.Count() > 0)

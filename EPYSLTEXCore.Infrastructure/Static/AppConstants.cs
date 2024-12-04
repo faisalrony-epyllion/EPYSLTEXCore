@@ -306,4 +306,63 @@
         Reallocation = 9,
         Revision = 10
     }
+    public static class EntityConceptStatus
+    {
+        public const int RUNNING = 1089;
+        public const int FIRM_CONCEPT = 1090;
+        public const int LIVE_PRODUCT = 1091;
+        public const int DROP = 1370;
+    }
+    public static class ItemSegmentNameConstants
+    {
+        public const string DYES_GROUP = "Dyes_Group";
+        public const string DYES_ITEM_NAME = "Dyes_Item Name";
+        public const string CHEMICALS_AGENT = "Chemicals_Agent";
+        public const string CHEMICALS_FORM = "Chemicals_Form";
+        public const string CHEMICALS_GROUP = "Chemicals_Group";
+        public const string CHEMICALS_ITEM_NAME = "Chemicals_Item Name";
+        public const string FABRIC_COLOR = "Fabric Color";
+        public const string CONSTRUCTION = "Construction";
+        public const string COMPOSITION = "Composition";
+        public const string GSM = "GSM";
+
+        #region Yarn Item Segments
+        public const string YARN_COMPOSITION = "Yarn Composition";
+        public const string YARN_TYPE = "Yarn Type New";
+        public const string YARN_MANUFACTURING_PROCESS = "Yarn Manufacturing Process";
+        public const string YARN_MANUFACTURING_SUB_PROCESS = "Yarn Manufacturing Sub Process";
+        public const string YARN_QUALITY_PARAMETER = "Yarn Quality Parameter";
+        public const string SHADE = "Shade";
+        public const string YARN_COUNT = "Yarn Count";
+        public const string YARN_COUNT_MASTER = "Yarn Count Master";
+        public const string NO_OF_PLY = "No of Ply";
+
+        public const string FIBER_TYPE = "Fiber Type";
+        public const string BLEND_TYPE = "Blend Type";
+        public const string YARN_PROGRAM = "Yarn Program";
+        public const string YARN_SUB_PROGRAM = "Yarn Sub Program";
+        public const string YARN_SUBPROGRAM_NEW = "Yarn Sub Program New";
+        public const string YARN_CERTIFICATIONS = "Yarn Certifications";
+        public const string YARN_MANUFACTURING_LINE = "Yarn Manufacturing Line";
+        public const string YARN_COLOR = "Yarn Color";
+        public const string YARN_COLOR_GRADE = "Yarn Color Grade";
+
+        public const string FABRIC_TYPE = "Fabric Type";
+        #endregion
+    }
+    public static class EntityTypeNameConstants
+    {
+        public const string STATUS = "Status";
+        public const string MACHINE_KNITTING_TYPE = "Machine Knitting Type";
+        public const string RM_TRIGGER_POINTS = "RM Trigger Points";
+        public const string FABRIC_TYPE = "Fabric Type";
+        public const string KNITTING_MACHINE_NATURE = "Knitting Machine Nature";
+        public const string KNITTING_MACHINE_BRAND = "Knitting Machine Brand";
+        public const string GREY_QC_MACHINE_PROCESS = "Grey QC Machine Process";
+        public const string GREY_QC_MACHINE_MACHINE_TYPE = "Grey QC Machine Type";
+        public const string GREY_QC_MACHINE_BRAND = "Grey QC Machine Brand";
+        public const string DYEING_MACHINE_BRAND = "Dyeing Machine Brand";
+        public const string CONCEPT_STATUS = "Concept Status";
+        public const string CONFIRMATION_STATUS = "Confirmation Status";
+    }
 }

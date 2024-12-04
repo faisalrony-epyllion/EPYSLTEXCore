@@ -42,5 +42,6 @@ namespace EPYSLTEX.Core.Interfaces
         
         #endregion FabricTechnicalNameOther
         Task<List<FabricWastageGrid>> GetFabricWastageGridAsync(string wastageFor);
+        Task UpdateFreeConceptStatus(string interfaceFrom, int conceptID = 0, string groupConceptNo = "", int bookingID = 0, int isBDS = 0, int ccColorID = 0, int colorID = 0, int itemMasterID = 0, string conceptIDs = "");
     }
 }

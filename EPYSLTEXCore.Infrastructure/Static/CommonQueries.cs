@@ -124,5 +124,46 @@ namespace EPYSLTEXCore.Infrastructure.Static
                         SELECT * FROM IPath";
             return sql;
         }
+        public static string GetItemSegmentValuesBySegmentNamesWithSegmentName()
+        {
+            return $@"SELECT CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                WHERE ISN.SegmentName In @SegmentNames And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                ORDER BY ISN.SegmentName";
+            /*return $@"SELECT CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc],CV.YarnTypeSegmentValueID [additionalValue]
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                Left Join {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup CV ON CV.SegmentValueID=ISV.SegmentValueID
+                WHERE ISN.SegmentName In @SegmentNames And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                ORDER BY ISN.SegmentName";*/
+        }
+        /// <summary>
+        /// Get entity type values by type name.
+        /// </summary>
+        /// <param name="entityTypeName"></param>
+        /// <returns>Returns array of entity type values.</returns>
+        public static string GetEntityTypeValuesOnly(string entityTypeName)
+        {
+            return $@"
+                Select EV.ValueName
+                From {DbNames.EPYSL}..EntityTypeValue EV
+                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+                Where ET.EntityTypeName = '{entityTypeName}'
+                Group By EV.ValueName";
+        }
+        /// <summary>
+        /// Get entity type values by type name.
+        /// </summary>
+        /// <param name="entityTypeName"></param>
+        /// <returns>Returns array of entity type values.</returns>
+        public static string GetFabricUsedPart()
+        {
+            return $@"
+                SELECT CAST(FUPartID AS varchar) [id], PartName [text], ConceptSubGroupID [desc]
+                FROM {DbNames.EPYSL}..FabricUsedPart WHERE ConceptSubGroupID <> 0";
+        }
     }
 }

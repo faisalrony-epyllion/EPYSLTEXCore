@@ -965,7 +965,7 @@
        // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
      
         
-        data["Childs"]=localStorage.getItem(localstorageKey)==null ? []: JSON.parse(localStorage.getItem(localstorageKey));
+        data["Childs"]= JSON.parse(localStorage.getItem(localstorageKey) || '[]');
     
         
 

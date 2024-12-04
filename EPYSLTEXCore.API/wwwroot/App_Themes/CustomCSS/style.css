@@ -5,7 +5,7 @@
     cursor: pointer;
     position: absolute;
     z-index: 10;
-    height: 50px;
+    height: 36px;
 }
 
 
@@ -62,7 +62,7 @@
 
         #mainTab li a {
             padding-left: 10px;
-            line-height: 38px;
+            line-height: 27px;
             color: #000 !important;
         }
 
@@ -79,7 +79,7 @@
             }*/
 
 .tabLi {
-    height: 50px !important;
+    height: 36px !important;
     text-align: center;
     font-size: 12px !important;
 }
@@ -88,15 +88,15 @@
         height: 44px !important;
     }
 
-        .tabLi a {
-            float: left;
-            width: 92%;
-        }
+    .tabLi a {
+        float: left;
+        width: 92%;
+    }
 
-        .tabLi div {
-            float: right;
-            width: 5%
-        }
+    .tabLi div {
+        float: right;
+        width: 5%
+    }
 
 
 .menu-box {
@@ -489,4 +489,8 @@
         .skin-grey .main-header > .logo:hover {
             background-color: #263238
         }
+}
+
+#mainTabContent .tab-pane {
+    padding: 12px;
 }

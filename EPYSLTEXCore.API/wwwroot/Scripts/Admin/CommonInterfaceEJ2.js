@@ -150,29 +150,37 @@
                 },
                 
                 actionComplete: function (args) {
-                  
+                  var keyName='';
+                  var keyValue='';
                     if (args.action == addKey) {
-                        let newData = args.data;
-                       
-                        saveEditedDataToLocalStorage(addKey, newData); 
+                         keyValue = args.data;
+                         keyName=addKey;
+                         keyValue['Status']=addKey
+                       addUniqueObjectToLocalStorage(keyValue);
+                        
                     }
 
                     // Check if the action is 'edit'
                     if (args.action == editKey) { 
                        
                         // Get the data to be edited from the arguments
-                        let editedData = args.rowData;
-                        saveEditedDataToLocalStorage(editKey, editedData); 
+                        keyValue = args.rowData;
+                         keyName=editKey;
+                           keyValue['Status']=editKey
+                         addUniqueObjectToLocalStorage(keyValue);
                     }
                     
                     if (args.requestType == deleteKey) {
-                      
+                     
                         // Get the edited data
-                        let deleteData = Array.isArray(args.data) && args.data.length>0 ? args.data[args.data.length-1]:args.data;
-                        saveEditedDataToLocalStorage(deleteKey, deleteData);
-                       
+                         keyValue = Array.isArray(args.data) && args.data.length>0 ? args.data[args.data.length-1]:args.data;
+                        keyName=deleteKey;
+                        keyValue['Status']=deleteKey
+                       addUniqueObjectToLocalStorage(keyValue);
  
                     }
+                    
+                    //saveEditedDataToLocalStorage(keyName, keyValue);
                 },
                 actionBegin: function (args) {
                     if (args.requestType === "save") {
@@ -210,29 +218,29 @@
  
         }
     }
- 
-    // Common function to save edited data to localStorage
-    function saveEditedDataToLocalStorage(statusKey, data) {
-        // Retrieve the existing edited data from localStorage, or initialize an empty array if none exists
-        var arreditedData = localStorage.getItem(localstorageKey) == null ? [] : JSON.parse(localStorage.getItem(localstorageKey));
-     
-
-        // Add the status key to the edited data
-        data['Status'] = statusKey;
-
-        // Push the edited data to the existing array
-        arreditedData.push(data);
-
-        // Save the updated array back to localStorage
-        window.localStorage.setItem(localstorageKey, JSON.stringify(arreditedData));
-    }
-        // Common function to save edited data to localStorage
+  
+        // Common function to  remove  localStorage
     function removeLocalStorage(key) {
         
              // Remove the key if it exists
         window.localStorage.removeItem(key);
     }
-
+    // Function to check for duplicates and push the object if it's not a duplicate
+    function addUniqueObjectToLocalStorage(obj) {
+       
+          var array = localStorage.getItem(localstorageKey) == null ? [] : JSON.parse(localStorage.getItem(localstorageKey));
+        let indexToRemove = array.findIndex(p => p[interfaceConfigs.PrimaryKeyColumn] === obj[interfaceConfigs.PrimaryKeyColumn]);
+        // Check if object already exists in the array
+        
+            if (indexToRemove !== -1) {
+              // Remove the object from the array
+              array.splice(indexToRemove, 1);
+            }        
+              array.push(obj);
+             window.localStorage.setItem(localstorageKey, JSON.stringify(array));
+       
+        
+    }
 
     async function executeSelectApis() {
         var objList = [],

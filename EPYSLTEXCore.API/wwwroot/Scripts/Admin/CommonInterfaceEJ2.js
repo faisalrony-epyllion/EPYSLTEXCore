@@ -20,6 +20,11 @@
         delete: "delete",
         add: "add"
     };
+    const commonAPiUrls = {
+        combo: "/api/common-interface/combodata/",
+        finder: "/api/common-interface/finderdata/",
+      
+    };
     var selectColumnList = [];
     var childSelectColumnList = [];
     var typeElements = [];
@@ -39,6 +44,8 @@
         $formEl = $("#form-ci-" + menuId);
         // Append the menuId to the baseKey
         localStorageKeys.baseKey = `${localStorageKeys.baseKey}${menuId}`;
+        commonAPiUrls.combo=`${commonAPiUrls.combo}${menuId}`;
+        commonAPiUrls.finder=`${commonAPiUrls.finder}${menuId}`;
         childForm = $("#form-ci-child-" + menuId);
         tblChildId = "#tabaleGridData-" + menuId;
         tblFinderId = "#tblSearchData-" + menuId;
@@ -272,12 +279,13 @@
             dependentColumnList = [],
             apiUrls = [];
         
-        interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" && x.ApiUrl.length > 0).map(x => {
+        interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" ).map(x => {
             var dIndex = interfaceConfigs.ChildGridColumns.findIndex(d => d.DependentColumnName == x.ColumnName);
             if (!dependentColumnList.includes(x.ColumnName) || dIndex > -1) {
+
                 var obj = {
                     ColumnName: x.ColumnName,
-                    ApiUrl: x.ApiUrl,
+                    ApiUrl: x.SelectSql ? commonAPiUrls.combo : x.ApiUrl,
                     ValueColumnName: x.ValueColumnName,
                     DisplayColumnName: x.DisplayColumnName,
                     Label: x.Label,

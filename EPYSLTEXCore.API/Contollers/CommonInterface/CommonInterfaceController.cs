@@ -65,8 +65,8 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
            return Ok();
            
         }
-        [Route("combodata/{menuId}/{paramValue}")]
-        public async Task<IActionResult> GetComboData(int menuId,string paramValue)
+        [Route("combodata/{menuId}")]
+        public async Task<IActionResult> GetComboData(int menuId)
         {
 
             var paginationInfo = Request.GetPaginationInfo();
@@ -76,7 +76,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
            foreach (var childGridColumn in childGridColumns)
             { 
                 string selectSql = childGridColumn.SelectSql;
-                var records = await _service.GetComboData(selectSql, connKey, new { paramValue });
+                var records = await _service.GetDynamicDataAsync(selectSql, connKey);
                 return Ok(records);
             }
 
@@ -94,7 +94,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             if (commonInterfaceChild != null && !string.IsNullOrWhiteSpace(connKey))
             {
                 string selectSql = commonInterfaceChild.SelectSql;
-                var records = await _service.GetSelectedItemFinderData(selectSql, connKey, new { id });
+                var records = await _service.GetDynamicDataAsync(selectSql, connKey, new { id });
                 return Ok(records);
             }
 

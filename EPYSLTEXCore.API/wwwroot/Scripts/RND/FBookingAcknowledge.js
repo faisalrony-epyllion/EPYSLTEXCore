@@ -2596,7 +2596,7 @@
                 $divTblEl.fadeOut();
 
                 masterData = response.data;
-
+                debugger;
                 masterData.BookingDate = formatDateToDefault(masterData.BookingDate);
                 setFormData($formEl, masterData);
 

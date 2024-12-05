@@ -102,7 +102,21 @@ namespace EPYSLTEX.Infrastructure.Services
             
             return records;
         }
+        public async Task<dynamic> GetComboData(string sqlQuery, string conKey, object dynamicParameters)
+        {
+            var query = sqlQuery;
+            
+            var isSp = sqlQuery.ToLower().Contains("sp");
+            query = isSp ? sqlQuery : $@"
+                 {sqlQuery}
+               ";
+            var commandType = isSp ? CommandType.StoredProcedure : CommandType.Text;
+            SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
+ 
+            var records = await _service.GetDynamicDataAsync(query, conn, dynamicParameters, commandType);
 
+            return records;
+        }
         public async Task<dynamic> GetSelectedItemFinderData(string sqlQuery, string conKey,object param)
         {
             SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));

@@ -38,6 +38,7 @@
     <Folder Include="Interfaces\Select2\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\CommonInterface\" />
+    <Folder Include="Services\Repositories\" />
     <Folder Include="Services\User\" />
   </ItemGroup>
 

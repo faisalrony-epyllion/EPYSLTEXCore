@@ -28,6 +28,11 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             
             _service = service;
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+            _connection = service.Connection;
+            
+
+            _service = service;
             _connection = service.Connection;
         }
 
@@ -212,7 +217,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     ItemSegmentNameConstants.CONSTRUCTION,
                     ItemSegmentNameConstants.COMPOSITION,
                     ItemSegmentNameConstants.GSM
-                }
+                }                
             };
             var query =
                 $@"
@@ -272,9 +277,10 @@ namespace EPYSLTEXCore.Application.Services.RND
                 data.CompositionList = itemSegments.Where(x => x.desc == ItemSegmentNameConstants.COMPOSITION);
                 data.GSMList = itemSegments.Where(x => x.desc == ItemSegmentNameConstants.GSM);
 
-                data.FabricComponents = await records.ReadAsync<string>();
+               data.FabricComponents = await records.ReadAsync<string>();
 
-                data.KnittingTypeList = await records.ReadAsync<Select2OptionModel>();
+               data.KnittingTypeList = await records.ReadAsync<Select2OptionModel>();
+
                 data.SubGroupList = await records.ReadAsync<Select2OptionModel>();
                 data.OtherTechnicalNameList = await records.ReadAsync<Select2OptionModel>();
 
@@ -285,6 +291,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 data.MachineGaugeList = records.Read<Select2OptionModel>().ToList();
 
                 data.TechnicalNameList = await records.ReadAsync<Select2OptionModel>();
+
                 return data;
             }
             catch (Exception ex)

@@ -14,10 +14,17 @@
     var finderApiUrl = "";
     var childGridApiUrl = "";
     var selectedChild = null;
-    var localstorageKey = "localstorageKey-";
-    var editKey = "edit";
-    var deleteKey = "delete";
-    var addKey = "add";
+    const localStorageKeys = {
+        baseKey: "localstorageKey-",
+        edit: "edit",
+        delete: "delete",
+        add: "add"
+    };
+    const commonAPiUrls = {
+        combo: "/api/common-interface/combodata/",
+        finder: "/api/common-interface/finderdata/",
+      
+    };
     var selectColumnList = [];
     var childSelectColumnList = [];
     var typeElements = [];
@@ -35,7 +42,10 @@
         menuId = localStorage.getItem("current_common_interface_menuid");
 
         $formEl = $("#form-ci-" + menuId);
-        localstorageKey=localstorageKey+menuId;
+        // Append the menuId to the baseKey
+        localStorageKeys.baseKey = `${localStorageKeys.baseKey}${menuId}`;
+        commonAPiUrls.combo=`${commonAPiUrls.combo}${menuId}`;
+        commonAPiUrls.finder=`${commonAPiUrls.finder}${menuId}`;
         childForm = $("#form-ci-child-" + menuId);
         tblChildId = "#tabaleGridData-" + menuId;
         tblFinderId = "#tblSearchData-" + menuId;
@@ -153,30 +163,31 @@
                    
                   var keyName='';
                   var keyValue='';
-                    if (args.action == addKey) {
+                    if (args.action == localStorageKeys.add) {
                          keyValue = args.data;
-                         keyName=addKey;
-                         keyValue['Status']=addKey
+                         keyName=localStorageKeys.add;
+                         keyValue.Status=localStorageKeys.add;
                        addUniqueObjectToLocalStorage(keyValue);
                         
                     }
 
                     // Check if the action is 'edit'
-                    if (args.action == editKey) { 
+                    if (args.action == localStorageKeys.edit) { 
                         
                         // Get the data to be edited from the arguments
+                        
                         keyValue = args.data;
-                         keyName=editKey;
-                           keyValue['Status']=editKey
+                         keyName=localStorageKeys.edit;
+                          keyValue.Status=localStorageKeys.edit;
                          addUniqueObjectToLocalStorage(keyValue);
                     }
                     
-                    if (args.requestType == deleteKey) {
+                    if (args.requestType == localStorageKeys.delete) {
                      
                         // Get the edited data
                          keyValue = Array.isArray(args.data) && args.data.length>0 ? args.data[args.data.length-1]:args.data;
-                        keyName=deleteKey;
-                        keyValue['Status']=deleteKey
+                        keyName=localStorageKeys.delete;
+                         keyValue.Status=localStorageKeys.delete;
                        addUniqueObjectToLocalStorage(keyValue);
  
                     }
@@ -226,21 +237,40 @@
              // Remove the key if it exists
         window.localStorage.removeItem(key);
     }
+    function getLocalStorage(key) {
+        
+             // Remove the key if it exists
+       return localStorage.getItem(key) == null ? [] : JSON.parse(localStorage.getItem(key));
+    }
+    function setLocalStorage(key,jsonObj) {
+        
+             // Remove the key if it exists
+       window.localStorage.setItem(key, JSON.stringify(jsonObj));
+    }
     // Function to check for duplicates and push the object if it's not a duplicate
     function addUniqueObjectToLocalStorage(obj) {
-       
-          var array = localStorage.getItem(localstorageKey) == null ? [] : JSON.parse(localStorage.getItem(localstorageKey));
-        let indexToRemove = array.findIndex(p => p[interfaceConfigs.PrimaryKeyColumn] === obj[interfaceConfigs.PrimaryKeyColumn]);
-        // Check if object already exists in the array
-       
-        
-            if (indexToRemove !== -1 && obj['Status']!=addKey) {
-              // Remove the object from the array
-              array.splice(indexToRemove, 1);
-            }        
-              array.push(obj);
-             window.localStorage.setItem(localstorageKey, JSON.stringify(array));
-       
+       const array = getLocalStorage(localStorageKeys.baseKey);
+       const firstChildGrid = interfaceConfigs.ChildGrids.at(0);
+       const primaryKeyColumn = firstChildGrid?.PrimaryKeyColumn;
+
+        if (primaryKeyColumn) {
+            const indexToRemove = array.findIndex(p => p[primaryKeyColumn] === obj[primaryKeyColumn]);
+    
+            if (indexToRemove !== -1) {
+                const itemToRemove = array[indexToRemove];
+                const isItemNew = itemToRemove.Status === localStorageKeys.add;
+                 obj.Status = isItemNew ? localStorageKeys.add : obj.Status;                
+                 array.splice(indexToRemove, 1); 
+                 
+            }
+
+            array.push(obj);  // Add the updated object to the array
+            setLocalStorage(localStorageKeys.baseKey, array);
+        }
+
+             
+
+      
         
     }
 
@@ -249,12 +279,13 @@
             dependentColumnList = [],
             apiUrls = [];
         
-        interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" && x.ApiUrl.length > 0).map(x => {
+        interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" ).map(x => {
             var dIndex = interfaceConfigs.ChildGridColumns.findIndex(d => d.DependentColumnName == x.ColumnName);
             if (!dependentColumnList.includes(x.ColumnName) || dIndex > -1) {
+
                 var obj = {
                     ColumnName: x.ColumnName,
-                    ApiUrl: x.ApiUrl,
+                    ApiUrl: x.SelectSql ? commonAPiUrls.combo : x.ApiUrl,
                     ValueColumnName: x.ValueColumnName,
                     DisplayColumnName: x.DisplayColumnName,
                     Label: x.Label,
@@ -645,7 +676,7 @@
             pageId: "divCommonInterface-" + menuId,
             height: 220,
             modalSize: "modal-lg",
-            apiEndPoint: selectedChild.FinderApiUrl,
+            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder : selectedChild.FinderApiUrl,
             fields: selectedChild.FinderHeaderColumns,
             widths: selectedChild.FinderColumnWidths,
             headerTexts: selectedChild.FinderDisplayColumns,
@@ -666,7 +697,7 @@
                 //$formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
                 //$formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
                 //$formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
-              removeLocalStorage(localstorageKey);
+              removeLocalStorage(localStorageKeys.baseKey);
           
                 var finderElement = interfaceConfigs.Childs.filter(function (a) {
                     return a.FinderApiUrl != null && a.FinderApiUrl.length > 0;

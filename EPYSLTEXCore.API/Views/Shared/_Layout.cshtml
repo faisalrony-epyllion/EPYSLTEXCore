@@ -125,7 +125,11 @@
             <input type="hidden" id="versionNumer" value="@Guid.NewGuid()" />
             <input type="hidden" id="isSuperUser" value="@ViewBag.IsSuperUser" />
             <!--End of Hidden Fields-->
-            @RenderBody()
+            <section class="content">
+                <div class="container-fluid">
+                   @RenderBody()
+                </div>
+            </section>
         </div>
         <!-- /.content-wrapper -->
         <!-- Main Footer -->

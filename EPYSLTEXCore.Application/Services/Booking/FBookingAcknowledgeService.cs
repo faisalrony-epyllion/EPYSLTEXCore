@@ -174,9 +174,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         ,PendingRevision= (CASE WHEN FBA.PreRevisionNo <> SBM.RevisionNo THEN 'Booking Revision No ' + CONVERT(VARCHAR(10),SBM.RevisionNo) ELSE '' END), SBM.ImagePath
 	                From SBM
 	                Inner Join {DbNames.EPYSL}..SampleType ST On SBM.SampleID = ST.SampleTypeID
-					LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBM.BookingID
-					LEFT JOIN FBookingAcknowledge FBA On FBA.BookingID = SBM.BookingID
-                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBM.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA On FBA.BookingID = SBM.BookingID
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
                    -- Where ST.DisplayCode <> 'LR' AND FBA.BookingID IS NULL
                     Where ST.DisplayCode <> 'LR'  AND (FBA.BookingID IS NULL or FBA.PreRevisionNo <> SBM.RevisionNo)
                 )
@@ -195,7 +195,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 	                LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 	                LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
                     Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                     LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID
 					Group By M.BookingID,M.BookingNo, M.BookingDate, M.SLNo, M.StyleNo, M.OrderQty, M.BuyerID, M.BuyerTeamID, M.SupplierID

@@ -104,8 +104,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<bool> DeleteEntityCompositKeyAsync(T entity);
          Task SaveNestedEntityAsync(Object T, IDbTransaction transaction = null);
         // Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null);
-       // Task SaveNestedEntityAsync<T>(T entity, IDbTransaction transaction);
-
+        // Task SaveNestedEntityAsync<T>(T entity, IDbTransaction transaction);
+        Task<int> AddDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null);
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);
         #region signature Methods
         Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);

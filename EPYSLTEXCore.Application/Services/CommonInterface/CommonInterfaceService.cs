@@ -5,8 +5,12 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Transactions;
+using static Dapper.SqlMapper;
 
 namespace EPYSLTEX.Infrastructure.Services
 {
@@ -131,5 +135,34 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             return await _service.ExecuteAsync(query, param);
         }
+        public async Task Save(string tableName,object obj,string conKey)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
+                  conn.OpenAsync();
+               
+                using (var transaction = conn.BeginTransaction()) // Begin a transaction
+                {
+                    try
+                    {
+                        var rowsAffected = _service.AddDynamicObjectAsync(tableName, obj, transaction);
+                        //transaction.Commit();  // Commit the transaction if everything goes well
+                        Console.WriteLine($"{rowsAffected} row(s) inserted.");
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();  // Rollback in case of an error
+                        Console.WriteLine($"Error: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
     }
 }

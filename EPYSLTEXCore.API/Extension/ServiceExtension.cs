@@ -5,12 +5,14 @@ using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Booking;
+using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Application.Services.Booking;
 using EPYSLTEXCore.Application.Services.RND;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 namespace EPYSLTEXCore.API.Extension
 {
     public static class ServiceExtensions
@@ -52,6 +54,11 @@ namespace EPYSLTEXCore.API.Extension
             //        }
             //    }
             //}
+
+            service.AddTransient<IFreeConceptService, FreeConceptService>();
+            service.AddTransient<ICommonHelperService, CommonHelperService>();
+            //service.AddTransient<IMapper, Mapper>();
+            //service.AddScoped<IGmtEfRepository<ItemSegmentName>, GmtEfRepository<ItemSegmentName>>();
 
         }
     }

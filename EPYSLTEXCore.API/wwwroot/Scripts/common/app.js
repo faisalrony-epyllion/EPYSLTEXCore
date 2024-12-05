@@ -390,7 +390,7 @@ function registerCloseEvent(menuId) {
     });
 
     //$(".closeTab").click(function () {
-    //    debugger;
+    //    
     //    var tabIndex = $(this).closest('li').attr("tabIndex");
     //    var preTabIndex = tabIndex - 1;
     //    var isActive = $(this).closest('li').hasClass("active");
@@ -623,6 +623,11 @@ function GetMenus(applicationId) {
 function generateMenu(menuList) {
 
     $.each(menuList, function (i, item) {
+
+        var aaa = item.Childs.filter(x => x.MenuParam.length > 0);
+        if (aaa.length > 0) {
+            
+        }
 
         if (!item.Childs.length) {
             if (!item.NavigateUrl) return true;

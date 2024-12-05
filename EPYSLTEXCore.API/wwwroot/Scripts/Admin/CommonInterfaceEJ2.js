@@ -686,7 +686,7 @@
             lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
-              
+      
                 finder.hideModal();
                 var data = res.rowData;                 
                 for (var p in data) {
@@ -699,9 +699,7 @@
                 //$formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
               removeLocalStorage(localStorageKeys.baseKey);
           
-                var finderElement = interfaceConfigs.Childs.filter(function (a) {
-                    return a.FinderApiUrl != null && a.FinderApiUrl.length > 0;
-                });
+                var finderElement = interfaceConfigs.Childs.filter(a =>   (a.FinderSql?.length > 0) || (a.FinderApiUrl?.length > 0) );
                 var selectApiUrl = finderElement.length > 0 ? finderElement[0].SelectApiUrl : "";
                 var primaryKeyValue = data[interfaceConfigs.PrimaryKeyColumn]
                 selectApiUrl = selectApiUrl + primaryKeyValue;
@@ -996,7 +994,7 @@
        // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
      
         
-        data["Childs"]= JSON.parse(localStorage.getItem(localstorageKey) || '[]');
+        data["Childs"]= getLocalStorage(localStorageKeys.baseKey);
     
         
 

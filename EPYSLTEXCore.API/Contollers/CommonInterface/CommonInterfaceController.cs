@@ -3,7 +3,10 @@ using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 using Microsoft.AspNetCore.Mvc;
+ 
+ 
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace EPYSLTEXCore.API.Contollers.CommonInterface
 {
@@ -105,6 +108,22 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         public async Task<IActionResult> Save(int menuId, dynamic entity)
         {
 
+            string jsonString = JsonSerializer.Serialize(entity);
+
+            // Now parse the string as a JsonObject (or JsonDocument)
+            JsonObject jsonObject = JsonSerializer.Deserialize<JsonObject>(jsonString);
+
+            // Extract the 'Childs' array
+            var childs = jsonObject["Childs"];
+
+            string json = JsonSerializer.Serialize(entity, new JsonSerializerOptions { WriteIndented = true });
+
+            CommonInterfaceMaster commonInterfaceMaster = await _service.GetCommonInterfaceMasterChildAsync(menuId);
+            string connKey = commonInterfaceMaster.ConName;
+            string tableName = commonInterfaceMaster.TableName;
+            string conName = commonInterfaceMaster.ConName;
+
+            _service.Save(tableName, childs, conName);
            
 
             return Ok();

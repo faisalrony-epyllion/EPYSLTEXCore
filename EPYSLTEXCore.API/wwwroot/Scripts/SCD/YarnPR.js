@@ -810,8 +810,9 @@
             //selectionType = "Multiple";
         }
 
-        var pageName = isCPRPage ? pageNameConstants.CPR : isFPRPage ? pageNameConstants.FPR : "";
-        console.log(pageName);
+        var pageName = "FPR";
+        //var pageName = isCPRPage ? pageNameConstants.CPR : isFPRPage ? pageNameConstants.FPR : "";
+     
         if ($tblMasterEl) $tblMasterEl.destroy();
 
         $tblMasterEl = new initEJ2Grid({

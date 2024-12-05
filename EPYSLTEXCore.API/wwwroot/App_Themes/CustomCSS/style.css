@@ -494,3 +494,6 @@
 #mainTabContent .tab-pane {
     padding: 12px;
 }
+form{
+    width:100% !important;
+}

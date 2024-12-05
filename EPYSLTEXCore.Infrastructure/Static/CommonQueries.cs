@@ -242,7 +242,22 @@ namespace EPYSLTEXCore.Infrastructure.Static
 
         public static object GetDayValidDurations()
         {
-            throw new NotImplementedException();
+            string activeQuery = "";
+            string usedQuery = "";
+
+            //if (!isGetAll) activeQuery = " AND DVD.IsActive = 1 ";
+            //if (usedDayValidDurationId > 0) usedQuery = $@" OR DVD.DayValidDurationId = {usedDayValidDurationId} ";
+
+            return $@"SELECT id = CAST(DVD.DayValidDurationId AS VARCHAR)
+                    ,[text] = CASE WHEN DVD.DayDuration > 1 
+                                   THEN CONCAT(ET.ValueName,' (',CAST(DVD.DayDuration AS VARCHAR),' days)')
+                                   ELSE CONCAT(ET.ValueName,' (',CAST(DVD.DayDuration AS VARCHAR),' day)')
+                              END
+                    ,additionalValue = CAST(DVD.DayDuration AS VARCHAR)
+                    ,[desc] = CAST(DVD.IsActive AS VARCHAR)
+                    FROM DayValidDuration DVD
+                    INNER JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = DVD.LocalOrImportId
+                    WHERE 1 = 1 {activeQuery} {usedQuery}";
         }
     }
 }

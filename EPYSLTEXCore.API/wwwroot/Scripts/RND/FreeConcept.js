@@ -672,6 +672,7 @@
     }
 
     function save(e) {
+        debugger;
         e.preventDefault();
         var concepts = [];
         var colorList = $tblChildEl.getCurrentViewRecords();

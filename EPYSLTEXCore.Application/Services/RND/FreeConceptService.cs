@@ -29,10 +29,6 @@ namespace EPYSLTEXCore.Application.Services.RND
             _service = service;
             _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
-            
-
-            _service = service;
-            _connection = service.Connection;
         }
 
         public async Task<List<FreeConceptMaster>> GetPagedAsync(FreeConceptStatus status, PaginationInfo paginationInfo)

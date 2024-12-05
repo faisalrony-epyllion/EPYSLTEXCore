@@ -49,13 +49,7 @@ namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
           //  return Ok();
         }
 
-        //[Route("ewo-list/{buyerIds}")]
-        //public async Task<IHttpActionResult> GetEWOList(string buyerIds)
-        //{
-        //    var paginationInfo = _httpContextAccessor.HttpContext.Request.GetPaginationInfo();
-        //    List<YarnPOChildOrder> records = await _service.GetChildOrdersAsync(buyerIds, paginationInfo);
-        //    return Ok(new TableResponseModel(records, paginationInfo.GridType));
-        //}
+      
 
         [Route("fiberType/{getall}")]
         public async Task<IActionResult> GetAllFiberType()

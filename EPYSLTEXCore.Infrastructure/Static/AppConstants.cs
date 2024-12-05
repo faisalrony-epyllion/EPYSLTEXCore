@@ -373,7 +373,45 @@
         public const string PROJECTION_YARN_BOOKING = "Projection Yarn Booking";
         public const string FABRIC_PROJECTION_YARN_BOOKING = "Fabric Projection Yarn Booking";
     }
+    public static class ItemSegmentValueConstants
+    {
+        public const string ANIMAL_FIBER = "Animal Fiber [AF]";
+        public const string BLENDED = "Blended";
+        public const string COLOR_MELLANGE = "Color Mellange [CM]";
+        public const string MAN_MADE_FIBER = "Man Made Fiber [MMF]";
+        public const string NATURAL_FIBER = "Natural Fiber [NF]";
+    }
+    public static class PageNames
+    {
+        public const string CPR = "CPR";
+        public const string FPR = "FPR";
+        public const string YDBB = "YDBB";
+        public const string MRSA = "MRSA";
+        public const string MRSACK = "MRSACK";
+        public const string YDMRSACK = "YDMRSACK";
+    }
+    public static class EnumDepertmentDescription
+    {
+        //All numbers are DB primary key value
 
+        public const int None = 0;
+
+        //19,35,31,38,11
+        public const int Knitting = 19;
+        public const int Operation = 35;
+        public const int OperationTextile = 31;
+        public const int PlanningMonitoringAndControl = 38;
+        public const int ProductionManagementControl = 11;
+
+        public const int ResearchAndDevelopment = 26;
+
+        public const int SupplyChain = 10;
+
+        public const int MerchandiserFabric = 25;
+        public const int Merchandising = 40;
+
+        public const int MarketingAndMerchandising = 4;
+    }
     public static class PRFrom
     {
         public const int CONCEPT = 1;

@@ -47,6 +47,8 @@
         public bool HasExternalReport { get; set; }
         public bool IsSessionUse { get; set; }
         public List<MenuDTO> Childs { get; set; }
-        }
+
+        public string MenuParam { get; set; } = "";
+    }
     }
 

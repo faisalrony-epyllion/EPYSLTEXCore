@@ -34,7 +34,8 @@
       "wwwroot/App_Themes/lib/toastr.js/toastr.min.js",
       "wwwroot/App_Themes/lib/bootstrap3-editable/js/bootstrap-editable.min.js",
       "wwwroot/App_Themes/lib/HoldOn/HoldOn.min.js",
-      "wwwroot/App_Themes/adminlte/js/adminlte.js"
+      "wwwroot/App_Themes/adminlte/js/adminlte.js",
+      "wwwroot/App_Themes/lib/moment/moment.min.js"
 
     ],
     "minify": {

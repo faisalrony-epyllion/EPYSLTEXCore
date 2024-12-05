@@ -848,6 +848,11 @@
         public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
         public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
         public const string CONCEPT_PENDING_STATUS_HK = "T_ConceptPendingStatus_HK";
+        
+        public const string CONCEPT_TYPE = "T_ConceptType";
+        public const string KNITTING_MACHINE_TYPE = "T_KnittingMachineType";
+        public const string KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME = "T_KnittingMachineSubClassTechnicalName";
+        public const string KNITTING_MACHINE_STRUCTURE_TYPE_HK = "T_KnittingMachineStructureType_HK";
 
 
         #region Garments Table

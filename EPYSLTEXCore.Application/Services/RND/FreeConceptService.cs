@@ -63,13 +63,13 @@ namespace EPYSLTEXCore.Application.Services.RND
                 var cpsObj = conceptPendingStatusList.Find(x => x.StatusName == this.GetStatusName(status));
                 whereCondition = $@" WHERE F.CPSID={cpsObj.CPSID} ";
                 statusPropCondition = ",ISNULL(FCL.CPSID,0) CPSID, FCL.[Status] ,LiveStatus=CPS.StatusName, StatusRemarks=(CASE WHEN FCL.Remarks = 'Done' THEN '-' ELSE FCL.Remarks END)";
-                pendingStatusJoin = $@" Inner JOIN FCL ON FCL.ConceptID = M.ConceptID Inner JOIN ConceptPendingStatus_HK CPS ON CPS.CPSID = FCL.CPSID ";
+                pendingStatusJoin = $@" Inner JOIN FCL ON FCL.ConceptID = M.ConceptID Inner JOIN {TableNames.CONCEPT_PENDING_STATUS_HK} CPS ON CPS.CPSID = FCL.CPSID ";
                 pendingQuery = $@" FCL AS(
 						SELECT A.*
 						FROM (SELECT FC.*
-						FROM FreeConceptStatus FC
+						FROM {TableNames.RND_FREE_CONCEPT_STATUS} FC
 						WHERE CPSID = {cpsObj.CPSID} AND Status = 0 AND IsApplicable=1) A
-						INNER JOIN FreeConceptStatus B ON B.ConceptID = A.ConceptID And B.SeqNo = Case When A.SeqNo = 1 Then 1 Else (A.SeqNo - 1) End
+						INNER JOIN {TableNames.RND_FREE_CONCEPT_STATUS} B ON B.ConceptID = A.ConceptID And B.SeqNo = Case When A.SeqNo = 1 Then 1 Else (A.SeqNo - 1) End
                         WHERE (B.Status = Case When A.SeqNo = 1 Then 0 Else 1 End AND B.IsApplicable=1) or (B.Status = 0 AND B.IsApplicable=0)
 				    ),";
                 paginationInfo.FilterBy = paginationInfo.FilterBy.Replace("Where", " AND ");
@@ -80,17 +80,17 @@ namespace EPYSLTEXCore.Application.Services.RND
             string sql = $@"WITH FABRIC AS (
 	                            SELECT FC.GroupConceptNo,FC.ConceptTypeID, ConceptDate = MIN(FC.ConceptDate), TechnicalName = STRING_AGG(T.TechnicalName,', '), 
 	                            FC.ConceptStatusID, FC.AddedBy, FC.StatusRemarks, FC.SubGroupID
-	                            FROM FreeConceptMaster FC
+	                            FROM {TableNames.RND_FREE_CONCEPT_MASTER} FC
 	                            INNER JOIN {DbNames.EPYSL}..EntityTypeValue ETV on ETV.ValueID = FC.ConceptStatusID
-	                            LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FC.TechnicalNameId
+	                            LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = FC.TechnicalNameId
 	                            WHERE FC.IsBDS = 0 AND FC.SubGroupID = 1 {statusCondition}
 	                            GROUP BY FC.GroupConceptNo, FC.ConceptTypeID, FC.ConceptStatusID, FC.AddedBy, FC.StatusRemarks, FC.SubGroupID
                             ),
                             OTHER AS (
 	                            SELECT FC.GroupConceptNo, FC.ConceptTypeID, ConceptDate = MIN(FC.ConceptDate),TechnicalName = STRING_AGG(T.TechnicalName,', '),
 	                            FC.ConceptStatusID, FC.AddedBy, FC.StatusRemarks, SubGroupID = MAX(FC.SubGroupID)
-	                            FROM FreeConceptMaster FC
-	                            LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FC.TechnicalNameId
+	                            FROM {TableNames.RND_FREE_CONCEPT_MASTER} FC
+	                            LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = FC.TechnicalNameId
 	                            WHERE FC.IsBDS = 0 AND FC.SubGroupID <> 1 AND FC.GroupConceptNo NOT IN (SELECT GroupConceptNo FROM FABRIC) 
 	                            GROUP BY FC.GroupConceptNo, FC.ConceptTypeID,
 	                            FC.ConceptStatusID, FC.AddedBy, FC.StatusRemarks
@@ -112,7 +112,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                            LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=M.SubGroupID
 	                            LEFT JOIN {DbNames.EPYSL}..LoginUser L ON L.UserCode = M.AddedBy
 	                            LEFT Join {DbNames.EPYSL}..Employee E ON E.EmployeeCode = L.EmployeeCode
-	                            LEFT JOIN ConceptType T ON T.ConceptTypeID = M.ConceptTypeID
+	                            LEFT JOIN {TableNames.CONCEPT_TYPE} T ON T.ConceptTypeID = M.ConceptTypeID
 	                            {pendingStatusJoin}
                             )
                             SELECT F.*, Count(*) Over() TotalRows
@@ -181,8 +181,8 @@ namespace EPYSLTEXCore.Application.Services.RND
                 $@"
                 -- Technical name List
                 SELECT Cast(TN.TechnicalNameId As varchar) id, TN.TechnicalName text
-                FROM FabricTechnicalName TN
-                INNER JOIN FabricTechnicalNameKMachineSubClass FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
+                FROM {TableNames.FabricTechnicalName} TN
+                INNER JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
                 WHERE FTN.SubClassID={subClassId}
                 Group By TN.TechnicalNameId, TN.TechnicalName
                 ";
@@ -228,7 +228,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 ----knitting type
                 ;SELECT Cast(V.TypeID As varchar) [id], V.TypeName [text]
-				FROM KnittingMachineType V;
+				FROM {TableNames.KNITTING_MACHINE_TYPE} V;
 
                 ----Item Subgroup
                 ;SELECT Cast(SubGroupID As varchar) [id], SubGroupName [text]
@@ -237,15 +237,15 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 ----Other Technical Name
                 SELECT Cast(a.TechnicalNameId As varchar) id, a.TechnicalName text
-                FROM FabricTechnicalName a
-                Inner Join KnittingMachineSubClassTechnicalName b On b.TechnicalNameID = a.TechnicalNameId
+                FROM {TableNames.FabricTechnicalName} a
+                Inner Join {TableNames.KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME} b On b.TechnicalNameID = a.TechnicalNameId
                 Group By a.TechnicalNameId, a.TechnicalName;
 
                 ----Subclass
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner Join {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
@@ -254,15 +254,15 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 -- Gauge
                 ;SELECT Cast(a.GG As varchar) id, a.GG text
-                FROM KnittingMachine a
-                Inner Join KnittingMachineSubClassTechnicalName b On b.SubClassID = a.MachineSubClassID
+                FROM {TableNames.KNITTING_MACHINE} a
+                Inner Join {TableNames.KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME} b On b.SubClassID = a.MachineSubClassID
                 Group By a.GG
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;";
 
             try
@@ -319,13 +319,13 @@ namespace EPYSLTEXCore.Application.Services.RND
                 $@"
                 ;Select a.ConceptID, a.ConceptNo, a.ConceptDate, a.TrialNo, a.TrialDate, a.ConceptFor, a.MCSubClassID, a.KnittingTypeID, KM.TypeName KnittingType,
                 a.ConstructionID, a.TechnicalNameId, a.CompositionID, a.GSMID, a.Qty, a.ConceptStatusID, a.Remarks, a.SubGroupID
-                From FreeConceptMaster a
-                Left Join KnittingMachineType KM ON KM.TypeID = a.KnittingTypeID
+                From {TableNames.RND_FREE_CONCEPT_MASTER} a
+                Left Join {TableNames.KNITTING_MACHINE_TYPE} KM ON KM.TypeID = a.KnittingTypeID
                 where a.ConceptID={id};
 
                 -- Childs Color
                 ;Select C.CCColorID, C.ColorID, FCBS.ColorCode, ISV.SegmentValue ColorName, FCBS.RGBOrHex, C.Remarks, C.IsLive
-                From FreeConceptChildColor C
+                From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} C
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = C.ColorID  
                 Where ConceptID = {id}
@@ -339,7 +339,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 ----knitting type
                 ;SELECT Cast(V.TypeID As varchar) [id], V.TypeName [text]
-							FROM KnittingMachineType V;
+							FROM {TableNames.KNITTING_MACHINE_TYPE} V;
 
                 ----Item Subgroup
                 ;SELECT Cast(SubGroupID As varchar) [id], SubGroupName [text]
@@ -348,15 +348,15 @@ namespace EPYSLTEXCore.Application.Services.RND
 
               -- Technical name List
                 SELECT Cast(TN.TechnicalNameId As varchar) id, TN.TechnicalName text
-                FROM FabricTechnicalName TN
-                INNER JOIN FabricTechnicalNameKMachineSubClass FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
+                FROM {TableNames.FabricTechnicalName} TN
+                INNER JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
                 WHERE FTN.SubClassID={subClassId}
                 Group By TN.TechnicalNameId, TN.TechnicalName
 
                   ----Subclass
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc]
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID";
 
             try
@@ -406,13 +406,13 @@ namespace EPYSLTEXCore.Application.Services.RND
                 $@"
                 ;Select a.ConceptID, a.ConceptNo, a.ConceptDate, a.TrialNo, a.TrialDate, a.ConceptFor, a.MCSubClassID, a.KnittingTypeID, KM.TypeName KnittingType,
                 a.ConstructionID, a.TechnicalNameId, a.CompositionID, a.GSMID, a.Qty, a.ConceptStatusID, a.Remarks, a.SubGroupID
-                From FreeConceptMaster a
-                Left Join KnittingMachineType KM ON KM.TypeID = a.KnittingTypeID
+                From {TableNames.RND_FREE_CONCEPT_MASTER} a
+                Left Join {TableNames.KNITTING_MACHINE_TYPE} KM ON KM.TypeID = a.KnittingTypeID
                 where a.ConceptID={id};
 
                 -- Childs Color
                 ;Select C.CCColorID, C.ColorID, C.ColorCode, ISV.SegmentValue ColorName, FCBS.RGBOrHex, C.Remarks, C.IsLive
-                From FreeConceptChildColor C
+                From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} C
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = C.ColorID  
                 where C.ConceptID={id}
@@ -426,7 +426,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 ----knitting type
                 ;SELECT Cast(V.TypeID As varchar) [id], V.TypeName [text]
-							FROM KnittingMachineType V;
+							FROM {TableNames.KNITTING_MACHINE_TYPE} V;
 
                 ----Item Subgroup
                 ;SELECT Cast(SubGroupID As varchar) [id], SubGroupName [text]
@@ -435,15 +435,15 @@ namespace EPYSLTEXCore.Application.Services.RND
 
               --Technical Name
                SELECT Cast(TN.TechnicalNameId As varchar) id, TN.TechnicalName text
-                FROM FabricTechnicalName TN
-                INNER JOIN FabricTechnicalNameKMachineSubClass FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
+                FROM {TableNames.FabricTechnicalName} TN
+                INNER JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
                 WHERE FTN.SubClassID={subClassId}
                 Group By TN.TechnicalNameId, TN.TechnicalName
 
                ----Subclass
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc]
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID";
 
             try
@@ -496,8 +496,8 @@ namespace EPYSLTEXCore.Application.Services.RND
                 ;Select F.GroupConceptNo, F.ConceptID, F.ConceptNo, F.ConceptDate, F.TrialNo, F.TrialDate, F.ConceptFor, F.MCSubClassID, F.KnittingTypeID,
                 KM.TypeName KnittingType, F.ConstructionID, F.TechnicalNameId, F.CompositionID, F.GSMID, F.Qty, F.ConceptStatusID, F.Remarks, F.SubGroupID,
                 F.ItemMasterID, F.ConceptTypeID, F.FUPartID, F.IsYD, F.MachineGauge, F.Length, F.Width, F.PreProcessRevNo, F.RevisionNo, F.RevisionDate, F.RevisionBy, F.RevisionReason
-                From FreeConceptMaster F
-                LEFT Join KnittingMachineType KM ON KM.TypeID = F.KnittingTypeID
+                From {TableNames.RND_FREE_CONCEPT_MASTER} F
+                LEFT Join {TableNames.KNITTING_MACHINE_TYPE} KM ON KM.TypeID = F.KnittingTypeID
                 where F.GroupConceptNo='{grpConceptNo}' AND F.SubGroupID=1;";
             }
             else  //Only Other Item = 3
@@ -508,11 +508,11 @@ namespace EPYSLTEXCore.Application.Services.RND
                 F.ConstructionID,F.TechnicalNameId,F.CompositionID,F.GSMID,F.Qty,F.ConceptStatusID,F.Remarks, F.SubGroupID, --KM.TypeName KnittingType,
                 F.ItemMasterID, F.ConceptTypeID, F.FUPartID, F.IsYD, F.MachineGauge, FU.PartName FUPartName, MCS.SubClassName MCSubClassName,
                 T.TechnicalName, F.Length, F.Width, F.PreProcessRevNo, F.RevisionNo, F.RevisionDate, F.RevisionBy, F.RevisionReason
-                From FreeConceptMaster F
+                From {TableNames.RND_FREE_CONCEPT_MASTER} F
                 --Inner Join KnittingMachineType KM ON KM.TypeID = KnittingTypeID
 				INNER JOIN {DbNames.EPYSL}..FabricUsedPart FU ON FU.FUPartID = F.FUPartID
-				INNER JOIN KnittingMachineSubClass MCS ON MCS.SubClassID = F.MCSubClassID
-				INNER JOIN FabricTechnicalName T ON T.TechnicalNameId = F.TechnicalNameId
+				INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} MCS ON MCS.SubClassID = F.MCSubClassID
+				INNER JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = F.TechnicalNameId
                 where F.GroupConceptNo='{grpConceptNo}' AND F.SubGroupID != 1 AND F.GroupConceptNo = F.ConceptNo ";
             }
             query +=
@@ -522,31 +522,31 @@ namespace EPYSLTEXCore.Application.Services.RND
                 F.ConstructionID, F.TechnicalNameId, F.CompositionID, F.GSMID, F.Qty, F.ConceptStatusID, F.Remarks, F.SubGroupID, --KM.TypeName KnittingType,
                 F.ItemMasterID, F.ConceptTypeID, F.FUPartID, F.IsYD, F.MachineGauge, FU.PartName FUPartName, MCS.SubClassName MCSubClassName,
                 T.TechnicalName, F.Length, F.Width, F.PreProcessRevNo, F.RevisionNo, F.RevisionDate, F.RevisionBy, F.RevisionReason
-                From FreeConceptMaster F
+                From {TableNames.RND_FREE_CONCEPT_MASTER} F
                 --Inner Join KnittingMachineType KM ON KM.TypeID = KnittingTypeID
 				INNER JOIN {DbNames.EPYSL}..FabricUsedPart FU ON FU.FUPartID = F.FUPartID
-				INNER JOIN KnittingMachineSubClass MCS ON MCS.SubClassID = F.MCSubClassID
-				INNER JOIN FabricTechnicalName T ON T.TechnicalNameId = F.TechnicalNameId
+				INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} MCS ON MCS.SubClassID = F.MCSubClassID
+				INNER JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = F.TechnicalNameId
                 where F.GroupConceptNo='{grpConceptNo}' AND F.SubGroupID != 1;
 
                 -- Childs Color
                 ;Select C.CCColorID, C.ConceptID, C.ColorID, C.ColorCode, ISV.SegmentValue ColorName, FCBS.RGBOrHex, C.Remarks, C.IsLive
                 ,IsRecipeDone = CASE WHEN ISNULL(RRC.RecipeReqChildID,0) = 0 THEN 0 ELSE 1 END
-                From FreeConceptChildColor C
+                From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} C
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = C.ColorID
-                LEFT JOIN RecipeRequestChild RRC ON RRC.ConceptID = C.ConceptID AND RRC.CCColorID = C.CCColorID
+                LEFT JOIN {TableNames.RND_RECIPE_REQ_CHILD} RRC ON RRC.ConceptID = C.ConceptID AND RRC.CCColorID = C.CCColorID
                 where C.ConceptID IN (SELECT ConceptID FROM FreeConceptMaster FC where FC.GroupConceptNo='{grpConceptNo}')
                 Group By C.CCColorID, C.ConceptID, C.ColorID, C.ColorCode, ISV.SegmentValue, FCBS.RGBOrHex, C.Remarks, C.IsLive, ISNULL(RRC.RecipeReqChildID,0);
 
                 ;With FC As (
 					Select ConceptID, RevisionNo 
-					from FreeConceptMaster
+					from {TableNames.RND_FREE_CONCEPT_MASTER}
 					WHERE IsBDS = 0 AND ConceptNo = GroupConceptNo AND GroupConceptNo='{grpConceptNo}'
 				)
 				Select FC.ConceptID
 				From FC
-				Inner Join FreeConceptMRMaster MR On MR.ConceptID = FC.ConceptID And MR.RevisionNo = FC.RevisionNo;
+				Inner Join {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR On MR.ConceptID = FC.ConceptID And MR.RevisionNo = FC.RevisionNo;
 
                 -- Item Segments
                 {CommonQueries.GetItemSegmentValuesBySegmentNamesWithSegmentName()};
@@ -556,7 +556,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 ----knitting type
                 ;SELECT Cast(V.TypeID As varchar) [id], V.TypeName [text]
-							FROM KnittingMachineType V;
+							FROM {TableNames.KNITTING_MACHINE_TYPE} V;
 
                 ----Item Subgroup
                 ;SELECT Cast(SubGroupID As varchar) [id], SubGroupName [text]
@@ -565,22 +565,22 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 ----Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
               ----Other Technical Name
                 ;SELECT Cast(a.TechnicalNameId As varchar) id, a.TechnicalName text
-                FROM FabricTechnicalName a
-                Inner Join KnittingMachineSubClassTechnicalName b On b.TechnicalNameID = a.TechnicalNameId
+                FROM {TableNames.FabricTechnicalName} a
+                Inner Join {TableNames.KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME} b On b.TechnicalNameID = a.TechnicalNameId
                 Group By a.TechnicalNameId, a.TechnicalName;
 
                ----Subclass
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner Join {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
@@ -589,14 +589,14 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 -- Gauge
                 SELECT Cast(a.GG As varchar) id, a.GG text
-                FROM KnittingMachine a
-                Inner Join KnittingMachineSubClassTechnicalName b On b.SubClassID = a.MachineSubClassID
+                FROM {TableNames.KNITTING_MACHINE} a
+                Inner Join {TableNames.KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME} b On b.SubClassID = a.MachineSubClassID
                 Group By a.GG;
 
                 --Material
                 SELECT MR.*
-                FROM FreeConceptMRMaster MR
-                INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = MR.ConceptID
+                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = MR.ConceptID
                 WHERE FCM.GroupConceptNo = '{grpConceptNo}';";
 
             try
@@ -701,10 +701,10 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"
             -- Master Data
-            Select * From FreeConceptMaster Where ConceptID = {id}
+            Select * From {TableNames.RND_FREE_CONCEPT_MASTER} Where ConceptID = {id}
 
             -- Child Colors
-            Select * From FreeConceptChildColor Where ConceptID = {id}";
+            Select * From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} Where ConceptID = {id}";
 
             try
             {
@@ -731,10 +731,10 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"
             -- Master Data
-            Select * From FreeConceptMaster Where GroupConceptNo = '{grpConceptNo}';
+            Select * From {TableNames.RND_FREE_CONCEPT_MASTER} Where GroupConceptNo = '{grpConceptNo}';
 
             -- Child Colors
-            ;Select * From FreeConceptChildColor Where ConceptID IN( SELECT ConceptID FROM FreeConceptMaster Where GroupConceptNo = '{grpConceptNo}');";
+            ;Select * From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} Where ConceptID IN( SELECT ConceptID FROM FreeConceptMaster Where GroupConceptNo = '{grpConceptNo}');";
 
             try
             {
@@ -762,7 +762,7 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"
             -- Master Data
-            SELECT * FROM ConceptPendingStatus_HK;";
+            SELECT * FROM {TableNames.CONCEPT_PENDING_STATUS_HK};";
 
             try
             {
@@ -786,8 +786,8 @@ namespace EPYSLTEXCore.Application.Services.RND
             var query =
                 $@"
                  SELECT Cast(TN.TechnicalNameId As varchar) id, TN.TechnicalName text
-                FROM FabricTechnicalName TN
-                INNER JOIN FabricTechnicalNameKMachineSubClass FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
+                FROM {TableNames.FabricTechnicalName} TN
+                INNER JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} FTN ON FTN.TechnicalNameID=TN.TechnicalNameId
                 WHERE FTN.SubClassID={subclassId}
                 Group By TN.TechnicalNameId, TN.TechnicalName";
 
@@ -933,13 +933,13 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"
             -- KnittingPlanMaster
-            Select * From KnittingPlanMaster Where ConceptID = {conceptID}
+            Select * From {TableNames.Knitting_Plan_Master} Where ConceptID = {conceptID}
 
             -- KJobCardMaster
-            Select * From KJobCardMaster Where ConceptID = {conceptID}
+            Select * From {TableNames.KNITTING_JOB_CARD_Master} Where ConceptID = {conceptID}
 
             -- KnittingProduction
-            Select * From KnittingProduction Where ConceptID = {conceptID}";
+            Select * From {TableNames.RND_KNITTING_PRODUCTION} Where ConceptID = {conceptID}";
 
             try
             {
@@ -1164,10 +1164,10 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"
             -- Master Data
-            Select * From FreeConceptMaster Where BookingID IN ({bookingIds}); 
+            Select * From {TableNames.RND_FREE_CONCEPT_MASTER} Where BookingID IN ({bookingIds}); 
 
             -- Child Colors
-            Select * From FreeConceptChildColor FCCC WHERE FCCC.ConceptID IN (SELECT FCM.ConceptID FROM FreeConceptMaster FCM WHERE FCM.BookingID IN ({bookingIds}))";
+            Select * From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCCC WHERE FCCC.ConceptID IN (SELECT FCM.ConceptID FROM FreeConceptMaster FCM WHERE FCM.BookingID IN ({bookingIds}))";
 
             try
             {
@@ -1195,7 +1195,7 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"
             -- Master Data
-            Select * From FreeConceptChildColor Where ConceptID = {conceptID}";
+            Select * From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} Where ConceptID = {conceptID}";
 
             try
             {

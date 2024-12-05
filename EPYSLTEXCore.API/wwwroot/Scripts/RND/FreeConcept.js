@@ -489,6 +489,7 @@
     }
 
     function getNew(e) {
+        //$divDetailsEl.removeClass('d-none');
         e.preventDefault();
         axios.get("/api/rnd-free-concept/new")
             .then(function (response) {

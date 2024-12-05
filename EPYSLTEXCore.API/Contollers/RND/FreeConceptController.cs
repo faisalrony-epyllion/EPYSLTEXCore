@@ -27,8 +27,8 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
     public class FreeConceptController : ApiBaseController
     {
-        private readonly IGmtEfRepository<ItemSegmentName> _itemSegmentNameRepository;
-        private readonly IGmtEfRepository<ItemSegmentValue> _itemSegmentValueRepository;
+        //private readonly IGmtEfRepository<ItemSegmentName> _itemSegmentNameRepository;
+        //private readonly IGmtEfRepository<ItemSegmentValue> _itemSegmentValueRepository;
         private readonly IFreeConceptService _service;
         private readonly IMapper _mapper;
         private readonly ICommonHelperService _commonService;
@@ -36,17 +36,19 @@ namespace EPYSLTEXCore.API.Contollers.RND
         private bool isModified;
         //IUserService _userService;
 
-        public FreeConceptController(IUserService userService,IGmtEfRepository<ItemSegmentName> itemSegmentNameRepository
-            , IGmtEfRepository<ItemSegmentValue> itemSegmentRepository
+        public FreeConceptController(IUserService userService
+            //,IGmtEfRepository<ItemSegmentName> itemSegmentNameRepository
+            //, IGmtEfRepository<ItemSegmentValue> itemSegmentRepository
             , IFreeConceptService freeConceptService
             , ICommonHelperService commonService
             , IDapperCRUDService<FreeConceptMaster> signatureRepository
-            , IMapper mapper) : base(userService)
+            //, IMapper mapper
+            ) : base(userService)
         {
-            _itemSegmentNameRepository = itemSegmentNameRepository;
-            _itemSegmentValueRepository = itemSegmentRepository;
+            //_itemSegmentNameRepository = itemSegmentNameRepository;
+            //_itemSegmentValueRepository = itemSegmentRepository;
             _service = freeConceptService;
-            _mapper = mapper;
+            //_mapper = mapper;
             _commonService = commonService;
             _signatureRepository = signatureRepository;
         }
@@ -486,31 +488,31 @@ namespace EPYSLTEXCore.API.Contollers.RND
             return Ok();
         }
 
-        [Route("save-fabric-composition")]
-        [HttpPost]
-        public async Task<IActionResult> SaveComposition(ItemSegmentValueBindingModel model)
-        {
-            ItemSegmentName itemSegmentName = await _itemSegmentNameRepository.FindAsync(a => a.SegmentName == ItemSegmentNameConstants.COMPOSITION);
-            if (itemSegmentName.IsNull())
-                return BadRequest("Composition Segment Not Found");
+        //[Route("save-fabric-composition")]
+        //[HttpPost]
+        //public async Task<IActionResult> SaveComposition(ItemSegmentValueBindingModel model)
+        //{
+        //    ItemSegmentName itemSegmentName = await _itemSegmentNameRepository.FindAsync(a => a.SegmentName == ItemSegmentNameConstants.COMPOSITION);
+        //    if (itemSegmentName.IsNull())
+        //        return BadRequest("Composition Segment Not Found");
 
-            if (await _itemSegmentValueRepository.ExistsAsync(x => x.SegmentNameId == itemSegmentName.Id && x.SegmentValue == model.SegmentValue))
-                return BadRequest("This composition is already exists.");
+        //    if (await _itemSegmentValueRepository.ExistsAsync(x => x.SegmentNameId == itemSegmentName.Id && x.SegmentValue == model.SegmentValue))
+        //        return BadRequest("This composition is already exists.");
 
-            //var itemSegmentName = await _itemSegmentNameRepository.FindAsync(x => x.SegmentName == ItemSegmentNameConstants.COMPOSITION);
-            //Guard.Against.NullObject(itemSegmentName);
+        //    //var itemSegmentName = await _itemSegmentNameRepository.FindAsync(x => x.SegmentName == ItemSegmentNameConstants.COMPOSITION);
+        //    //Guard.Against.NullObject(itemSegmentName);
 
-            ItemSegmentValue entity = new ItemSegmentValue
-            {
-                SegmentValue = model.SegmentValue,
-                SegmentNameId = itemSegmentName.Id
-            };
+        //    ItemSegmentValue entity = new ItemSegmentValue
+        //    {
+        //        SegmentValue = model.SegmentValue,
+        //        SegmentNameId = itemSegmentName.Id
+        //    };
 
-            await _itemSegmentValueRepository.AddAsync(entity, TableNames.ITEM_SEGMENT_VALUE);
+        //    await _itemSegmentValueRepository.AddAsync(entity, TableNames.ITEM_SEGMENT_VALUE);
 
-            var responseData = _mapper.Map<ItemSegmentValueBindingModel>(entity);
+        //    var responseData = _mapper.Map<ItemSegmentValueBindingModel>(entity);
 
-            return Ok(responseData);
-        }
+        //    return Ok(responseData);
+        //}
     }
 }

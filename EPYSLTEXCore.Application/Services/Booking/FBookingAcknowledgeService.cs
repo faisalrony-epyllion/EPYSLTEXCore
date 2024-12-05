@@ -65,7 +65,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 queryProjConcept = $@"FCM AS
 					(
 						SELECT FCM.BookingID 
-						FROM FreeConceptMaster FCM 
+						FROM {TableNames.RND_FREE_CONCEPT_MASTER} FCM 
 						WHERE FCM.IsBDS = 3
 						GROUP BY FCM.BookingID 
 					),";

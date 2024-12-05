@@ -13,7 +13,7 @@ namespace EPYSLTEXCore.API.Contollers
         {
             _userService = userService;
         }
-        public IActionResult Index(int menuId, string pageName,string navUrlName)
+        public IActionResult Index(int menuId, string pageName,string navUrlName, string menuParam)
         {
             //var s = AppUser;
             var rootName = "~/Views/";

@@ -2,7 +2,7 @@
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Statics;
 
-namespace EPYSLTEX.Core.Interfaces.Services
+namespace EPYSLTEXCore.Application.Interfaces
 {
     public interface IYarnPRService
     {

@@ -3,7 +3,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
 
-namespace EPYSLTEX.Core.Interfaces.Services
+namespace EPYSLTEXCore.Application.Interfaces
 {
     public interface IFreeConceptMRService
     {

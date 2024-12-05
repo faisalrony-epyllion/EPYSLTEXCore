@@ -226,7 +226,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
         public bool IsNewObj { get; set; }
         [Write(false)]
         public string Instruction { get; set; }
-        [Write(false)]
+        /*[Write(false)]
         public int Segment1ValueID { get; set; }
         [Write(false)]
         public int Segment2ValueID { get; set; }
@@ -257,7 +257,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
         [Write(false)]
         public string Segment7ValueDesc { get; set; }
         [Write(false)]
-        public string Segment8ValueDesc { get; set; }
+        public string Segment8ValueDesc { get; set; }*/
         [Write(false)]
         public decimal ExistingYarnAllowance { get; set; } = 0;
         [Write(false)]

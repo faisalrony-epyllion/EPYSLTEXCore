@@ -69,7 +69,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         public async Task<IActionResult> GetComboData(int menuId)
         {
 
-            var paginationInfo = Request.GetPaginationInfo();
+            
             CommonInterfaceMaster commonInterfaceMaster = await _service.GetConfigurationAsync(menuId);
             string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName;
             var childGridColumns = commonInterfaceMaster.ChildGridColumns;

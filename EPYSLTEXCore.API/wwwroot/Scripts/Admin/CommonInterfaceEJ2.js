@@ -676,7 +676,7 @@
             pageId: "divCommonInterface-" + menuId,
             height: 220,
             modalSize: "modal-lg",
-            apiEndPoint: selectedChild.FinderApiUrl,
+            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder : selectedChild.FinderApiUrl,
             fields: selectedChild.FinderHeaderColumns,
             widths: selectedChild.FinderColumnWidths,
             headerTexts: selectedChild.FinderDisplayColumns,

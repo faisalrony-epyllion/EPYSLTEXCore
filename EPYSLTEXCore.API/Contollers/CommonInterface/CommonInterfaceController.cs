@@ -65,12 +65,28 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
            return Ok();
            
         }
-
-        [Route("selectfinderdata/{menuId}/{id}")]
-        public async Task<IActionResult> SelectFinderData(int menuId,int id)
+        [Route("combodata/{menuId}/{paramValue}")]
+        public async Task<IActionResult> GetComboData(int menuId,string paramValue)
         {
 
             var paginationInfo = Request.GetPaginationInfo();
+            CommonInterfaceMaster commonInterfaceMaster = await _service.GetConfigurationAsync(menuId);
+            string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName;
+            var childGridColumns = commonInterfaceMaster.ChildGridColumns;
+           foreach (var childGridColumn in childGridColumns)
+            { 
+                string selectSql = childGridColumn.SelectSql;
+                var records = await _service.GetComboData(selectSql, connKey, new { paramValue });
+                return Ok(records);
+            }
+
+            return Ok();
+
+        }
+        [Route("selectfinderdata/{menuId}/{id}")]
+        public async Task<IActionResult> SelectFinderData(int menuId,int id)
+        {
+ 
             CommonInterfaceMaster commonInterfaceMaster = await _service.GetCommonInterfaceMasterChildAsync(menuId);
             string connKey = commonInterfaceMaster.ConName;
             

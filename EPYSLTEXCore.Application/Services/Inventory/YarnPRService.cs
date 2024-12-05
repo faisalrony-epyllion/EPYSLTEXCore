@@ -24,6 +24,7 @@ namespace EPYSLTEX.Infrastructure.Services
             , IDapperCRUDService<YarnPRChild> itemMasterRepository)
         {
             _service = service;
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
         }
 

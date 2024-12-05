@@ -20,6 +20,7 @@ namespace EPYSLTEXCore.API.Contollers
 
             ViewBag.MenuId = menuId;
             ViewBag.PageName = pageName;
+            ViewBag.MenuParam = menuParam;
             string viewPath= rootName + navUrlName.SplitAndAddUnderscore();
            
             return View(viewPath);

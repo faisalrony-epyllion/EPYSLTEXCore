@@ -262,6 +262,9 @@ function reloadTableData(type, tableId) {
             var navUrlName = $(this).data("navurl-name");
             var pageType = $(this).data("page-type");
             var pageName = $(this).data("page-name");
+            debugger;
+            var menuParam = $(this).data("menu-param");
+
             if (pageName) pageName = pageName.split(' ').join('');
             else pageName = actionName;
 
@@ -275,11 +278,11 @@ function reloadTableData(type, tableId) {
                 else showTab(pageName);
             }
             else if (pageType == 'CI') {
-                if (isExists.length === 0) getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName);
+                if (isExists.length === 0) getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName);
                 else showTab(pageName);
             }
             else {
-                if (isExists.length === 0) GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName);
+                if (isExists.length === 0) GetViewMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName);
                 else {
                     showTab(pageName);
                     var tableId = $(this).data("table-id");
@@ -438,10 +441,10 @@ function resetTabIndex() {
     });
 }
 
-function GetViewMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName) {
+function GetViewMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName) {
     $($mainTab[0]).children().removeClass('active');
     $($mainTab[0]).children().removeClass('bg-info');
-    var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName;
+    var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName + "&menuParam=" + menuParam;
 
     axios.get(url).then(function (response) {
         var len = $("#mainTab").find("li").length;
@@ -555,7 +558,7 @@ function GetNotFoundViewMarkup(tabid, tabCaption) {
         .catch(showResponseError);
 }
 
-function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, tabCaption, navUrlName) {
+function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName) {
     $($mainTab[0]).children().removeClass('active');
     $($mainTab[0]).children().removeClass('bg-info');
     localStorage.setItem("current_common_interface_menuid", menuId);
@@ -621,11 +624,6 @@ function generateMenu(menuList) {
 
     $.each(menuList, function (i, item) {
 
-        var aaa = item.Childs.filter(x => x.MenuParam.length > 0);
-        if (aaa.length > 0) {
-            debugger;
-        }
-
         if (!item.Childs.length) {
             if (!item.NavigateUrl) return true;
             var navProperties = item.NavigateUrl.split('/');
@@ -634,17 +632,17 @@ function generateMenu(menuList) {
             var updatednavigateUrl = item.NavigateUrl.replace(/\//g, '_');
 
             if (navProperties[1] == 'notfoundpartial') {
-                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-menuParam = "' + item.MenuParam + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '" data-page-type="NF"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else if (item.UseCommonInterface) {
-                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-menuParam = "' + item.MenuParam + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else if (item.PageName == 'ReportViewer') {
                 var path = rootPath + '/reports/index';
                 template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else {
-                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-menuParam = "' + item.MenuParam + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
 
             activeMenu = false;

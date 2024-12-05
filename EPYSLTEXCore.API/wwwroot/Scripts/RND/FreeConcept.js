@@ -495,6 +495,7 @@
                 $("#divRetrial").fadeOut();
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
+                
                 masterData = response.data;
                 masterData.ConceptDate = formatDateToDefault(masterData.ConceptDate);
                 masterData.TrialDate = formatDateToDefault(masterData.TrialDate);

@@ -3,7 +3,7 @@
     localStorage.setItem("menuId", "@ViewBag.MenuId");
 </script>
 
-@{ 
+@{
     var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
     var divTblId = "divtbl" + pageId;
     var toolbarId = "toolbar" + pageId;
@@ -21,7 +21,7 @@
     <input type="hidden" id="FPRPage" value="@ViewBag.FPRPage" />
 
     <div class="row" id="@divTblId">
-        <div class="col-sm-12">
+        <div class="col-12">
             <div id="@toolbarId" class="master-toolbar">
                 @*<button id="btnNewPR" class="btn btn-default btn-sm">
             <i class="fa fa-plus"></i>&nbsp;New
@@ -87,184 +87,211 @@
         </div>
     </div>
     <div class="row">
-        <form class="form-horizontal" id="@formId">
+        <form id="@formId">
 
             <input type="hidden" id="YarnPRMasterID" name="YarnPRMasterID" value="-1111" />
             <input type="hidden" id="SubGroupID" name="SubGroupID" />
             <input type="hidden" id="YarnPRFromID" name="YarnPRFromID" />
             <input type="hidden" id="RevisionStatus" name="RevisionStatus" />
+            <div class="card card-default" id="@divDetailsId" style="display:none">
 
-            <div class="box-body" id="@divDetailsId" style="display:none">
-                <div class="col-sm-12">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            General Information
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Requisition No</label>
-                                            <div class="col-sm-8">
-                                                <input id="YarnPRNo" name="YarnPRNo" type="text" class="form-control input-sm" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Requisition Date</label>
-                                            <div class="col-sm-8">
-                                                <input id="YarnPRDate" name="YarnPRDate" class="form-control input-sm" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Concept/Booking No</label>
-                                            <div class="col-sm-8">
-                                                <input id="GroupConceptNo" name="GroupConceptNo" type="text" class="form-control input-sm" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="ApvBuyer">
-                                            <label class="control-label col-sm-4 small">Buyer</label>
-                                            <div class="col-sm-8">
-                                                <input id="Buyer" name="Buyer" type="text" class="form-control input-sm" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group d-none">
-                                            <div class="col-sm-offset-4 col-sm-8">
-                                                <div class="icheck-primary">
-                                                    <input type="checkbox" id="IsRNDPR" class="form-control input-sm" name="IsRNDPR" />
-                                                    <label for="IsRNDPR">Is this PR for RND?</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="divStatus" style="display:none;">
-                                            <label class="control-label col-sm-4 small">Status</label>
-                                            <div class="col-sm-8">
-                                                <input id="PRStatus" name="PRStatus" class="form-control input-sm" readonly />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Trigger Point</label>
-                                            <div class="col-sm-8">
-                                                <select id="TriggerPointID" name="TriggerPointID" class="form-control input-sm" style="width:100%"></select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Required Date</label>
-                                            <div class="col-sm-8">
-                                                <input id="YarnPRRequiredDate" name="YarnPRRequiredDate" class="form-control input-sm ej2-datepicker" data-date-start-date="0d" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="ApvBuyerTeam">
-                                            <label class="control-label col-sm-4 small">Buyer Team</label>
-                                            <div class="col-sm-8">
-                                                <input id="BuyerTeam" name="BuyerTeam" type="text" class="form-control input-sm" readonly />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Requisition By</label>
-                                            <div class="col-sm-8">
-                                                <input id="YarnPRByName" name="YarnPRByName" type="text" class="form-control input-sm" readonly />
-                                                <!--<select id="YarnPRBy" name="YarnPRBy" class="form-control input-sm" style="width:100%"></select>-->
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Remarks</label>
-                                            <div class="col-sm-8">
-                                                <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control input-sm"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="divRejectReason" style="display:none;">
-                                            <label class="control-label col-sm-4 small">Rejct Reason</label>
-                                            <div class="col-sm-8">
-                                                <textarea id="RejectReason" rows="2" name="RejectReason" type="text" class="form-control input-sm" readonly></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="divUnAcknowledgeReason" style="display:none;">
-                                            <label class="control-label col-sm-4 small">UnAcknowledge Reason</label>
-                                            <div class="col-sm-8">
-                                                <textarea id="UnAcknowledgeReason" rows="2" name="UnAcknowledgeReason" type="text" class="form-control input-sm" readonly></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="card" style="border-color:transparent; border-style:none;">
+                        <div class="card-header">
+                            <h3 class="card-title">  General Information</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="card-body">
+                            <div class="row">
 
-                <div class="col-sm-12">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            Item Information
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <table id="@tblChildId"></table>
+                                        <label>Requisition No</label>
+
+                                        <input id="YarnPRNo" name="YarnPRNo" type="text" class="form-control form-control-sm" readonly />
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Requisition Date</label>
+                                        <input id="YarnPRDate" name="YarnPRDate" class="form-control form-control-sm" readonly />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Concept/Booking No</label>
+
+                                        <input id="GroupConceptNo" name="GroupConceptNo" type="text" class="form-control form-control-sm" readonly />
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group" id="ApvBuyer">
+                                    <label>Buyer</label>
+
+                                    <input id="Buyer" name="Buyer" type="text" class="form-control form-control-sm" readonly />
+
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group d-none">
+
+                                        <div class="icheck-primary">
+                                            <input type="checkbox" id="IsRNDPR" class="form-control form-control-sm" name="IsRNDPR" />
+                                            <label for="IsRNDPR">Is this PR for RND?</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" id="divStatus" style="display:none;">
+                                        <label>Status</label>
+
+                                        <input id="PRStatus" name="PRStatus" class="form-control form-control-sm" readonly />
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Trigger Point</label>
+
+                                        <select id="TriggerPointID" name="TriggerPointID" class="form-control input-sm" style="width:100%"></select>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Required Date</label>
+
+                                        <input id="YarnPRRequiredDate" name="YarnPRRequiredDate" class="form-control input-sm ej2-datepicker" data-date-start-date="0d" readonly />
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" id="ApvBuyerTeam">
+                                        <label>Buyer Team</label>
+
+                                        <input id="BuyerTeam" name="BuyerTeam" type="text" class="form-control input-sm" readonly />
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Requisition By</label>
+
+                                        <input id="YarnPRByName" name="YarnPRByName" type="text" class="form-control form-control-sm" readonly />
+                                        <!--<select id="YarnPRBy" name="YarnPRBy" class="form-control input-sm" style="width:100%"></select>-->
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Remarks</label>
+
+                                        <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control form-control-sm"></textarea>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" id="divRejectReason" style="display:none;">
+                                        <label>Rejct Reason</label>
+
+                                        <textarea id="RejectReason" rows="2" name="RejectReason" type="text" class="form-control form-control-sm" readonly></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" id="divUnAcknowledgeReason" style="display:none;">
+                                        <label>UnAcknowledge Reason</label>
+
+                                        <textarea id="UnAcknowledgeReason" rows="2" name="UnAcknowledgeReason" type="text" class="form-control form-control-sm" readonly></textarea>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="card" style="border-color:transparent; border-style:none;">
+                        <div class="card-header">
+                            <h3 class="card-title">  Item Information</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group" style="width:100% !important">
+                                    <table id="@tblChildId"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer btn-e-float-margin">
+                        <div class="col-md-offset-2 col-md-10">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                                <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                                <button type="button" class="btn btn-success m-w-120" id="btnSaveForApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send for acknowledge</button>
+                                <button type="button" class="btn btn-success m-w-120" id="btnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                                <button type="button" class="btn btn-success m-w-120" id="btnAcknowledgeMR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge MR</button>
+                                <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                                <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+            </div>
+        </form>
+    </div>
+</div>
 
-                <div class="box-footer btn-e-float-margin">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnSaveForApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send for acknowledge</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnAcknowledgeMR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge MR</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
-                            <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
+<div class="modal fade" id="modal-child">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="childTitle"></h4>
+                Purchase Requisition
+            </div>
+            <div class="modal-body">
+                <div class="row col-12" style="font-family:'Kohinoor Bangla'">
+                    <div class="card-heading">
+                        Commercial Company Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <table id="@tblCompanyModalId"></table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-
-    </div>
-
-    <div class="modal fade" id="modal-child">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title" id="childTitle"></h4>
-                    Purchase Requisition
-                </div>
-                <div class="modal-body">
-                    <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
-                        <div class="panel-heading">
-                            Commercial Company Information
-                        </div>
-                        <div class="panel-body">
-
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <table id="@tblCompanyModalId"></table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    @*<button type="button" class="btn btn-primary" id="btnOkSearch">Ok</button>*@
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary" id="btnOkSearch">Ok</button>*@
             </div>
         </div>
     </div>
 </div>
-
-

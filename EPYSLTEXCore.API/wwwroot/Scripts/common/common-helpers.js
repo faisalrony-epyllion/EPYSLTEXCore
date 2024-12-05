@@ -468,14 +468,18 @@ function setFormData($formEl, data) {
         $formEl.find("input, select, textarea").each(function () {
             try {
                 var $input = $(this);
+               
                 var value = data[this.name];
                 if (this.tagName.toLowerCase() === "textarea") {
+           
                     $input.val(value);
                 }
                 else if (this.tagName.toLowerCase() === "input") {
+                   
                     switch (this.type) {
                         case "checkbox":
                             $input.prop("checked", value);
+                           
                             break;
                         case "radio":
                             $input.each(function (i) {

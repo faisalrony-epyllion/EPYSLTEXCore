@@ -1,9 +1,8 @@
+using EPYSLTEX.Core.Interfaces;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Infrastructure.Services;
 using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEX.Web.Services;
-using EPYSLTEXCore.Application.DataAccess;
-using EPYSLTEXCore.Application.DataAccess.Interfaces;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Booking;
 using EPYSLTEXCore.Application.Interfaces.RND;
@@ -28,13 +27,17 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<ICommonInterfaceService, CommonInterfaceService>();
             service.AddTransient<ISelect2Service, Select2Service>();
             service.AddTransient<ICommonHelpers, CommonHelpers>();
+            service.AddTransient<ICommonHelperService, CommonHelperService>();
+            service.AddTransient<IFreeConceptService, FreeConceptService>();
             service.AddTransient<IYarnProductSetupService, YarnProductSetupService>();
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
+            service.AddTransient<IFreeConceptMRService, FreeConceptMRService>();
+            service.AddTransient<IConceptStatusService, ConceptStatusService>();
 
-            service.AddTransient<IFreeConceptService, FreeConceptService>();
             service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
+            service.AddTransient<IYarnPRService,YarnPRService>();
 
-            //service.AddTransient<ISignatureService, SignatureService>();
+
 
             //foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
             //{

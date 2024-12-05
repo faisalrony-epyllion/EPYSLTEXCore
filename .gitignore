@@ -159,3 +159,4 @@
 /EPYSLTEXCore.API/obj/Debug/net8.0/EPYSLTEXCore.API.MvcApplicationPartsAssemblyInfo.cs
 /EPYSLTEXCore.API/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.EPYSLTEXCore.API.props
 /EPYSLTEXCore.API/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.EPYSLTEXCore.API.props
+*.json

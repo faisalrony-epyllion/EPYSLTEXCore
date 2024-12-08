@@ -67,7 +67,7 @@ namespace EPYSLTEXCore.Application.Services.General
 
             var query = $@"
                 With F As (
-                    Select ISV.SegmentValueID PTNID, ISV.SegmentValueID ColorID, FCBS.ColorSource, FCBS.ColorCode, FCBS.RGBOrHex, ISV.SegmentValue ColorName
+                    Select ISV.SegmentValueID PTNID, ISV.SegmentValueID ColorID, FCBS.ColorSource, ColorCode = ISNULL(FCBS.ColorCode,''), FCBS.RGBOrHex, ISV.SegmentValue ColorName
                     From {DbNames.EPYSL}..ItemSegmentValue ISV
                     Inner Join {DbNames.EPYSL}..ItemSegmentName ISN on ISN.SegmentNameID = ISV.SegmentNameID
                     Left Join {DbNames.EPYSL}..FabricColorBookSetup FCBS On FCBS.ColorID = ISV.SegmentValueID

@@ -5,10 +5,13 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.Security.Cryptography.Xml;
 using static Dapper.SqlMapper;
 namespace EPYSLTEXCore.Infrastructure.Data
@@ -1415,6 +1418,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         {
             if (increment == 0) return 0;
             var signature = await GetSignatureAsync(field, 1, 1, repeatAfter);
+            //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
             if (signature == null)
             {
@@ -1424,11 +1428,13 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = increment
                 };
+                Connection.ConnectionString=_connectionString;
                 await Connection.InsertAsync(signature);
             }
             else
             {
                 signature.LastNumber += increment;
+                Connection.ConnectionString = _connectionString;
                 await Connection.UpdateAsync(signature);
             }
 
@@ -1437,7 +1443,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
-            string query = @"SELECT TOP 1 * FROM Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
+            string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
             var parameters = new
             {
                 Field = field,
@@ -1460,9 +1466,16 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             try
             {
-                await Connection.OpenAsync();
+                
+                if (Connection.State == System.Data.ConnectionState.Closed)
+                {
+                    await Connection.OpenAsync();
+                }
                 var records = await Connection.QueryFirstOrDefaultAsync(query, parameters);
-                return records.ToList();
+                string jsonString = JsonConvert.SerializeObject(records);
+                Signatures signature = JsonConvert.DeserializeObject<Signatures>(jsonString);
+                //return records.ToList();
+                return signature;
             }
             catch (System.Exception ex)
             {
@@ -1476,6 +1489,81 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         }
 
+        private async Task<Signatures> GetSignatureCmdAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
+        {
+            SqlConnection connection = new SqlConnection(_connectionString);
+            SqlTransaction transaction = null;
+            #region Query
+            string query = $@"SELECT TOP 1 * FROM Signature WHERE Field = '{field.ToString()}' AND CompanyId = '{companyId}' AND SiteId = '{siteId.ToString()}'";
+            
+            switch (repeatAfter)
+            {
+                case RepeatAfterEnum.EveryYear:
+                    query += " AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryMonth:
+                    query += " AND MONTH(Dates) = MONTH(GETDATE()) AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryDay:
+                    query += " AND CAST(Dates AS DATE) = CAST(GETDATE() AS DATE)";
+                    break;
+            }
+            #endregion
+            try
+            {
+                connection.Open();
+
+                // Begin a local transaction
+                transaction = connection.BeginTransaction();
+
+                // Create a command and associate it with the transaction
+                SqlCommand command = connection.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText = query;  // Replace with your SQL query
+
+                // Execute the command using BeginExecuteReader (asynchronously)
+                var asyncResult = command.BeginExecuteReader();
+                Signatures signatures = new Signatures();
+                // Wait for the command to finish execution (if needed)
+                using (SqlDataReader reader = command.EndExecuteReader(asyncResult))
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.HasRows)
+                        {
+                            signatures.Field = reader[0].ToString();
+                            signatures.Dates = Convert.ToDateTime(reader[1].ToString());
+                            signatures.LastNumber = Convert.ToDecimal(reader[2].ToString());
+                            signatures.CompanyID = reader[3].ToString();
+                            signatures.SiteID = reader[4].ToString();
+                        }
+                    }
+                }
+
+                // Commit the transaction if everything is fine
+                transaction.Commit();
+                return signatures;
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction if an error occurs
+                if (transaction != null)
+                {
+                    transaction.Rollback();
+                }
+                return new Signatures();
+            }
+            finally
+            {
+                // Ensure the connection is closed properly
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+            }
+        }
+
+        
 
         #endregion
 
@@ -1649,7 +1737,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 {
                     Field = field,
                     Dates = DateTime.Today,
-                    CompanyId = companyId.ToString(),
+                    CompanyID = companyId.ToString(),
                     LastNumber = 1
                 };
                 await Connection.InsertAsync(signature);

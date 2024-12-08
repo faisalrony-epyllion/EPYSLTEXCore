@@ -9,6 +9,7 @@ using System.Collections;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Security.Cryptography.Xml;
 using static Dapper.SqlMapper;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
@@ -1434,31 +1435,31 @@ namespace EPYSLTEXCore.Infrastructure.Data
             return (int)(signature.LastNumber - increment + 1);
         }
 
-        public async Task<int> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
-        {
-            var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter);
+        //public async Task<int> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
+        //{
+        //    var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter);
 
-            if (signature == null)
-            {
-                signature = new Signatures
-                {
-                    Field = field,
-                    Dates = DateTime.Today,
-                    CompanyId = companyId.ToString(),
-                    LastNumber = 1
-                };
-                await Connection.InsertAsync(signature);
-            }
-            else
-            {
-                signature.LastNumber++;
-                await Connection.UpdateAsync(signature);
-            }
+        //    if (signature == null)
+        //    {
+        //        signature = new Signatures
+        //        {
+        //            Field = field,
+        //            Dates = DateTime.Today,
+        //            CompanyId = companyId.ToString(),
+        //            LastNumber = 1
+        //        };
+        //        await Connection.InsertAsync(signature);
+        //    }
+        //    else
+        //    {
+        //        signature.LastNumber++;
+        //        await Connection.UpdateAsync(signature);
+        //    }
 
-            var datePart = DateTime.Now.ToString("yyMMdd");
-            var numberPart = signature.LastNumber.ToString(padWith);
-            return Convert.ToInt32($"{companyId}{datePart}{numberPart}");
-        }
+        //    var datePart = DateTime.Now.ToString("yyMMdd");
+        //    var numberPart = signature.LastNumber.ToString(padWith);
+        //    return Convert.ToInt32($"{companyId}{datePart}{numberPart}");
+        //}
 
         private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
@@ -1639,6 +1640,60 @@ namespace EPYSLTEXCore.Infrastructure.Data
             {
                 throw new InvalidOperationException("Error while fetching unique code.", ex);
             }
+        }
+        #endregion
+
+        #region Check validtion by SP
+        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue) where CT : class, IDapperBaseEntity
+        {
+            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
+        }
+        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue) where CT : class, IDapperBaseEntity
+        {
+            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
+        }
+        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue) where CT : class, IDapperBaseEntity
+        {
+            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
+        }
+        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue) where CT : class, IDapperBaseEntity
+        {
+            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
+        }
+        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue, int fifthParamValue) where CT : class, IDapperBaseEntity
+        {
+            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, FifthParamValue = fifthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
+        }
+
+        public async Task<string> GetMaxNoAsync(string field, int companyId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
+        {
+            var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter);
+
+            if (signature == null)
+            {
+                signature = new Signatures
+                {
+                    Field = field,
+                    Dates = DateTime.Today,
+                    CompanyId = companyId.ToString(),
+                    LastNumber = 1
+                };
+                await Connection.InsertAsync(signature);
+            }
+            else
+            {
+                signature.LastNumber++;
+                await Connection.UpdateAsync(signature);
+            }
+
+            //await _dbContext.SaveChangesAsync();
+
+            var datePart = DateTime.Now.ToString("yyMMdd");
+            var numberPart = signature.LastNumber.ToString(padWith);
+            var comId = companyId.ToString("00");
+            var maxNo = $@"{comId}{datePart}{numberPart}";
+
+            return maxNo;
         }
         #endregion
 

@@ -153,6 +153,7 @@
         public const string YarnLCChild = "T_YarnLCChild";
         public const string YarnLCDocument = "T_YarnLCDocument";
         public const string YarnLCMaster = "T_YarnLCMaster";
+        public const string LCInfo = "T_LCInfo";
         public const string IMPORT_LC_NO = "LcNo";
         public const string MachineGaugeSetup = "T_MachineGaugeSetup";
         public const string ManufacturingCost = "T_ManufacturingCost";
@@ -163,11 +164,14 @@
         public const string PDReceiveChild = "T_PDReceiveChild";
         public const string PDReceiveChildRack = "T_PDReceiveChildRack";
         public const string PDReceiveChildRoll = "T_PDReceiveChildRoll";
+
+        public const string YARN_RECEIVE_MASTER = "T_YarnReceiveMaster";
         public const string YARN_RECEIVE_CHILD = "T_YarnReceiveChild";
         public const string YARN_RECEIVE_CHILD_ORDER = "T_YarnReceiveChildOrder";
         public const string YARN_RECEIVE_CHILD_BUYER = "T_YarnReceiveChildBuyer";
+        public const string YARN_RECEIVE_CHILD_SUB_PROGRAM = "T_YarnReceiveChildSubProgram";
         public const string YarnReceiveChildRoll = "T_YarnReceiveChildRoll";
-        public const string YARN_RECEIVE_MASTER = "T_YarnReceiveMaster";
+
         //public const string YarnReceiveQCChild = "YarnReceiveQCChild";
         //public const string YarnReceiveQCMaster = "YarnReceiveQCMaster";
         public const string YarnRequisitionChild = "T_YarnRequisitionChild";
@@ -645,7 +649,7 @@
         public static string YARN_RnD_REQ_MASTER = "T_YarnRnDReqMaster";
         public static string YARN_RnD_REQ_CHILD = "T_YarnRnDReqChild";
         //public static string YARN_RnD_REQ_CHILD_SUBPROGRAM = "YarnRNDReqChildSubProgram";
-        public static string YarnReceiveChildRackBin = "T_YarnReceiveChildRackBin";
+        public const string YARN_RECEIVE_CHILD_RACK_BIN = "T_YarnReceiveChildRackBin";
         public static string YARN_RnD_REQ_RECEIVE_MASTER = "T_YarnRNDReqReceiveMaster";
         public static string YARN_RnD_REQ_RECEIVE_CHILD = "T_YarnRNDReqReceiveChild";
         public static string YARN_RnD_REQ_RECEIVE_NO = "RnDReceiveNo";

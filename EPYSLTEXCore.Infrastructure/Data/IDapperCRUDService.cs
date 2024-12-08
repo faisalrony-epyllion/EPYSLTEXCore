@@ -110,8 +110,17 @@ namespace EPYSLTEXCore.Infrastructure.Data
         #region signature Methods
         Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
         Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
-        Task<int> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000");
-        
+        Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000");
+
+        #endregion
+
+
+        #region Check validations by SP
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue, int fifthParamValue) where CT : class, IDapperBaseEntity;
         #endregion
     }
 }

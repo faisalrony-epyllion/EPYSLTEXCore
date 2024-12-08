@@ -208,7 +208,7 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             return await _service.ExecuteAsync(query, param);
         }
-        public async Task Save(string tableName,object obj,string conKey)
+        public async Task Save(string tableName,object obj,string conKey, List<string> primaryKeyColumns, string status="")
         {
             try
             {
@@ -219,7 +219,21 @@ namespace EPYSLTEX.Infrastructure.Services
                 {
                     try
                     {
-                        var rowsAffected = _service.AddDynamicObjectAsync(tableName, obj, transaction);
+                        if (status == "delete")
+                        {
+                            _service.DeleteDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
+                        }
+                        if (status=="add")
+                        {
+                            _service.AddDynamicObjectAsync(tableName, obj,  transaction);
+                        }
+                    if(status=="edit")
+                        {
+                            _service.UpdateDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
+                        }
+
+                
+                        var rowsAffected = _service.AddSingleDynamicObjectAsync(tableName, obj, transaction);
                         //transaction.Commit();  // Commit the transaction if everything goes well
                         Console.WriteLine($"{rowsAffected} row(s) inserted.");
                     }

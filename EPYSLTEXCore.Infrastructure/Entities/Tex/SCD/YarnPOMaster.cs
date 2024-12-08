@@ -65,7 +65,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
             SupplierRejectBy = 0;
             SupplierRejectReason = "";
             PRMasterID = 0;
-            SubGroupID = 0;
+            //SubGroupID = 0;
             AddedBy = 0;
             UpdatedBy = 0;
             IsRevision = false;
@@ -80,71 +80,71 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         #region Table Properties
 
         [ExplicitKey]
-        public int YPOMasterID { get; set; }
-        public string PoNo { get; set; }
+        public int YPOMasterID { get; set; } = 0;
+        public string PoNo { get; set; } = AppConstants.NEW;
         public DateTime PoDate { get; set; }
-        public int RevisionNo { get; set; }
+        public int RevisionNo { get; set; } = 0;
         public DateTime? RevisionDate { get; set; }
-        public int CompanyId { get; set; }
-        public int SupplierId { get; set; }
-        public int PoForId { get; set; }
-        public int CurrencyId { get; set; }
-        public string QuotationRefNo { get; set; }
+        public int CompanyId { get; set; } = 0;
+        public int SupplierId { get; set; } = 0;
+        public int PoForId { get; set; } = 0;
+        public int CurrencyId { get; set; } = 2;
+        public string QuotationRefNo { get; set; } = "";
         public DateTime? QuotationRefDate { get; set; }
         public DateTime DeliveryStartDate { get; set; }
         public DateTime DeliveryEndDate { get; set; }
-        public string Remarks { get; set; }
-        public string InternalNotes { get; set; }
-        public int IncoTermsId { get; set; }
-        public int PaymentTermsId { get; set; }
-        public int? TypeOfLcId { get; set; }
-        public int? TenureofLc { get; set; }
-        public int? CalculationofTenure { get; set; }
-        public int? CreditDays { get; set; }
-        public int ReImbursementCurrencyId { get; set; }
-        public string Charges { get; set; }
-        public int CountryOfOriginId { get; set; }
-        public bool TransShipmentAllow { get; set; }
-        public decimal ShippingTolerance { get; set; }
-        public int? PortofLoadingID { get; set; }
-        public int? PortofDischargeID { get; set; }
-        public int? ShipmentModeId { get; set; }
-        public bool Proposed { get; set; }
-        public int ProposedBy { get; set; }
+        public string Remarks { get; set; } = "";
+        public string InternalNotes { get; set; } = "";
+        public int IncoTermsId { get; set; } = 0;
+        public int PaymentTermsId { get; set; } = 0;
+        public int? TypeOfLcId { get; set; } = 0;
+        public int? TenureofLc { get; set; } = 0;
+        public int? CalculationofTenure { get; set; } = 0;
+        public int? CreditDays { get; set; } = 0;
+        public int ReImbursementCurrencyId { get; set; } = 2;
+        public string Charges { get; set; } = "";
+        public int CountryOfOriginId { get; set; } = 0;
+        public bool TransShipmentAllow { get; set; } = false;
+        public decimal ShippingTolerance { get; set; } = 0m;
+        public int? PortofLoadingID { get; set; } = 0;
+        public int? PortofDischargeID { get; set; } = 0;
+        public int? ShipmentModeId { get; set; } = 0;
+        public bool Proposed { get; set; } = false;
+        public int ProposedBy { get; set; } = 0;
         public DateTime? ProposedDate { get; set; }
-        public bool UnApprove { get; set; }
-        public string UnapproveReason { get; set; }
-        public bool Approved { get; set; }
-        public int ApprovedBy { get; set; }
-        public int UnApproveBy { get; set; }
+        public bool UnApprove { get; set; } = false;
+        public string UnapproveReason { get; set; } = "";
+        public bool Approved { get; set; } = false;
+        public int ApprovedBy { get; set; } = 0;
+        public int UnApproveBy { get; set; } = 0;
         public DateTime? ApprovedDate { get; set; }
         public DateTime? UnApproveDate { get; set; }
-        public int OfferValidity { get; set; }
-        public int? QualityApprovalProcedureId { get; set; }
-        public bool SignIn { get; set; }
-        public int SignInBy { get; set; }
+        public int OfferValidity { get; set; } = 0;
+        public int? QualityApprovalProcedureId { get; set; } = 0;
+        public bool SignIn { get; set; } = false;
+        public int SignInBy { get; set; } = 0;
         public DateTime? SignInDate { get; set; }
-        public bool SupplierAcknowledge { get; set; }
-        public int SupplierAcknowledgeBy { get; set; }
+        public bool SupplierAcknowledge { get; set; } = false;
+        public int SupplierAcknowledgeBy { get; set; } = 0;
         public DateTime? SupplierAcknowledgeDate { get; set; }
-        public bool SupplierReject { get; set; }
-        public int SupplierRejectBy { get; set; }
-        public string SupplierRejectReason { get; set; }
-        public int PRMasterID { get; set; }
-        public int SubGroupID { get; set; }
-        public int AddedBy { get; set; }
-        public int UpdatedBy { get; set; }
+        public bool SupplierReject { get; set; } = false;
+        public int SupplierRejectBy { get; set; } = 0;
+        public string SupplierRejectReason { get; set; } = "";
+        public int PRMasterID { get; set; } = 0;
+        public int SubGroupID { get; set; } = AppConstants.ITEM_SUB_GROUP_YARN;
+        public int AddedBy { get; set; } = 0;
+        public int UpdatedBy { get; set; } = 0;
         public DateTime DateAdded { get; set; }
         public DateTime? DateUpdated { get; set; }
-        public string ConceptNo { get; set; }
-        public string BookingNo { get; set; }
-        public bool IsRevision { get; set; }
-        public int RevisionBy { get; set; }
-        public string RevisionReason { get; set; }
-        public bool IsCancel { get; set; }
-        public int CancelBy { get; set; }
+        public string ConceptNo { get; set; } = "";
+        public string BookingNo { get; set; } = "";
+        public bool IsRevision { get; set; } = false;
+        public int RevisionBy { get; set; } = 0;
+        public string RevisionReason { get; set; } = "";
+        public bool IsCancel { get; set; } = false;
+        public int CancelBy { get; set; } = 0;
         public DateTime? CancelDate { get; set; }
-        public string CancelReason { get; set; }
+        public string CancelReason { get; set; } = "";
 
         #endregion Table Properties
 
@@ -155,71 +155,71 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public string StatusPIPO { get; set; } = "";
         [Write(false)]
-        public string[] BuyerIds { get; set; }
+        public string[] BuyerIds { get; set; } = null;
         [Write(false)]
-        public string PortOfLoadingName { get; set; }
+        public string PortOfLoadingName { get; set; } = "";
 
         [Write(false)]
-        public string PortOfDischargeName { get; set; }
+        public string PortOfDischargeName { get; set; } = "";
 
         [Write(false)]
-        public string POStatus { get; set; }
+        public string POStatus { get; set; } = "";
         [Write(false)]
         public string AddedByName { get; set; } = "";
         [Write(false)]
-        public bool ReceivedCompleted { get; set; }
+        public bool ReceivedCompleted { get; set; } = false;
 
         [Write(false)]
-        public string PIStatus { get; set; }
+        public string PIStatus { get; set; } = "";
 
         [Write(false)]
-        public string CompanyName { get; set; }
+        public string CompanyName { get; set; } = "";
 
         [Write(false)]
-        public string SupplierName { get; set; }
+        public string SupplierName { get; set; } = "";
 
         [Write(false)]
-        public string POFor { get; set; }
+        public string POFor { get; set; } = "";
 
         [Write(false)]
-        public decimal TotalQty { get; set; }
+        public decimal TotalQty { get; set; } = 0;
         [Write(false)]
         public decimal BalanceQTY { get; set; } = 0;
         [Write(false)]
         public decimal POQty { get; set; } = 0;
 
         [Write(false)]
-        public decimal TotalValue { get; set; }
+        public decimal TotalValue { get; set; } = 0;
 
         [Write(false)]
-        public string CurrencyCode { get; set; }
+        public string CurrencyCode { get; set; } = "USD";
 
         [Write(false)]
-        public string BranchName { get; set; }
+        public string BranchName { get; set; } = "";
 
         [Write(false)]
-        public string IncoTermsName { get; set; }
+        public string IncoTermsName { get; set; } = "";
 
         [Write(false)]
-        public string PaymentTermsName { get; set; }
+        public string PaymentTermsName { get; set; } = "";
 
         [Write(false)]
-        public bool IsItemGenerate { get; set; }
+        public bool IsItemGenerate { get; set; } = false;
 
         [Write(false)]
-        public string TypeOfLC { get; set; }
+        public string TypeOfLC { get; set; } = "";
 
         [Write(false)]
-        public string LCTenure { get; set; }
+        public string LCTenure { get; set; } = "";
 
         [Write(false)]
-        public string ReImbursmentCurrency { get; set; }
+        public string ReImbursmentCurrency { get; set; } = "USD";
 
         [Write(false)]
-        public string CountyOfOrigin { get; set; }
+        public string CountyOfOrigin { get; set; } = "";
 
         [Write(false)]
-        public string ShipmentMode { get; set; }
+        public string ShipmentMode { get; set; } = "";
 
         [Write(false)]
         public DateTime? InHouseDate { get; set; }
@@ -234,19 +234,19 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         public DateTime? PCFDate { get; set; }
 
         [Write(false)]
-        public int SFToPLDays { get; set; }
+        public int SFToPLDays { get; set; } = 0;
 
         [Write(false)]
-        public int PLToPDDays { get; set; }
+        public int PLToPDDays { get; set; } = 0;
 
         [Write(false)]
-        public int PCFDays { get; set; }
+        public int PCFDays { get; set; } = 0;
 
         [Write(false)]
-        public int InHouseDays { get; set; }
+        public int InHouseDays { get; set; } = 0;
 
         [Write(false)]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = "";
 
         [Write(false)]
         public DateTime PRRequiredDate { get; set; }
@@ -254,23 +254,23 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public DateTime PRDate { get; set; }
         [Write(false)]
-        public string PRNO { get; set; }
+        public string PRNO { get; set; } = "";
         [Write(false)]
-        public string PRByUser { get; set; }
+        public string PRByUser { get; set; } = "";
         [Write(false)]
-        public string ApproveBy { get; set; }
+        public string ApproveBy { get; set; } = "";
         [Write(false)]
-        public string RejectBy { get; set; }
+        public string RejectBy { get; set; } = "";
         [Write(false)]
-        public string AcknowledgeBy { get; set; }
+        public string AcknowledgeBy { get; set; } = "";
         [Write(false)]
-        public bool InLand { get; set; }
+        public bool InLand { get; set; } = false;
         [Write(false)]
-        public string CountryOfOriginName { get; set; }
+        public string CountryOfOriginName { get; set; } = "";
         [Write(false)]
-        public int YarnPRChildID { get; set; }
+        public int YarnPRChildID { get; set; } = 0;
         [Write(false)]
-        public string YarnChildPoBuyerIds { get; set; }
+        public string YarnChildPoBuyerIds { get; set; } = "";
         [Write(false)]
         public string BuyerName { get; set; } = "";
         [Write(false)]
@@ -398,33 +398,33 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public IEnumerable<Select2OptionModel> DayValidDurations { get; set; }
         [Write(false)]
-        public List<int> IgnoreValidationPOIds { get; set; }
+        public List<int> IgnoreValidationPOIds { get; set; } = new List<int>();
 
         [Write(false)]
-        public string YarnPRBy { get; set; }
+        public string YarnPRBy { get; set; } = "";
         [Write(false)]
-        public string ShadeCode { get; set; }
+        public string ShadeCode { get; set; } = "";
 
         [Write(false)]
-        public decimal ReqQty { get; set; }
+        public decimal ReqQty { get; set; } = 0;
         [Write(false)]
-        public string Segment1ValueDesc { get; set; }
+        public string Segment1ValueDesc { get; set; } = "";
         [Write(false)]
-        public string Segment2ValueDesc { get; set; }
+        public string Segment2ValueDesc { get; set; } = "";
         [Write(false)]
-        public string Segment3ValueDesc { get; set; }
+        public string Segment3ValueDesc { get; set; } = "";
         [Write(false)]
-        public string Segment4ValueDesc { get; set; }
+        public string Segment4ValueDesc { get; set; } = "";
         [Write(false)]
-        public string Segment5ValueDesc { get; set; }
+        public string Segment5ValueDesc { get; set; } = "";
         [Write(false)]
-        public string Segment6ValueDesc { get; set; }
+        public string Segment6ValueDesc { get; set; } = "";
         [Write(false)]
-        public string Segment7ValueDesc { get; set; }
+        public string Segment7ValueDesc { get; set; } = "";
         [Write(false)]
-        public string Segment8ValueDesc { get; set; }
+        public string Segment8ValueDesc { get; set; } = "";
         [Write(false)]
-        public bool IsRevise { get; set; }
+        public bool IsRevise { get; set; } = false;
         [Write(false)]
         public bool IsYarnReceived { get; set; } = false;
         #endregion Additional Columns

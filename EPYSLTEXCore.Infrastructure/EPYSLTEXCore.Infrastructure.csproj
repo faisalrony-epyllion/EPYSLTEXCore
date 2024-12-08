@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="CustomAttributes\" />
+    <Folder Include="Entities\DTOs\Item\" />
     <Folder Include="Entities\Gmt\Security\" />
   </ItemGroup>
 

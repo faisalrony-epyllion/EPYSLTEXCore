@@ -134,10 +134,10 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         public string ColorName { get; set; } = "";
 
         [Write(false)]
-        public int? ColorID { get; set; }
+        public int ColorID { get; set; } = 0;
 
         [Write(false)]
-        public string? Color { get; set; }
+        public string Color { get; set; } = "";
 
         [Write(false)]
         public string ItemSubGroup { get; set; } = "";

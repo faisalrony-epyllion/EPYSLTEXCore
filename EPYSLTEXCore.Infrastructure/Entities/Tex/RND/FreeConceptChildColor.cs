@@ -49,61 +49,61 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         #region Additional Properties
 
         [Write(false)]
-        public string? ConceptNo { get; set; }
+        public string ConceptNo { get; set; } = "";
 
         [Write(false)]
         public DateTime ConceptDate { get; set; }
 
         [Write(false)]
-        public int? TrialNo { get; set; }
+        public int TrialNo { get; set; } = 0;
 
         [Write(false)]
         public DateTime? TrialDate { get; set; }
 
         [Write(false)]
-        public int? ConceptFor { get; set; }
+        public int ConceptFor { get; set; } = 0;
 
         [Write(false)]
-        public int? KnittingTypeId { get; set; }
+        public int KnittingTypeId { get; set; } = 0;
 
         [Write(false)]
-        public int? ConstructionId { get; set; }
+        public int ConstructionId { get; set; } = 0;
 
         [Write(false)]
-        public int? CompositionId { get; set; }
+        public int CompositionId { get; set; } = 0;
 
         [Write(false)]
-        public int? GSMId { get; set; }
+        public int GSMId { get; set; } = 0;
 
         [Write(false)]
-        public decimal? Qty { get; set; }
+        public decimal Qty { get; set; } = 0;
 
         [Write(false)]
-        public int? ConceptStatusId { get; set; }
+        public int ConceptStatusId { get; set; } = 0;
 
         [Write(false)]
         public string? RGBOrHex { get; set; }
 
         [Write(false)]
-        public string? KnittingType { get; set; }
+        public string KnittingType { get; set; } = "";
 
         [Write(false)]
-        public string? Composition { get; set; }
+        public string Composition { get; set; } = "";
 
         [Write(false)]
-        public string? Construction { get; set; }
+        public string Construction { get; set; } = "";
 
         [Write(false)]
-        public string? TechnicalName { get; set; }
+        public string TechnicalName { get; set; } = "";
 
         [Write(false)]
-        public string? Gsm { get; set; }
+        public string Gsm { get; set; } = "";
 
         [Write(false)]
-        public string? DPName { get; set; }
+        public string DPName { get; set; } = "";
 
         [Write(false)]
-        public string? ColorSource { get; set; }
+        public string ColorSource { get; set; } = "";
         [Write(false)]
         public bool IsRecipeDone { get; set; }
         [Write(false)]
@@ -116,7 +116,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         public IEnumerable<Select2OptionModel> FiberPartList { get; set; } = [];
 
         [Write(false)]
-        public string? UserName { get; set; }
+        public string UserName { get; set; } = "";
 
         #endregion Additional Properties
 

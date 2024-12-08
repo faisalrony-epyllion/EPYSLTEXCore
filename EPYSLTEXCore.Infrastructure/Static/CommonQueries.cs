@@ -1535,7 +1535,5 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     INNER JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = DVD.LocalOrImportId
                     WHERE 1 = 1 {activeQuery} {usedQuery}";
         }
-
-
     }
 }

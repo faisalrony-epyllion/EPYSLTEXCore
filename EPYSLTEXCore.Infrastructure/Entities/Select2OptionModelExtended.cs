@@ -2,10 +2,10 @@
 {
     public class Select2OptionModelExtended
     {
-        public string id { get; set; }
-        public string text { get; set; }
-        public string desc { get; set; }
-        public string additionalValue { get; set; }
+        public string id { get; set; } = "";
+        public string text { get; set; } = "";
+        public string desc { get; set; } = "";
+        public string additionalValue { get; set; } = "";
         public string additionalValue2 { get; set; } = "";
 
         //public int IProp1 { get; set; } = 0;

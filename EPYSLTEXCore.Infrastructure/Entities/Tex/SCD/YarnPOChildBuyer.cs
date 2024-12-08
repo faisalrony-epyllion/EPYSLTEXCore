@@ -17,14 +17,14 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         }
 
         [ExplicitKey]
-        public int YPOChildBuyerID { get; set; }
-        public int YPOChildID { get; set; }
-        public int YPOMasterID { get; set; }
-        public int BuyerId { get; set; }
+        public int YPOChildBuyerID { get; set; } = 0;
+        public int YPOChildID { get; set; } = 0;
+        public int YPOMasterID { get; set; } = 0;
+        public int BuyerId { get; set; } = 0;
 
         #region Additional Fields
         [Write(false)]
-        public string BuyerName { get; set; }
+        public string BuyerName { get; set; } = "";
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || YPOChildBuyerID > 0;
 

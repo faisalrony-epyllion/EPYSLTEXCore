@@ -509,4 +509,13 @@
         public const int DEFECT = 159;
         public const int DECISION = 160;
     }
+    public static class EnumPBookingType //Also have a DB table named PBookingType
+    {
+        public const int None = 0;
+        public const int Merchandising = 1;
+        public const int Rnd = 2;
+        public const int Textile = 3;
+        public const int SupplyChain = 4;
+        public const int MnM = 5;
+    }
 }

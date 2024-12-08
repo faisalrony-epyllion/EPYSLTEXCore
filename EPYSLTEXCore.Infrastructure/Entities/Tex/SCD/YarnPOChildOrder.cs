@@ -8,45 +8,45 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
     public class YarnPOChildOrder : DapperBaseEntity
     {
         [ExplicitKey]
-        public int YPOChildOrderID { get; set; }
+        public int YPOChildOrderID { get; set; } = 0;
 
-        public int YPOChildID { get; set; }
+        public int YPOChildID { get; set; } = 0;
 
-        public int YPOMasterID { get; set; }
+        public int YPOMasterID { get; set; } = 0;
 
-        public int ExportOrderId { get; set; }
+        public int ExportOrderId { get; set; } = 0;
 
-        public string EWONo { get; set; }
+        public string EWONo { get; set; } = "";
 
-        public int BuyerID { get; set; }
+        public int BuyerID { get; set; } = 0;
 
-        public int BuyerTeamID { get; set; }
+        public int BuyerTeamID { get; set; } = 0;
 
-        public string BuyerName { get; set; }
+        public string BuyerName { get; set; } = "";
 
-        public int Qty { get; set; }
+        public int Qty { get; set; } = 0;
 
-        public bool IsSample { get; set; }
+        public bool IsSample { get; set; } = false;
 
         #region Additional
 
         [Write(false)]
-        public string BuyerTeam { get; set; }
+        public string BuyerTeam { get; set; } = "";
 
         [Write(false)]
-        public string StyleNo { get; set; }
+        public string StyleNo { get; set; } = "";
 
         [Write(false)]
-        public decimal ReceiveQty { get; set; }
+        public decimal ReceiveQty { get; set; } = 0;
 
         [Write(false)]
-        public int CompanyId { get; set; }
+        public int CompanyId { get; set; } = 0;
 
         [Write(false)]
-        public string CompanyName { get; set; }
+        public string CompanyName { get; set; } = "";
 
         [Write(false)]
-        public int SupplierId { get; set; }
+        public int SupplierId { get; set; } = 0;
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || YPOChildOrderID > 0;

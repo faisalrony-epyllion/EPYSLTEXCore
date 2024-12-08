@@ -105,128 +105,128 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         #region Additional Properties
 
         [Write(false)]
-        public List<FreeConceptChildColor> ChildColors { get; set; }
+        public List<FreeConceptChildColor> ChildColors { get; set; } = new List<FreeConceptChildColor>();
 
         [Write(false)]
-        public List<FreeConceptSet> FreeConceptSets { get; set; }
+        public List<FreeConceptSet> FreeConceptSets { get; set; } = new List<FreeConceptSet>();
         [Write(false)]
-        public List<FreeConceptMaster> FabricItems { get; set; }
+        public List<FreeConceptMaster> FabricItems { get; set; } = new List<FreeConceptMaster>();
 
         [Write(false)]
-        public List<FreeConceptMaster> OtherItems { get; set; }
+        public List<FreeConceptMaster> OtherItems { get; set; } = new List<FreeConceptMaster>();
 
         [Write(false)]
-        public List<ConceptStatus> ConceptStatusList { get; set; }
+        public List<ConceptStatus> ConceptStatusList { get; set; } = new List<ConceptStatus>();
 
         [Write(false)]
-        public string KnittingType { get; set; }
+        public string KnittingType { get; set; } = "";
 
         [Write(false)]
-        public string ConcepTypeName { get; set; }
+        public string ConcepTypeName { get; set; } = "";
 
         [Write(false)]
-        public string BookingNo { get; set; }
+        public string BookingNo { get; set; } = "";
 
         //[Write(false)]
         //public int ColorId { get; set; }
 
         [Write(false)]
-        public string ColorName { get; set; }
+        public string ColorName { get; set; } = "";
 
         [Write(false)]
-        public int ColorID { get; set; }
+        public int? ColorID { get; set; }
 
         [Write(false)]
-        public string Color { get; set; }
+        public string? Color { get; set; }
 
         [Write(false)]
-        public string ItemSubGroup { get; set; }
+        public string ItemSubGroup { get; set; } = "";
 
         [Write(false)]
-        public string Composition { get; set; }
+        public string Composition { get; set; } = "";
 
         [Write(false)]
-        public string Construction { get; set; }
+        public string Construction { get; set; } = "";
 
         [Write(false)]
-        public string TechnicalName { get; set; }
+        public string TechnicalName { get; set; } = "";
 
         [Write(false)]
-        public string SubClassName { get; set; }
+        public string SubClassName { get; set; } = "";
 
         [Write(false)]
-        public string GSM { get; set; }
+        public string GSM { get; set; } = "";
 
         [Write(false)]
-        public string ConceptStatus { get; set; }
+        public string ConceptStatus { get; set; } = "";
 
         [Write(false)]
-        public string ConceptForName { get; set; }
+        public string ConceptForName { get; set; } = "";
 
         [Write(false)]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = "";
 
         [Write(false)]
-        public string FUPartName { get; set; }
+        public string FUPartName { get; set; } = "";
 
         [Write(false)]
-        public string MCSubClassName { get; set; }
+        public string MCSubClassName { get; set; } = "";
 
         [Write(false)]
-        public decimal BookingQty { get; set; }
+        public decimal BookingQty { get; set; } = 0;
 
         [Write(false)]
-        public string LiveStatus { get; set; }
+        public string LiveStatus { get; set; } = "";
 
         [Write(false)]
         public string RevisionPendingInString => RevisionPending ? "Need Revision" : "Running";
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> KnittingTypeList { get; set; }
+        public IEnumerable<Select2OptionModel> KnittingTypeList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> SubGroupList { get; set; }
+        public IEnumerable<Select2OptionModel> SubGroupList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ConstructionList { get; set; }
+        public IEnumerable<Select2OptionModel> ConstructionList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CompositionList { get; set; }
+        public IEnumerable<Select2OptionModel> CompositionList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> TechnicalNameList { get; set; }
+        public IEnumerable<Select2OptionModel> TechnicalNameList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> MCSubClassList { get; set; }
+        public IEnumerable<Select2OptionModel> MCSubClassList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> GSMList { get; set; }
+        public IEnumerable<Select2OptionModel> GSMList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<string> FabricComponents { get; set; }
+        public IEnumerable<string> FabricComponents { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> MachineGaugeList { get; set; }
+        public IEnumerable<Select2OptionModel> MachineGaugeList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> OtherMCSubClassList { get; set; }
+        public IEnumerable<Select2OptionModel> OtherMCSubClassList { get; set; } = [];
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> OtherTechnicalNameList { get; set; }
+        public IEnumerable<Select2OptionModel> OtherTechnicalNameList { get; set; } = [];
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || ConceptID > 0;
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> FabricUsedPartList { get; set; }
+        public IEnumerable<Select2OptionModel> FabricUsedPartList { get; set; } = [];
         [Write(false)]
-        public bool NeedRevision { get; set; }
+        public bool NeedRevision { get; set; } = false;
         [Write(false)]
-        public string grpConceptNo { get; set; }
+        public string grpConceptNo { get; set; } = "";
         [Write(false)]
-        public int conceptType { get; set; }
+        public int conceptType { get; set; } = 0;
         [Write(false)]
-        public List<FreeConceptMRMaster> MRList { get; set; }
+        public List<FreeConceptMRMaster> MRList { get; set; } = new List<FreeConceptMRMaster>();
         #endregion Additional Properties
 
         public FreeConceptMaster()
@@ -264,6 +264,36 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
             MachineDia = 0;
             BrandID = 0;
             ProduceKnittingQty = 0;
+            
+            TrialNo = 0;
+            KnittingTypeID = 0;
+            SubGroupID = 0;
+            ConstructionId = 0;
+            TechnicalNameId = 0;
+            CompositionId = 0;
+            GSMId = 0;
+            Qty = 0;
+            QtyInKG = 0;
+            ConceptStatusId = 0;
+            Remarks = "";
+            AddedBy = 0;
+            DateAdded = DateTime.Now;
+            ProdStart = false;
+            ProdComplete = false;
+            RevisionPending = false;
+            Active = false;
+            ConceptTypeID = 0;
+            FUPartID = 0;
+            IsYD = false;
+            Length = 0;
+            Width = 0;
+            BookingID = 0;
+            BookingChildID = 0;
+            PreProcessRevNo = 0;
+            RevisionNo = 0;
+            RevisionBy = 0;
+            RevisionReason = "";
+            DeliveryComplete = false;
         }
 
         public static implicit operator FreeConceptMaster(FinishFabricStockForm v)

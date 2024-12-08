@@ -10,6 +10,8 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.AspNetCore.Authorization;
+
 //using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -140,8 +142,10 @@ namespace EPYSLTEXCore.API.Contollers.RND
         }
         [Route("save")]
         [HttpPost]
+        //public async Task<IActionResult> Save(List<FreeConceptMaster> models)
         public async Task<IActionResult> Save(List<FreeConceptMaster> models)
         {
+            //List<FreeConceptMaster> models = new List<FreeConceptMaster>();
             string grpConceptNo = models.First().GroupConceptNo;
             int conceptID = 0;
             int conceptTypeID = models.First().ConceptTypeID;
@@ -329,6 +333,14 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
             return Ok();
         }
+
+        [Route("save1")]
+        [HttpPost]
+        public async Task<IActionResult> Save_Test(dynamic models)
+        {
+            return Ok();
+        }
+
         private async Task<string> GetMaxGroupConceptNoAsync()
         {
             var id = await _signatureRepository.GetMaxIdAsync(TableNames.RND_GROUP_CONCEPTNO, RepeatAfterEnum.EveryMonth);

@@ -17,17 +17,17 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         [ExplicitKey]
         public int RecipeDInfoID { get; set; }
 
-        public int RecipeReqMasterID { get; set; }
+        public int RecipeReqMasterID { get; set; } = 0;
 
-        public int CCColorID { get; set; }
+        public int CCColorID { get; set; } = 0;
 
-        public int RecipeID { get; set; }
+        public int RecipeID { get; set; } = 0;
 
-        public int FiberPartID { get; set; }
+        public int FiberPartID { get; set; } = 0;
 
-        public int ColorID { get; set; }
+        public int ColorID { get; set; } = 0;
 
-        public string ColorCode { get; set; }
+        public string ColorCode { get; set; } = "";
 
         public decimal Temperature { get; set; }
 

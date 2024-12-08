@@ -12,13 +12,13 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         [ExplicitKey]
         public int FCSetItemID { get; set; }
 
-        public int FCSetID { get; set; }
+        public int FCSetID { get; set; } = 0;
 
-        public int ConceptID { get; set; }
+        public int ConceptID { get; set; }= 0;
 
-        public int ItemMasterID { get; set; }
+        public int ItemMasterID { get; set; } = 0;
 
-        public decimal Qty { get; set; }
+        public decimal Qty { get; set; }= decimal.Zero;
 
         #endregion Table Properties
 

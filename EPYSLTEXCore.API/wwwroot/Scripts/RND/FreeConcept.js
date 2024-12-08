@@ -496,7 +496,7 @@
                 $("#divRetrial").fadeOut();
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
-                
+
                 masterData = response.data;
                 masterData.ConceptDate = formatDateToDefault(masterData.ConceptDate);
                 masterData.TrialDate = formatDateToDefault(masterData.TrialDate);
@@ -672,7 +672,6 @@
     }
 
     function save(e) {
-        debugger;
         e.preventDefault();
         var concepts = [];
         var colorList = $tblChildEl.getCurrentViewRecords();
@@ -767,8 +766,12 @@
             concepts.push(obj);
         }
         if (hasError) return;
-
-        axios.post("/api/rnd-free-concept/save", concepts)
+        var config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        axios.post("/api/rnd-free-concept/save", concepts, config)
             .then(function () {
                 toastr.success("Saved successfully.");
                 backToList();

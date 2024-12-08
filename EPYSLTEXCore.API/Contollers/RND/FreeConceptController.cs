@@ -31,6 +31,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
         private readonly IDapperCRUDService<FreeConceptMaster> _signatureRepository;
         private bool isModified;
         //IUserService _userService;
+        private readonly IConfiguration _configuration;
 
         public FreeConceptController(IUserService userService
             //,IGmtEfRepository<ItemSegmentName> itemSegmentNameRepository
@@ -38,6 +39,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             , IFreeConceptService freeConceptService
             , ICommonHelperService commonService
             , IDapperCRUDService<FreeConceptMaster> signatureRepository
+            ,IConfiguration configuration
             //, IMapper mapper
             ) : base(userService)
         {
@@ -47,6 +49,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             //_mapper = mapper;
             _commonService = commonService;
             _signatureRepository = signatureRepository;
+            _configuration = configuration;
         }
 
         [Route("list")]
@@ -142,6 +145,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
         }
         [Route("save")]
         [HttpPost]
+        //public async Task<IActionResult> Save(List<FreeConceptMaster> models)
         //public async Task<IActionResult> Save(List<FreeConceptMaster> models)
         public async Task<IActionResult> Save(List<FreeConceptMaster> models)
         {
@@ -343,6 +347,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
         private async Task<string> GetMaxGroupConceptNoAsync()
         {
+            _signatureRepository.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.GMT_CONNECTION));
             var id = await _signatureRepository.GetMaxIdAsync(TableNames.RND_GROUP_CONCEPTNO, RepeatAfterEnum.EveryMonth);
             var datePart = DateTime.Now.ToString("yyMM");
             return $@"{datePart}{id:0000}";

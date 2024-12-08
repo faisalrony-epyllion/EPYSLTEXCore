@@ -6,6 +6,8 @@ using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Static;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -14,12 +16,14 @@ namespace EPYSLTEX.Infrastructure.Services
     public class CommonHelperService : ICommonHelperService
     {
         private readonly IDapperCRUDService<DapperBaseEntity> _service;
-        
-        private SqlConnection _texConnection;
 
-        public CommonHelperService(IDapperCRUDService<DapperBaseEntity> service)
+        private SqlConnection _texConnection;
+        private readonly IConfiguration _configuration;
+
+        public CommonHelperService(IDapperCRUDService<DapperBaseEntity> service, IConfiguration configuration)
         {
             _service = service;
+            _configuration = configuration;
         }
 
         #region FabricColorShade
@@ -211,7 +215,7 @@ namespace EPYSLTEX.Infrastructure.Services
             {paginationInfo.PageBy}";
             return await _service.GetDataAsync<FabricTechnicalNameOther>(sql);
 
-   
+
         }
 
         public async Task<FabricTechnicalNameOther> GetFabricTechnicalNameOtherAsync(int id)
@@ -221,20 +225,21 @@ namespace EPYSLTEX.Infrastructure.Services
         }
 
         #endregion Fabric Technical Name Other
-        
 
-        
+
+
         public async Task<List<FabricWastageGrid>> GetFabricWastageGridAsync(string wastageFor)
         {
             var sql = $@"Select FWG.FWGID, FWG.WastageFor, FWG.IsFabric, FWG.GSMFrom, FWG.GSMTo, FWG.BookingQtyFrom, FWG.BookingQtyTo, FWG.FixedQty, FWG.ExcessQty, FWG.ExcessPercentage
                         From FabricWastageGrid FWG WHERE wastageFor='{wastageFor}'";
-            
+
             return await _service.GetDataAsync<FabricWastageGrid>(sql);
         }
 
         public async Task UpdateFreeConceptStatus(string interfaceFrom, int conceptID = 0, string groupConceptNo = "", int bookingID = 0, int isBDS = 0, int ccColorID = 0, int colorID = 0, int itemMasterID = 0, string conceptIDs = "")
         {
-            await _service.ExecuteAsync("spUpdateFreeConceptStatus", new { InterfaceFrom = interfaceFrom, ConceptID = conceptID, GroupConceptNo = groupConceptNo, BookingID = bookingID, IsBDS = isBDS, CCColorID = ccColorID, ColorID = colorID, ItemMasterID = itemMasterID, ConceptIDs = conceptIDs }, 30, CommandType.StoredProcedure);
+            _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+            await _service.ExecuteAsync(SPNames.spUpdateFreeConceptStatus, new { InterfaceFrom = interfaceFrom, ConceptID = conceptID, GroupConceptNo = groupConceptNo, BookingID = bookingID, IsBDS = isBDS, CCColorID = ccColorID, ColorID = colorID, ItemMasterID = itemMasterID, ConceptIDs = conceptIDs }, 30, CommandType.StoredProcedure);
         }
     }
 }

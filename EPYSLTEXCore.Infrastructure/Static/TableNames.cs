@@ -153,6 +153,7 @@
         public const string YarnLCChild = "T_YarnLCChild";
         public const string YarnLCDocument = "T_YarnLCDocument";
         public const string YarnLCMaster = "T_YarnLCMaster";
+        public const string LCInfo = "T_LCInfo";
         public const string IMPORT_LC_NO = "LcNo";
         public const string MachineGaugeSetup = "T_MachineGaugeSetup";
         public const string ManufacturingCost = "T_ManufacturingCost";
@@ -163,11 +164,14 @@
         public const string PDReceiveChild = "T_PDReceiveChild";
         public const string PDReceiveChildRack = "T_PDReceiveChildRack";
         public const string PDReceiveChildRoll = "T_PDReceiveChildRoll";
+
+        public const string YARN_RECEIVE_MASTER = "T_YarnReceiveMaster";
         public const string YARN_RECEIVE_CHILD = "T_YarnReceiveChild";
         public const string YARN_RECEIVE_CHILD_ORDER = "T_YarnReceiveChildOrder";
         public const string YARN_RECEIVE_CHILD_BUYER = "T_YarnReceiveChildBuyer";
+        public const string YARN_RECEIVE_CHILD_SUB_PROGRAM = "T_YarnReceiveChildSubProgram";
         public const string YarnReceiveChildRoll = "T_YarnReceiveChildRoll";
-        public const string YARN_RECEIVE_MASTER = "T_YarnReceiveMaster";
+
         //public const string YarnReceiveQCChild = "YarnReceiveQCChild";
         //public const string YarnReceiveQCMaster = "YarnReceiveQCMaster";
         public const string YarnRequisitionChild = "T_YarnRequisitionChild";
@@ -200,12 +204,12 @@
         public const string YarnAddProcessAllowanceSetup = "T_YarnAddProcessAllowanceSetup";
         public const string YarnAllowanceSetup = "T_YarnAllowanceSetup";
         public const string YarnAllowanceSetupChild = "T_YarnAllowanceSetupChild";
-        public const string YarnBookingChild = "T_YarnBookingChild";
+        public const string YarnBookingChild = "YarnBookingChild";
         //public const string YarnBookingChild_18_05_17 = "YarnBookingChild_18_05_17";
         public const string YarnBookingChild_Bk = "T_YarnBookingChild_Bk";
         public const string YarnBookingChildGarmentPart = "T_YarnBookingChildGarmentPart";
         public const string YarnBookingChildGarmentPart_Bk = "T_YarnBookingChildGarmentPart_Bk";
-        public const string YarnBookingChildItem = "T_YarnBookingChildItem";
+        public const string YarnBookingChildItem = "YarnBookingChildItem";
         public const string BulkBookingFinishFabricUtilization = "T_BulkBookingFinishFabricUtilization";
         public const string FBookingAcknowledgeChildGFUtilization = "T_FBookingAcknowledgeChildGFUtilization";
         public const string FBookingAcknowledgeChildReplacement = "T_FBookingAcknowledgeChildReplacement";
@@ -645,7 +649,7 @@
         public static string YARN_RnD_REQ_MASTER = "T_YarnRnDReqMaster";
         public static string YARN_RnD_REQ_CHILD = "T_YarnRnDReqChild";
         //public static string YARN_RnD_REQ_CHILD_SUBPROGRAM = "YarnRNDReqChildSubProgram";
-        public static string YarnReceiveChildRackBin = "T_YarnReceiveChildRackBin";
+        public const string YARN_RECEIVE_CHILD_RACK_BIN = "T_YarnReceiveChildRackBin";
         public static string YARN_RnD_REQ_RECEIVE_MASTER = "T_YarnRNDReqReceiveMaster";
         public static string YARN_RnD_REQ_RECEIVE_CHILD = "T_YarnRNDReqReceiveChild";
         public static string YARN_RnD_REQ_RECEIVE_NO = "RnDReceiveNo";
@@ -854,7 +858,7 @@
         public const string KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME = "T_KnittingMachineSubClassTechnicalName";
         public const string KNITTING_MACHINE_STRUCTURE_TYPE_HK = "T_KnittingMachineStructureType_HK";
 
-
+        public const string BDS_CRITERIA_HK = "T_BDSCriteria_HK";
         #region Garments Table
         public const string SAMPLE_BOOKING_MASTER = "SampleBookingMaster";//Garments Table
         public const string SAMPLE_BOOKING_CONSUMPTION = "SampleBookingConsumption";//Garments Table
@@ -863,6 +867,9 @@
         public const string BOOKING_CHILD = "BookingChild";//Garments Table
         public const string BOOKING_ITEM_ACKNOWLEDGE = "BookingItemAcknowledge";//Garments Table
         #endregion
+
+        public const string YD_BOOKING_MASTER = "T_YDBookingMaster";
+        public const string BDS_DEPENDENT_TNA_EVENT_HK = "T_BDSDependentTNAEvent_HK";
 
     }
 }

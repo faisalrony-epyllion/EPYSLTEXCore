@@ -17,95 +17,95 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
     {
         [ExplicitKey]
         public int FBAckID { get; set; }
-        public int BookingID { get; set; }
-        public string BookingNo { get; set; }
-        public string SLNo { get; set; }
+        public int BookingID { get; set; } = 0;
+        public string BookingNo { get; set; } = "";
+        public string SLNo { get; set; } = "";
         public System.DateTime BookingDate { get; set; }
-        public int BuyerID { get; set; }
-        public int BuyerTeamID { get; set; }
-        public int ExecutionCompanyID { get; set; }
-        public int SupplierID { get; set; }
-        public int StyleMasterID { get; set; }
-        public string StyleNo { get; set; }
-        public int SubGroupID { get; set; }
-        public int ExportOrderID { get; set; }
+        public int BuyerID { get; set; } = 0;
+        public int BuyerTeamID { get; set; } = 0;
+        public int ExecutionCompanyID { get; set; } = 0;
+        public int SupplierID { get; set; } = 0;
+        public int StyleMasterID { get; set; } = 0;
+        public string StyleNo { get; set; } = "";
+        public int SubGroupID { get; set; } = 0;
+        public int ExportOrderID { get; set; } = 0;
         public decimal BookingQty { get; set; } = 0;
         public int AddedBy { get; set; } = 0;
         public System.DateTime DateAdded { get; set; }
-        public int? UpdatedBy { get; set; }
+        public int? UpdatedBy { get; set; } = 0;
         public System.DateTime? DateUpdated { get; set; }
-        public bool IsSample { get; set; }
-        public bool IsUnAcknowledge { get; set; }
+        public bool IsSample { get; set; } = false;
+        public bool IsUnAcknowledge { get; set; } = false;
         public DateTime? UnAcknowledgeDate { get; set; }
-        public int? UnAcknowledgeBy { get; set; }
-        public string UnAcknowledgeReason { get; set; }
+        public int? UnAcknowledgeBy { get; set; } = 0;
+        public string UnAcknowledgeReason { get; set; } = "";
         public int BomMasterId { get; set; } = 0;
-        public int ItemGroupId { get; set; }
-        public bool Status { get; set; }
-        public bool WithoutOB { get; set; }
-        public int PreRevisionNo { get; set; }
-        public int RevisionNo { get; set; }
+        public int ItemGroupId { get; set; } = 0;
+        public bool Status { get; set; } = false;
+        public bool WithoutOB { get; set; } = false;
+        public int PreRevisionNo { get; set; } = 0;
+        public int RevisionNo { get; set; } = 0;
         public DateTime? RevisionDate { get; set; }
-        public bool IsKnittingComplete { get; set; }
-        public int KnittingRevisionNo { get; set; }
-        public bool IsCheckByKnittingHead { get; set; }
-        public int CheckByKnittingHead { get; set; }
+        public bool IsKnittingComplete { get; set; } = false;
+        public int KnittingRevisionNo { get; set; } = 0;
+        public bool IsCheckByKnittingHead { get; set; } = false;
+        public int CheckByKnittingHead { get; set; } = 0;
         public DateTime? CheckDateKnittingHead { get; set; }
-        public bool IsRejectByKnittingHead { get; set; }
-        public int RejectByKnittingHead { get; set; }
+        public bool IsRejectByKnittingHead { get; set; } = false;
+        public int RejectByKnittingHead { get; set; } = 0;
         public DateTime? RejectDateKnittingHead { get; set; }
-        public string RejectReasonKnittingHead { get; set; }
-        public bool IsApprovedByProdHead { get; set; }
-        public int ApprovedByProdHead { get; set; }
+        public string RejectReasonKnittingHead { get; set; } = "";
+        public bool IsApprovedByProdHead { get; set; } = false;
+        public int ApprovedByProdHead { get; set; } = 0;
         public DateTime? ApprovedDateProdHead { get; set; }
-        public bool IsRejectByProdHead { get; set; }
-        public int RejectByProdHead { get; set; }
+        public bool IsRejectByProdHead { get; set; } = false;
+        public int RejectByProdHead { get; set; } = 0;
         public DateTime? RejectDateProdHead { get; set; }
-        public string RejectReasonProdHead { get; set; }
-        public bool IsApprovedByPMC { get; set; }
-        public int ApprovedByPMC { get; set; }
+        public string RejectReasonProdHead { get; set; } = "";
+        public bool IsApprovedByPMC { get; set; } = false;
+        public int ApprovedByPMC { get; set; } = 0;
         public DateTime? ApprovedDatePMC { get; set; }
-        public bool IsRejectByPMC { get; set; }
-        public int RejectByPMC { get; set; }
+        public bool IsRejectByPMC { get; set; } = false;
+        public int RejectByPMC { get; set; } = 0;
         public DateTime? RejectDatePMC { get; set; }
-        public string RejectReasonPMC { get; set; }
-        public bool IsApprovedByAllowance { get; set; }
-        public int ApprovedByAllowance { get; set; }
+        public string RejectReasonPMC { get; set; } = "";
+        public bool IsApprovedByAllowance { get; set; } = false;
+        public int ApprovedByAllowance { get; set; } = 0;
         public DateTime? ApprovedDateAllowance { get; set; }
-        public bool IsRejectByAllowance { get; set; }
-        public int RejectByAllowance { get; set; }
+        public bool IsRejectByAllowance { get; set; } = false;
+        public int RejectByAllowance { get; set; } = 0;
         public DateTime? RejectDateAllowance { get; set; }
-        public string RejectReasonAllowance { get; set; }
-        public int MerchandiserID { get; set; }
-        public int FinancialYearID { get; set; }
-        public int SeasonID { get; set; }
-        public int PreRevisionNoLabdip { get; set; }
-        public int RevisionNoLabdip { get; set; }
-        public int PreRevisionNoBBKI { get; set; }
-        public int RevisionNoBBKI { get; set; }
-        public bool IsReviseBBKI { get; set; }
-        public bool IsUtilizationProposalConfirmed { get; set; }
-        public int UtilizationProposalConfirmedBy { get; set; }
+        public string RejectReasonAllowance { get; set; } = "";
+        public int MerchandiserID { get; set; } = 0;
+        public int FinancialYearID { get; set; } = 0;
+        public int SeasonID { get; set; } = 0;
+        public int PreRevisionNoLabdip { get; set; } = 0;
+        public int RevisionNoLabdip { get; set; } = 0;
+        public int PreRevisionNoBBKI { get; set; } = 0;
+        public int RevisionNoBBKI { get; set; } = 0;
+        public bool IsReviseBBKI { get; set; } = false;
+        public bool IsUtilizationProposalConfirmed { get; set; } = false;
+        public int UtilizationProposalConfirmedBy { get; set; } = 0;
         public DateTime? UtilizationProposalConfirmedDate { get; set; }
-        public bool IsUtilizationProposalSend { get; set; }
-        public int UtilizationProposalSendBy { get; set; }
+        public bool IsUtilizationProposalSend { get; set; } = false;
+        public int UtilizationProposalSendBy { get; set; } = 0;
         public DateTime? UtilizationProposalSendDate { get; set; }
-        public string RivisionReason { get; set; }
-        public string CollarSizeID { get; set; }
-        public decimal CollarWeightInGm { get; set; }
-        public string CuffSizeID { get; set; }
-        public decimal CuffWeightInGm { get; set; }
-        public bool IsInternalRevise { get; set; }
-        public int InternalReviseBy { get; set; }
-        public string InternalReviseReason { get; set; }
+        public string RivisionReason { get; set; } = "";
+        public string CollarSizeID { get; set; } = "";
+        public decimal CollarWeightInGm { get; set; } = 0;   
+        public string CuffSizeID { get; set; } = "";
+        public decimal CuffWeightInGm { get; set; } = 0;
+        public bool IsInternalRevise { get; set; } = false;
+        public int InternalReviseBy { get; set; } = 0;
+        public string InternalReviseReason { get; set; } = "";
         public DateTime? InternalReviseDate { get; set; }
-        public int BaseTypeId { get; set; }
+        public int BaseTypeId { get; set; } = (int)EnumBaseType.None;
         public int KnittingCompleteBy { get; set; } = 0;
         public DateTime? KnittingCompleteDate { get; set; }
-        public bool IsAllocationInternalRevise { get; set; }
-        public int AllocationInternalReviseBy { get; set; }
+        public bool IsAllocationInternalRevise { get; set; } = false;
+        public int AllocationInternalReviseBy { get; set; } = 0;        
         public DateTime? AllocationInternalReviseDate { get; set; }
-        public string AllocationInternalReviseReason { get; set; }
+        public string AllocationInternalReviseReason { get; set; } = "";
         public bool IsValidForYarnBookingAcknowledge { get; set; } = false;
 
 
@@ -113,119 +113,119 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
         [Write(false)]
         public string FabricBookingType { get; set; } = "";
         [Write(false)]
-        public string IsRevMktAck { get; set; }
+        public string IsRevMktAck { get; set; } = "";
         [Write(false)]
-        public string IsRevisionAck { get; set; }
+        public string IsRevisionAck { get; set; } = "";
         [Write(false)]
-        public string BuyerName { get; set; }
+        public string BuyerName { get; set; } = "";
         [Write(false)]
-        public int TechnicalNameId { get; set; }
+        public int TechnicalNameId { get; set; } = 0;
         [Write(false)]
-        public string BuyerTeamName { get; set; }
+        public string BuyerTeamName { get; set; } = "";
         [Write(false)]
-        public string CompanyName { get; set; }
+        public string CompanyName { get; set; } = "";
         [Write(false)]
-        public string SupplierName { get; set; }
+        public string SupplierName { get; set; } = "";
         [Write(false)]
-        public string Remarks { get; set; }
+        public string Remarks { get; set; } = "";
         [Write(false)]
-        public string SeasonName { get; set; }
+        public string SeasonName { get; set; } = "";
         [Write(false)]
-        public int YBookingID { get; set; }
+        public int YBookingID { get; set; } = 0;
         [Write(false)]
-        public string YBookingNo { get; set; }
+        public string YBookingNo { get; set; } = "";
         [Write(false)]
-        public string ExportOrderNo { get; set; }
+        public string ExportOrderNo { get; set; } = "";
         [Write(false)]
-        public string EmployeeName { get; set; }
+        public string EmployeeName { get; set; } = "";
         [Write(false)]
-        public decimal OrderQty { get; set; }
+        public decimal OrderQty { get; set; } = 0;
         [Write(false)]
-        public string ImagePath { get; set; }
+        public string ImagePath { get; set; } = "";
         [Write(false)]
-        public string ImagePath1 { get; set; }
+        public string ImagePath1 { get; set; } = "";
         [Write(false)]
-        public string AckByName { get; set; }
+        public string AckByName { get; set; } = "";
         [Write(false)]
-        public string UnAckByName { get; set; }
+        public string UnAckByName { get; set; } = "";
         [Write(false)]
-        public int TextileCompanyID { get; set; }
+        public int TextileCompanyID { get; set; } = 0;
         [Write(false)]
-        public int CompanyID { get; set; }
+        public int CompanyID { get; set; } = 0;
         [Write(false)]
-        public string PageName { get; set; }
+        public string PageName { get; set; } = "";
         [Write(false)]
-        public int TNACalendarDays { get; set; }
+        public int TNACalendarDays { get; set; } = 0;
         [Write(false)]
-        public bool IsBulkBooking { get; set; }
+        public bool IsBulkBooking { get; set; } = false;
         [Write(false)]
-        public string ActionStatus { get; set; }
+        public string ActionStatus { get; set; } = "";
         [Write(false)]
-        public string BOMStatus { get; set; }
+        public string BOMStatus { get; set; } = "";
         [Write(false)]
-        public string RevNoValue { get; set; }
+        public string RevNoValue { get; set; } = "";
         [Write(false)]
-        public string BBStatus { get; set; }
+        public string BBStatus { get; set; } = "";
         [Write(false)]
-        public string GroupConceptNo { get; set; }
+        public string GroupConceptNo { get; set; } = "";
         [Write(false)]
-        public string SaveType { get; set; }
+        public string SaveType { get; set; } = "";
         [Write(false)]
-        public bool HasYarnBooking { get; set; }
+        public bool HasYarnBooking { get; set; } = false;
         [Write(false)]
         public DateTime? FBAcknowledgeDate { get; set; }
         [Write(false)]
         public DateTime? BKAcknowledgeDate { get; set; }
         [Write(false)]
-        public string RejectReason { get; set; }
+        public string RejectReason { get; set; } = "";
         [Write(false)]
-        public bool IsReject { get; set; }
+        public bool IsReject { get; set; } = false;
         [Write(false)]
         public bool IsApprove { get; set; } = false;
         [Write(false)]
-        public bool LabdipAcknowledge { get; set; }
+        public bool LabdipAcknowledge { get; set; } = false;
         [Write(false)]
-        public int LabdipAcknowledgeBY { get; set; }
+        public int LabdipAcknowledgeBY { get; set; } = 0;
         [Write(false)]
         public DateTime? LabdipAcknowledgeDate { get; set; }
         [Write(false)]
-        public string LabdipUnAcknowledgeReason { get; set; }
+        public string LabdipUnAcknowledgeReason { get; set; } = "";
         [Write(false)]
-        public bool IsAddition { get; set; }
+        public bool IsAddition { get; set; } = false;
         [Write(false)]
-        public bool IsUpdateAddition { get; set; }
+        public bool IsUpdateAddition { get; set; } = false;
         [Write(false)]
-        public string ParentYBookingNo { get; set; }
+        public string ParentYBookingNo { get; set; } = "";
         [Write(false)]
-        public bool IsRevisionValid { get; set; }
+        public bool IsRevisionValid { get; set; } = false;
         [Write(false)]
-        public bool IsInvalidBooking { get; set; }
+        public bool IsInvalidBooking { get; set; } = false;
         [Write(false)]
-        public int YarnPreRevisionNo { get; set; }
+        public int YarnPreRevisionNo { get; set; } = 0;
         [Write(false)]
-        public int UserId { get; set; }
+        public int UserId { get; set; } = 0;
         [Write(false)]
-        public int LFDMasterID { get; set; }
+        public int LFDMasterID { get; set; } = 0;
         [Write(false)]
-        public int LFDChildID { get; set; }
+        public int LFDChildID { get; set; } = 0;
         [Write(false)]
-        public decimal RequiredQty { get; set; }
+        public decimal RequiredQty { get; set; } = 0;
         [Write(false)]
-        public decimal StockQty { get; set; }
+        public decimal StockQty { get; set; } = 0;
         [Write(false)]
-        public decimal DeliveredQty { get; set; }
+        public decimal DeliveredQty { get; set; } = 0;
         [Write(false)]
         public DateTime? RequiredFabricDeliveryDate { get; set; }
         [Write(false)]
         public DateTime? ApproveDate { get; set; }
         [Write(false)]
-        public string RevisionReason { get; set; }
+        public string RevisionReason { get; set; } = "";
         [Write(false)]
-        public string BookingStatus { get; set; }
+        public string BookingStatus { get; set; } = "";
         [Write(false)]
-        public string YarnBookingRevisionDate { get; set; }
+        public string YarnBookingRevisionDate { get; set; } = "";
         [Write(false)]
-        public int CalendarDays { get; set; }
+        public int CalendarDays { get; set; } = 0;
         [Write(false)]
         public DateTime? FirstShipmentDate { get; set; }
         [Write(false)]
@@ -233,7 +233,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
         [Write(false)]
         public DateTime? AddYarnBookingDate { get; set; }
         [Write(false)]
-        public string BookingType { get; set; }
+        public string BookingType { get; set; } = "";
         [Write(false)]
         public DateTime? FabricStartDate { get; set; }
         [Write(false)]
@@ -241,37 +241,37 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
         [Write(false)]
         public decimal OrderQtyKG { get; set; }
         [Write(false)]
-        public string PMCApprovedBy { get; set; }
+        public string PMCApprovedBy { get; set; } = "";
         [Write(false)]
-        public string PMCRejectedBy { get; set; }
+        public string PMCRejectedBy { get; set; } = "";
         [Write(false)]
         public DateTime? ApproveRejectDatePMC { get; set; }
         [Write(false)]
-        public string PMCApprovedRejectedBy { get; set; }
+        public string PMCApprovedRejectedBy { get; set; } = "";
         [Write(false)]
-        public string TeamLeader { get; set; }
+        public string TeamLeader { get; set; } = "";
         [Write(false)]
-        public int EWOStatusID { get; set; }
+        public int EWOStatusID { get; set; } = 0;
         [Write(false)]
-        public int OrderBankMasterID { get; set; }
+        public int OrderBankMasterID { get; set; } = 0;
         [Write(false)]
-        public int MenuId { get; set; }
+        public int MenuId { get; set; } = 0;
         [Write(false)]
-        public string InternalRivisionReason { get; set; }
+        public string InternalRivisionReason { get; set; } = "";
         [Write(false)]
-        public Status GridStatus { get; set; }
+        public Status GridStatus { get; set; } = Statics.Status.None;
         [Write(false)]
         public bool IsMktRevisionPending { get; set; } = false;
         [Write(false)]
-        public string BtnId { get; set; }
+        public string BtnId { get; set; } = "";
         [Write(false)]
-        public string BookingByName { get; set; }
+        public string BookingByName { get; set; } = "";
         [Write(false)]
-        public string YarnBookingByName { get; set; }
+        public string YarnBookingByName { get; set; } = "";
         [Write(false)]
-        public string MerchandisingTeam { get; set; }
+        public string MerchandisingTeam { get; set; } = "";
         [Write(false)]
-        public string YarnProjectionReference { get; set; }
+        public string YarnProjectionReference { get; set; } = "";
         [Write(false)]
         public DateTime FabricRequireDate { get; set; }
         [Write(false)]
@@ -441,55 +441,55 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Booking
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || FBAckID > 0;
         [Write(false)]
-        public bool HasFabric { get; set; }
+        public bool HasFabric { get; set; } = false;
         [Write(false)]
-        public bool HasCollar { get; set; }
+        public bool HasCollar { get; set; } = false;
         [Write(false)]
-        public bool HasCuff { get; set; }
+        public bool HasCuff { get; set; } = false;
         [Write(false)]
-        public string SubGroupName { get; set; }
+        public string SubGroupName { get; set; } = "";
         [Write(false)]
-        public int BookingBy { get; set; }
+        public int BookingBy { get; set; } = 0;
         [Write(false)]
-        public string PendingRevision { get; set; }
+        public string PendingRevision { get; set; } = "";
         [Write(false)]
-        public string ColorCode { get; set; }
+        public string ColorCode { get; set; } = "";
         [Write(false)]
-        public string grpConceptNo { get; set; }
+        public string grpConceptNo { get; set; } = "";
         [Write(false)]
-        public int IsBDS { get; set; }
+        public int IsBDS { get; set; } = 0;
         [Write(false)]
-        public bool IsRevised { get; set; }
+        public bool IsRevised { get; set; } = false;
         [Write(false)]
-        public bool PreProcessRevNo { get; set; }
+        public bool PreProcessRevNo { get; set; } = false;
         [Write(false)]
-        public string CreatedByName { get; set; }
+        public string CreatedByName { get; set; } = "";
         [Write(false)]
         public string FabricBookingStatus { get; set; } = "";
         [Write(false)]
-        public string StatusText { get; set; }
+        public string StatusText { get; set; } = "";
         [Write(false)]
-        public string Reason { get; set; }
+        public string Reason { get; set; } = "";
         [Write(false)]
-        public bool IsLabdipAcknowledge { get; set; }
+        public bool IsLabdipAcknowledge { get; set; } = false;
         [Write(false)]
-        public int ParamTypeId { get; set; }
+        public int ParamTypeId { get; set; } = 0;
         [Write(false)]
-        public string DeliveryNo { get; set; }
+        public string DeliveryNo { get; set; } = "";
         [Write(false)]
-        public bool IsLabdip { get; set; }
+        public bool IsLabdip { get; set; } = false;
         [Write(false)]
-        public string PMCApproveBy { get; set; }
+        public string PMCApproveBy { get; set; } = "";
         [Write(false)]
-        public int GmtQtyPcs { get; set; }
+        public int GmtQtyPcs { get; set; } = 0;
         [Write(false)]
-        public string UnAcknowledgeByName { get; set; }
+        public string UnAcknowledgeByName { get; set; } = "";
         [Write(false)]
         public DateTime? AcknowledgeDate { get; set; }
         [Write(false)]
-        public string AcknowledgeByName { get; set; }
+        public string AcknowledgeByName { get; set; } = "";
         [Write(false)]
-        public bool IsRevisedYarn { get; set; }
+        public bool IsRevisedYarn { get; set; } = false;
         [Write(false)]
         public string Ageing { get; set; } = "";
         [Write(false)]

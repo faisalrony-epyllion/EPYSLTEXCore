@@ -55,7 +55,7 @@
             }
     </style>
     <div class="row" id="@divTblId">
-        <div class="col-sm-12">
+        <div class="col-12">
             <div id="@toolbarId" class="master-toolbar">
                 @*<button id="btnPendingList" class="btn btn-success text-white btn-sm">
             <i class="fa fa-list"></i>&nbsp;Pending List
@@ -102,7 +102,7 @@
         </div>
     </div>
     <div class="row">
-        <form class="form-horizontal" id="@formId">
+        <form class="row" id="@formId">
             <input type="text" style="display:none" id="FBAckID" name="FBAckID" value="-1111" />
             <input type="text" style="display:none" id="BookingID" name="BookingID" />
             <input type="text" style="display:none" id="BuyerID" name="BuyerID" />
@@ -119,103 +119,103 @@
             @*<input type="text" style="display:none" id="RevisionNo" name="RevisionNo" />*@
             <input type="text" style="display:none" id="PreRevisionNo" name="PreRevisionNo" />
             <input type="text" style="display:none" id="BomMasterId" name="BomMasterId" />
-            <div class="box-body" id="@divDetailsId" style="display:none">
+            <div class="box-body" id="@divDetailsId" style="display:none;">
                 <input type="hidden" id="GroupConceptNo" name="GroupConceptNo" />
-                <div class="col-sm-12">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
+                <div class="col-12">
+                    <div class="card card-success" style="border-color:transparent; border-style:none;">
+                        <div class="card-heading">
                             General Information
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Booking No</label>
+                                        <label class="col-form-label col-md-4 small">Booking No</label>
                                         <div class="col-sm-8">
                                             <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group divRevisionNo">
-                                        <label class="control-label col-sm-4 small">Revision No</label>
+                                        <label class="col-form-label col-md-4 small">Revision No</label>
                                         <div class="col-sm-8">
                                             <input id="RevisionNo" name="RevisionNo" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group" style="display:none;">
-                                        <label class="control-label col-sm-4 small">SL No</label>
+                                        <label class="col-form-label col-md-4 small">SL No</label>
                                         <div class="col-sm-8">
                                             <input id="SLNo" name="SLNo" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Booking Date</label>
+                                        <label class="col-form-label col-md-4 small">Booking Date</label>
                                         <div class="col-sm-8">
                                             <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Season Name</label>
+                                        <label class="col-form-label col-md-4 small">Season Name</label>
                                         <div class="col-sm-8">
                                             <input id="SeasonName" name="SeasonName" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-4">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Buyer</label>
+                                        <label class="col-form-label col-md-4 small">Buyer</label>
                                         <div class="col-sm-8">
                                             <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Buyer Team</label>
+                                        <label class="col-form-label col-md-4 small">Buyer Team</label>
                                         <div class="col-sm-8">
                                             <input id="BuyerTeamName" name="BuyerTeamName" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Company</label>
+                                        <label class="col-form-label col-md-4 small">Company</label>
                                         <div class="col-sm-8">
                                             <input id="CompanyName" name="CompanyName" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <label class="col-form-label col-md-4 small">Remarks</label>
                                         <div class="col-sm-8">
                                             <textarea id="Remarks" name="Remarks" class="form-control input-sm" readonly rows="4" cols="10"></textarea>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-4">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Style No</label>
+                                        <label class="col-form-label col-md-4 small">Style No</label>
                                         <div class="col-sm-8">
                                             <input id="StyleNo" name="StyleNo" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Order Qty (KG)</label>
+                                        <label class="col-form-label col-md-4 small">Order Qty (KG)</label>
                                         <div class="col-sm-8">
                                             <input id="BookingQty" name="BookingQty" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Gmt Qty (PCS)</label>
+                                        <label class="col-form-label col-md-4 small">Gmt Qty (PCS)</label>
                                         <div class="col-sm-8">
                                             <input id="GmtQtyPcs" name="GmtQtyPcs" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Supplier Name</label>
+                                        <label class="col-form-label col-md-4 small">Supplier Name</label>
                                         <div class="col-sm-8">
                                             <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group divUnAcknowledgeReason" style="display:none;">
-                                        <label class="control-label col-sm-4 small">Un-Ack Reason</label>
+                                        <label class="col-form-label col-md-4 small">Un-Ack Reason</label>
                                         <div class="col-sm-8">
                                             <input id="UnAcknowledgeReason" name="UnAcknowledgeReason" class="form-control input-sm" readonly />
                                         </div>
@@ -235,17 +235,17 @@
                     <div><label style="margin: 4px; float: left; ">Deleted Items</label></div>
                 </div>
 
-                <div class="col-sm-12" id="divFabricInfo" style="display: none">
-                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
-                        <div class="panel-heading">
+                <div class="col-12" id="divFabricInfo" style="display: none">
+                    <div class="card card-success" style="border-color:transparent; border-style: none;">
+                        <div class="card-heading">
                             <label class="lblTableTitle">Fabric Booking Item Information</label>
                             <button type="button" class="btn btn-success btn-xs deletedItemTable btnDeletedItemShow" group="1" style="display:none;" title="Show/Hide deleted items">
                                 <i class="fa fa-eye"></i>
                             </button>
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="form-group">
                                         @*<table id="tblFabric-@pageId"></table>*@
                                         <table id="@tblChildId"></table>
@@ -256,14 +256,14 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12 deletedItemTable dTable" group="1" id="divFabricInfoDI" style="display: none">
-                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
-                        <div class="panel-heading">
+                <div class="col-12 deletedItemTable dTable" group="1" id="divFabricInfoDI" style="display: none">
+                    <div class="card card-success" style="border-color:transparent; border-style: none;">
+                        <div class="card-heading">
                             <span>Deleted </span> <label class="lblTableTitle">Item Details</label>
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="form-group">
                                         <table id="@tblChildIdDI"></table>
                                     </div>
@@ -273,17 +273,17 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12" id="divCollarInfo" style="display: none">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
+                <div class="col-12" id="divCollarInfo" style="display: none">
+                    <div class="card card-success" style="border-color:transparent; border-style:none;">
+                        <div class="card-heading">
                             <label>Collar Information</label>
                             <button type="button" class="btn btn-success btn-xs deletedItemTable btnDeletedItemShow" group="11" style="display:none;" title="Show/Hide deleted items">
                                 <i class="fa fa-eye"></i>
                             </button>
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="form-group">
                                         @*<table id="tblCollar-@pageId"></table>*@
                                         <table id="@tblChildCollarId"></table>
@@ -294,14 +294,14 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12 deletedItemTable dTable" group="11" id="divCollarInfoDI" style="display: none">
-                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
-                        <div class="panel-heading">
+                <div class="col-12 deletedItemTable dTable" group="11" id="divCollarInfoDI" style="display: none">
+                    <div class="card card-success" style="border-color:transparent; border-style: none;">
+                        <div class="card-heading">
                             Deleted Collar Information
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="form-group">
                                         <table id="@tblChildCollarIdDI"></table>
                                     </div>
@@ -311,17 +311,17 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12" id="divCufInfo" style="display:none">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
+                <div class="col-12" id="divCufInfo" style="display:none">
+                    <div class="card card-success" style="border-color:transparent; border-style:none;">
+                        <div class="card-heading">
                             <label>Cuff Information</label>
                             <button type="button" class="btn btn-success btn-xs deletedItemTable btnDeletedItemShow" group="12" style="display:none;" title="Show/Hide deleted items">
                                 <i class="fa fa-eye"></i>
                             </button>
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="form-group">
                                         @*<table id="tblCuff-@pageId"></table>*@
                                         <table id="@tblChildCuffId"></table>
@@ -332,14 +332,14 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12 deletedItemTable dTable" group="12" id="divCuffInfoDI" style="display: none">
-                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
-                        <div class="panel-heading">
+                <div class="col-12 deletedItemTable dTable" group="12" id="divCuffInfoDI" style="display: none">
+                    <div class="card card-success" style="border-color:transparent; border-style: none;">
+                        <div class="card-heading">
                             Deleted Cuff Information
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="form-group">
                                         <table id="@tblChildCuffIdDI"></table>
                                     </div>
@@ -375,9 +375,9 @@
                             Liabilities Criteria
                         </div>
                         <div class="modal-body">
-                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
-                                <div class="form-horizontal">
-                                    <div class="col-sm-12 div-criteria">
+                            <div class="row col-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="row">
+                                    <div class="col-12 div-criteria">
                                         <table id="@itemDetailsId" class="table table-bordered table-striped tblItemDetails">
                                             <thead>
                                                 <tr>
@@ -430,14 +430,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-12" id="divYarnInfo">
-                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
-                                    <div class="panel-heading">
+                            <div class="col-12" id="divYarnInfo">
+                                <div class="card card-success" style="border-color:transparent; border-style: none;">
+                                    <div class="card-heading">
                                         <label class="lblTableTitle">Liabilities Informations</label>
                                     </div>
-                                    <div class="panel-body">
-                                        <div class="form-horizontal">
-                                            <div class="col-sm-12">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-12">
                                                 <div class="form-group">
                                                     @*<table id="tblFabric-@pageId"></table>*@
                                                     <table id="@tblPlanningId"></table>
@@ -447,14 +447,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-12" id="divYarnInfo">
-                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
-                                    <div class="panel-heading">
+                            <div class="col-12" id="divYarnInfo">
+                                <div class="card card-success" style="border-color:transparent; border-style: none;">
+                                    <div class="card-heading">
                                         <label class="lblTableTitle">Yarn Liabilities</label>
                                     </div>
-                                    <div class="panel-body">
-                                        <div class="form-horizontal">
-                                            <div class="col-sm-12">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-12">
                                                 <div class="form-group">
                                                     @*<table id="tblFabric-@pageId"></table>*@
                                                     <table id="@tblYarnChildId"></table>

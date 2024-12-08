@@ -1,390 +1,268 @@
 ﻿<script type="text/javascript">
-    localStorage.setItem("pageName", "@ViewBag.PageName");
-    localStorage.setItem("menuId", "@ViewBag.MenuId");
+	localStorage.setItem("pageName", "@ViewBag.PageName");
+	localStorage.setItem("menuId", "@ViewBag.MenuId");
 </script>
 
 @{
-    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
-    var divTblId = "divtbl" + pageId;
-    var toolbarId = "toolbar" + pageId;
-    var tblMasterId = "tbl" + pageId;
-    var tblChildId = "tblChild" + pageId;
-    var tblOtherItemId = "tblOtherItem" + pageId;
-    var tblFabricItemId = "tblFabricItem" + pageId;
-    var tblChildSetId = "tblChildSet" + pageId;
-    var tblChildSetDetailsId = "tblChildSetDetails" + pageId;
-    var formId = "form" + pageId;
-    var divDetailsId = "divDetails" + pageId;
+	var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+	var divTblId = "divtbl" + pageId;
+	var toolbarId = "toolbar" + pageId;
+	var tblMasterId = "tbl" + pageId;
+	var tblChildId = "tblChild" + pageId;
+	var tblOtherItemId = "tblOtherItem" + pageId;
+	var tblFabricItemId = "tblFabricItem" + pageId;
+	var tblChildSetId = "tblChildSet" + pageId;
+	var tblChildSetDetailsId = "tblChildSetDetails" + pageId;
+	var formId = "form" + pageId;
+	var divDetailsId = "divDetails" + pageId;
 }
 @*Main*@
+
 <div id="@pageId">
-    <div class="row" id="@divTblId">
-        <div class="col-sm-12">
-            <div id="@toolbarId" class="master-toolbar">
-                <div class="row">
-                    <div class="col-md-12">
-                        <button id="btnNew" class="btn btn-default btn-sm btn-list btn-list-left">
-                            <i class="fa fa-plus"></i>&nbsp;New
-                        </button>
-                        @*<button id="btnList" class="btn btn-success text-white btn-sm btn-list">
+	<div class="row" id="@divTblId">
+		<div class="col-sm-12">
+			<div id="@toolbarId" class="master-toolbar">
+				<div class="row">
+					<div class="col-md-12">
+						<button id="btnNew" class="btn btn-default btn-sm btn-list btn-list-left">
+							<i class="fa fa-plus"></i>&nbsp;New
+						</button>
+						@*<button id="btnList" class="btn btn-success text-white btn-sm btn-list">
                                 <i class="fa fa-list"></i>&nbsp;Concept List
                             </button>*@
-                        <button id="btnAllList" class="btn btn-success btn-sm btn-list btn-list-left">
-                            <i class="fa fa-list"></i>&nbsp;All
-                        </button>
+						<button id="btnAllList" class="btn btn-success btn-sm btn-list btn-list-left">
+							<i class="fa fa-list"></i>&nbsp;All
+						</button>
 
-                        <button id="btnPendingList" class="btn btn-default btn-sm btn-list btn-list-left">
-                            <i class="fa fa-list"></i>&nbsp;Pending
-                        </button>
-                        <button id="btnLiveList" class="btn btn-default btn-sm btn-list btn-list-left">
-                            <i class="fa fa-list"></i>&nbsp;Live
-                        </button>
-                        <button id="btnPreservedList" class="btn btn-default btn-sm btn-list btn-list-left">
-                            <i class="fa fa-list"></i>&nbsp;Preserved
-                        </button>
-                        <button id="btnDroppedList" class="btn btn-default btn-sm btn-list btn-list-left">
-                            <i class="fa fa-list"></i>&nbsp;Dropped
-                        </button>
-                    </div>
-                </div>
-                <div class="row" style="margin-top:4px;">
-                    <div class="col-md-12" id="divPendingButtons" style="display:none;">
-                        <button id="btnSourcingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;Sourcing Pending
-                        </button>
-                        <button id="btnYDPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;YD Pending
-                        </button>
-                        <button id="btnKnitPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;Knit Pending
-                        </button>
-                        <button id="btnBatchPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;Batch Pending
-                        </button>
-                        <button id="btnDyeingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;Dyeing Pending
-                        </button>
-                        <button id="btnFinishPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;Finish Pending
-                        </button>
-                        <button id="btnTestPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;Test Pending
-                        </button>
-                        <button id="btnWaitingForLiveList" class="btn btn-default btn-sm btn-list btn-list-right">
-                            <i class="fa fa-list"></i>&nbsp;Waiting for Live
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <table id="@tblMasterId"></table>
-        </div>
-    </div>
-    <div class="row">
-        <form class="form-horizontal" id="@formId">
-            <input type="hidden" id="ConceptID" name="ConceptID" value="-1111" />
-            <input type="hidden" name="RevisionPending" id="RevisionPending" />
-            <input type="hidden" name="RevisionNo" id="RevisionNo" />
+						<button id="btnPendingList" class="btn btn-default btn-sm btn-list btn-list-left">
+							<i class="fa fa-list"></i>&nbsp;Pending
+						</button>
+						<button id="btnLiveList" class="btn btn-default btn-sm btn-list btn-list-left">
+							<i class="fa fa-list"></i>&nbsp;Live
+						</button>
+						<button id="btnPreservedList" class="btn btn-default btn-sm btn-list btn-list-left">
+							<i class="fa fa-list"></i>&nbsp;Preserved
+						</button>
+						<button id="btnDroppedList" class="btn btn-default btn-sm btn-list btn-list-left">
+							<i class="fa fa-list"></i>&nbsp;Dropped
+						</button>
+					</div>
+				</div>
+				<div class="row" style="margin-top:4px;">
+					<div class="col-md-12" id="divPendingButtons" style="display:none;">
+						<button id="btnSourcingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;Sourcing Pending
+						</button>
+						<button id="btnYDPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;YD Pending
+						</button>
+						<button id="btnKnitPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;Knit Pending
+						</button>
+						<button id="btnBatchPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;Batch Pending
+						</button>
+						<button id="btnDyeingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;Dyeing Pending
+						</button>
+						<button id="btnFinishPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;Finish Pending
+						</button>
+						<button id="btnTestPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;Test Pending
+						</button>
+						<button id="btnWaitingForLiveList" class="btn btn-default btn-sm btn-list btn-list-right">
+							<i class="fa fa-list"></i>&nbsp;Waiting for Live
+						</button>
+					</div>
+				</div>
+			</div>
+			<table id="@tblMasterId"></table>
+		</div>
+	</div>
+	<div class="row">
+		<form class="form-horizontal" id="@formId">
 
-            <div class="box-body d-none" id="@divDetailsId">
-                <div class="col-sm-12">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            General Information
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-6">
-                                    @*<div class="form-group">
-                    <label class="control-label col-sm-4 small">Concept No</label>
-                    <div class="col-sm-8">
-                        <input id="ConceptNo" name="ConceptNo" class="form-control input-sm" readonly />
-                    </div>
-                </div>*@
+			<input type="hidden" id="ConceptID" name="ConceptID" value="-1111" />
+			<input type="hidden" name="RevisionPending" id="RevisionPending" />
+			<input type="hidden" name="RevisionNo" id="RevisionNo" />
 
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Concept No</label>
-                                        <div class="col-sm-8">
-                                            <input id="GroupConceptNo" name="GroupConceptNo" class="form-control input-sm" readonly />
-                                        </div>
-                                    </div>
+			<div class="box-body" id="@divDetailsId" style="display:none;">
 
-                                    <div id="divRetrial" class="d-none">
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Trial/Re-Trial No</label>
-                                            <div class="col-sm-8">
-                                                <input id="TrialNo" name="TrialNo" class="form-control input-sm" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-4 small">Trial/Re-Trial Date</label>
-                                            <div class="col-sm-8">
-                                                <input id="TrialDate" name="TrialDate" class="form-control input-sm ej2-datepicker" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+				<div class="col-sm-12">
+					<div class="panel panel-success" style="border-color:transparent; border-style:none;">
+						<div class="panel-heading">
+							General Information
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-6">
 
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Concept Date</label>
-                                        <div class="col-sm-8">
-                                            <input id="ConceptDate" name="ConceptDate" class="form-control input-sm ej2-datepicker" readonly />
-                                        </div>
-                                    </div>
-                                    @*<div class="form-group">
-                    <label class="control-label col-sm-4 small" id="ConceptFor">Concept For</label>
-                    <div class="col-sm-8">
-                        <div class="icheck-primary icheck-inline">
-                            <input type="radio" id="structure-based" name="ConceptFor" value="1092" data-concept-for="Structure Based" checked />
-                            <label for="structure-based">Structure Based</label>
-                        </div>
-                        <div class="icheck-primary icheck-inline">
-                            <input type="radio" id="color-based" name="ConceptFor" data-concept-for="Color Based" value="1093" />
-                            <label for="color-based">Color Based</label>
-                        </div>
-                    </div>
-                </div>*@
-                                </div>
-                            </div>
-                            <div class="form-horizontal">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Concept Type</label>
-                                        <div class="col-sm-8">
-                                            <input type="checkbox" style="margin:5px;" id="onlyFabric" name="onlyFabric" value="1" class="chkConceptType" />
-                                            <label for="onlyFabric">Only Fabric</label>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Concept No</label>
+										<div class="col-sm-8">
+											<input id="GroupConceptNo" name="GroupConceptNo" class="form-control input-sm" readonly />
+										</div>
+									</div>
 
-                                            <input type="checkbox" style="margin:5px;" id="fabricOtherItem" name="fabricOtherItem" value="2" class="chkConceptType" />
-                                            <label for="fabricOtherItem">Fabric & Flat Knit</label>
+									<div id="divRetrial" class="d-none">
+										<div class="form-group">
+											<label class="control-label col-sm-4 small">Trial/Re-Trial No</label>
+											<div class="col-sm-8">
+												<input id="TrialNo" name="TrialNo" class="form-control input-sm" readonly />
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="control-label col-sm-4 small">Trial/Re-Trial Date</label>
+											<div class="col-sm-8">
+												<input id="TrialDate" name="TrialDate" class="form-control input-sm ej2-datepicker" />
+											</div>
+										</div>
+									</div>
+								</div>
 
-                                            <input type="checkbox" style="margin:5px;" id="onlyOtherItem" name="onlyOtherItem" value="3" class="chkConceptType" />
-                                            <label for="onlyOtherItem">Only Flat Knit</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Concept Story</label>
-                                        <div class="col-sm-8">
-                                            <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Concept Story" class="form-control input-sm"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-horizontal">
-                                <div class="col-sm-6">
-                                    
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small"></label>
-                                        <div class="col-sm-8">
-                                            <button type="button" id="btn-add-composition" class="btn btn-success btn-xs">
-                                                <i class="fa fa-plus"></i>&nbsp;Add Composition
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <div class="panel-body">
-                        <div class="form-horizontal">
-                            <!--
-                            <div class="col-sm-5" id="divFabricItem">
-                                <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                                    <div class="panel-heading">
-                                        Product Information
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Machine Type</label>
-                                        <div class="col-sm-8">
-                                            <select id="MCSubClassID" name="MCSubClassID" class="form-control input-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-4 small">Machine Group</label>
-                                        <div class="col-sm-8">
-                                            <input id="KnittingType" name="KnittingType" class="form-control input-sm" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="divSubGroup">
-                                        <label class="control-label col-sm-4 small">Item Sub Group</label>
-                                        <div class="col-sm-8">
-                                            <select id="SubGroupID" name="SubGroupID" class="form-control input-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-4 small">Construction</label>
-                                        <div class="col-sm-8">
-                                            <select id="ConstructionId" name="ConstructionId" class="form-control input-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Technical Name</label>
-                                        <div class="col-sm-8">
-                                            <select id="TechnicalNameId" name="TechnicalNameId" class="form-control input-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Composition</label>
-                                        <div class="col-sm-8">
-                                            <div class="input-group input-group-sm">
-                                                <select id="CompositionId" name="CompositionId" class="form-control" style="width:100%"></select>
-                                                <span class="input-group-btn">
-                                                    <button id="btn-add-composition" class="btn btn-default" type="button" style="height: 25px"><i class="fa fa-plus"></i></button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">GSM</label>
-                                        <div class="col-sm-8">
-                                            <select id="GSMId" name="GSMId" class="form-control input-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small" id="lblQty">Quantity(pcs/kg)</label>
-                                        <div class="col-sm-8">
-                                            <input id="Qty" name="Qty" type="number" class="form-control input-sm" max="50" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Concept Story</label>
-                                        <div class="col-sm-8">
-                                            <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Concept Story" class="form-control input-sm"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            -->
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Concept Date</label>
+										<div class="col-sm-8">
+											<input id="ConceptDate" name="ConceptDate" class="form-control input-sm ej2-datepicker" readonly />
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-horizontal">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Concept Type</label>
+										<div class="col-sm-8">
+											<input type="checkbox" style="margin:5px;" id="onlyFabric" name="onlyFabric" value="1" class="chkConceptType" />
+											<label for="onlyFabric">Only Fabric</label>
 
-                            <div class="col-sm-12" id="divChild">
-                                <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                                    <div class="panel-heading">
-                                        Color Information
-                                        <button type="button" id="btnAddColor" class="btn btn-success btn-xs">
-                                            <i class="fa fa-plus"></i>&nbsp;Add Color
-                                        </button>
-                                        <button class="btn btn-primary btn-xs" id="btnUpdate" style="float:right;margin-right:10px;">
-                                            <i class="fa fa-save"></i>&nbsp;&nbsp;Update
-                                        </button>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="form-horizontal">
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <table id="@tblChildId"></table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+											<input type="checkbox" style="margin:5px;" id="fabricOtherItem" name="fabricOtherItem" value="2" class="chkConceptType" />
+											<label for="fabricOtherItem">Fabric & Flat Knit</label>
 
-                <div class="col-sm-12" id="divFabricItem">
-                    <div class="panel panel-success" style="border-color: transparent; border-style: none;">
-                        <div class="panel-heading">
-                            Fabric Information
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <table id="@tblFabricItemId"></table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+											<input type="checkbox" style="margin:5px;" id="onlyOtherItem" name="onlyOtherItem" value="3" class="chkConceptType" />
+											<label for="onlyOtherItem">Only Flat Knit</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Concept Story</label>
+										<div class="col-sm-8">
+											<textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Concept Story" class="form-control input-sm"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-horizontal">
+								<div class="col-sm-6">
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small"></label>
+										<div class="col-sm-8">
+											<button type="button" id="btn-add-composition" class="btn btn-success btn-xs">
+												<i class="fa fa-plus"></i>&nbsp;Add Composition
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="panel-body">
+						<div class="form-horizontal">
+							<div class="col-sm-12" id="divChild">
+								<div class="panel panel-success" style="border-color:transparent; border-style:none;">
+									<div class="panel-heading">
+										Color Information
+										<button type="button" id="btnAddColor" class="btn btn-success btn-xs">
+											<i class="fa fa-plus"></i>&nbsp;Add Color
+										</button>
+										<button class="btn btn-primary btn-xs" id="btnUpdate" style="float:right;margin-right:10px;">
+											<i class="fa fa-save"></i>&nbsp;&nbsp;Update
+										</button>
+									</div>
+									<div class="panel-body">
+										<div class="form-horizontal">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<table id="@tblChildId"></table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                <div class="col-sm-12" id="divOtherItem">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            Flat Knit Information
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <table id="@tblOtherItemId"></table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+				<div class="col-sm-12" id="divFabricItem">
+					<div class="panel panel-success" style="border-color: transparent; border-style: none;">
+						<div class="panel-heading">
+							Fabric Information
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<table id="@tblFabricItemId"></table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                @*<div class="col-sm-12">
-                        <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                            <div class="panel-heading">
-                                Set Information
-                            </div>
-                            <div class="panel-body">
-                                <div class="form-horizontal">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <button id="btnNewItem" type="button" class="btn btn-success btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;New</button>
-                                            <table id="@tblChildSetId"></table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+				<div class="col-sm-12" id="divOtherItem">
+					<div class="panel panel-success" style="border-color:transparent; border-style:none;">
+						<div class="panel-heading">
+							Flat Knit Information
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<table id="@tblOtherItemId"></table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="box-footer btn-e-float-margin" id="divFormButtons">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="pull-right">
+							<button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+							<button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+							<button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+						</div>
+					</div>
+				</div>
 
-                    <div class="col-sm-12">
-                        <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                            <div class="panel-heading">
-                                Set Details Information
-                            </div>
-                            <div class="panel-body">
-                                <div class="form-horizontal">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <button id="btnNewItem" type="button" class="btn btn-success btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;New</button>
-                                            <table id="@tblChildSetDetailsId"></table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>*@
+			</div>
+		</form>
+	</div>
 
-                <div class="box-footer btn-e-float-margin" id="divFormButtons">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Create New Composition</h4>
-                </div>
-                <div class="modal-body" style="padding: 0 15px">
-                    <table id="tblCreateComposition-@pageId"></table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Create New Composition</h4>
+				</div>
+				<div class="modal-body" style="padding: 0 15px">
+					<table id="tblCreateComposition-@pageId"></table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

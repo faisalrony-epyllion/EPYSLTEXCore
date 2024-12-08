@@ -5,8 +5,12 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Transactions;
+using static Dapper.SqlMapper;
 
 namespace EPYSLTEX.Infrastructure.Services
 {
@@ -102,22 +106,8 @@ namespace EPYSLTEX.Infrastructure.Services
             
             return records;
         }
-        public async Task<dynamic> GetComboData(string sqlQuery, string conKey, object dynamicParameters)
-        {
-            var query = sqlQuery;
-            
-            var isSp = sqlQuery.ToLower().Contains("sp");
-            query = isSp ? sqlQuery : $@"
-                 {sqlQuery}
-               ";
-            var commandType = isSp ? CommandType.StoredProcedure : CommandType.Text;
-            SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
  
-            var records = await _service.GetDynamicDataAsync(query, conn, dynamicParameters, commandType);
-
-            return records;
-        }
-        public async Task<dynamic> GetSelectedItemFinderData(string sqlQuery, string conKey,object param)
+        public async Task<dynamic> GetDynamicDataAsync(string sqlQuery, string conKey,object param)
         {
             SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
              
@@ -125,7 +115,7 @@ namespace EPYSLTEX.Infrastructure.Services
 
             return records;
         }
-        public async Task<dynamic> GetSelectedItemFinderData(string sqlQuery, string conKey)
+        public async Task<dynamic> GetDynamicDataAsync(string sqlQuery, string conKey)
         {
             SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
 
@@ -145,5 +135,34 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             return await _service.ExecuteAsync(query, param);
         }
+        public async Task Save(string tableName,object obj,string conKey)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
+                  conn.OpenAsync();
+               
+                using (var transaction = conn.BeginTransaction()) // Begin a transaction
+                {
+                    try
+                    {
+                        var rowsAffected = _service.AddDynamicObjectAsync(tableName, obj, transaction);
+                        //transaction.Commit();  // Commit the transaction if everything goes well
+                        Console.WriteLine($"{rowsAffected} row(s) inserted.");
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();  // Rollback in case of an error
+                        Console.WriteLine($"Error: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
     }
 }

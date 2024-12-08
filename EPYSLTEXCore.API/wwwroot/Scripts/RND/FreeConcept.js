@@ -489,12 +489,14 @@
     }
 
     function getNew(e) {
+        //$divDetailsEl.removeClass('d-none');
         e.preventDefault();
         axios.get("/api/rnd-free-concept/new")
             .then(function (response) {
                 $("#divRetrial").fadeOut();
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
+                
                 masterData = response.data;
                 masterData.ConceptDate = formatDateToDefault(masterData.ConceptDate);
                 masterData.TrialDate = formatDateToDefault(masterData.TrialDate);
@@ -670,6 +672,7 @@
     }
 
     function save(e) {
+        debugger;
         e.preventDefault();
         var concepts = [];
         var colorList = $tblChildEl.getCurrentViewRecords();

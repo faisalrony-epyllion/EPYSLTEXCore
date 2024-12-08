@@ -204,12 +204,12 @@
         public const string YarnAddProcessAllowanceSetup = "T_YarnAddProcessAllowanceSetup";
         public const string YarnAllowanceSetup = "T_YarnAllowanceSetup";
         public const string YarnAllowanceSetupChild = "T_YarnAllowanceSetupChild";
-        public const string YarnBookingChild = "T_YarnBookingChild";
+        public const string YarnBookingChild = "YarnBookingChild";
         //public const string YarnBookingChild_18_05_17 = "YarnBookingChild_18_05_17";
         public const string YarnBookingChild_Bk = "T_YarnBookingChild_Bk";
         public const string YarnBookingChildGarmentPart = "T_YarnBookingChildGarmentPart";
         public const string YarnBookingChildGarmentPart_Bk = "T_YarnBookingChildGarmentPart_Bk";
-        public const string YarnBookingChildItem = "T_YarnBookingChildItem";
+        public const string YarnBookingChildItem = "YarnBookingChildItem";
         public const string BulkBookingFinishFabricUtilization = "T_BulkBookingFinishFabricUtilization";
         public const string FBookingAcknowledgeChildGFUtilization = "T_FBookingAcknowledgeChildGFUtilization";
         public const string FBookingAcknowledgeChildReplacement = "T_FBookingAcknowledgeChildReplacement";
@@ -852,8 +852,13 @@
         public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
         public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
         public const string CONCEPT_PENDING_STATUS_HK = "T_ConceptPendingStatus_HK";
+        
+        public const string CONCEPT_TYPE = "T_ConceptType";
+        public const string KNITTING_MACHINE_TYPE = "T_KnittingMachineType";
+        public const string KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME = "T_KnittingMachineSubClassTechnicalName";
+        public const string KNITTING_MACHINE_STRUCTURE_TYPE_HK = "T_KnittingMachineStructureType_HK";
 
-
+        public const string BDS_CRITERIA_HK = "T_BDSCriteria_HK";
         #region Garments Table
         public const string SAMPLE_BOOKING_MASTER = "SampleBookingMaster";//Garments Table
         public const string SAMPLE_BOOKING_CONSUMPTION = "SampleBookingConsumption";//Garments Table
@@ -862,6 +867,9 @@
         public const string BOOKING_CHILD = "BookingChild";//Garments Table
         public const string BOOKING_ITEM_ACKNOWLEDGE = "BookingItemAcknowledge";//Garments Table
         #endregion
+
+        public const string YD_BOOKING_MASTER = "T_YDBookingMaster";
+        public const string BDS_DEPENDENT_TNA_EVENT_HK = "T_BDSDependentTNAEvent_HK";
 
     }
 }

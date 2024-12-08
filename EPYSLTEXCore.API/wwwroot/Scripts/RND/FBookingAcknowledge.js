@@ -279,6 +279,7 @@
         });
 
         $formEl.find("#btnSave").click(function (e) {
+            debugger;
             e.preventDefault();
             saveWithConfirm("", false);
         });
@@ -2596,7 +2597,7 @@
                 $divTblEl.fadeOut();
 
                 masterData = response.data;
-
+                debugger;
                 masterData.BookingDate = formatDateToDefault(masterData.BookingDate);
                 setFormData($formEl, masterData);
 
@@ -3433,11 +3434,16 @@
             x.YarnSubBrandID = getDefaultValueWhenInvalidN(x.YarnSubBrandID);
             x.LabdipUpdateDate = null;
         });
-        data.FBookingAcknowledgeList = masterData.FBookingAcknowledgeList;
-        data.FabricBookingAcknowledgeList = masterData.FabricBookingAcknowledgeList;
-        data.FBookingChild = acknowledgeList;
-        data.FBookingAckLiabilityDistributionList = liabilityDistributionList;
-        data.FBookingAcknowledgementYarnLiabilityList = yarnLiabilityList.filter(x => x.AllocatedQty > 0);
+        //data.FBookingAcknowledgeList = masterData.FBookingAcknowledgeList;
+        //data.FabricBookingAcknowledgeList = masterData.FabricBookingAcknowledgeList;
+        //data.FBookingChild = acknowledgeList;
+        //data.FBookingAckLiabilityDistributionList = liabilityDistributionList;
+        //data.FBookingAcknowledgementYarnLiabilityList = yarnLiabilityList.filter(x => x.AllocatedQty > 0);
+        data.FBookingAcknowledgeList = [];
+        data.FabricBookingAcknowledgeList = [];
+        data.FBookingChild = [];
+        data.FBookingAckLiabilityDistributionList = [];
+        data.FBookingAcknowledgementYarnLiabilityList = [];
         data.grpConceptNo = $formEl.find('#GroupConceptNo').val();
         data.IsBDS = _isBDS;
 
@@ -3452,7 +3458,15 @@
 
         data.ListTypeMasterGrid = getListTypeMasterGrid();
 
+        debugger;
+        //var modelDynamic = data;
+        //modelDynamic.Remarks = 'j';
 
+        //for (var key in modelDynamic) {
+        //    if (key.toUpperCase().endsWith('ID')) {
+        //        modelDynamic[key] = parseInt(modelDynamic[key]);
+        //    }
+        //}
         axios.post("/api/fab-acknowledge/acknowledge", data)
             .then(function (response) {
                 if (response.data) {

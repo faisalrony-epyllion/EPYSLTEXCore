@@ -810,8 +810,9 @@
             //selectionType = "Multiple";
         }
 
-        var pageName = isCPRPage ? pageNameConstants.CPR : isFPRPage ? pageNameConstants.FPR : "";
-        console.log(pageName);
+        var pageName = "FPR";
+        //var pageName = isCPRPage ? pageNameConstants.CPR : isFPRPage ? pageNameConstants.FPR : "";
+     
         if ($tblMasterEl) $tblMasterEl.destroy();
 
         $tblMasterEl = new initEJ2Grid({
@@ -1430,18 +1431,7 @@
                 })
             },
             { field: 'YarnCategory', headerText: 'Yarn Category', allowEditing: false, width: 350 },
-            //{
-            //    field: 'FPRCompanyID', headerText: 'Company', edit: ej2GridMultipleDropDownObj({
-            //        dataSource: masterData.CompanyList,
-            //        displayField: "FPRCompanyName",
-            //        onChange: function (selectedData, currentRowData) {
-            //            var index = $tblChildEl.getRowIndexByPrimaryKey(currentRowData.YarnPRChildID);
-            //            alert(index)
-            //            // Call this if you want to update row data
-            //            $tblChildEl.editModule.updateRow(index, currentRowData);
-            //        }
-            //    })
-            //}
+
         ]);
 
         var refSpinner = {
@@ -1493,7 +1483,7 @@
         var tableOptions = {
             tableId: tblChildId,
             data: data,
-            columns: columns,
+            columns: columns,            
             editSettings: {
                 allowAdding: false,
                 allowEditing: true,
@@ -1516,22 +1506,9 @@
                         args.data.AllocationQty = 0;
                         return false;
                     }
-                    //if (args.data.AllocationQty > args.data.ReqQty) {
-                    //    toastr.error(`Maximum Req Qty is ${args.data.ReqQty}`);
-                    //    args.data.PurchaseQty = 0;
-                    //    args.data.AllocationQty = 0;
-                    //    return false;
-                    //}
-
                     args.data.AllocationQty = args.data.ReqQty - args.data.PurchaseQty;
                     args.data.AllocationQty = args.data.AllocationQty.toFixed(2);
                     args.rowData.AllocationQty = args.data.AllocationQty;
-
-                    //var index = $tblChildEl.getRowIndexByPrimaryKey(args.rowData.YarnPRChildID);
-                    //args.data.CompanyNames = args.rowData.CompanyNames;
-                    //args.data.CompanyIDs = args.rowData.CompanyIDs;
-                    //args.data.FPRCompanyName = args.rowData.FPRCompanyName;
-                    //args.data.FPRCompanyID = args.rowData.FPRCompanyID;
                 }
             },
             commandClick: childCommandClick,

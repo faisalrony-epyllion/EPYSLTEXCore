@@ -16,6 +16,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.Entity;
+using System.Text.Json;
 
 
 
@@ -1224,12 +1225,23 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             }
             return fba;
         }
-
+        /*
         [Route("acknowledge")]
         [HttpPost]
-        [ValidateModel]
+        //[ValidateModel]
+        public async Task<IActionResult> Acknowledge(dynamic modelDynamic)
+        {
+            FBookingAcknowledge md = JsonSerializer.Deserialize<FBookingAcknowledge>(modelDynamic.GetRawText()); ;
+            return null;
+        }
+        */
+  
+        [Route("acknowledge")]
+        [HttpPost]
+        //[ValidateModel]
         public async Task<IActionResult> Acknowledge(FBookingAcknowledge modelDynamic)
         {
+
             await _service.CheckIsBookingApprovedAsync(modelDynamic.BookingNo);
 
             FBookingAcknowledge model = CommonFunction.DeepClone(modelDynamic);
@@ -2309,6 +2321,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
             return Ok(SendMailTrueOrFalse);
         }
+
         /* //OFF FOR CORE
 public async Task<bool> SystemMail(List<FabricBookingAcknowledge> saveFabricBookingItemAcknowledgeList, List<BookingMaster> bmList, Boolean IsSendMail, String SaveType, bool HasLiabilities, int unAckBy, string listTypeMasterGrid)
 {

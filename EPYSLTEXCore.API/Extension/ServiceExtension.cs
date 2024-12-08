@@ -9,6 +9,7 @@ using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Application.Services.Booking;
+using EPYSLTEXCore.Application.Services.General;
 using EPYSLTEXCore.Application.Services.RND;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
@@ -37,7 +38,8 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IConceptStatusService, ConceptStatusService>();
 
             service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
-            service.AddTransient<IYarnPRService,YarnPRService>();
+            service.AddTransient<IYarnPRService, YarnPRService>();
+            service.AddTransient<IYarnReceiveService, YarnReceiveService>();
 
 
 
@@ -57,6 +59,7 @@ namespace EPYSLTEXCore.API.Extension
 
             service.AddTransient<IFreeConceptService, FreeConceptService>();
             service.AddTransient<ICommonHelperService, CommonHelperService>();
+            service.AddTransient<IFabricColorBookSetupService, FabricColorBookSetupService>();
             //service.AddTransient<IMapper, Mapper>();
             //service.AddScoped<IGmtEfRepository<ItemSegmentName>, GmtEfRepository<ItemSegmentName>>();
 

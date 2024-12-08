@@ -10,7 +10,6 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using System.Reflection;
-using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 #endregion
 
@@ -28,7 +27,6 @@ builder.Services.AddMemoryCache(opt =>
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
-    
 });
 
 builder.Services.AddApplication(); // Services LifeTime

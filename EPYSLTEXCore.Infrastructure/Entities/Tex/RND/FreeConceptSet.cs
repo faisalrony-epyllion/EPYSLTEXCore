@@ -10,11 +10,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         [ExplicitKey]
         public int FCSetID { get; set; }
 
-        public int ConceptID { get; set; }
+        public int ConceptID { get; set; } = 0;
 
-        public int SubGroupID { get; set; }
+        public int SubGroupID { get; set; }= 0;
 
-        public decimal Ratio { get; set; }
+        public decimal Ratio { get; set; }= decimal.Zero;
 
         #region Additional Fields
 

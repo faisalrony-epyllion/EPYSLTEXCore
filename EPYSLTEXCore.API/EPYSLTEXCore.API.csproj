@@ -7,25 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Contollers\Admin\**" />
     <Compile Remove="wwwroot\App_Themes\adminlte\dist\**" />
     <Compile Remove="wwwroot\App_Themes\home\**" />
     <Compile Remove="wwwroot\App_Themes\plugins\**" />
     <Compile Remove="wwwroot\css\**" />
     <Compile Remove="wwwroot\js\**" />
-    <Content Remove="Contollers\Admin\**" />
     <Content Remove="wwwroot\App_Themes\adminlte\dist\**" />
     <Content Remove="wwwroot\App_Themes\home\**" />
     <Content Remove="wwwroot\App_Themes\plugins\**" />
     <Content Remove="wwwroot\css\**" />
     <Content Remove="wwwroot\js\**" />
-    <EmbeddedResource Remove="Contollers\Admin\**" />
     <EmbeddedResource Remove="wwwroot\App_Themes\adminlte\dist\**" />
     <EmbeddedResource Remove="wwwroot\App_Themes\home\**" />
     <EmbeddedResource Remove="wwwroot\App_Themes\plugins\**" />
     <EmbeddedResource Remove="wwwroot\css\**" />
     <EmbeddedResource Remove="wwwroot\js\**" />
-    <None Remove="Contollers\Admin\**" />
     <None Remove="wwwroot\App_Themes\adminlte\dist\**" />
     <None Remove="wwwroot\App_Themes\home\**" />
     <None Remove="wwwroot\App_Themes\plugins\**" />

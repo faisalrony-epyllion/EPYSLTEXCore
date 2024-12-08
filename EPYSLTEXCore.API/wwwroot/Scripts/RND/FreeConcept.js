@@ -489,13 +489,14 @@
     }
 
     function getNew(e) {
+        //$divDetailsEl.removeClass('d-none');
         e.preventDefault();
         axios.get("/api/rnd-free-concept/new")
             .then(function (response) {
                 $("#divRetrial").fadeOut();
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
-                
+
                 masterData = response.data;
                 masterData.ConceptDate = formatDateToDefault(masterData.ConceptDate);
                 masterData.TrialDate = formatDateToDefault(masterData.TrialDate);
@@ -765,8 +766,12 @@
             concepts.push(obj);
         }
         if (hasError) return;
-
-        axios.post("/api/rnd-free-concept/save", concepts)
+        var config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        axios.post("/api/rnd-free-concept/save", concepts, config)
             .then(function () {
                 toastr.success("Saved successfully.");
                 backToList();

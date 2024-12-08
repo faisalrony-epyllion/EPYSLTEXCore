@@ -422,5 +422,91 @@
         public const int PROJECTION_YARN_BOOKING = 4;
         public const int FABRIC_PROJECTION_YARN_BOOKING = 5;
     }
-
+    public static class ContactCategoryConstants
+    {
+        public const int CONTACT_CATEGORY_BUYER = 1;
+        public const int CONTACT_CATEGORY_SUPPLIER = 2;
+        public const int CONTACT_CATEGORY_CONSIGNEE = 12;
+        public const int CONTACT_CATEGORY_NOTIFY_PARTY = 5;
+    }
+    public static class EntityTypeConstants
+    {
+        public const int PARTIAL_SHIPMENT = 20;
+        public const int PORT_OF_LOADING = 38;
+        public const int PORT_OF_DISCHARGE = 37;
+        public const int CALCULATION_OF_TENURE = 72;
+        public const int LC_TENURE = 73;
+        public const int SHIPMENT_MODE = 41;
+        public const int TRANS_SHIPMENT_ALLOW = 32;
+        public const int BANK_ACCEPTANCE_FROM = 101;
+        public const int MATURITY_CALCULATION = 80;
+        public const int CI_DECLARATION = 99;
+        public const int BI_DECLARATION = 100;
+        public const int TRANSPORT_TYPE = 63;
+        public const int TRANSPORT_MODE = 83;
+        public const int TRANSPORT_AGENCY = 84;
+        public const int AVAILABLE_WITH = 31;
+        public const int SHIPMENT_STATUS = 85;
+        public const int OFFER_VALIDITY = 74;
+        public const int PAYMENT_INSTRUMENT = 26;
+        public const int SERVICE_WO_APPLY = 64;
+        public const int QUALITY_APPROVAL_PROCEDURE = 85;
+        public const int YARN_QC_REQ_FOR = 106;
+        public const int KNITTING_BRAND = 115;
+        public const int KNITTING_TYPE = 110;
+        public const int CDA_QC_REQ_FOR = 107;
+        public const int CDA_SS_REQ_FOR = 200;
+        public const int CDA_Floor_REQ_FOR = 201;
+        public const int YARN_BRAND = 12;
+        public const int YARN_SUB_BRAND = 42;
+        public const int YARN_FIBER_TYPE = 116;
+        public const int YARN_BLEND_TYPE = 117;
+        public const int YARN_TYPE = 118;
+        public const int YARN_PROGRAM = 119;
+        public const int YARN_SUB_PROGRAM = 120;
+        public const int YARN_CERTIFICATION = 121;
+        public const int YARN_Q_PARAMETER = 122;
+        public const int YARN_MANUFACTURING_LINE = 123;
+        public const int YARN_MANUFACTURING_PROCESS = 124;
+        public const int YARN_SUB_M_PROCESS = 125;
+        public const int YARN_COLOR = 126;
+        public const int YARN_COLOR_GRADE = 127;
+        public const int RECIPE_DEFINITION_FOR = 132;
+        public const int RECIPE_DEFINITION_PROCESS = 131;
+        public const int RECIPE_DEFINITION_PARTICULARS = 133;
+        public const int Roll_FINISHING_PROCESS = 134;
+        public const int Roll_FINISHING_QC_STATUS = 135;
+        public const int FLOOR_REQUISITION_STATUS = 136;
+        public const int FIRM_CONCEPT_IMAGE = 139;
+        public const int FIRM_CONCEPT_DECLARATION = 140;
+        public const int DYEING_MACHINE_GROUP = 144;
+        public const int DYEING_MACHINE_BRAND = 145;
+        public const int DYEING_MACHINE_CAPACITY = 146;
+        public const int DYEING_MACHINE_DYE_PROCESS = 147;
+        public const int DYEING_MACHINE_FABRICATION = 148;
+        public const int DYEING_FLOOR = 149;
+        public const int DYEING_MACHINE_NOZZLE = 150;
+        public const int DYEING_MACHINE_CC = 151;
+        public const int FLOOR_REQUISITION_STATUS_FRESH = 1118;
+        public const int FLOOR_REQUISITION_STATUS_RE_DYEING = 1119;
+        public const int CONCEPT_FOR_STRUCTURE_BASE = 1092;
+        public const int CONCEPT_FOR_COLOR_BASE = 1093;
+        public const int FIRM_CONCEPT_IMAGE_PRODUCT = 1127;
+        public const int FIRM_CONCEPT_IMAGE_CAM = 1128;
+        public const int FIRM_CONCEPT_IMAGE_NEEDLE = 1129;
+        public const int FIRM_CONCEPT_DECLARATION_YES = 1130;
+        public const int FIRM_CONCEPT_DECLARATION_NO = 1131;
+        public const int FIRM_CONCEPT_DECLARATION_REWORK = 1132;
+        public const int FIRM_CONCEPT_DECLARATION_DECISION_PENDING = 1133;
+        public const int TESTING_REQUIREMENT_TYPE = 153;
+        public const int TESTING_REQUIREMENT_METHOD = 152;
+        public const int TESTING_REQUIREMENT_DRYING = 154;
+        public const int GREY_QC_MACHINE_CRITERIA = 155;
+        public const int GREY_QC_MACHINE_PROCESS = 156;
+        public const int GREY_QC_MACHINE_MACHINE_TYPE = 157;
+        public const int GREY_QC_MACHINE_BRAND = 161;
+        public const int DEFECTS_CATEGORY = 158;
+        public const int DEFECT = 159;
+        public const int DECISION = 160;
+    }
 }

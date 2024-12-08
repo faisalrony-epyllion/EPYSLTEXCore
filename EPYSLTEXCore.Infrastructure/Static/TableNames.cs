@@ -783,7 +783,7 @@
         public const string YARN_YD_REQ_CHILD = "T_YarnYDReqChild";
         public const string YARN_SHADE_BOOK = "T_YarnShadeBook"; 
         public const string SEGMENT_FILTER_SETUP = "SegmentValueYarnTypeMappingSetup";
-        public const string FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP = "FabricComponentMappingSetup";
+        public const string FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP = "T_FabricComponentMappingSetup";
         public const string SPINNER_WISE_YARN_PACKING_HK = "T_SpinnerWiseYarnPacking_HK";
 
         public const string MACHINE_GAUGE_SETUP = "T_MachineGaugeSetup";

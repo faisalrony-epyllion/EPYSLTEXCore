@@ -50,9 +50,9 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
 
     public class YarnProductSetupChildProgramDTO : YarnProductSetupChildProgramBindingModel
     {
-        public string Program { get; set; }
-        public string SubProgram { get; set; }
-        public string Certifications { get; set; }
+        public string Program { get; set; } = "";
+        public string SubProgram { get; set; } = "";
+        public string Certifications { get; set; } = "";
     }
 
     public class YarnProductSetupChildTechnicalParameterDTO : YarnProductSetupChildTechnicalParameterBindingModel

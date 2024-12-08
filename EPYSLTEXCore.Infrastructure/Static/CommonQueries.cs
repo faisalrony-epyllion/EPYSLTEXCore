@@ -1535,7 +1535,15 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     INNER JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = DVD.LocalOrImportId
                     WHERE 1 = 1 {activeQuery} {usedQuery}";
         }
-
-
+        public static string GetContactsByCategoryType(string contactCategory)
+        {
+            return
+                $@"Select Cast(C.ContactID As varchar) [id], C.ShortName [text]
+                From {DbNames.EPYSL}..Contacts C
+                Inner Join {DbNames.EPYSL}..ContactCategoryChild CCC On C.ContactID = CCC.ContactID
+                Inner Join {DbNames.EPYSL}..ContactCategoryHK CC ON CC.ContactCategoryID = CCC.ContactCategoryID
+                Where CC.ContactCategoryName = '{contactCategory}' And C.Name != 'Select'
+                Order By C.ShortName";
+        }
     }
 }

@@ -8,24 +8,24 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
     public class FabricComponentMappingSetup : DapperBaseEntity
     {
         [ExplicitKey]
-        public int SetupID { get; set; }
-        public int FiberID { get; set; }
-        public int SubProgramID { get; set; }
-        public int CertificationsID { get; set; }
-        public int AddedBy { get; set; }
+        public int SetupID { get; set; } = 0;
+        public int FiberID { get; set; } = 0;
+        public int SubProgramID { get; set; } = 0;
+        public int CertificationsID { get; set; } = 0;
+        public int AddedBy { get; set; } = 0;
         public DateTime DateAdded { get; set; }
-        public int UpdatedBy { get; set; }
+        public int UpdatedBy { get; set; } = 0;
         public DateTime DateUpdated { get; set; }
 
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || SetupID > 0;
         [Write(false)]
-        public string Fiber { get; set; }
+        public string Fiber { get; set; } = "";
         [Write(false)]
-        public string SubProgram { get; set; }
+        public string SubProgram { get; set; } = "";
         [Write(false)]
-        public string Certifications { get; set; }
+        public string Certifications { get; set; } = "";
 
         public FabricComponentMappingSetup()
         {

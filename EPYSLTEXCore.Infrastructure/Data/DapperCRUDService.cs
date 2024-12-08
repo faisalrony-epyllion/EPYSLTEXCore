@@ -1441,32 +1441,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
             return (int)(signature.LastNumber - increment + 1);
         }
 
-        //public async Task<int> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
-        //{
-        //    var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter);
-
-        //    if (signature == null)
-        //    {
-        //        signature = new Signatures
-        //        {
-        //            Field = field,
-        //            Dates = DateTime.Today,
-        //            CompanyId = companyId.ToString(),
-        //            LastNumber = 1
-        //        };
-        //        await Connection.InsertAsync(signature);
-        //    }
-        //    else
-        //    {
-        //        signature.LastNumber++;
-        //        await Connection.UpdateAsync(signature);
-        //    }
-
-        //    var datePart = DateTime.Now.ToString("yyMMdd");
-        //    var numberPart = signature.LastNumber.ToString(padWith);
-        //    return Convert.ToInt32($"{companyId}{datePart}{numberPart}");
-        //}
-
         private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
             string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
@@ -1753,7 +1727,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, FifthParamValue = fifthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
         }
 
-        public async Task<string> GetMaxNoAsync(string field, int companyId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
+        public async Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
         {
             var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter);
 

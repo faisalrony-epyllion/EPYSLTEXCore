@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EPYSLTEX.Core.Statics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -654,7 +655,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
         public static string GetFiberSubProgramCertificationsFilterMapping()
         {
             return $@";select SV.*,ETV.ValueName Fiber,ISV2.SegmentValue SubProgram,ISV3.SegmentValue Certifications
-				from {DbNames.EPYSL}..FabricComponentMappingSetup SV
+				from {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} SV
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID=SV.FiberID  
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID=SV.SubProgramID  
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID=SV.CertificationsID
@@ -667,7 +668,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 FROM {DbNames.EPYSL}..ItemSegmentName ISN
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN {DbNames.EPYSL}..FabricComponentMappingSetup FCMS on FCMS.CertificationsID=ISV.SegmentValueID
+                LEFT JOIN {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} FCMS on FCMS.CertificationsID=ISV.SegmentValueID
 		        LEFT JOIN CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 		        	AND ISNULL(CBS.IsInactive,0) = 0
@@ -680,7 +681,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 FROM {DbNames.EPYSL}..ItemSegmentName ISN
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN {DbNames.EPYSL}..FabricComponentMappingSetup FCMS on FCMS.SubProgramID=ISV.SegmentValueID
+                LEFT JOIN {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} FCMS on FCMS.SubProgramID=ISV.SegmentValueID
 		        LEFT JOIN SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 			        AND ISNULL(SBS.IsInactive,0) = 0 

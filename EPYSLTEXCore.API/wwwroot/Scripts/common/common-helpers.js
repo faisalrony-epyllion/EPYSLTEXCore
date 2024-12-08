@@ -2491,7 +2491,7 @@ async function getYarnItemColumnsAsync(dataList, isEditable = true) {
 async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true) {
 
     try {
-
+        debugger;
         var response = await axios.get(getYarnItemsApiUrl(dataList));
         itemSegmentValues = response.data;
         var yarnTypeElem, manufacturingProcessElem, subProcessElem, qualityParameterElem, countElem;

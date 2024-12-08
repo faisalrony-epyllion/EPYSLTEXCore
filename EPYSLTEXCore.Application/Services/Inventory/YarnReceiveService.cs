@@ -1409,7 +1409,7 @@ namespace EPYSLTEXCore.Application.Services
                 await _service.SaveAsync(yarnReceiveChilds, transaction);
                 foreach (YarnReceiveChild item in yarnReceiveChilds)
                 {
-                   // await _service.ValidationSingleAsync(item, transaction, SPNames.sp_Validation_YarnReceiveChild, item.EntityState, userId, item.ChildID);
+                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnReceiveChild", item.EntityState, userId, item.ChildID);
                 }
 
                 await _service.SaveAsync(yarnReceiveChildOrders.Where(x => x.EntityState != EntityState.Deleted).ToList(), transaction);

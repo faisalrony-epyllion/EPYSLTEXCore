@@ -16,6 +16,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
         Task<dynamic> GetFinderData(string sqlQuery, string conKey, string primaryKeyColumn, PaginationInfo paginationInfo);
         Task<dynamic> GetDynamicDataAsync(string sqlQuery, string conKey);
         Task Save(string tableName, object obj ,string conKey);
+        Task<IEnumerable<CommonInterfaceMaster>> GetConfigurationAsyncByApplicationID(int applicationId);
+
 
     }
 }

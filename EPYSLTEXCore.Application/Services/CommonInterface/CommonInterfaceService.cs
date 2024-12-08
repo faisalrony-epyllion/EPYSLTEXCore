@@ -69,6 +69,79 @@ namespace EPYSLTEX.Infrastructure.Services
                 _connection.Close();
             }
         }
+        public async Task<IEnumerable<CommonInterfaceMaster>> GetConfigurationAsyncByApplicationID(int applicationId)
+        {
+            string query = $@"
+                    -- Select MenuId and store in temporary table
+                    SELECT MenuId
+                    INTO #MenuIds
+                    FROM EPYSL..Menu
+                    WHERE ApplicationID = {applicationId};
+
+                    -- Select from CommonInterfaceMaster
+                    SELECT CM.*
+                    FROM CommonInterfaceMaster CM
+                    INNER JOIN #MenuIds M ON CM.MenuId = M.MenuId;
+
+                    -- Select from CommonInterfaceChild
+                    SELECT C.*
+                    FROM CommonInterfaceChild C
+                    INNER JOIN CommonInterfaceMaster M ON C.ParentID = M.MasterID
+                    INNER JOIN #MenuIds M2 ON M.MenuId = M2.MenuId;
+
+                    -- Select from CommonInterfaceChildGrid
+                    SELECT C.*
+                    FROM CommonInterfaceChildGrid C
+                    INNER JOIN CommonInterfaceMaster M ON C.ParentID = M.MasterID
+                    INNER JOIN #MenuIds M2 ON M.MenuId = M2.MenuId;
+
+                    -- Select from CommonInterfaceChildGridColumn
+                    SELECT C.*
+                    FROM CommonInterfaceChildGridColumn C
+                    INNER JOIN CommonInterfaceMaster M ON C.ParentID = M.MasterID
+                    INNER JOIN #MenuIds M2 ON M.MenuId = M2.MenuId;
+
+                    -- Drop the temporary table
+                    DROP TABLE #MenuIds;";
+
+            try
+            {
+                await _connection.OpenAsync();
+           
+                var records = await _connection.QueryMultipleAsync(query);
+
+                // Read the first result set (CommonInterfaceMaster)
+                var commonInterfaceMasters = await records.ReadAsync<CommonInterfaceMaster>();
+
+                // Read the second result set (CommonInterfaceChild)
+                var commonInterfaceChildren = await records.ReadAsync<CommonInterfaceChild>();
+
+                // Read the third result set (CommonInterfaceChildGrid)
+                var commonInterfaceChildGrids = await records.ReadAsync<CommonInterfaceChildGrid>();
+
+                // Read the fourth result set (CommonInterfaceChildGridColumn)
+                var commonInterfaceChildGridColumns = await records.ReadAsync<CommonInterfaceChildGridColumn>();
+
+                // Process the results (Optional - depending on how you want to use them)
+                foreach (var master in commonInterfaceMasters)
+                {
+                    // Optionally, link child data to the parent, if needed
+                    master.Childs = commonInterfaceChildren.Where(c => c.ParentId == master.MasterID).ToList();
+                    master.ChildGrids = commonInterfaceChildGrids.Where(c => c.ParentId == master.MasterID).ToList();
+                    master.ChildGridColumns = commonInterfaceChildGridColumns.Where(c => c.ParentId == master.MasterID).ToList();
+                }
+
+                return commonInterfaceMasters;
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
 
         public async Task<CommonInterfaceMaster> GetCommonInterfaceMasterChildAsync(int menuId)
         {

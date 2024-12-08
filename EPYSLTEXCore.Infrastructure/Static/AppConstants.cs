@@ -11,6 +11,7 @@
         public const string TEXTILE_CONNECTION = "TexConnection";
         public const int ITEM_SUB_GROUP_YARN_NEW = 102;
         public const int ITEM_SUB_GROUP_YARN = 39;
+        public const int APPLICATION_ID=11;
     }
     public static class DbNames
     {
@@ -170,6 +171,7 @@
     public static class InMemoryCacheKeys
     {
         public const string APIReports = "DynamicAPIReports";
+        public const string CommonInterfaceConfig = "CommonInterfaceConfig";
     }
     public static class CompnayIDConstants
     {

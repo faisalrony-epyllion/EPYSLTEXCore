@@ -153,7 +153,6 @@
         public const string YarnLCChild = "T_YarnLCChild";
         public const string YarnLCDocument = "T_YarnLCDocument";
         public const string YarnLCMaster = "T_YarnLCMaster";
-        public const string LCInfo = "T_LCInfo";
         public const string IMPORT_LC_NO = "LcNo";
         public const string MachineGaugeSetup = "T_MachineGaugeSetup";
         public const string ManufacturingCost = "T_ManufacturingCost";
@@ -266,6 +265,7 @@
         //public const string YarnPOForOrder = "YarnPOForOrder";
         //public const string YarnPOForBuyer = "YarnPOForBuyer";
         public const string YarnPOMaster = "T_YarnPOMaster";
+        
         //public const string YarnPOReturnChild = "YarnPOReturnChild";
         //public const string YarnPOReturnMaster = "YarnPOReturnMaster";
         public const string YarnPriceSetup = "T_YarnPriceSetup";

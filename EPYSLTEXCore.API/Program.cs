@@ -22,12 +22,11 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache(opt =>
 {
-    opt.SizeLimit = 100; // Set the caching key limit
+    opt.SizeLimit = 100 * 1024 * 1024; // 100MB limit
 });
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; // Ignore nulls
 });
 
 builder.Services.AddApplication(); // Services LifeTime

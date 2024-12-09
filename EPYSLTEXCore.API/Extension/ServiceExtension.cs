@@ -38,10 +38,13 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IConceptStatusService, ConceptStatusService>();
             service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
             service.AddTransient<IYarnPRService, YarnPRService>();
-            service.AddTransient<IYarnReceiveService, YarnReceiveService>();       
+            service.AddTransient<IYarnReceiveService, YarnReceiveService>();
+            service.AddTransient<IYarnRackBinAllocationService, YarnRackBinAllocationService>();
             service.AddScoped(typeof(IItemMasterService<>), typeof(ItemMasterService<>));
+            
             service.AddTransient<IItemSetupService, ItemSetupService>();
             service.AddTransient<IProjectionYarnBookingService, ProjectionYarnPurchaseBookingService>();
+
 
 
             //foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
@@ -61,8 +64,7 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IFreeConceptService, FreeConceptService>();
             service.AddTransient<ICommonHelperService, CommonHelperService>();
             service.AddTransient<IFabricColorBookSetupService, FabricColorBookSetupService>();
-            //service.AddTransient<IMapper, Mapper>();
-            //service.AddScoped<IGmtEfRepository<ItemSegmentName>, GmtEfRepository<ItemSegmentName>>();
+
 
         }
     }

@@ -156,16 +156,13 @@ namespace EPYSLTEXCore.Infrastructure.Static
         }
         public static string GetEntityTypesByEntityTypeName(string segmentName)
         {
-            /* return
-                 $@"SELECT CAST(ValueID AS VARCHAR) id, ValueName text
+            return
+                $@"SELECT CAST(ValueID AS VARCHAR) id, ValueName text
                  FROM {DbNames.EPYSL}..EntityTypeValue EV
                  Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-                 WHERE ET.EntityTypeName = '{entityTypeName}' AND ValueName <> 'Select'
-                 ORDER BY ValueName";*/
-            return $@"Select CAST(ISV.SegmentValueID AS nvarchar) id, ISV.SegmentValue [text]
-                From {DbNames.EPYSL}..ItemSegmentValue ISV
-                Inner Join {DbNames.EPYSL}..ItemSegmentName ISN On ISV.SegmentNameID = ISN.SegmentNameID
-                Where ISN.SegmentName = '{segmentName}'";
+                 WHERE ET.EntityTypeName = '{segmentName}' AND ValueName <> 'Select'
+                 ORDER BY ValueName";
+   
         }
         public static string GetItemSegmentValuesBySegmentNamesWithSegmentName()
         {

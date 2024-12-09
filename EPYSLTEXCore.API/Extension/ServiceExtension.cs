@@ -42,6 +42,7 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
             service.AddTransient<IYarnPRService, YarnPRService>();
             service.AddTransient<IYarnReceiveService, YarnReceiveService>();
+            service.AddTransient<IYarnReceiveService, YarnReceiveService>();
             service.AddTransient<IProjectionYarnBookingService, ProjectionYarnPurchaseBookingService>();
 
 

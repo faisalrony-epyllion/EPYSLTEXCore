@@ -1,10 +1,8 @@
-﻿using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.SupplyChain;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
 {
-    public class ItemMaster : IBaseEntity
+    public class ItemMasterBomTemp : IBaseEntity
     {
         ///<summary>
         /// ItemMasterID (Primary key)
@@ -126,60 +124,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         ///</summary>
         public int Segment15ValueId { get; set; }
 
-        /// <summary>
-        /// EntityState
-        /// </summary>
         public EntityState EntityState { get; set; }
 
-        /// <summary>
-        /// Child BookingChilds where [BookingChild].[ItemMasterID] point to this entity (FK_BookingChild_ItemMaster)
-        /// </summary>
-        public virtual ICollection<BookingChild> BookingChilds { get; set; }
-        /// <summary>
-        /// Child BookingChildDetails where [BookingChildDetails].[ItemMasterID] point to this entity (FK_BookingChildDetails_ItemMaster)
-        /// </summary>
-        public virtual ICollection<BookingChildDetail> BookingChildDetails { get; set; }
-        /// <summary>
-        /// Child PiChilds where [PIChild].[ItemMasterID] point to this entity (FK_PIChild_ItemMaster)
-        /// </summary>
-        public virtual ICollection<PiChild> PiChilds { get; set; }
-        /// <summary>
-        /// Child SpoChilds where [SPOChild].[ItemMasterID] point to this entity (FK_SPOChild_ItemMaster)
-        /// </summary>
-        public virtual ICollection<SpoChild> SpoChilds { get; set; }
-        /// <summary>
-        /// Child SpoChildDetails where [SPOChildDetails].[ItemMasterID] point to this entity (FK_SPOChildDetails_ItemMaster)
-        /// </summary>
-        public virtual ICollection<SpoChildDetail> SpoChildDetails { get; set; }
-
-        /// <summary>
-        /// Parent ItemGroup pointed by [ItemMaster].([ItemGroupId]) (FK_ItemMaster_ItemGroup)
-        /// </summary>
-        public virtual ItemGroup ItemGroup { get; set; }
-
-        /// <summary>
-        /// Parent ItemSubGroup pointed by [ItemMaster].([SubGroupId]) (FK_ItemMaster_ItemSubGroup)
-        /// </summary>
-        public virtual ItemSubGroup ItemSubGroup { get; set; }
-
-        /// <summary>
-        /// Parent Unit pointed by [ItemMaster].([DefaultReportUnitId]) (FK_ItemMaster_Unit1)
-        /// </summary>
-        public virtual Unit DefaultReportUnit { get; set; }
-
-        /// <summary>
-        /// Parent Unit pointed by [ItemMaster].([DefaultTranUnitId]) (FK_ItemMaster_Unit)
-        /// </summary>
-        public virtual Unit DefaultTranUnit { get; set; }
-
-        public ItemMaster()
+        public ItemMasterBomTemp()
         {
             EntityState = EntityState.Added;
-            BookingChilds = new List<BookingChild>();
-            BookingChildDetails = new List<BookingChildDetail>();
-            PiChilds = new List<PiChild>();
-            SpoChilds = new List<SpoChild>();
-            SpoChildDetails = new List<SpoChildDetail>();
         }
     }
 }

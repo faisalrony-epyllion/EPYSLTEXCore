@@ -375,6 +375,12 @@
         public const string PROJECTION_YARN_BOOKING = "Projection Yarn Booking";
         public const string FABRIC_PROJECTION_YARN_BOOKING = "Fabric Projection Yarn Booking";
     }
+    public static class DB_TYPE
+    {
+        public const int textile = 1;
+        public const int gmt = 2;
+
+    }
     public static class ItemSegmentValueConstants
     {
         public const string ANIMAL_FIBER = "Animal Fiber [AF]";
@@ -517,5 +523,25 @@
         public const int Textile = 3;
         public const int SupplyChain = 4;
         public const int MnM = 5;
+    }
+
+    public static class CacheKeys
+    {
+        public const string Yarn_Item_Segments = "YarnItemSegments";
+
+    }
+
+    public static class EnumSegmentType
+    {
+        public const int None = 0;
+        public const int Composition = 1;
+        public const int YarnType = 2;
+        public const int Process = 3;
+        public const int SubProcess = 4;
+        public const int QualityParameter = 5;
+        public const int Count = 6;
+        public const int Fiber = 7;
+        public const int SubProgram = 8;
+        public const int Certification = 9;
     }
 }

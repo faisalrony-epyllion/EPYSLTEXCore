@@ -10,12 +10,15 @@
     <Compile Remove="Entities\**" />
     <Compile Remove="Interfaces\Base\**" />
     <Compile Remove="Interfaces\Repository\**" />
+    <Compile Remove="Services\Repositories\**" />
     <EmbeddedResource Remove="Entities\**" />
     <EmbeddedResource Remove="Interfaces\Base\**" />
     <EmbeddedResource Remove="Interfaces\Repository\**" />
+    <EmbeddedResource Remove="Services\Repositories\**" />
     <None Remove="Entities\**" />
     <None Remove="Interfaces\Base\**" />
     <None Remove="Interfaces\Repository\**" />
+    <None Remove="Services\Repositories\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,16 +33,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EPYSLTEXCore.Infrastructure\EPYSLTEXCore.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Interfaces\CommonInterface\" />
     <Folder Include="Interfaces\Select2\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\CommonInterface\" />
-    <Folder Include="Services\Repositories\" />
     <Folder Include="Services\User\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EPYSLTEXCore.Infrastructure\EPYSLTEXCore.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

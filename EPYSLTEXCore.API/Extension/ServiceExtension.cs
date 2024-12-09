@@ -5,17 +5,13 @@ using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Booking;
-using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
-using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Application.Services.Booking;
 using EPYSLTEXCore.Application.Services.General;
-using EPYSLTEXCore.Application.Services.Inventory;
 using EPYSLTEXCore.Application.Services.RND;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 namespace EPYSLTEXCore.API.Extension
 {
     public static class ServiceExtensions
@@ -38,7 +34,6 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
             service.AddTransient<IFreeConceptMRService, FreeConceptMRService>();
             service.AddTransient<IConceptStatusService, ConceptStatusService>();
-
             service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
             service.AddTransient<IYarnPRService, YarnPRService>();
             service.AddTransient<IYarnReceiveService, YarnReceiveService>();

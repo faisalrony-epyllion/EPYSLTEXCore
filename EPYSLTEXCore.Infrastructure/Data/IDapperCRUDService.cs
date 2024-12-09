@@ -113,8 +113,11 @@ namespace EPYSLTEXCore.Infrastructure.Data
         #region signature Methods
         Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
         Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
+
+        Task<IEnumerable<T>> AddManyAsync(IEnumerable<T> entities, string tableName);
         Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000");
 
         #endregion
+        int RunSqlCommand(string query, bool transactionRequired, object parameters = null);
     }
 }

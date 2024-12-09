@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Data;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Dynamic;
@@ -777,79 +778,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             throw new System.NotImplementedException();
         }
 
-        /*public async Task<T> SaveEntityAsync(T entity)
-        {
-            SqlTransaction transaction = null;
-            try
-            {
-                await Connection.OpenAsync();
-                transaction = Connection.BeginTransaction();
-
-                string tableName = EntityReflectionHelper.GetTableName<T>();
-                string keyColumnName = EntityReflectionHelper.GetKeyColumnName<T>();
-
-                if (tableName == null || keyColumnName == null)
-                {
-                    throw new InvalidOperationException("Table name or key column could not be determined for the entity.");
-                }
-
-                // Use reflection to get the value of the key property
-                var keyValue = typeof(T).GetProperty(keyColumnName)?.GetValue(entity, null);
-
-                // Check if entity exists
-                string selectQuery = $"SELECT * FROM {tableName} WHERE {keyColumnName} = @Key";
-                var existingEntity = await Connection.QueryFirstOrDefaultAsync<T>(selectQuery, new { Key = keyValue }, transaction);
-
-                if (existingEntity == null)
-                {
-                    // If the entity does not exist, set it to be added
-                    entity.EntityState = System.Data.Entity.EntityState.Added;
-                    // Get Max Number of primary Key Value from table
-                    var result = await Connection.QueryAsync<dynamic>(
-                        $"SELECT TOP 1 {keyColumnName} AS ID FROM {tableName} ORDER BY {keyColumnName} DESC",
-                        transaction: transaction
-                    ).ConfigureAwait(false);
-
-                    int id = result.FirstOrDefault()?.ID ?? 0; // Default to 0 if no records exist
-
-                    // Increment the ID to assign the next value
-                    id++;
-
-                    // Set Max Number to primary key property
-                    typeof(T).GetProperty(keyColumnName)?.SetValue(entity, id);
-                }
-                else
-                {
-                    // If the entity exists, set it to be modified
-                    entity.EntityState = System.Data.Entity.EntityState.Modified;
-
-                    // Update the existing entity's properties with the new values
-                    var properties = EntityReflectionHelper.GetColumnNames<T>();
-                    foreach (var property in properties)
-                    {
-                        var newValue = typeof(T).GetProperty(property)?.GetValue(entity, null);
-                        typeof(T).GetProperty(property)?.SetValue(existingEntity, newValue);
-                    }
-                }
-
-                // Save the entity using the CRUD service
-                await SaveSingleAsync(entity, transaction);
-                transaction.Commit();
-
-                return entity;
-            }
-            catch (Exception ex)
-            {
-                transaction?.Rollback();
-                throw ex;
-            }
-            finally
-            {
-                Connection.Close();
-            }
-        }*/
-
-        public async Task<T> SaveEntityAsync(T entity)
+          public async Task<T> SaveEntityAsync(T entity)
         {
             SqlTransaction transaction = null;
             try
@@ -1071,9 +1000,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         }
 
-
-
-
         public async Task<bool> DeleteEntityAsync(T entity, string keyValue)
         {
             SqlTransaction transaction = null;
@@ -1201,7 +1127,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 Connection.Close();
             }
         }
-
         public async Task<bool> DeleteEntityCompositKeyAsync(T entity)
         {
             SqlTransaction transaction = null;
@@ -1254,80 +1179,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             {
                 Connection.Close();
             }
-        }
-
-        /*   public async Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null)
-           {
-               if (Connection.State != ConnectionState.Open)
-               {
-                   await Connection.OpenAsync();
-               }
-
-               using (var transactionScope = transaction ?? Connection.BeginTransaction())
-               {
-                   try
-                   {
-                       string tableName = EntityReflectionHelper.GetTableName(entity.GetType());
-                       string keyPropertyName = EntityReflectionHelper.GetKeyPropertyName(entity.GetType());
-
-                       var keyValue = entity.GetType().GetProperty(keyPropertyName).GetValue(entity);
-                       bool isNew = keyValue == null || Convert.ToInt64(keyValue) == 0;
-
-                       if (isNew)
-                       {
-                           await Connection.InsertAsync(entity, transactionScope);
-                       }
-                       else
-                       {
-                           await Connection.UpdateAsync(entity, transactionScope);
-                       }
-
-                       foreach (var prop in entity.GetType().GetProperties())
-                       {
-                           if (EntityReflectionHelper.IsForeignKey(prop))
-                           {
-                               var childEntity = prop.GetValue(entity);
-                               if (childEntity != null)
-                               {
-                                   var foreignKeyProperty = childEntity.GetType().GetProperty(prop.Name);
-                                   foreignKeyProperty.SetValue(childEntity, keyValue);
-
-                                   await SaveNestedEntityAsync(childEntity as T, transactionScope);
-                               }
-                           }
-                           else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsGenericType)
-                           {
-                               var childEntities = prop.GetValue(entity) as IEnumerable;
-                               if (childEntities != null)
-                               {
-                                   foreach (var childEntity in childEntities)
-                                   {
-                                       var foreignKeyProperty = childEntity.GetType().GetProperty($"{entity.GetType().Name}Id");
-                                       foreignKeyProperty.SetValue(childEntity, keyValue);
-
-                                       await SaveNestedEntityAsync(childEntity as T, transactionScope);
-                                   }
-                               }
-                           }
-                       }
-
-                       transactionScope.Commit();
-                   }
-                   catch (Exception ex)
-                   {
-                       transactionScope.Rollback();
-                       throw ex;
-                   }
-                   finally
-                   {
-                       if (transaction == null)
-                       {
-                           Connection.Close();
-                       }
-                   }
-               }
-           }
-        */
+        }    
         public async Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null)
         {
             if (Connection.State != ConnectionState.Open)
@@ -1383,10 +1235,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 }
             }
         }
-
-
-
-
 
         #region signature Methods
 
@@ -1566,7 +1414,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
         
 
         #endregion
-
 
         #region Dynamic Table Save
         // Get Column Names from Schema
@@ -1819,7 +1666,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         #endregion
 
-
         #region Table Max Number without signature table
         public async Task<int> GetUniqueCodeWithoutSignatureAsync(
             IDbConnection connection,
@@ -1914,5 +1760,72 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
         #endregion
 
+
+        public async Task<IEnumerable<T>> AddManyAsync(IEnumerable<T> entities, string tableName)
+        {
+
+            var transaction = Connection.BeginTransaction();
+            try
+            {
+           
+                var maxId = await GetMaxIdAsync(tableName, entities.Count());
+
+                // Prepare insert query
+                var insertQuery = $"INSERT INTO {tableName} ({string.Join(",", typeof(T).GetProperties().Select(p => p.Name))}) " +
+                                  $"VALUES ({string.Join(",", typeof(T).GetProperties().Select(p => "@" + p.Name))})";
+
+                // Assign new IDs and insert entities
+                foreach (var entity in entities)
+                {
+                    typeof(T).GetProperty("Id")?.SetValue(entity, ++maxId); // Set new ID
+                    await Connection.ExecuteAsync(insertQuery, entity, transaction: transaction);
+                }
+
+                transaction.Commit();
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw; // Rethrow exception for caller to handle
+            }
+
+    
+        }
+
+        public int RunSqlCommand(string query, bool transactionRequired, object parameters = null)
+        {
+
+            Connection.Open();
+
+            if (transactionRequired)
+            {
+                using (var transaction = Connection.BeginTransaction())
+                {
+                    try
+                    {
+                        int result = Connection.Execute(query, parameters, transaction: transaction);
+                        transaction.Commit();
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Connection.Execute(query, parameters);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+        }
     }
 }

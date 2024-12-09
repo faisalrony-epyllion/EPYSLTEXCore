@@ -171,7 +171,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         public string YarnPRByName { get; set; } = "";
         [Write(false)]
         public string CreateBy { get; set; } = "";
-
+        [Write(false)]
+        public int MaxValue { get; set; } = 0;
         #endregion Additional Property
     }
 }

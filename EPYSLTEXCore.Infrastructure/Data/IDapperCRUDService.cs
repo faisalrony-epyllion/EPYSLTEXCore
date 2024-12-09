@@ -102,22 +102,24 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<bool> DeleteEntityAsync(T entity, string keyValue);
         Task<T> SaveEntityCompositKeyAsync(T entity);
         Task<bool> DeleteEntityCompositKeyAsync(T entity);
-         Task SaveNestedEntityAsync(Object T, IDbTransaction transaction = null);
+        Task SaveNestedEntityAsync(Object T, IDbTransaction transaction = null);
         // Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null);
         // Task SaveNestedEntityAsync<T>(T entity, IDbTransaction transaction);
-         Task<int> AddDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null);
+        Task<int> AddDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null);
         Task<int> AddSingleDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null);
         Task<int> DeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null);
         Task<int> UpdateDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null);
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);
         #region signature Methods
-        Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null);
-        Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
+        Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null);
+        Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null);
         int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
         Task<IEnumerable<T>> AddManyAsync(IEnumerable<T> entities, string tableName);
         Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000");
 
         #endregion
         int RunSqlCommand(string query, bool transactionRequired, object parameters = null);
+        Task<int> GetUniqueCodeWithoutSignatureAsync(IDbConnection connection, IDbTransaction transaction, string tableName, string fieldName);
+        Task<int> GetUniqueCodeWithoutSignatureAsync(IDbConnection connection, IDbTransaction transaction, string tableName, string fieldName, string preFix);
     }
 }

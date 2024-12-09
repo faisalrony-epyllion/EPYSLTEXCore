@@ -290,113 +290,113 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || YPOMasterID > 0;
         [Write(false)]
-        public IEnumerable<YarnPOChildYarnSubProgram> YarnPOChildYarnSubPrograms { get; set; }
+        public IEnumerable<YarnPOChildYarnSubProgram> YarnPOChildYarnSubPrograms { get; set; } = Enumerable.Empty<YarnPOChildYarnSubProgram>();
 
         [Write(false)]
-        public IEnumerable<YarnPOChildOrder> YarnPOChildOrders { get; set; }
+        public IEnumerable<YarnPOChildOrder> YarnPOChildOrders { get; set; } = Enumerable.Empty<YarnPOChildOrder>();
 
         [Write(false)]
-        public IEnumerable<YarnPOChildBuyer> YarnPOForBuyers { get; set; }
+        public IEnumerable<YarnPOChildBuyer> YarnPOForBuyers { get; set; } = Enumerable.Empty<YarnPOChildBuyer>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> BuyerList { get; set; }
+        public IEnumerable<Select2OptionModel> BuyerList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ExportOrderList { get; set; }
+        public IEnumerable<Select2OptionModel> ExportOrderList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> SupplierList { get; set; }
+        public IEnumerable<Select2OptionModel> SupplierList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> IncoTermsList { get; set; }
+        public IEnumerable<Select2OptionModel> IncoTermsList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> PaymentTermsList { get; set; }
+        public IEnumerable<Select2OptionModel> PaymentTermsList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> PIForList { get; set; }
+        public IEnumerable<Select2OptionModel> PIForList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> PortofLoadingList { get; set; }
+        public IEnumerable<Select2OptionModel> PortofLoadingList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> PortofDischargeList { get; set; }
+        public IEnumerable<Select2OptionModel> PortofDischargeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CalculationofTenureList { get; set; }
+        public IEnumerable<Select2OptionModel> CalculationofTenureList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CreditDaysList { get; set; }
+        public IEnumerable<Select2OptionModel> CreditDaysList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CurrencyTypeList { get; set; }
+        public IEnumerable<Select2OptionModel> CurrencyTypeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CompanyList { get; set; }
+        public IEnumerable<Select2OptionModel> CompanyList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> BankBranchList { get; set; }
+        public IEnumerable<Select2OptionModel> BankBranchList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ShipmentModeList { get; set; }
+        public IEnumerable<Select2OptionModel> ShipmentModeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CountryOfOriginList { get; set; }
+        public IEnumerable<Select2OptionModel> CountryOfOriginList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> TypeOfLcList { get; set; }
+        public IEnumerable<Select2OptionModel> TypeOfLcList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> OfferValidityList { get; set; }
+        public IEnumerable<Select2OptionModel> OfferValidityList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> QualityApprovalProcedureList { get; set; }
+        public IEnumerable<Select2OptionModel> QualityApprovalProcedureList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnUnitList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnUnitList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> FiberTypeList { get; set; }
+        public IEnumerable<Select2OptionModel> FiberTypeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> BlendTypeList { get; set; }
+        public IEnumerable<Select2OptionModel> BlendTypeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnTypeList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnTypeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnProgramList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnProgramList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnSubProgramList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnSubProgramList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ManufacturingLineList { get; set; }
+        public IEnumerable<Select2OptionModel> ManufacturingLineList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ManufacturingProcessList { get; set; }
+        public IEnumerable<Select2OptionModel> ManufacturingProcessList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ManufacturingSubProcessList { get; set; }
+        public IEnumerable<Select2OptionModel> ManufacturingSubProcessList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnCompositionList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnCompositionList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnCountList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnCountList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnColorList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnColorList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ColorGradeList { get; set; }
+        public IEnumerable<Select2OptionModel> ColorGradeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> ShadeList { get; set; }
+        public IEnumerable<Select2OptionModel> ShadeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> BaseTypes { get; set; }
+        public IEnumerable<Select2OptionModel> BaseTypes { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; }
+        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public List<int> IgnoreValidationPOIds { get; set; } = new List<int>();
 

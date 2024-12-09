@@ -435,6 +435,14 @@
         public const int CONTACT_CATEGORY_CONSIGNEE = 12;
         public const int CONTACT_CATEGORY_NOTIFY_PARTY = 5;
     }
+
+    public enum EnumRackBinOperationType
+    {
+        None = 0,
+        Addition = 1,
+        Deduction = 2
+    }
+
     public static class EntityTypeConstants
     {
         public const int PARTIAL_SHIPMENT = 20;

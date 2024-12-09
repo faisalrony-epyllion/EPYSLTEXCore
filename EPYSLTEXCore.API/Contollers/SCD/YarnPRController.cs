@@ -114,6 +114,9 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
 
             var tempChildList = CommonFunction.DeepClone(model.Childs);
 
+            //List<YarnPRChild> childRecords = model.Childs;
+            //_itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+
             List<YarnPRChild> prChilds = source != PRFromName.PROJECTION_YARN_BOOKING ? await _service.GetChilds(conceptNos, itemIds, bookingNos) : new List<YarnPRChild>();
             if (model.IsAdditional)
             {

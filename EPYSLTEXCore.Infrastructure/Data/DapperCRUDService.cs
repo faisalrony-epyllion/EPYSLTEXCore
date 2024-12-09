@@ -1316,7 +1316,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             return Convert.ToInt32(signature.LastNumber - increment + 1);
         }
-        private  Signatures GetSignature(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
+        private Signatures GetSignature(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
             string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
             var parameters = new
@@ -1344,7 +1344,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                 if (Connection.State == System.Data.ConnectionState.Closed)
                 {
-                     Connection.Open();
+                    Connection.Open();
                 }
                 var records = Connection.QueryFirstOrDefault(query, parameters);
                 string jsonString = JsonConvert.SerializeObject(records);
@@ -1360,7 +1360,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             {
                 Connection.Close();
             }
-
+        }
         private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter, SqlTransaction transaction = null)
         {
             string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";

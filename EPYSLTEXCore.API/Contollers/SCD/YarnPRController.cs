@@ -4,11 +4,14 @@ using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Server;
+using Newtonsoft.Json;
 using NLog;
 using System.Data.Entity;
 
@@ -105,8 +108,10 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
         [Route("save")]
         [HttpPost]
     
-        public async Task<IActionResult> Save(YarnPRMaster model)
+        public async Task<IActionResult> Save(dynamic model1)
         {
+            YarnPRMaster model = JsonConvert.DeserializeObject<YarnPRMaster>(Convert.ToString(model1));
+
             string source = model.Childs.Count() > 0 ? model.Childs.First().Source : "";
             string conceptNos = string.Join(",", model.Childs.Select(x => "'" + x.ConceptNo + "'"));
             string itemIds = string.Join(",", model.Childs.Select(x => x.ItemMasterID));

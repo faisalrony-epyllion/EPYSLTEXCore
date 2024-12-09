@@ -31,6 +31,7 @@ builder.Services.AddMemoryCache(opt =>
 #region JSON config
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
     options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
     options.JsonSerializerOptions.AllowTrailingCommas = true; // For loose JSON parsing
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // Case-insensitive matching

@@ -6,10 +6,12 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,11 +27,18 @@ namespace EPYSLTEXCore.Application.Services
     {
         private readonly IDapperCRUDService<YarnReceiveMaster> _service;
         private readonly SqlConnection _connection;
+        private SqlTransaction transaction = null;
+        private readonly IConfiguration _configuration;
 
-        public YarnReceiveService(IDapperCRUDService<YarnReceiveMaster> service)
+        public YarnReceiveService(
+            IDapperCRUDService<YarnReceiveMaster> service
+            , IConfiguration configuration)
         {
+
             _service = service;
-            _connection = service.Connection;
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+            _connection = _service.Connection;
+            _configuration = configuration;
         }
         public async Task<List<YarnReceiveMaster>> GetPagedAsync(Status status, bool isCDAPage, PaginationInfo paginationInfo)
         {
@@ -862,16 +871,14 @@ namespace EPYSLTEXCore.Application.Services
                     {CommonQueries.GetEntityTypesByEntityTypeId(EntityTypeConstants.TRANSPORT_MODE)};
 
                     ----TransportAgencyList
-                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.CARRYING_CONTRACTOR)}; 
-                    /* {CommonQueries.GetEntityTypesByEntityTypeId(EntityTypeConstants.TRANSPORT_AGENCY)}; */
+                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.CARRYING_CONTRACTOR)};
 
                     -----ShipmentStatusList
-                    /* {CommonQueries.GetEntityTypesByEntityTypeId(EntityTypeConstants.SHIPMENT_STATUS)}; */
                     SELECT 0 As id, 'Full' text 
                     Union
                     SELECT 1 As id, 'Partial' text 
                     Union
-                    SELECT 2 As id, 'Last' text 
+                    SELECT 2 As id, 'Last' text;
 
                     -----LocationList
                     {CommonQueries.GetLocation()};
@@ -884,7 +891,7 @@ namespace EPYSLTEXCore.Application.Services
 
                     Select Cast (CE.CompanyID as varchar) [id] , CE.ShortName [text]
                     FROM {DbNames.EPYSL}..CompanyEntity CE 
-                    WHERE CE.BusinessNature IN ('TEX','PC') ORDER BY CE.ShortName
+                    WHERE CE.BusinessNature IN ('TEX','PC') ORDER BY CE.ShortName;
 
                     --Buyers
                     {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)};
@@ -896,7 +903,8 @@ namespace EPYSLTEXCore.Application.Services
                     SELECT * FROM POV2IgnoreValidation;
 
                     --Receive For
-                    Select Cast (RF.ReceiveForId as varchar) [id] , RF.ReceiveForName [text] FROM ReceiveFor RF;";
+                    Select Cast (RF.ReceiveForId as varchar) [id] , RF.ReceiveForName [text] FROM ReceiveFor RF;
+";
             try
             {
                 await _connection.OpenAsync();

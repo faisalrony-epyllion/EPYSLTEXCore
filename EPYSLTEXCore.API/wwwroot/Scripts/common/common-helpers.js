@@ -431,7 +431,19 @@ function formElToJson($formEl) {
 
     return jsonObj;
 }
-
+function getCorrectionOfProperties(paramObj) {
+    paramObj = DeepClone(paramObj);
+    for (var pName in paramObj) {
+        if (pName.toLowerCase().includes('date')) {
+            var pValue = getDefaultValueWhenInvalidS(paramObj[pName]);
+            if (pValue.length > 4) paramObj[pName] = new Date(paramObj[pName]);
+        }
+    }
+    return paramObj;
+}
+function DeepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 /**
  * Set
  * @param {any} $formEl

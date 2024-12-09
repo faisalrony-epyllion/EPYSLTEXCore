@@ -1344,6 +1344,8 @@
 
             x.DayDuration = getDefaultValueWhenInvalidN(x.DayDuration);
             dayDurations.push(x.DayDuration);
+
+            x = getCorrectionOfProperties(x);
         });
         if (!isCPRPage && !isFPRPage) {
             var minDay = Math.max(...dayDurations);
@@ -1373,7 +1375,9 @@
             data.YarnPRNo = masterData.YarnPRNo;
         }
         var url = isCPRPage ? "/api/yarn-pr/save-cpr" : (isFPRPage ? "/api/yarn-pr/save-fpr" : "/api/yarn-pr/save");
-    
+
+        data = getCorrectionOfProperties(data);
+
         axios.post(url, data)
             .then(function () {
                 toastr.success("Saved successfully.");

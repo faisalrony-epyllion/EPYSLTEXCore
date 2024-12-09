@@ -120,7 +120,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public bool IsCheckDVD { get; set; } = true;
         [Write(false)]
-        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; }
+        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public List<YarnPOMaster> YarnPOMasters { get; set; } = new List<YarnPOMaster>();
 
@@ -181,19 +181,19 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         #endregion Booking
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CompanyList { get; set; }
+        public IEnumerable<Select2OptionModel> CompanyList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnPRByList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnPRByList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<YarnProductSetupChildProgramDTO> ChildProgramList { get; set; }
+        public IEnumerable<YarnProductSetupChildProgramDTO> ChildProgramList { get; set; } = Enumerable.Empty<YarnProductSetupChildProgramDTO>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> TechnicalParameterList { get; set; }
+        public IEnumerable<Select2OptionModel> TechnicalParameterList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> TriggerPointList { get; set; }
+        public IEnumerable<Select2OptionModel> TriggerPointList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> FiberTypeList { get; set; }
+        public IEnumerable<Select2OptionModel> FiberTypeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> RefSpinnerList { get; set; }
+        public IEnumerable<Select2OptionModel> RefSpinnerList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public string YarnPRByName { get; set; } = "";
         [Write(false)]

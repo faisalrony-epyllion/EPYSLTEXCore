@@ -1286,9 +1286,81 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 await Connection.UpdateAsync(signature);
             }
 
-            return (int)(signature.LastNumber - increment + 1);
+            return Convert.ToInt32(signature.LastNumber - increment + 1);
         }
+        public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
+        {
+            if (increment == 0) return 0;
+            var signature =  GetSignature(field, 1, 1, repeatAfter);
+            //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
+            if (signature == null)
+            {
+                signature = new Signatures
+                {
+                    Field = field,
+                    Dates = DateTime.Today,
+                    LastNumber = increment
+                };
+                Connection.ConnectionString = _connectionString;
+                 Connection.InsertAsync(signature);
+            }
+            else
+            {
+                signature.LastNumber += increment;
+                Connection.ConnectionString = _connectionString;
+                 Connection.UpdateAsync(signature);
+            }
+
+            return Convert.ToInt32(signature.LastNumber - increment + 1);
+        }
+        private  Signatures GetSignature(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
+        {
+            string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
+            var parameters = new
+            {
+                Field = field,
+                CompanyId = companyId.ToString(),
+                SiteId = siteId.ToString()
+            };
+
+            switch (repeatAfter)
+            {
+                case RepeatAfterEnum.EveryYear:
+                    query += " AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryMonth:
+                    query += " AND MONTH(Dates) = MONTH(GETDATE()) AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryDay:
+                    query += " AND CAST(Dates AS DATE) = CAST(GETDATE() AS DATE)";
+                    break;
+            }
+
+            try
+            {
+
+                if (Connection.State == System.Data.ConnectionState.Closed)
+                {
+                     Connection.Open();
+                }
+                var records = Connection.QueryFirstOrDefault(query, parameters);
+                string jsonString = JsonConvert.SerializeObject(records);
+                Signatures signature = JsonConvert.DeserializeObject<Signatures>(jsonString);
+                //return records.ToList();
+                return signature;
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                Connection.Close();
+            }
+
+
+        }
         private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
             string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
@@ -1796,7 +1868,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public int RunSqlCommand(string query, bool transactionRequired, object parameters = null)
         {
 
-            Connection.Open();
+            //Connection.Open();
 
             if (transactionRequired)
             {

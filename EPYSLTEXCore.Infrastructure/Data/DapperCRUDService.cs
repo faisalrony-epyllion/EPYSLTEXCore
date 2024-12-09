@@ -1579,8 +1579,50 @@ namespace EPYSLTEXCore.Infrastructure.Data
             return (await Connection.QueryAsync<string>(sql, new { TableName = tableName }, transaction)).ToList();
         }
 
-        // Add or Insert
+
         public async Task<int> AddDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null)
+        {
+            // If dataObject is a list, loop through each item
+            if (dataObject is IEnumerable<object> dataObjectList)
+            {
+                // Get the column names for the table
+                var columns = await GetColumnNamesAsync(tableName, transaction);
+
+                int rowsAffected = 0;
+
+                // Loop through each item in the list
+                foreach (var item in dataObjectList)
+                {
+                    // Use reflection to extract properties and their values
+                    var data = item.GetType()
+                                   .GetProperties()
+                                   .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+                                   .ToDictionary(p => p.Name, p => p.GetValue(item));
+
+                    if (!data.Any())
+                    {
+                        throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+                    }
+
+                    var columnNames = string.Join(", ", data.Keys);
+                    var parameters = string.Join(", ", data.Keys.Select(x => "@" + x));
+                    var sql = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameters});";
+
+                    // Execute insert for each object in the list
+                    rowsAffected += await Connection.ExecuteAsync(sql, data, transaction);
+                }
+
+                return rowsAffected;
+            }
+            else
+            {
+                // If it's not a list, proceed with the original code for a single object
+                return await AddSingleDynamicObjectAsync(tableName, dataObject, transaction);
+            }
+        }
+
+        // AddSingleDynamicObjectAsync method for handling a single object
+        public async Task<int> AddSingleDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null)
         {
             var columns = await GetColumnNamesAsync(tableName, transaction);
 
@@ -1602,7 +1644,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             return await Connection.ExecuteAsync(sql, data, transaction);
         }
 
-        public async Task<int> UpdateDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
+        public async Task<int> UpdateSingleObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
         {
             var columns = await GetColumnNamesAsync(tableName, transaction);
 
@@ -1632,7 +1674,120 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             return await Connection.ExecuteAsync(sql, data, transaction);
         }
+        public async Task<int> UpdateDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
+        {
+            if (dataObject is IEnumerable<object> dataList)
+            {
+
+                // Retrieve the column names for the table
+                var columns = await GetColumnNamesAsync(tableName, transaction);
+
+                int rowsAffected = 0;
+
+                // Iterate through each item in the list and perform the update
+                foreach (var item in dataList)
+                {
+                    // Use reflection to extract properties and their values
+                    var data = item.GetType()
+                                   .GetProperties()
+                                   .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+                                   .ToDictionary(p => p.Name, p => p.GetValue(item));
+
+                    if (!data.Any())
+                    {
+                        throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+                    }
+
+                    // Separate key columns and update columns
+                    var keyData = primaryKeyColumns
+                        .ToDictionary(pk => pk, pk => data.ContainsKey(pk) ? data[pk] : throw new ArgumentException($"Primary key '{pk}' is missing in the object."));
+
+                    var updateColumns = data.Keys
+                        .Except(primaryKeyColumns, StringComparer.OrdinalIgnoreCase)
+                        .Select(col => $"{col} = @{col}");
+
+                    var setClause = string.Join(", ", updateColumns);
+                    var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
+
+                    // Build the SQL statement for the update
+                    var sql = $"UPDATE {tableName} SET {setClause} WHERE {whereClause};";
+
+                    // Execute the update for the current item in the list
+                    rowsAffected += await Connection.ExecuteAsync(sql, data, transaction);
+                }
+                // Return the total number of rows affected
+                return rowsAffected;
+            }
+
+            else
+            {
+                // If it's not a list, proceed with the original code for a single object
+                return await UpdateSingleObjectAsync(tableName, dataObject, primaryKeyColumns, transaction);
+            }
+        }
+
+
         public async Task<int> DeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
+        {
+            // Check if the dataObject is a list of objects
+            if (dataObject is IEnumerable<object> dataList)
+            {
+                throw new ArgumentException("The provided object is not a collection.");
+
+
+                // Retrieve the column names for the table
+                var columns = await GetColumnNamesAsync(tableName, transaction);
+
+                int rowsAffected = 0;
+
+                // Iterate through each item in the list and perform the delete
+                foreach (var item in dataList)
+                {
+                    // Use reflection to extract properties and their values
+                    var data = item.GetType()
+                                   .GetProperties()
+                                   .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+                                   .ToDictionary(p => p.Name, p => p.GetValue(item));
+
+                    if (!data.Any())
+                    {
+                        throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+                    }
+
+                    // Ensure primary key values exist in the object
+                    foreach (var pk in primaryKeyColumns)
+                    {
+                        if (!data.ContainsKey(pk))
+                        {
+                            throw new ArgumentException($"Primary key '{pk}' is missing in the object.");
+                        }
+                    }
+
+                    // Build the WHERE clause based on the primary key columns
+                    var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
+
+                    // Build the SQL DELETE statement
+                    var sql = $"DELETE FROM {tableName} WHERE {whereClause};";
+
+                    // Execute the delete for the current item in the list
+                    rowsAffected += await Connection.ExecuteAsync(sql, data, transaction);
+                }
+
+                // Return the total number of rows affected
+                return rowsAffected;
+            }
+            else
+            {
+             return await   DeleteSingleObjectAsync(tableName, dataObject, primaryKeyColumns, transaction);
+
+            }
+        }
+
+
+
+
+
+        public async Task<int> DeleteSingleObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
         {
             var columns = await GetColumnNamesAsync(tableName, transaction);
 

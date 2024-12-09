@@ -22,11 +22,11 @@ namespace EPYSLTEX.Web.Controllers.Apis
     [Route("api/items")]
     public class ItemsController : ApiBaseController
     {
-        private readonly IItemMasterService _itemMasterService;     
+        private readonly IItemMasterService<ItemMasterUploadBindingModel> _itemMasterService;     
         
         private readonly IItemSetupService _itemSetupService;
         private readonly IMemoryCache _memoryCache;
-        public ItemsController(IItemMasterService itemMasterService, IMemoryCache memoryCache, IUserService userService
+        public ItemsController(IItemMasterService<ItemMasterUploadBindingModel> itemMasterService, IMemoryCache memoryCache, IUserService userService
             , IItemSetupService itemSetupService) : base(userService)
         {
             _itemMasterService = itemMasterService;          

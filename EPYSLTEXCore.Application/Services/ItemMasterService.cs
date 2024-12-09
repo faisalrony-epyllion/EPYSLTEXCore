@@ -12,9 +12,8 @@ using System.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services
 {
-    public class ItemMasterService : IItemMasterService
+    public class ItemMasterService<T> : IItemMasterService<T> where T : BaseItemMaster
     {
-
         private readonly IDapperCRUDService<DapperBaseEntity> _sqlQueryService;
         private readonly IDapperCRUDService<ItemSegmentValue> _itemSegmentService;
         private readonly SqlConnection _connection;
@@ -30,7 +29,7 @@ namespace EPYSLTEXCore.Application.Services
             
         }
 
-        public void GenerateItem(int subGroupId, ref List<ItemMasterUploadBindingModel> itemList)
+        public void GenerateItem(int subGroupId, ref List<T> itemList)
         {
             try
             {
@@ -251,7 +250,7 @@ namespace EPYSLTEXCore.Application.Services
        
         }
 
-        private void SetSegmentValueDesc(int subGroupId, ref List<ItemMasterUploadBindingModel> list)
+        private void SetSegmentValueDesc(int subGroupId, ref List<T> list)
         {
             List<Select2OptionModel> itemSegmentValueList = new List<Select2OptionModel>();
 

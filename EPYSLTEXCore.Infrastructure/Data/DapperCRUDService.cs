@@ -8,12 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.Security.Cryptography.Xml;
+using System.Transactions;
 using static Dapper.SqlMapper;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
@@ -29,7 +31,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
             this._configuration = configuration;
             this._connectionString = this._configuration.GetConnectionString("GmtConnection");
             Connection = new SqlConnection(this._connectionString);
-
         }
 
         public SqlConnection GetConnection(string connectionName = AppConstants.DB_CONNECTION)
@@ -1239,9 +1240,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
         #region signature Methods
 
 
-        public async Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
+        public async Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null)
         {
-            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter);
+            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter, transaction);
 
             if (signature == null)
             {
@@ -1251,7 +1252,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = 1
                 };
-                await Connection.InsertAsync(signature);
+                
+                await SaveSingleAsync(signature, transaction);
             }
             else
             {
@@ -1289,7 +1291,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             return (int)(signature.LastNumber - increment + 1);
         }
 
-        private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
+        private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter, SqlTransaction transaction = null)
         {
             string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
             var parameters = new
@@ -1314,16 +1316,44 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             try
             {
-                
+                Signatures signature = null;
                 if (Connection.State == System.Data.ConnectionState.Closed)
                 {
                     await Connection.OpenAsync();
                 }
-                var records = await Connection.QueryFirstOrDefaultAsync(query, parameters);
-                string jsonString = JsonConvert.SerializeObject(records);
-                Signatures signature = JsonConvert.DeserializeObject<Signatures>(jsonString);
+                //var records = await Connection.QueryFirstOrDefaultAsync(query, parameters);
+                //string jsonString = JsonConvert.SerializeObject(records);
+                //signature = JsonConvert.DeserializeObject<Signatures>(jsonString);
                 //return records.ToList();
-                return signature;
+                //return signature;
+
+                using (var command = Connection.CreateCommand())
+                {
+                    command.CommandText = query;
+                    command.Parameters.AddWithValue("@Field", field);
+                    command.Parameters.AddWithValue("@CompanyId", companyId);
+                    command.Parameters.AddWithValue("@SiteId", siteId);
+
+                    // Ensure that the command is associated with a transaction
+                    if (transaction != null)
+                    {
+                        command.Transaction = transaction;
+                    }
+
+                    // Execute your command (e.g., execute reader, execute non-query, etc.)
+                    // Example with ExecuteReader:
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            signature = new Signatures();
+                            signature.LastNumber = Convert.ToInt32(reader["LastNumber"]);
+                        }
+                    }
+
+                    return signature;
+
+                }
             }
             catch (System.Exception ex)
             {
@@ -1336,6 +1366,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
 
         }
+        
 
         private async Task<Signatures> GetSignatureCmdAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {

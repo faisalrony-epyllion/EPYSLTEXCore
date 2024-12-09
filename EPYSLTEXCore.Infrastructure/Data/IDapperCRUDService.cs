@@ -111,7 +111,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<int> UpdateDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null);
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);
         #region signature Methods
-        Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
+        Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null);
         Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
 
         Task<IEnumerable<T>> AddManyAsync(IEnumerable<T> entities, string tableName);

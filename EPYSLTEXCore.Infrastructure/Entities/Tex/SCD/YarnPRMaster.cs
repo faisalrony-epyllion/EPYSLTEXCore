@@ -10,33 +10,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
     [Table(TableNames.YARN_PR_MASTER)]
     public class YarnPRMaster : DapperBaseEntity
     {
-        public YarnPRMaster()
-        {
-            Remarks = "";
-            SendForApproval = false;
-            SendForCPRApproval = false;
-            Approve = false;
-            ApproveBy = 0;
-            Reject = false;
-            RejectBy = 0;
-            RejectReason = "";
-            TriggerPointID = 0;
-            UpdatedBy = 0;
-            DateAdded = DateTime.Now;
-            YarnPRDate = DateTime.Now;
-            YarnPRRequiredDate = DateTime.Now;
-            YarnPRNo = AppConstants.NEW;
-            YarnPRFromID = 0;
-            AdditionalNo = 0;
-            Status = Status.Pending;
-            Childs = new List<YarnPRChild>();
-            IsAdditional = false;
-            YarnPRName = "";
-            YarnPRFromMasterId = 0;
-            YarnPRFromTableId = 0;
-            Childs = new List<YarnPRChild>();
-        }
-
         [ExplicitKey]
         public int YarnPRMasterID { get; set; } = 0;
         public int YarnPRFromID { get; set; } = 0;
@@ -120,7 +93,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public bool IsCheckDVD { get; set; } = true;
         [Write(false)]
-        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; }
+        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public List<YarnPOMaster> YarnPOMasters { get; set; } = new List<YarnPOMaster>();
 
@@ -181,23 +154,24 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         #endregion Booking
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CompanyList { get; set; }
+        public IEnumerable<Select2OptionModel> CompanyList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnPRByList { get; set; }
+        public IEnumerable<Select2OptionModel> YarnPRByList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<YarnProductSetupChildProgramDTO> ChildProgramList { get; set; }
+        public IEnumerable<YarnProductSetupChildProgramDTO> ChildProgramList { get; set; } = Enumerable.Empty<YarnProductSetupChildProgramDTO>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> TechnicalParameterList { get; set; }
+        public IEnumerable<Select2OptionModel> TechnicalParameterList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> TriggerPointList { get; set; }
+        public IEnumerable<Select2OptionModel> TriggerPointList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> FiberTypeList { get; set; }
+        public IEnumerable<Select2OptionModel> FiberTypeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> RefSpinnerList { get; set; }
+        public IEnumerable<Select2OptionModel> RefSpinnerList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public string YarnPRByName { get; set; } = "";
         [Write(false)]
         public string CreateBy { get; set; } = "";
+
         #endregion Additional Property
     }
 }

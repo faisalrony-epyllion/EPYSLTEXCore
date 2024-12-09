@@ -54,7 +54,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities
         public string UpdateSql { get; set; }
         public string SaveApiUrl { get; set; }
         public string ConName { get; set; }
-
+        public string NameSpace { get; set; }
         #region Additional Fields
 
         [Write(false)]

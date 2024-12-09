@@ -771,6 +771,7 @@
                 'Content-Type': 'application/json'
             }
         };
+        debugger;
         axios.post("/api/rnd-free-concept/save", concepts, config)
             .then(function () {
                 toastr.success("Saved successfully.");
@@ -1046,6 +1047,7 @@
                         RGBOrHex: value.RGBOrHex
                     });
                 });
+                debugger;
                 initChildTable(masterData.ChildColors);
             }
         });

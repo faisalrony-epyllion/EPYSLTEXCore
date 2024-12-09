@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EPYSLTEX.Core.Statics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,126 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 Inner Join ContactCategoryChild CCC On C.ContactID = CCC.ContactID
                 Inner Join ContactCategoryHK CC ON CC.ContactCategoryID = CCC.ContactCategoryID
                 Where CC.ContactCategoryName IN ('{categoryName}')";
+        }
+        public static string GetItemSegmentValuesBySegmentNamesWithMapping()
+        {
+            //if (countIds.IsNotNullOrEmpty()) countSQL += $@" OR ISV.SegmentValueID IN ({countIds})";
+            //if (compositionIds.IsNotNullOrEmpty()) compositionSQL += $@" OR ISV.SegmentValueID IN ({compositionIds})";
+
+            string sql = $@"
+                ;With YCO as(
+                    select 0 YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
+                    from {DbNames.EPYSL}..ItemSegmentValue ISV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+                    LEFT JOIN YarnCompositionBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
+                    WHERE ISN.SegmentName In ('Yarn Composition') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+                ),
+                YT as (
+                    select distinct SV.YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(SV.YarnTypeSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.YarnTypeSVID    
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('Yarn Type New')                
+                    --ORDER BY ISV.SegmentValue
+                ),
+                MP as (
+                    select distinct SV.YarnTypeSVID,SV.ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(SV.ManufacturingProcessSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingProcessSVID    
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('Yarn Manufacturing Process')                
+                    --ORDER BY ISV.SegmentValue
+                ),
+                SP as (
+                    select distinct SV.YarnTypeSVID,SV.ManufacturingProcessSVID,SV.SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(SV.SubProcessSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.SubProcessSVID    
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('Yarn Manufacturing Sub Process')                
+                    --ORDER BY ISV.SegmentValue
+                ),
+                YQP as (
+                    select distinct SV.YarnTypeSVID,SV.ManufacturingProcessSVID,SV.SubProcessSVID,SV.QualityParameterSVID,0 CountSVID,CAST(SV.QualityParameterSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.QualityParameterSVID    
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('Yarn Quality Parameter')                
+                    --ORDER BY ISV.SegmentValue
+                ),
+                YCM as (
+                    Select YarnTypeSVID,ManufacturingProcessSVID,SubProcessSVID,QualityParameterSVID,0 CountSVID,CAST(0 As varchar) [id],CountUnit [text],'Yarn Count Master' [desc], IsInactive = 0
+				    from (
+                    select SV.YarnTypeSVID,SV.ManufacturingProcessSVID,SV.SubProcessSVID,SV.QualityParameterSVID,CountUnit from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
+                    INNER JOIN YQP on SV.YarnTypeSVID=YQP.YarnTypeSVID  AND SV.ManufacturingProcessSVID=YQP.ManufacturingProcessSVID AND SV.SubProcessSVID=YQP.SubProcessSVID AND SV.QualityParameterSVID=YQP.QualityParameterSVID
+                ) A
+                ),
+				YC as(
+                    select 0 YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
+                    from {DbNames.EPYSL}..ItemSegmentValue ISV
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+                    LEFT JOIN YarnCountBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
+                    WHERE ISN.SegmentName In ('Yarn Count') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+				)
+                --select * from(
+                Select * from YCO
+                Union All
+                Select * from YT
+                Union All
+                Select * from MP
+                Union All
+                Select * from SP
+                Union All
+                Select * from YQP
+                Union All
+                Select * from YCM
+				Union All
+                Select * from YC
+                --)X 
+                --Where YarnTypeSVID=85385 AND ManufacturingProcessSVID=59238 AND SubProcessSVID=65478 AND QualityParameterSVID=59533
+                ORDER BY [desc],[text]";
+
+            return sql;
+        }
+
+        public static string GetFiberSubProgramCertifications()
+        {
+            return $@"
+                Select * FROM(
+                Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text], 'Fiber Type'[desc]
+                From {DbNames.EPYSL}..EntityTypeValue EV
+                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+                LEFT JOIN FiberBasicSetup FBS ON FBS.ValueID = EV.ValueID
+                Where ET.EntityTypeName = 'Fabric Type' AND ISNULL(FBS.IsInactive,0) = 0
+                Group By EV.ValueID,EV.ValueName
+                UNION 
+                SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                LEFT JOIN SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
+                WHERE ISN.SegmentName In ('Yarn Sub Program New') And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                AND ISNULL(SBS.IsInactive,0) = 0
+                UNION
+                SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
+                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                LEFT JOIN CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
+                WHERE ISN.SegmentName In ('Yarn Certifications') And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                AND ISNULL(CBS.IsInactive,0) = 0
+                )FL 
+                Order By [desc], [text] ";
+
+        }
+        public static string GetItemSegmentValuesFilterMapping()
+        {
+            return $@";select SV.*,ISV1.SegmentValue YarnType,ISV2.SegmentValue ManufacturingProcess,ISV3.SegmentValue SubProcess,ISV4.SegmentValue QualityParameter,SV.CountUnit [Count]
+				from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
+				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID=SV.YarnTypeSVID  
+				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID=SV.ManufacturingProcessSVID  
+				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID=SV.SubProcessSVID  
+				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV4 ON ISV4.SegmentValueID=SV.QualityParameterSVID  
+                ORDER BY SV.SegmentValueMappingID DESC";
         }
 
         public static string GetUnit()
@@ -260,85 +381,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
         {
             return $@"SELECT * FROM {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup";
         }
-        public static string GetItemSegmentValuesBySegmentNamesWithMapping()
-        {
-            //if (countIds.IsNotNullOrEmpty()) countSQL += $@" OR ISV.SegmentValueID IN ({countIds})";
-            //if (compositionIds.IsNotNullOrEmpty()) compositionSQL += $@" OR ISV.SegmentValueID IN ({compositionIds})";
 
-            string sql = $@"
-                ;With YCO as(
-                    select 0 YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
-                    from {DbNames.EPYSL}..ItemSegmentValue ISV
-                    INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                    LEFT JOIN YarnCompositionBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
-                    WHERE ISN.SegmentName In ('Yarn Composition') --AND (ISNULL(YCBS.IsInactive,0) = 0)
-                ),
-                YT as (
-                    select distinct SV.YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(SV.YarnTypeSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
-                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.YarnTypeSVID    
-                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Type New')                
-                    --ORDER BY ISV.SegmentValue
-                ),
-                MP as (
-                    select distinct SV.YarnTypeSVID,SV.ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(SV.ManufacturingProcessSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
-                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingProcessSVID    
-                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Manufacturing Process')                
-                    --ORDER BY ISV.SegmentValue
-                ),
-                SP as (
-                    select distinct SV.YarnTypeSVID,SV.ManufacturingProcessSVID,SV.SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(SV.SubProcessSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
-                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.SubProcessSVID    
-                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Manufacturing Sub Process')                
-                    --ORDER BY ISV.SegmentValue
-                ),
-                YQP as (
-                    select distinct SV.YarnTypeSVID,SV.ManufacturingProcessSVID,SV.SubProcessSVID,SV.QualityParameterSVID,0 CountSVID,CAST(SV.QualityParameterSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
-                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.QualityParameterSVID    
-                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Quality Parameter')                
-                    --ORDER BY ISV.SegmentValue
-                ),
-                YCM as (
-                    Select YarnTypeSVID,ManufacturingProcessSVID,SubProcessSVID,QualityParameterSVID,0 CountSVID,CAST(0 As varchar) [id],CountUnit [text],'Yarn Count Master' [desc], IsInactive = 0
-				    from (
-                    select SV.YarnTypeSVID,SV.ManufacturingProcessSVID,SV.SubProcessSVID,SV.QualityParameterSVID,CountUnit from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-                    INNER JOIN YQP on SV.YarnTypeSVID=YQP.YarnTypeSVID  AND SV.ManufacturingProcessSVID=YQP.ManufacturingProcessSVID AND SV.SubProcessSVID=YQP.SubProcessSVID AND SV.QualityParameterSVID=YQP.QualityParameterSVID
-                ) A
-                ),
-				YC as(
-                    select 0 YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
-                    from {DbNames.EPYSL}..ItemSegmentValue ISV
-                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                    LEFT JOIN YarnCountBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
-                    WHERE ISN.SegmentName In ('Yarn Count') --AND (ISNULL(YCBS.IsInactive,0) = 0)
-				)
-                --select * from(
-                Select * from YCO
-                Union All
-                Select * from YT
-                Union All
-                Select * from MP
-                Union All
-                Select * from SP
-                Union All
-                Select * from YQP
-                Union All
-                Select * from YCM
-				Union All
-                Select * from YC
-                --)X 
-                --Where YarnTypeSVID=85385 AND ManufacturingProcessSVID=59238 AND SubProcessSVID=65478 AND QualityParameterSVID=59533
-                ORDER BY [desc],[text]";
-
-            return sql;
-        }
         /*
         public static string GetItemSegmentValuesBySegmentNamesWithMapping(string countIds, string compositionIds)
         {
@@ -610,51 +653,12 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 ORDER BY [desc],[text]";
 
         }
-        public static string GetFiberSubProgramCertifications()
-        {
-            return $@"
-                Select * FROM(
-                Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text], 'Fiber Type'[desc]
-                From {DbNames.EPYSL}..EntityTypeValue EV
-                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-                LEFT JOIN FiberBasicSetup FBS ON FBS.ValueID = EV.ValueID
-                Where ET.EntityTypeName = 'Fabric Type' AND ISNULL(FBS.IsInactive,0) = 0
-                Group By EV.ValueID,EV.ValueName
-                UNION 
-                SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
-                FROM {DbNames.EPYSL}..ItemSegmentName ISN
-                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
-                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
-                WHERE ISN.SegmentName In ('Yarn Sub Program New') And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
-                AND ISNULL(SBS.IsInactive,0) = 0
-                UNION
-                SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
-                FROM {DbNames.EPYSL}..ItemSegmentName ISN
-                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
-                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
-                WHERE ISN.SegmentName In ('Yarn Certifications') And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
-                AND ISNULL(CBS.IsInactive,0) = 0
-                )FL 
-                Order By [desc], [text] ";
 
-        }
-        public static string GetItemSegmentValuesFilterMapping()
-        {
-            return $@";select SV.*,ISV1.SegmentValue YarnType,ISV2.SegmentValue ManufacturingProcess,ISV3.SegmentValue SubProcess,ISV4.SegmentValue QualityParameter,SV.CountUnit [Count]
-				from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID=SV.YarnTypeSVID  
-				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID=SV.ManufacturingProcessSVID  
-				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID=SV.SubProcessSVID  
-				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV4 ON ISV4.SegmentValueID=SV.QualityParameterSVID  
-                ORDER BY SV.SegmentValueMappingID DESC";
-
-        }
+   
         public static string GetFiberSubProgramCertificationsFilterMapping()
         {
             return $@";select SV.*,ETV.ValueName Fiber,ISV2.SegmentValue SubProgram,ISV3.SegmentValue Certifications
-				from {DbNames.EPYSL}..FabricComponentMappingSetup SV
+				from {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} SV
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID=SV.FiberID  
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID=SV.SubProgramID  
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID=SV.CertificationsID
@@ -667,7 +671,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 FROM {DbNames.EPYSL}..ItemSegmentName ISN
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN {DbNames.EPYSL}..FabricComponentMappingSetup FCMS on FCMS.CertificationsID=ISV.SegmentValueID
+                LEFT JOIN {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} FCMS on FCMS.CertificationsID=ISV.SegmentValueID
 		        LEFT JOIN CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 		        	AND ISNULL(CBS.IsInactive,0) = 0
@@ -680,7 +684,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 FROM {DbNames.EPYSL}..ItemSegmentName ISN
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN {DbNames.EPYSL}..FabricComponentMappingSetup FCMS on FCMS.SubProgramID=ISV.SegmentValueID
+                LEFT JOIN {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} FCMS on FCMS.SubProgramID=ISV.SegmentValueID
 		        LEFT JOIN SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 			        AND ISNULL(SBS.IsInactive,0) = 0 
@@ -1521,8 +1525,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
             string activeQuery = "";
             string usedQuery = "";
 
-            //if (!isGetAll) activeQuery = " AND DVD.IsActive = 1 ";
-            //if (usedDayValidDurationId > 0) usedQuery = $@" OR DVD.DayValidDurationId = {usedDayValidDurationId} ";
+
 
             return $@"SELECT id = CAST(DVD.DayValidDurationId AS VARCHAR)
                     ,[text] = CASE WHEN DVD.DayDuration > 1 
@@ -1535,6 +1538,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     INNER JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = DVD.LocalOrImportId
                     WHERE 1 = 1 {activeQuery} {usedQuery}";
         }
+
 
 
     }

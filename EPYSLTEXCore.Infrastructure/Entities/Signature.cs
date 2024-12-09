@@ -15,16 +15,16 @@ namespace EPYSLTEXCore.Infrastructure.Entities
         public decimal LastNumber { get; set; }
 
         [ExplicitKey]
-        public string CompanyId { get; set; }
+        public string CompanyID { get; set; }
 
         [ExplicitKey]
-        public string SiteId { get; set; }
+        public string SiteID { get; set; }
 
         public Signatures()
         {
             LastNumber = 1m;
-            CompanyId = "1";
-            SiteId = "1";
+            CompanyID = "1";
+            SiteID = "1";
         }
 
         #region Additional Properties

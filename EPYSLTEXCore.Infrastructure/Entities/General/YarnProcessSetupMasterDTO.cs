@@ -1,4 +1,6 @@
-﻿namespace EPYSLTEXCore.Infrastructure.Entities.General
+﻿using EPYSLTEXCore.Infrastructure.Data;
+
+namespace EPYSLTEXCore.Infrastructure.Entities.General
 {
     public class YarnProcessSetupMasterDTO : YarnProcessSetupMasterBindingModel
     {
@@ -17,4 +19,7 @@
         public IEnumerable<Select2OptionModel> CountList { get; set; }
         public IEnumerable<Select2OptionModel> FiberTypeList { get; set; }
     }
+
+
+
 }

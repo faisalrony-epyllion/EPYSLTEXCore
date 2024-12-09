@@ -1,6 +1,6 @@
 ﻿(function () {
     // #region variables
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId;
     var isApprovePage = false;
     var isAcknowledgePage = false;
@@ -22,6 +22,7 @@
 
         if (!menuId) menuId = localStorage.getItem("menuId");
         if (!pageName) pageName = localStorage.getItem("pageName");
+        if (!menuParam) menuParam = localStorage.getItem("menuParam");
 
         var pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -34,10 +35,15 @@
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
         $toolbarEl.find("#divAddPRForMR").fadeIn();
 
-        isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
-        isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
-        isCPRPage = convertToBoolean($(`#${pageId}`).find("#CPRPage").val());
-        isFPRPage = convertToBoolean($(`#${pageId}`).find("#FPRPage").val());
+
+
+        if (menuParam == "Ack") isAcknowledgePage = true;
+        else if (menuParam == "A") isApprovePage = true;
+        else if (menuParam == "CPR") isCPRPage = true;
+        else if (menuParam == "FPR") isFPRPage = true;
+
+        
+
   
         if (isAcknowledgePage) {
             $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnPendingRevisionList").hide();
@@ -809,10 +815,9 @@
             columns.unshift({ type: 'checkbox', width: 50 });
             //selectionType = "Multiple";
         }
+        var pageName = isCPRPage ? pageNameConstants.CPR : isFPRPage ? pageNameConstants.FPR : "";
+        pageName = replaceInvalidChar(pageName);
 
-        var pageName = "FPR";
-        //var pageName = isCPRPage ? pageNameConstants.CPR : isFPRPage ? pageNameConstants.FPR : "";
-     
         if ($tblMasterEl) $tblMasterEl.destroy();
 
         $tblMasterEl = new initEJ2Grid({
@@ -936,6 +941,8 @@
             //axios.get(`/api/yarn-pr/new-mr/${args.rowData.FCMRMasterID}`)
             axios.get(`/api/yarn-pr/new-mr?iDs=${FCMRMasterID}&source=${Source}&revisionstatus=${RevisionStatus}`)
                 .then(function (response) {
+
+               
                     isEditable = true;
                     status = statusConstants.ADDITIONAL;
                     $divDetailsEl.fadeIn();
@@ -962,6 +969,7 @@
                     $formEl.find("#TriggerPointID").val('1252').trigger("change"); //Projection 
                     //$formEl.find("#YarnPRBy").val(masterData.YarnPRBy).trigger("change");
                     $formEl.find("#IsRNDPR").prop('checked', true);
+                
                     initChildTable(masterData.Childs);
                 })
                 .catch(showResponseError);
@@ -1155,6 +1163,7 @@
         axios.get(`/api/yarn-pr/new-mr?iDs=${iDs}&source=${uniqueAry[0].Source}&revisionstatus=${uniqueAry[0].RevisionStatus}`)
             .then(function (response) {
                 isEditable = true;
+                //console.log(response);
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
                 $formEl.find("#divRejectReason").hide();
@@ -1188,6 +1197,7 @@
                 $formEl.find("#IsRNDPR").prop('checked', true);
                 $formEl.find("#YarnPRFromID").val(yarnPRFromID);
                 $formEl.find("#YarnPRByName").val(masterData.YarnPRByName);
+                
                 initChildTable(masterData.Childs);
             })
             .catch(showResponseError);
@@ -1396,6 +1406,7 @@
     //check
     async function initChildTable(data) {
         if ($tblChildEl) $tblChildEl.destroy();
+      
         var columns = [{ field: 'YarnPRChildID', isPrimaryKey: true, visible: false }];
         if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ADDITIONAL || status == statusConstants.APPROVED) {
             columns.push.apply(columns,
@@ -1639,7 +1650,10 @@
     }
 
     async function getYarnSegments() {
+        console.log("i am getYarnSegments");
         var response = await axios.get(getYarnItemsApiUrl([]));
+        console.log(getYarnItemsApiUrl([]));
+        console.log(response);
         _yarnSegments = response.data;
     }
 
@@ -1674,6 +1688,9 @@
         return isValidItemInfo;
     }
     function setYarnSegDesc(obj) {
+
+      
+        //console.log(_yarnSegments);
         for (var indexSeg = 1; indexSeg <= 6; indexSeg++) {
             var segIdProp = "Segment" + indexSeg + "ValueId";
             var segDescProp = "Segment" + indexSeg + "ValueDesc";

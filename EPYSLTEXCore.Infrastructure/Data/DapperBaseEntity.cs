@@ -13,7 +13,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public EntityState EntityState { get; set; }
 
         [Write(false)]
-        public int TotalRows { get; set; }
+        public int TotalRows { get; set; } = 0;
 
         [Write(false)]
         public abstract bool IsModified { get; }

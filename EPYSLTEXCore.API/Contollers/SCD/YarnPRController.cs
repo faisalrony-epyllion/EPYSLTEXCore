@@ -1,11 +1,9 @@
 ﻿using EPYSLTEX.Core.Interfaces;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Infrastructure.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
@@ -16,8 +14,8 @@ using System.Data.Entity;
 
 namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
 {
-   
-       
+
+    [Authorize]
     [Route("api/yarn-pr")]
     [ApiController]
     public class YarnPRController : ApiBaseController
@@ -47,6 +45,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
         [Route("list")]
         public async Task<IActionResult> GetList(Status status, string pageName)
         {
+            pageName = CommonFunction.ReplaceInvalidChar(pageName);
             var paginationInfo = Request.GetPaginationInfo();
             List<YarnPRMaster> records = await _service.GetPagedAsync(status, pageName, paginationInfo);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));

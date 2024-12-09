@@ -28,7 +28,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
             YarnChildPoExportIds = "";
             YarnChildPoEWOs = "";
             ReceivedCompleted = false;
-            EntityState = EntityState.Added;
             YarnChildPoBuyerIdArray = new int[] { };
             YarnChildPoExportIdArray = new int[] { };
             IsYarnReceive = false;
@@ -36,30 +35,30 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         }
 
         [ExplicitKey]
-        public int YPOChildID { get; set; }
-        public int YPOMasterID { get; set; }
-        public string YarnCategory { get; set; }
-        public decimal PoQty { get; set; }
-        public decimal Rate { get; set; }
-        public decimal PIValue { get; set; }
-        public string Remarks { get; set; }
-        public string YarnLotNo { get; set; }
-        public string HSCode { get; set; }
-        public string YarnShade { get; set; }
-        public int YarnProgramId { get; set; }
-        public int NoOfThread { get; set; }
-        public int PoForId { get; set; } //2161,2162,2163,2164
-        public int PRMasterID { get; set; }
-        public int PRChildID { get; set; }
-        public string ShadeCode { get; set; }
-        public int ConceptID { get; set; }
-        public string EWOOthers { get; set; }
-        public int POCone { get; set; }
-        public string QuotationRefNo { get; set; }
+        public int YPOChildID { get; set; } = 0;
+        public int YPOMasterID { get; set; } = 0;
+        public string YarnCategory { get; set; } = "";
+        public decimal PoQty { get; set; } = 0;
+        public decimal Rate { get; set; } = 0;
+        public decimal PIValue { get; set; } = 0;
+        public string Remarks { get; set; } = "";
+        public string YarnLotNo { get; set; } = "";
+        public string HSCode { get; set; } = "";
+        public string YarnShade { get; set; } = "";
+        public int YarnProgramId { get; set; } = 0;
+        public int NoOfThread { get; set; } = 0;
+        public int PoForId { get; set; } = 0; //2161,2162,2163,2164
+        public int PRMasterID { get; set; } = 0;
+        public int PRChildID { get; set; } = 0;
+        public string ShadeCode { get; set; } = "";
+        public int ConceptID { get; set; } = 0;
+        public string EWOOthers { get; set; } = "";
+        public int POCone { get; set; } = 0;
+        public string QuotationRefNo { get; set; } = "";
         public DateTime? QuotationRefDate { get; set; }
-        public string BookingNo { get; set; }
-        public int BuyerID { get; set; }
-        public bool ReceivedCompleted { get; set; }
+        public string BookingNo { get; set; } = "";
+        public int BuyerID { get; set; } = 0;
+        public bool ReceivedCompleted { get; set; } = false;
         public DateTime? ReceivedDate { get; set; }
         public int YarnStockSetId { get; set; } = 0;
         public int DayValidDurationId { get; set; } = 0;
@@ -68,21 +67,21 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public decimal BalanceQTY { get; set; } = 0;
         [Write(false)]
-        public string ConceptNo { get; set; }
+        public string ConceptNo { get; set; } = "";
         [Write(false)]
-        public int ReqCone { get; set; }
+        public int ReqCone { get; set; } = 0;
         [Write(false)]
         public DateTime YarnPRRequiredDate { get; set; }
         [Write(false)]
-        public EntityState EntityState { get; set; }
+        public EntityState EntityState { get; set; } = EntityState.Added;
         [Write(false)]
-        public int TotalRows { get; set; }
+        public int TotalRows { get; set; } = 0;
         [Write(false)]
-        public bool IsYarnReceive { get; set; }
+        public bool IsYarnReceive { get; set; } = false;
         [Write(false)]
-        public bool IsYarnReceiveByPI { get; set; }
+        public bool IsYarnReceiveByPI { get; set; } = false;
         [Write(false)]
-        public decimal ReceiveQty { get; set; }
+        public decimal ReceiveQty { get; set; } = 0;
         [Write(false)]
         public bool IsModified => EntityState == EntityState.Modified;
         [Write(false)]
@@ -94,51 +93,51 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public List<YarnPOChildOrder> YarnPOChildOrders { get; set; }
         [Write(false)]
-        public string YarnSubProgramIds { get; set; }
+        public string YarnSubProgramIds { get; set; } = "";
         [Write(false)]
-        public string YarnSubProgramNames { get; set; }
+        public string YarnSubProgramNames { get; set; } = "";
         [Write(false)]
         public int[] YarnSubProgramIdArray { get; set; }
         [Write(false)]
-        public string YarnChildPoBuyerIds { get; set; }
+        public string YarnChildPoBuyerIds { get; set; } = "";
         [Write(false)]
         public int[] YarnChildPoBuyerIdArray { get; set; }
         [Write(false)]
-        public string YarnChildPoExportIds { get; set; }
+        public string YarnChildPoExportIds { get; set; } = "";
         [Write(false)]
         public int[] YarnChildPoExportIdArray { get; set; }
         [Write(false)]
-        public string POFor { get; set; }
+        public string POFor { get; set; } = "";
         [Write(false)]
-        public string YarnPRNo { get; set; }
+        public string YarnPRNo { get; set; } = "";
         [Write(false)]
-        public string DisplayUnitDesc { get; set; }
+        public string DisplayUnitDesc { get; set; } = "Kg";
         [Write(false)]
-        public decimal PIQtyN { get; set; }
+        public decimal PIQtyN { get; set; } = 0;
         [Write(false)]
-        public decimal PIRateN { get; set; }
+        public decimal PIRateN { get; set; } = 0;
         [Write(false)]
-        public decimal PIValueN { get; set; }
+        public decimal PIValueN { get; set; } = 0;
         [Write(false)]
-        public decimal StockQty { get; set; }
+        public decimal StockQty { get; set; } = 0;
         [Write(false)]
-        public decimal ReqQty { get; set; }
+        public decimal ReqQty { get; set; } = 0;
         [Write(false)]
-        public string YarnProgram { get; set; }
+        public string YarnProgram { get; set; } = "";
         [Write(false)]
-        public string YarnChildPoEWOs { get; set; }
+        public string YarnChildPoEWOs { get; set; } = "";
         [Write(false)]
-        public string BuyerNames { get; set; }
+        public string BuyerNames { get; set; } = "";
         [Write(false)]
-        public string BuyerName { get; set; }
+        public string BuyerName { get; set; } = "";
         [Write(false)]
-        public decimal TotalPOQty { get; set; }
+        public decimal TotalPOQty { get; set; } = 0;
         [Write(false)]
-        public decimal TotalPOValue { get; set; }
+        public decimal TotalPOValue { get; set; } = 0;
         [Write(false)]
-        public int BaseTypeId { get; set; }
+        public int BaseTypeId { get; set; } = (int)EnumBaseType.None;
         [Write(false)]
-        public string BaseTypeName { get; set; }
+        public string BaseTypeName { get; set; } = "";
         [Write(false)]
         public int DayDuration { get; set; } = 0;
         [Write(false)]

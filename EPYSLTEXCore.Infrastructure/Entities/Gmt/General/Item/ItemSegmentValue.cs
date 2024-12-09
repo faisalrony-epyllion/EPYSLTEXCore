@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dapper.Contrib.Extensions;
+using EPYSLTEXCore.Infrastructure.Data;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
 {
-    public class ItemSegmentValue : IBaseEntity
+    public class ItemSegmentValue : DapperBaseEntity
     {
         ///<summary>
         /// SegmentValueID (Primary key)
@@ -55,6 +52,9 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         /// Parent ItemSegmentName pointed by [ItemSegmentValue].([SegmentNameId]) (FK_ItemSegmentValue_ItemSegmentName)
         /// </summary>
         public virtual ItemSegmentName ItemSegmentName { get; set; }
+
+        [Write(false)]
+        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified;
 
         public ItemSegmentValue()
         {

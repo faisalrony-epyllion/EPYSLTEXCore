@@ -262,6 +262,7 @@ function reloadTableData(type, tableId) {
             var navUrlName = $(this).data("navurl-name");
             var pageType = $(this).data("page-type");
             var pageName = $(this).data("page-name");
+            debugger;
             var menuParam = $(this).data("menu-param");
 
             if (pageName) pageName = pageName.split(' ').join('');

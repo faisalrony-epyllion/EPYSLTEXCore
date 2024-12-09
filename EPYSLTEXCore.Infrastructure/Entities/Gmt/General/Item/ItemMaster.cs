@@ -1,12 +1,6 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.SupplyChain;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
 {

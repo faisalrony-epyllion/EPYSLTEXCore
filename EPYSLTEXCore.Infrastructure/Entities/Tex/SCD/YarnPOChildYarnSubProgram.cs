@@ -8,11 +8,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
     public class YarnPOChildYarnSubProgram : DapperBaseEntity
     {
         [ExplicitKey]
-        public int YPOChildYSPID { get; set; }
+        public int YPOChildYSPID { get; set; } = 0;
 
-        public int YPOChildID { get; set; }
-        public int YPOMasterID { get; set; }
-        public int YarnSubProgramId { get; set; }
+        public int YPOChildID { get; set; } = 0;
+        public int YPOMasterID { get; set; } = 0;
+        public int YarnSubProgramId { get; set; } = 0;
 
         #region Addtional Properties
 

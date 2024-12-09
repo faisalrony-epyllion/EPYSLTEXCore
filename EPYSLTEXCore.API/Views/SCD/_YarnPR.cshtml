@@ -1,6 +1,7 @@
 ﻿<script type="text/javascript">
     localStorage.setItem("pageName", "@ViewBag.PageName");
     localStorage.setItem("menuId", "@ViewBag.MenuId");
+     localStorage.setItem("menuParam", "@ViewBag.MenuParam");
 </script>
 
 @{
@@ -109,7 +110,7 @@
                         <div class="card-body">
                             <div class="row">
 
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Requisition No</label>
 
@@ -117,13 +118,13 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Requisition Date</label>
                                         <input id="YarnPRDate" name="YarnPRDate" class="form-control form-control-sm" readonly />
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Concept/Booking No</label>
 
@@ -131,131 +132,150 @@
 
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Trigger Point</label>
 
+                                        <select id="TriggerPointID" name="TriggerPointID" class="form-control form-control-sm" style="width:100%"></select>
 
+                                    </div>
+                                </div>
                             </div>
-                            <div class="row">
-                                <div class="form-group" id="ApvBuyer">
+
+                       
+                        <div class="row">
+                                <div class="col-md-3" id="ApvBuyer">
+                                <div class="form-group">
                                     <label>Buyer</label>
 
                                     <input id="Buyer" name="Buyer" type="text" class="form-control form-control-sm" readonly />
 
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group d-none">
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group d-none">
 
-                                        <div class="icheck-primary">
-                                            <input type="checkbox" id="IsRNDPR" class="form-control form-control-sm" name="IsRNDPR" />
-                                            <label for="IsRNDPR">Is this PR for RND?</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group" id="divStatus" style="display:none;">
-                                        <label>Status</label>
-
-                                        <input id="PRStatus" name="PRStatus" class="form-control form-control-sm" readonly />
-
+                                    <div class="icheck-primary">
+                                        <input type="checkbox" id="IsRNDPR" class="form-control form-control-sm" name="IsRNDPR" />
+                                        <label for="IsRNDPR">Is this PR for RND?</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Trigger Point</label>
+                                <div class="col-md-3" id="divStatus" style="display:none;">
+                                <div class="form-group" >
+                                    <label>Status</label>
 
-                                        <select id="TriggerPointID" name="TriggerPointID" class="form-control input-sm" style="width:100%"></select>
+                                    <input id="PRStatus" name="PRStatus" class="form-control form-control-sm" readonly />
 
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Required Date</label>
-
-                                        <input id="YarnPRRequiredDate" name="YarnPRRequiredDate" class="form-control input-sm ej2-datepicker" data-date-start-date="0d" readonly />
-
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group" id="ApvBuyerTeam">
-                                        <label>Buyer Team</label>
-
-                                        <input id="BuyerTeam" name="BuyerTeam" type="text" class="form-control input-sm" readonly />
-
-                                    </div>
-                                </div>
-
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Requisition By</label>
-
-                                        <input id="YarnPRByName" name="YarnPRByName" type="text" class="form-control form-control-sm" readonly />
-                                        <!--<select id="YarnPRBy" name="YarnPRBy" class="form-control input-sm" style="width:100%"></select>-->
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Remarks</label>
-
-                                        <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control form-control-sm"></textarea>
-
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group" id="divRejectReason" style="display:none;">
-                                        <label>Rejct Reason</label>
-
-                                        <textarea id="RejectReason" rows="2" name="RejectReason" type="text" class="form-control form-control-sm" readonly></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group" id="divUnAcknowledgeReason" style="display:none;">
-                                        <label>UnAcknowledge Reason</label>
-
-                                        <textarea id="UnAcknowledgeReason" rows="2" name="UnAcknowledgeReason" type="text" class="form-control form-control-sm" readonly></textarea>
-
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card" style="border-color:transparent; border-style:none;">
-                        <div class="card-header">
-                            <h3 class="card-title">  Item Information</h3>
-                    
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div  style="width:100% !important">
-                                    <table id="@tblChildId"></table>
+                        <div class="row">
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Required Date</label>
+
+                                        <input id="YarnPRRequiredDate" name="YarnPRRequiredDate" class="form-control form-control-sm ej2-datepicker" data-date-start-date="0d" readonly />
+
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="box-footer btn-e-float-margin">
-                        <div class="col-md-offset-2 col-md-10">
-                            <div class="pull-right">
-                                <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                                <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                                <button type="button" class="btn btn-success m-w-120" id="btnSaveForApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send for acknowledge</button>
-                                <button type="button" class="btn btn-success m-w-120" id="btnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
-                                <button type="button" class="btn btn-success m-w-120" id="btnAcknowledgeMR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge MR</button>
-                                <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
-                                <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
+                                <div class="col-md-3" id="ApvBuyerTeam">
+                                <div class="form-group" >
+                                    <label>Buyer Team</label>
+
+                                        <input id="BuyerTeam" name="BuyerTeam" type="text" class="form-control form-control-sm" readonly />
+
+                                </div>
+                            </div>
+
+
+                      
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Requisition By</label>
+
+                                    <input id="YarnPRByName" name="YarnPRByName" type="text" class="form-control form-control-sm" readonly />
+                                    <!--<select id="YarnPRBy" name="YarnPRBy" class="form-control input-sm" style="width:100%"></select>-->
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Remarks</label>
+
+                                    <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control form-control-sm"></textarea>
+
+                                </div>
+                            </div>
+                                <div class="col-md-3" id="divRejectReason" style="display:none;">
+                                <div class="form-group">
+                                    <label>Rejct Reason</label>
+
+                                    <textarea id="RejectReason" rows="2" name="RejectReason" type="text" class="form-control form-control-sm" readonly></textarea>
+                                </div>
+                            </div>
+                                <div class="col-md-3" id="divUnAcknowledgeReason" style="display:none;">
+                                <div class="form-group">
+                                    <label>UnAcknowledge Reason</label>
+
+                                    <textarea id="UnAcknowledgeReason" rows="2" name="UnAcknowledgeReason" type="text" class="form-control form-control-sm" readonly></textarea>
+
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- /.row -->
+                <div class="card" style="border-color:transparent; border-style:none;">
+                    <div class="card-header">
+                        <h3 class="card-title">  Item Information</h3>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div style="width:100% !important">
+                                <table id="@tblChildId"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="box-footer btn-e-float-margin">
+                        <div class="row">
+                            <div class="offset-md-2 col-md-10">
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-default m-w-120 mr-2" id="btnCancel">
+                                        <i class="fa fa-angle-double-left"></i>&nbsp;Back to List
+                                    </button>
+                                    <button type="button" class="btn btn-primary m-w-120 mr-2" id="btnSave">
+                                        <i class="fa fa-save"></i>&nbsp;&nbsp;Save
+                                    </button>
+                                    <button type="button" class="btn btn-success m-w-120 mr-2" id="btnSaveForApproval">
+                                        <i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send for acknowledge
+                                    </button>
+                                    <button type="button" class="btn btn-success m-w-120 mr-2" id="btnAcknowledge">
+                                        <i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge
+                                    </button>
+                                    <button type="button" class="btn btn-success m-w-120 mr-2" id="btnAcknowledgeMR" style="display:none">
+                                        <i class="fa fa-check-square-o"></i>&nbsp;Acknowledge MR
+                                    </button>
+                                    <button type="button" class="btn btn-success m-w-120 mr-2" id="btnApproveYPR" style="display:none">
+                                        <i class="fa fa-check-square-o"></i>&nbsp;Approve
+                                    </button>
+                                    <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none">
+                                        <i class="fa fa-remove"></i>&nbsp;Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-            </div>
-        </form>
+            <!-- /.row -->
     </div>
+    <!-- /.card-body -->
+    <div class="card-footer">
+    </div>
+    </form>
+</div>
 </div>
 
 <div class="modal fade" id="modal-child">

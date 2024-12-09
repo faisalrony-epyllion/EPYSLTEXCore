@@ -39,6 +39,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities
 
         public string ConName { get; set; }
 
+        public string NameSpace { get; set; }
+
         [Write(false)]
         public override bool IsModified => ChildGridID > 0 || EntityState == System.Data.Entity.EntityState.Modified;
     }

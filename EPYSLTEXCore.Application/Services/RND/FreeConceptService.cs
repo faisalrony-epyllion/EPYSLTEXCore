@@ -8,6 +8,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -21,14 +22,16 @@ namespace EPYSLTEXCore.Application.Services.RND
         private readonly IDapperCRUDService<FreeConceptMaster> _service;
         private readonly SqlConnection _connection;
         private SqlTransaction transaction = null;
-
+        private readonly IConfiguration _configuration;
         public FreeConceptService(
-             IDapperCRUDService<FreeConceptMaster> service)
+             IDapperCRUDService<FreeConceptMaster> service
+             , IConfiguration configuration)
         {
             
             _service = service;
             _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
-            _connection = service.Connection;
+            _connection = _service.Connection;
+            _configuration = configuration;
         }
 
         public async Task<List<FreeConceptMaster>> GetPagedAsync(FreeConceptStatus status, PaginationInfo paginationInfo)
@@ -532,7 +535,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = C.ColorID
                 LEFT JOIN {TableNames.RND_RECIPE_REQ_CHILD} RRC ON RRC.ConceptID = C.ConceptID AND RRC.CCColorID = C.CCColorID
-                where C.ConceptID IN (SELECT ConceptID FROM FreeConceptMaster FC where FC.GroupConceptNo='{grpConceptNo}')
+                where C.ConceptID IN (SELECT ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} FC where FC.GroupConceptNo='{grpConceptNo}')
                 Group By C.CCColorID, C.ConceptID, C.ColorID, C.ColorCode, ISV.SegmentValue, FCBS.RGBOrHex, C.Remarks, C.IsLive, ISNULL(RRC.RecipeReqChildID,0);
 
                 ;With FC As (
@@ -730,7 +733,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             Select * From {TableNames.RND_FREE_CONCEPT_MASTER} Where GroupConceptNo = '{grpConceptNo}';
 
             -- Child Colors
-            ;Select * From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} Where ConceptID IN( SELECT ConceptID FROM FreeConceptMaster Where GroupConceptNo = '{grpConceptNo}');";
+            ;Select * From {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} Where ConceptID IN( SELECT ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} Where GroupConceptNo = '{grpConceptNo}');";
 
             try
             {
@@ -965,8 +968,8 @@ namespace EPYSLTEXCore.Application.Services.RND
             List<ConceptPendingStatus_HK> conceptPendingStatusList = await GetPendingStatus();
             try
             {
-                await _connection.OpenAsync();
-                transaction = _connection.BeginTransaction();
+                //await _connection.OpenAsync();
+                //transaction = _connection.BeginTransaction();
 
                 switch (entityState)
                 {
@@ -987,7 +990,9 @@ namespace EPYSLTEXCore.Application.Services.RND
                     default:
                         break;
                 }
-
+                _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+                await _service.Connection.OpenAsync();
+                transaction = _service.Connection.BeginTransaction();
                 await _service.SaveAsync(entities, transaction);
                 List<FreeConceptChildColor> childColors = new List<FreeConceptChildColor>();
                 entities.ForEach(entity =>
@@ -1018,7 +1023,8 @@ namespace EPYSLTEXCore.Application.Services.RND
             finally
             {
                 if (transaction != null) transaction.Dispose();
-                _connection.Close();
+                //_connection.Close();
+                _service.Connection.Close();
             }
         }
 
@@ -1115,10 +1121,13 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             try
             {
-                await _connection.OpenAsync();
-                transaction = _connection.BeginTransaction();
+                //await _connection.OpenAsync();
+                //transaction = _connection.BeginTransaction();
+                _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+                await _service.Connection.OpenAsync();
+                transaction = _service.Connection.BeginTransaction();
 
-                await _connection.ExecuteAsync("spBackupFreeConcept_Full", new { ConceptNo = grpConceptNo }, transaction, 30, CommandType.StoredProcedure);
+                await _service.Connection.ExecuteAsync("spBackupFreeConcept_Full", new { ConceptNo = grpConceptNo }, transaction, 30, CommandType.StoredProcedure);
 
                 entities = await UpdateMany(entities);
 
@@ -1140,7 +1149,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             finally
             {
                 if (transaction != null) transaction.Dispose();
-                _connection.Close();
+                _service.Connection.Close();
             }
         }
         private string GetStatusName(FreeConceptStatus status)
@@ -1214,8 +1223,8 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             try
             {
-                await _connection.OpenAsync();
-                transaction = _connection.BeginTransaction();
+                //await _connection.OpenAsync();
+                //transaction = _connection.BeginTransaction();
                 int maxId = 0;
 
                 maxId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entities.FindAll(x => x.EntityState == EntityState.Added).Count());
@@ -1223,6 +1232,10 @@ namespace EPYSLTEXCore.Application.Services.RND
                 {
                     item.CCColorID = maxId++;
                 }
+                
+                _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+                await _service.Connection.OpenAsync();
+                transaction = _service.Connection.BeginTransaction();
                 await _service.SaveAsync(entities, transaction);
 
                 transaction.Commit();
@@ -1235,7 +1248,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             finally
             {
                 if (transaction != null) transaction.Dispose();
-                _connection.Close();
+                _service.Connection.Close();
             }
         }
     }

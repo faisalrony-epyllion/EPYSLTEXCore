@@ -464,7 +464,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
 
                 --Fiber-SubProgram-Certifications Mapping Setup
-                Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup";
+                Select * FROM {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP}";
 
             try
             {

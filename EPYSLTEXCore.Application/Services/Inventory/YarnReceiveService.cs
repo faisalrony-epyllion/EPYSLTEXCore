@@ -6,10 +6,12 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,11 +27,18 @@ namespace EPYSLTEXCore.Application.Services
     {
         private readonly IDapperCRUDService<YarnReceiveMaster> _service;
         private readonly SqlConnection _connection;
+        private SqlTransaction transaction = null;
+        private readonly IConfiguration _configuration;
 
-        public YarnReceiveService(IDapperCRUDService<YarnReceiveMaster> service)
+        public YarnReceiveService(
+            IDapperCRUDService<YarnReceiveMaster> service
+            , IConfiguration configuration)
         {
+
             _service = service;
-            _connection = service.Connection;
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+            _connection = _service.Connection;
+            _configuration = configuration;
         }
         public async Task<List<YarnReceiveMaster>> GetPagedAsync(Status status, bool isCDAPage, PaginationInfo paginationInfo)
         {
@@ -540,7 +549,7 @@ namespace EPYSLTEXCore.Application.Services
                 {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)};
 
                 SELECT id = YarnPackingID, [text] = PackNo, [desc] = SpinnerID, additionalValue = Cone, additionalValue2 = NetWeight
-                FROM {TableNames.SPINNER_WISE_YARN_PACKING_HK};
+                FROM SpinnerWiseYarnPacking_HK;
 
                 -- POV2 IgnoreValidation
                 SELECT * FROM POV2IgnoreValidation;
@@ -731,7 +740,7 @@ namespace EPYSLTEXCore.Application.Services
                     {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)};
 
                     SELECT id = YarnPackingID, [text] = PackNo, [desc] = SpinnerID, additionalValue = Cone, additionalValue2 = NetWeight
-                    FROM {TableNames.SPINNER_WISE_YARN_PACKING_HK};
+                    FROM SpinnerWiseYarnPacking_HK;
 
                     -- POV2 IgnoreValidation
                     SELECT * FROM POV2IgnoreValidation;
@@ -799,7 +808,7 @@ namespace EPYSLTEXCore.Application.Services
                     {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)};
 
                     SELECT id = YarnPackingID, [text] = PackNo, [desc] = SpinnerID, additionalValue = Cone, additionalValue2 = NetWeight
-                    FROM {TableNames.SPINNER_WISE_YARN_PACKING_HK};
+                    FROM SpinnerWiseYarnPacking_HK;
 
                     -- POV2 IgnoreValidation
                     SELECT * FROM POV2IgnoreValidation;
@@ -862,16 +871,14 @@ namespace EPYSLTEXCore.Application.Services
                     {CommonQueries.GetEntityTypesByEntityTypeId(EntityTypeConstants.TRANSPORT_MODE)};
 
                     ----TransportAgencyList
-                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.CARRYING_CONTRACTOR)}; 
-                    /* {CommonQueries.GetEntityTypesByEntityTypeId(EntityTypeConstants.TRANSPORT_AGENCY)}; */
+                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.CARRYING_CONTRACTOR)};
 
                     -----ShipmentStatusList
-                    /* {CommonQueries.GetEntityTypesByEntityTypeId(EntityTypeConstants.SHIPMENT_STATUS)}; */
                     SELECT 0 As id, 'Full' text 
                     Union
                     SELECT 1 As id, 'Partial' text 
                     Union
-                    SELECT 2 As id, 'Last' text 
+                    SELECT 2 As id, 'Last' text;
 
                     -----LocationList
                     {CommonQueries.GetLocation()};
@@ -884,19 +891,20 @@ namespace EPYSLTEXCore.Application.Services
 
                     Select Cast (CE.CompanyID as varchar) [id] , CE.ShortName [text]
                     FROM {DbNames.EPYSL}..CompanyEntity CE 
-                    WHERE CE.BusinessNature IN ('TEX','PC') ORDER BY CE.ShortName
+                    WHERE CE.BusinessNature IN ('TEX','PC') ORDER BY CE.ShortName;
 
                     --Buyers
                     {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)};
 
                     SELECT id = YarnPackingID, [text] = PackNo, [desc] = SpinnerID, additionalValue = Cone, additionalValue2 = NetWeight
-                    FROM {TableNames.SPINNER_WISE_YARN_PACKING_HK};
+                    FROM SpinnerWiseYarnPacking_HK;
 
                     -- POV2 IgnoreValidation
                     SELECT * FROM POV2IgnoreValidation;
 
                     --Receive For
-                    Select Cast (RF.ReceiveForId as varchar) [id] , RF.ReceiveForName [text] FROM ReceiveFor RF;";
+                    Select Cast (RF.ReceiveForId as varchar) [id] , RF.ReceiveForName [text] FROM ReceiveFor RF;
+";
             try
             {
                 await _connection.OpenAsync();
@@ -1050,7 +1058,7 @@ namespace EPYSLTEXCore.Application.Services
 				LEFT JOIN YPOB On YPOB.YPOChildID =X.POChildID
                 LEFT JOIN POChildBuyer PB  On PB.YPOChildID = X.POChildID
                 LEFT JOIN {DbNames.EPYSL}..Contacts S ON S.ContactId = X.SpinnerID
-                LEFT JOIN {TableNames.SPINNER_WISE_YARN_PACKING_HK} P ON P.YarnPackingID = X.YarnPackingID
+                LEFT JOIN SpinnerWiseYarnPacking_HK P ON P.YarnPackingID = X.YarnPackingID
                 LEFT Join {DbNames.EPYSL}..Unit AS UU On UU.UnitID = X.UnitID;
 
                 --YarnReceiveChildOrder
@@ -1109,7 +1117,7 @@ namespace EPYSLTEXCore.Application.Services
                 {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)}
 
                 SELECT id = YarnPackingID, [text] = PackNo, [desc] = SpinnerID, additionalValue = Cone, additionalValue2 = NetWeight
-                FROM {TableNames.SPINNER_WISE_YARN_PACKING_HK};
+                FROM SpinnerWiseYarnPacking_HK;
 
                 -----SpinnerList
                 {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.SPINNER)};
@@ -1409,19 +1417,19 @@ namespace EPYSLTEXCore.Application.Services
                 await _service.SaveAsync(yarnReceiveChilds, transaction);
                 foreach (YarnReceiveChild item in yarnReceiveChilds)
                 {
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnReceiveChild", item.EntityState, userId, item.ChildID);
+                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnReceiveChild", item.EntityState, userId, item.ChildID);
                 }
 
                 await _service.SaveAsync(yarnReceiveChildOrders.Where(x => x.EntityState != EntityState.Deleted).ToList(), transaction);
                 await _service.SaveAsync(yarnReceiveChildBuyers.Where(x => x.EntityState != EntityState.Deleted).ToList(), transaction);
 
-                #region Stock Operation
-                if (entity.IsApproved)
-                {
-                    userId = entity.EntityState == EntityState.Added ? entity.AddedBy : entity.UpdatedBy;
-                    await _connection.ExecuteAsync("spYarnStockOperation", new { MasterID = entity.ReceiveID, FromMenuType = EnumFromMenuType.YarnReceive, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
-                }
-                #endregion Stock Operation
+                //#region Stock Operation
+                //if (entity.IsApproved)
+                //{
+                //    userId = entity.EntityState == EntityState.Added ? entity.AddedBy : entity.UpdatedBy;
+                //    await _connection.ExecuteAsync("spYarnStockOperation", new { MasterID = entity.ReceiveID, FromMenuType = EnumFromMenuType.YarnReceive, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
+                //}
+                //#endregion Stock Operation
 
                 transaction.Commit();
             }
@@ -1480,19 +1488,12 @@ namespace EPYSLTEXCore.Application.Services
                 //CountId = Segment6ValueId
 
                 #region find yarn control table name
+
                 string comYarnControlTable = TableNames.YARN_CONTROL_NO;
-                if (companyName == "EFL")
-                {
-                    comYarnControlTable = TableNames.YARN_CONTROL_NO_EFL;
-                }
-                else if (companyName == "EKL")
-                {
-                    comYarnControlTable = TableNames.YARN_CONTROL_NO_EKL;
-                }
-                else if (companyName == "ESL")
-                {
-                    comYarnControlTable = TableNames.YARN_CONTROL_NO_ESL;
-                }
+                if (companyName == "EFL") comYarnControlTable = TableNames.YARN_CONTROL_NO_EFL;
+                else if (companyName == "EKL") comYarnControlTable = TableNames.YARN_CONTROL_NO_EKL;
+                else if (companyName == "ESL") comYarnControlTable = TableNames.YARN_CONTROL_NO_ESL;
+
                 #endregion
 
                 List<YarnReceiveChild> tempChilds = new List<YarnReceiveChild>();
@@ -1504,7 +1505,10 @@ namespace EPYSLTEXCore.Application.Services
                         ChildID = tempObj.ChildID,
                         ShadeCode = tempObj.ShadeCode
                     });
-                    x.ShadeCode = x.ShadeCode == "" || x.ShadeCode == null || x.ShadeCode.ToLower() == "n/a" || x.ShadeCode.ToLower() == "empty" ? "N/A" : x.ShadeCode;
+                    x.ShadeCode = x.ShadeCode == "" 
+                               || x.ShadeCode == null 
+                               || x.ShadeCode.ToLower() == "n/a" 
+                               || x.ShadeCode.ToLower() == "empty" ? "N/A" : x.ShadeCode;
                 });
 
                 if (comYarnControlTable.IsNotNullOrEmpty())

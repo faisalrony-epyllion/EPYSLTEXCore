@@ -8,40 +8,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
     [Table(TableNames.YARN_PR_CHILD)]
     public class YarnPRChild : YarnItemMaster, IDapperBaseEntity
     {
-        public YarnPRChild()
-        {
-            YDMaterialRequirementChildItemID = 0;
-            Remarks = "";
-            YarnPRCompanies = new List<YarnPRCompany>();
-            CompanyIDs = new int[] { CompnayIDConstants.EFL };
-            CPRCompanyIDs = new int[] { CompnayIDConstants.EFL };
-            //CompanyNames = "EFL";
-            //CPRCompanyNames = "EFL";
-            BookingNo = "";
-            ConceptNo = "";
-            YarnPRChildID = 0;
-            YarnPRMasterID = 0;
-            YarnCategory = "";
-            ReqQty = 0;
-            ReqCone = 0;
-            ConceptID = 0;
-            Remarks = "";
-            ShadeCode = "";
-            SetupChildID = 0;
-            FPRCompanyID = 0;
-            FCMRChildID = 0;
-            PYBBookingChildID = 0;
-            YDMaterialRequirementChildItemID = 0;
-            HSCode = "";
-            PreProcessRevNo = 0;
-            RefLotNo = "";
-            RefSpinnerID = 0;
-            AllocationID = 0;
-            PurchaseQty = 0;
-            AllocationQty = 0;
-            BaseTypeId = (int)EnumBaseType.None;
-            AllocationChildID = 0;
-        }
 
         [ExplicitKey]
         public int YarnPRChildID { get; set; } = 0;
@@ -74,7 +40,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public string Source { get; set; } = "";
         [Write(false)]
-        public EntityState EntityState { get; set; }
+        public EntityState EntityState { get; set; } = EntityState.Added;
         [Write(false)]
         public int TotalRows { get; set; } = 0;
         [Write(false)]
@@ -100,9 +66,9 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public string BookingNo { get; set; } = "";
         [Write(false)]
-        public int[] CompanyIDs { get; set; }
+        public int[] CompanyIDs { get; set; } = Array.Empty<int>();
         [Write(false)]
-        public int[] CPRCompanyIDs { get; set; }
+        public int[] CPRCompanyIDs { get; set; } = Array.Empty<int>();
         [Write(false)]
         public string GroupConceptNo { get; set; } = "";
         [Write(false)]
@@ -111,19 +77,4 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         public string DayValidDurationName { get; set; } = "";
         #endregion Additional Property
     }
-
-    //public class YarnPRChildValidator : AbstractValidator<YarnPRChild>
-    //{
-    //    public YarnPRChildValidator()
-    //    {
-    //        //RuleFor(x => x.Segment1ValueId).NotEmpty().WithMessage("Composition is required!");
-    //        //RuleFor(x => x.Segment2ValueId).NotEmpty().WithMessage("Yarn type is required!");
-    //        //RuleFor(x => x.Segment3ValueId).NotEmpty().WithMessage("Manufacturing process is required!");
-    //        //RuleFor(x => x.Segment5ValueId).NotEmpty().WithMessage("Yarn count is required!");
-    //        //RuleFor(x => x.Segment7ValueId).NotEmpty().WithMessage("Yarn count is required!");
-    //        RuleFor(x => x.CompanyIDs).NotEmpty().WithMessage("Company field is required!");
-    //        RuleFor(x => x.ReqQty).NotEmpty().WithMessage("Req Qty is required!");
-    //        //RuleFor(x => x.HSCode).NotEmpty().WithMessage("HS Code is required!").MaximumLength(20).WithMessage("HS code can not be more than 20 characters.");
-    //    }
-    //}
 }

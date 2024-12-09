@@ -159,7 +159,7 @@ namespace EPYSLTEXCore.Application.Services
 
                 #region 2. Save All Item In Temp Table
 
-                var maxId = _itemSegmentService.GetMaxIdAsync(TableNames.ITEMMASTER, newItemMasters.Count);
+                var maxId = _itemSegmentService.GetMaxId(TableNames.ITEMMASTER, newItemMasters.Count);
                 int maxItemMasterId = Convert.ToInt32(Convert.ToInt32(maxId));
                 foreach (var item in newItemMasters)
                 {

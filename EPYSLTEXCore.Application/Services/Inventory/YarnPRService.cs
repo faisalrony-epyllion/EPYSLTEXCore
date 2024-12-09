@@ -10,6 +10,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace EPYSLTEX.Infrastructure.Services
 {
@@ -1887,7 +1888,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 switch (yarnPRMaster.EntityState)
                 {
                     case EntityState.Added:
-                        yarnPRMaster = await AddAsync(yarnPRMaster);
+                        yarnPRMaster = await AddAsync(yarnPRMaster, transaction);
                         break;
 
                     case EntityState.Modified:
@@ -1924,9 +1925,9 @@ namespace EPYSLTEX.Infrastructure.Services
             }
         }
         
-        public async Task<YarnPRMaster> AddAsync(YarnPRMaster entity)
+        public async Task<YarnPRMaster> AddAsync(YarnPRMaster entity, SqlTransaction transaction)
         {
-            entity.YarnPRMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER);
+            entity.YarnPRMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER, RepeatAfterEnum.NoRepeat, transaction);
             if (!entity.IsAdditional)
             {
                 var prNextNumber = await this.GetMaxReqNo(entity.GroupConceptNo);

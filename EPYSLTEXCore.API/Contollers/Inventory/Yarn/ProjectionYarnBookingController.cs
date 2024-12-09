@@ -22,7 +22,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         private readonly ISelect2Service _select2Service;
         private readonly IProjectionYarnBookingService _service;
         private readonly IYarnPRService _servicePR;
-        //Waiting For Nishad Vai//private readonly ItemMasterRepository<ProjectionYarnBookingItemChild> _itemMasterRepository;
+        private readonly IItemMasterService<ProjectionYarnBookingItemChild> _itemMasterRepository;
         //private readonly IEmailService _emailService;
         //private readonly IReportingService _reportingService;
         //private readonly ICommonService _commonService;
@@ -30,7 +30,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         public ProjectionYarnBookingController(ISelect2Service select2Service
             , IProjectionYarnBookingService service
-            //Waiting For Nishad Vai//, ItemMasterRepository<ProjectionYarnBookingItemChild> itemMasterRepository
+            , IItemMasterService<ProjectionYarnBookingItemChild> itemMasterRepository
             , IUserService userService
         //, IEmailService emailService
         //, IReportingService reportingService
@@ -39,7 +39,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         {
             _select2Service = select2Service;
             _service = service;
-            //Waiting For Nishad Vai//_itemMasterRepository = itemMasterRepository;
+            _itemMasterRepository = itemMasterRepository;
             //_emailService = emailService;
             //_reportingService = reportingService;
             _logger = LogManager.GetCurrentClassLogger();
@@ -114,7 +114,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         {
             List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();
             childRecords = model.ProjectionYarnBookingItemChilds;
-            //Waiting For Nishad Vai//_itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
             ProjectionYarnBookingMaster entity;
             if (model.PYBookingID > 0)
             {
@@ -655,7 +655,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             {
                 List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();
                 childRecords = model.ProjectionYarnBookingItemChilds;
-                //Waiting For Nishad Vai//_itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+                _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
 
                 ProjectionYarnBookingMaster entity;
 

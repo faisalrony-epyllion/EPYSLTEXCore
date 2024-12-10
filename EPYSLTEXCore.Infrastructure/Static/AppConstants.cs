@@ -579,4 +579,11 @@
         public const int SubProgram = 8;
         public const int Certification = 9;
     }
+    public static class EnumBDSType
+    {
+        public const int Concept = 0;
+        public const int BDS = 1;
+        public const int Bulk = 2;
+        public const int ProjectionBooking = 3;
+    }
 }

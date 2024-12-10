@@ -1,0 +1,1482 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("bulkBookingAckPage", "@ViewBag.BulkBookingAckPage");
+</script>
+<style type="text/css">
+    .hide_IMG {
+        display: none;
+    }
+</style>
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblChildCollarId = "tblChildCollarId" + pageId;
+    var tblChildCuffId = "tblChildCuffId" + pageId;
+    var tblItemSummary = "tblItemSummary" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblPlanningId = "tblPlanning" + pageId;
+    var modalPlanningId = "modalPlanning" + pageId;
+    var modalCriteriaId = "modalCriteria" + pageId;
+    var tblCriteriaId = "tblCriteria" + pageId;
+    var tblColorChildIdFP = "tblColorChildIdFP" + pageId;
+    var tblChildIdFP = "tblChildFP" + pageId;
+    var modalUtilizationPropoasalId = "modalUtilizationPropoasal" + pageId;
+    var tblStockSummaryId = "tblStockSummary" + pageId;
+    var tblStockInfoId = "tblStockInfo" + pageId;
+    var tblFFUtilizationId = "tblFFUtilizationInfo" + pageId;
+    var modalFFUtilizationId = "modalFFUtilizationInfo" + pageId;
+    var tblGFUtilizationId = "tblGFUtilizationInfo" + pageId;
+    var modalGFUtilizationId = "modalGFUtilizationInfo" + pageId;
+    var tblGeryYarnUtilizationId = "tblGreyYarnUtilizationInfo" + pageId;
+    var modalGeryYarnUtilizationId = "modalGeryYarnUtilizationInfo" + pageId;
+
+    var tblDyedYarnUtilizationId = "tblDyedYarnUtilizationInfo" + pageId;
+    var modalDyedYarnUtilizationId = "modalDyedYarnUtilizationInfo" + pageId;
+
+    var tblFBAckChildReplacementInfoId = "tblFBAckChildReplacementInfo" + pageId;
+    var modalFBAckChildReplacementInfoId = "modalFBAckChildReplacementInfo" + pageId;
+
+    var tblFBAckYarnNetYarnReqQtyInfoId = "tblFBAckYarnNetYarnReqQtyInfo" + pageId;
+    var modalFBAckYarnNetYarnReqQtyInfoId = "modalFBAckYarnNetYarnReqQtyInfo" + pageId;
+}
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <button id="btnPendingList" class="btn btn-success text-white btn-sm btnToolbar btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;Pending List
+                </button>
+                <button id="btnDraftList" class="btn btn-sm btnToolbar btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;Draft List
+                </button>
+                <button id="btnBookingList" class="btn btn-sm btnToolbar btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;<span class="spnBookingListText">Booking List</span>
+                </button>
+                <button id="btnRcvList" class="btn btn-success text-white btn-sm btnToolbar">
+                    <i class="fa fa-list"></i>&nbsp;Yet To Swatch Receive List
+                </button>
+
+                <button id="btnAdditionBBKIList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Additional List
+                </button>
+                @*<button id="btnList" class="btn btn-default btn-sm btnToolbar">
+            <i class="fa fa-hourglass"></i>&nbsp;Acknowledged List
+        </button>*@
+                <button id="btnList" class="btn btn-default btn-sm btnToolbar">
+                    <i class="fa fa-list"></i>&nbsp;Available List
+                </button>
+                <button id="btnCancelList" class="btn btn-default btn-sm btnToolbar">
+                    <i class="fa fa-list"></i>&nbsp;Cancel List
+                </button>
+                <button id="btnAcknowledgedList" class="btn btn-default btn-sm btnToolbar">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledged List
+                </button>
+                <button id="btnDeliveredList" class="btn btn-default btn-sm btnToolbar">
+                    <i class="fa fa-list"></i>&nbsp;Delivered List
+                </button>
+                <button id="btnUnAcknowledgedList" class="btn btn-default btn-sm btnToolbar btnCountNF">
+                    <i class="fa fa-list"></i>&nbsp;<span class="spnUnAcknowledgedListText">UnAcknowledged List</span>
+                </button>
+                <button id="btnWaitingForRevisionList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Waiting for revision List
+                </button>
+
+                <button id="btnPendingAllowanceList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Allowance List
+                </button>
+                <button id="btnAllowanceList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Send For Approval List
+                </button>
+                <button id="btnRejectedAllowanceList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Reject List
+                </button>
+
+                <button id="btnPendingUtilizationProposalList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Utilization Proposal List
+                </button>
+
+                <button id="btnPendingUtilizationConfirmationList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Utilization Confirmation List
+                </button>
+                <button id="btnUtilizationConfirmedList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Utilization Confirmed List
+                </button>
+
+                <button id="btnPendingCheckList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending For Check
+                </button>
+                <button id="btnCheckedList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Checked List
+                </button>
+                <button id="btnRejectedCheckList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Reject List By Knitting Head
+                </button>
+
+                <button id="btnPendingApprovalList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Approval
+                </button>
+                <button id="btnApprovedList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Approved List
+                </button>
+                <button id="btnRejectedApproveList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Reject List By Production Head
+                </button>
+
+                <button id="btnPendingFinalApprovalList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Final Approval
+                </button>
+                <button id="btnFinalApprovaledList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Final Approved List
+                </button>
+                <button id="btnInternalRejectionList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Internal Rejection List
+                </button>
+                <button id="btnRejectedFinalApprovalList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Reject List By PMC
+                </button>
+
+                <button id="btnPendingLabDipList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending List
+                </button>
+                <button id="btnLabDipAcknowledgeList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledge List
+                </button>
+                <button id="btnFLLabDipUnAcknowledgeList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;UnAcknowledge List
+                </button>
+                <button id="btnLabDipRnDAckList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledge List (R&D)
+                </button>
+                <button id="btnLabDipUnAcknowledgeList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Unacknowledge List (R&D)
+                </button>
+                <button id="btnLabDipRevisionList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Revision List
+                </button>
+
+                <button id="btnApproveBBKIList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Approved List
+                </button>
+                <button id="btnRejectBBKIList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Reject List
+                </button>
+
+                <button id="btnAllBulkBookingList" class="btn btn-default btn-sm btnToolbar btnCountNF" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;All
+                </button>
+
+                <button id="btnPendingYBAList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Acknowledge
+                </button>
+                <button id="btnRevisionYarnYBAList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Revision Acknowledge
+                </button>
+                @*<button id="btnRevisionBookingYBAList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+            <i class="fa fa-list"></i>&nbsp;Booking Revision List
+        </button>*@
+                <button id="btnAckYBAList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledged List
+                </button>
+                <button id="btnUnAckYBAList" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Unacknowledged List
+                </button>
+                <button id="btnPendingExport" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Data Export
+                </button>
+                <button id="btnExport" class="btn btn-success text-white btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Data Export
+                </button>
+
+                <button id="btnRefreshList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-refresh"></i>&nbsp;
+                </button>
+            </div>
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="FBAckID" name="FBAckID" value="-1111" />
+            <input type="hidden" id="BookingID" name="BookingID" />
+            <input type="hidden" id="BuyerID" name="BuyerID" />
+            <input type="hidden" id="BuyerTeamID" name="BuyerTeamID" />
+            <input type="hidden" id="ExecutionCompanyID" name="ExecutionCompanyID" />
+            <input type="hidden" id="SupplierID" name="SupplierID" />
+            <input type="hidden" id="StyleMasterID" name="StyleMasterID" />
+            <input type="hidden" id="SubGroupID" name="SubGroupID" />
+            <input type="hidden" id="ExportOrderID" name="ExportOrderID" />
+            <input type="hidden" id="CompanyID" name="CompanyID" />
+            <input type="hidden" id="BookingBy" name="BookingBy" />
+            <input type="hidden" id="RevisionNo" name="RevisionNo" />
+            <input type="hidden" id="PreRevisionNo" name="PreRevisionNo" />
+            <input type="hidden" id="IsYarnRevision" name="IsYarnRevision" />
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <input type="hidden" id="GroupConceptNo" name="GroupConceptNo" />
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
+                        </div>
+                        <div class="panel-body">
+                            @*<div class="form-horizontal">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Booking No</label>
+                                            <div class="col-sm-8">
+                                                <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group divYBookingNo" style="display:none;">
+                                            <label class="control-label col-sm-4 small">Yarn Booking No</label>
+                                            <div class="col-sm-8">
+                                                <input id="YBookingNo" name="YBookingNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            <label class="control-label col-sm-4 small">SL No</label>
+                                            <div class="col-sm-8">
+                                                <input id="SLNo" name="SLNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Booking Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group divForBBKI">
+                                            <label class="control-label col-sm-4 small">Req Del Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="RequiredFabricDeliveryDate" name="RequiredFabricDeliveryDate" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Season Name</label>
+                                            <div class="col-sm-8">
+                                                <input id="SeasonName" name="SeasonName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Buyer</label>
+                                            <div class="col-sm-8">
+                                                <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Buyer Team</label>
+                                            <div class="col-sm-8">
+                                                <input id="BuyerTeamName" name="BuyerTeamName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Company</label>
+                                            <div class="col-sm-8">
+                                                <input id="CompanyName" name="CompanyName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group divForBBKI">
+                                            <label class="control-label col-sm-4 small">Yarn Req Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="YarnRequiredDate" name="YarnRequiredDate" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Remarks</label>
+                                            <div class="col-sm-8">
+                                                <input id="Remarks" name="Remarks" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Style No</label>
+                                            <div class="col-sm-8">
+                                                <input id="StyleNo" name="StyleNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Order Qty</label>
+                                            <div class="col-sm-8">
+                                                <input id="BookingQty" name="BookingQty" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Supplier Name</label>
+                                            <div class="col-sm-8">
+                                                <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group divUnAcknowledgeReason" style="display:none;">
+                                            <label class="control-label col-sm-4 small">Reason</label>
+                                            <div class="col-sm-8">
+                                                <input id="UnAcknowledgeReason" name="UnAcknowledgeReason" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group divForBBKI">
+                                            <label class="control-label col-sm-4 small">TNA Days</label>
+                                            <div class="col-sm-8">
+                                                <input id="TNACalendarDays" name="TNACalendarDays" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group divForBBKI">
+                                            <div class="col-sm-12">
+                                                <button type="button" id="addYarnComposition" class="btn btn-success btn-xs" style="float:right">
+                                                    <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Composition
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="form-horizontal" id="divCommonGeneralData">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small lblBookingNo">Booking No</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divYBookingNo" style="display:none;">
+                                        <label class="control-label col-sm-4 small">Yarn Booking No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YBookingNo" name="YBookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display:none;">
+                                        <label class="control-label col-sm-4 small">SL No</label>
+                                        <div class="col-sm-8">
+                                            <input id="SLNo" name="SLNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Team</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerTeamName" name="BuyerTeamName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Season Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SeasonName" name="SeasonName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <input id="Remarks" name="Remarks" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Style No</label>
+                                        <div class="col-sm-8">
+                                            <input id="StyleNo" name="StyleNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Delivery Place</label>
+                                        <div class="col-sm-8">
+                                            <input id="CompanyName" name="CompanyName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small lblSupplierName">Supplier Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small lblOrderQty">Order Qty</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingQty" name="BookingQty" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBFA">
+                                        <label class="control-label col-sm-4 small">Order Qty(KG)</label>
+                                        <div class="col-sm-8">
+                                            <input id="OrderQtyKG" name="OrderQtyKG" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divUnAcknowledgeReason" style="display:none;">
+                                        <label class="control-label col-sm-4 small">Reason</label>
+                                        <div class="col-sm-8">
+                                            <input id="UnAcknowledgeReason" name="UnAcknowledgeReason" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group divForBBKI">
+                                        <label class="control-label col-sm-4 small">Req Del Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="RequiredFabricDeliveryDate" name="RequiredFabricDeliveryDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divAddYarnBookingDate">
+                                        <label class="control-label col-sm-4 small">Add. Yarn Booking Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="AddYarnBookingDate" name="AddYarnBookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBKI">
+                                        <label class="control-label col-sm-4 small">TNA Days</label>
+                                        <div class="col-sm-8">
+                                            <input id="TNACalendarDays" name="TNACalendarDays" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBFA">
+                                        <label class="control-label col-sm-4 small">First Shipment Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="FirstShipmentDate" name="FirstShipmentDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBKI">
+                                        <label class="control-label col-sm-4 small">Yarn Req Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnRequiredDate" name="YarnRequiredDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBFA">
+                                        <label class="control-label col-sm-4 small">Fabric Start Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="FabricStartDate" name="FabricStartDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBFA">
+                                        <label class="control-label col-sm-4 small">Fabric End Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="FabricEndDate" name="FabricEndDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small lblTeamLeader">Team Leader</label>
+                                        <div class="col-sm-8">
+                                            <input id="TeamLeader" name="TeamLeader" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBKI">
+                                        <div class="col-sm-12">
+                                            <button type="button" id="addYarnComposition" class="btn btn-success btn-xs addYarnComposition" style="float:right">
+                                                <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Composition
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-horizontal" id="divYBAckGeneralData">
+                                <div class="col-sm-4">
+
+                                    <div class="form-group divYBookingNo" style="display:none;">
+                                        <label class="control-label col-sm-4 small">Yarn Booking No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YBookingNo" name="YBookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small lblBookingNo">Fabric Booing No</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Booking Date (FR)</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingDateFR" name="BookingDateFR" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Booking Date (Actual)</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Booking Status</label>
+                                        <div class="col-sm-8">
+                                            <input id="FabricBookingStatus" name="FabricBookingStatus" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Booking Date (FR)</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnBookingDateFR" name="YarnBookingDateFR" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Booking Date (Actual)</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnBookingDateActual" name="YarnBookingDateActual" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Booking Status</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnBookingStatus" name="YarnBookingStatus" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Booking Created By</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnBookingCreatedBy" name="YarnBookingCreatedBy" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Projection Ref</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnProjectionRef" name="YarnProjectionRef" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <!--
+                                    <div class="form-group" style="display:none;">
+                                        <label class="control-label col-sm-4 small">Booking Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Booking Created By</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnBookingByName" name="YarnBookingByName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Projection Reference</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnProjectionReference" name="YarnProjectionReference" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    -->
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Required Date (FR)</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnRequiredDateFR" name="YarnRequiredDateFR" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Required Date (Based on Actual Yarn Booking)</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnRequiredDateBOYB" name="YarnRequiredDateBOYB" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Delivery Start Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="FabricRequireDate" name="FabricRequireDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Delivery Complete Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="FabricRequireDateEnd" name="FabricRequireDateEnd" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Garments Shipment Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="GarmentsShipmentDate" name="GarmentsShipmentDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Merchandiser</label>
+                                        <div class="col-sm-8">
+                                            <input id="Merchandiser" name="Merchandiser" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Team</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerTeamName" name="BuyerTeamName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Merchandising Team</label>
+                                        <div class="col-sm-8">
+                                            <input id="MerchandisingTeam" name="MerchandisingTeam" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <!--
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Req Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnRequiredDate" name="YarnRequiredDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Req Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="FabricRequireDate" name="FabricRequireDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Garments Shipment Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="GarmentsShipmentDate" name="GarmentsShipmentDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking Merchandiser</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingByName" name="BookingByName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    -->
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Season Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SeasonName" name="SeasonName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">TNA Calender</label>
+                                        <div class="col-sm-8">
+                                            <input id="TNACalender" name="TNACalender" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Supplier Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Last Fabric Booking Revision Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="RevisionDate" name="RevisionDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Last Yarn Booking Revision Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnBookingRevisionDate" name="YarnBookingRevisionDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Total Number of Yarn Booking Revision</label>
+                                        <div class="col-sm-8">
+                                            <input id="YarnRevisionNo" name="YarnRevisionNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <!--
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Team</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerTeamName" name="BuyerTeamName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Merchandising Team</label>
+                                        <div class="col-sm-8">
+                                            <input id="MerchandisingTeam" name="MerchandisingTeam" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Season Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SeasonName" name="SeasonName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group divForBBKI">
+                                        <label class="control-label col-sm-4 small">TNA Days</label>
+                                        <div class="col-sm-8">
+                                            <input id="TNACalendarDays" name="TNACalendarDays" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small lblSupplierName">Supplier Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <input id="Remarks" name="Remarks" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    -->
+                                    @*<div class="form-group divForBBKI">
+                                            <label class="control-label col-sm-4 small">Req Del Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="RequiredFabricDeliveryDate" name="RequiredFabricDeliveryDate" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>*@
+
+
+
+                                    <div class="form-group divForBBKI">
+                                        <div class="col-sm-12">
+                                            <button type="button" id="addYarnComposition" class="btn btn-success btn-xs addYarnComposition" style="float:right">
+                                                <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Composition
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12" id="divFabricInfo" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                        <div class="panel-heading">
+                            <label id="lblTableTitle">Sample Booking Consumption</label>
+                            <button type="button" id="btntblChild" class="btn btn-success btn-xs btnHideShowPlus">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <button type="button" id="btnAddFabricItem" class="btn btn-primary btn-xs forAYB" title="Take Items" style="display:none;">
+                                <i class="fa fa-search-plus"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body" id="divtblChild">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<table id="tblFabric-@pageId"></table>*@
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divCollarInfo" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div style="float: left; margin: 10px;">
+                                    <label>Collar Information</label>
+                                    <button type="button" id="btntblChildCollar" class="btn btn-success btn-xs btnHideShowPlus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" id="btnAddCollarItem" class="btn btn-primary btn-xs forAYB" title="Take Items" style="display:none;">
+                                        <i class="fa fa-search-plus"></i>
+                                    </button>
+                                </div>
+                                @*<input type="hidden" id="CollarSizeID" />
+                                    <input type="hidden" id="CollarWeightInGm" />*@
+                                <div class="divForWeight" style="float: right; margin: 10px 10px 0 0; display: none;">
+                                    <label style="font-size: 12px;">Size : </label>
+                                    <select id="CollarSizeID" name="CollarSizeID" class="form-control SizeWithConsumption" style="margin-right: 5px; height: 24px; "></select>
+                                    <label style="font-size: 12px;">Consumption(gm) : </label>
+                                    <input type="number" id="CollarWeightInGm" name="CollarWeightInGm" class="SizeWithConsumption" placeholder="Consumption(gm)" style="width: 70px; height: 24px;" />
+                                    <button type="button" id="btnCollarApplyKG" class="btn btn-success btn-xs SizeWithConsumption">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body" id="divtblChildCollar">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<table id="tblCollar-@pageId"></table>*@
+                                        <table id="@tblChildCollarId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divCufInfo" style="display:none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div style="float: left; margin: 10px;">
+                                    <label>Cuff Information</label>
+                                    <button type="button" id="btntblChildCuff" class="btn btn-success btn-xs btnHideShowPlus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" id="btnAddCuffItem" class="btn btn-primary btn-xs forAYB" title="Take Items" style="display:none;">
+                                        <i class="fa fa-search-plus"></i>
+                                    </button>
+                                </div>
+                                @*<input type="hidden" id="CuffSizeID" />
+                                    <input type="hidden" id="CuffWeightInGm" />*@
+                                <div class="divForWeight" style="float:right;margin:10px 10px 0 0;display:none;">
+                                    <label style="font-size: 12px;">Size : </label>
+                                    <select id="CuffSizeID" name="CuffSizeID" class="form-control SizeWithConsumption" style="margin-right: 5px; height: 24px; "></select>
+                                    <label style="font-size: 12px;">Consumption(gm) : </label>
+                                    <input type="number" id="CuffWeightInGm" name="CuffWeightInGm" class="SizeWithConsumption" placeholder="Consumption(gm)" style="width: 70px; height: 24px;" />
+                                    <button type="button" id="btnCuffApplyKG" class="btn btn-success btn-xs SizeWithConsumption">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body" id="divtblChildCuff">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<table id="tblCuff-@pageId"></table>*@
+                                        <table id="@tblChildCuffId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divItemSummary" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                        <div class="panel-heading">
+                            <label id="lblTableTitle">Item Summary</label>
+                            <button type="button" id="btnItemSummary" class="btn btn-success btn-xs">
+                                Yarn Summary
+                            </button>
+                            <button id="btnYarnBookingSummaryReport" type="button" class="btn btn-danger btn-xs" title="Yarn Booking Summary Report">
+                                <i class="fa fa-file-pdf-o"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblItemSummary"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Create New Composition</h4>
+                            </div>
+                            <div class="modal-body" style="padding: 0 15px">
+                                <div class="icheck-primary icheck-inline">
+                                    <input type="radio" id="non-blended-bbki" name="BlendedBBKI" value="0" checked />
+                                    <label for="non-blended-bbki">Non Blended</label>
+                                </div>
+                                <div class="icheck-primary icheck-inline">
+                                    <input type="radio" id="blended-bbki" name="BlendedBBKI" value="1" />
+                                    <label for="blended-bbki">Blended</label>
+                                </div>
+                                <table id="tblCreateComposition-@pageId"></table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnReceive"><i class="fa fa-save"></i>&nbsp;Receive</button>
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-success m-w-120 btnAction" id="btnSaveAsDraft"><i class="fa fa-save"></i>&nbsp;&nbsp;<span id="spnSaveAsDraft">Save as Draft</span></button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnRejectByKnittingInputPopup" style="display:none;"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnApproveByAllowance" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnRejectByAllowancePopup" style="display:none;"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnCheckByKnittingHead" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Send For Approval</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnRejectByKnittingHeadPopup" style="display:none;"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnApproveByProductionHead" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnRejectByProductionHeadPopup" style="display:none;"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnApproveByPMC" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnInternalReviseByPMCPopup" style="display:none;"><i class="fa fa-recycle"></i>&nbsp;&nbsp;Internal Revise</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnRejectByPMCPopup" style="display:none;"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnReviseBBKI" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnReviseBBKIYarn" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnReviseBBKIAdYarn" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnAckYBA" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnUnAckYBA" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Unacknowledge</button>
+
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnSaveLabDipAck" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnSaveLabDipUnAck" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Unacknowledge</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnReviseLabDipRnD" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnReviseLabDip" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnUnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;UnAcknowledge</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnReceived"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnCancelAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Accept</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnCancelUnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Not Accept</button>
+
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnSaveUtilizationProposal" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnSendForUtilizationApproval" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send For Approval</button>
+
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnApproveAdditionBBKI" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
+                            <button type="button" class="btn btn-danger m-w-120 btnAction" id="btnRejectAdditionBBKI" style="display:none;"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+            <div class="modal fade" id="@modalCriteriaId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title" id="criteriachildTitle"></h4>
+                            BDS Criteria Name
+                        </div>
+                        <div class="modal-body">
+                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <table id="@tblCriteriaId"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnOkk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="@modalPlanningId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title" id="childTitle"></h4>
+                            BDS Planning Criteria
+                        </div>
+                        <div class="modal-body">
+                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <table id="@tblPlanningId"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="@modalUtilizationPropoasalId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Yarn Allocation
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm-12" id="divYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label class="lblTableTitle">Stock Informations</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    @*<table id="tblFabric-@pageId"></table>*@
+                                                    <table id="@tblStockInfoId"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnUPOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="@modalFFUtilizationId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Finish Fabric Utilization
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm-12" id="divYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label id="lblTableTitleFFUtilization">Finish Fabric Utilization</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblFFUtilizationId"></table>
+                                                </div>
+                                                <a class="btn btn-xs btn-default" title="Add Utilization" id="btnLoadFinishingFabricUtilization" style="margin-top:6px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Utilization</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnFFUtilizationOK">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="@modalGFUtilizationId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Grey Fabric Utilization
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm-12" id="divGreyYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label id="lblTableTitleFFUtilization">Grey Fabric Utilization</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblGFUtilizationId"></table>
+                                                </div>
+                                                <a class="btn btn-xs btn-default" title="Add Utilization" id="btnLoadGreyFabricUtilization" style="margin-top:6px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Utilization</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnGFUPOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="@modalGeryYarnUtilizationId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Grey Yarn Utilization
+                        </div>
+                        <div class="modal-body" id="divYarnInfo">
+                            <div class="col-sm-12" id="divGrayYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label id="lblTableTitleGreyYarnUtilization">Grey Yarn Utilization</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblGeryYarnUtilizationId"></table>
+                                                </div>
+                                                <a class="btn btn-xs btn-default" title="Add Grey Yarn Utilization" id="btnLoadGreyYarnUtilization" style="margin-top:6px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Grey Yarn Utilization</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" id="btnGreyYarnPOPUPClose">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnGreyYarnPOPUPOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="@modalDyedYarnUtilizationId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Dyed Yarn Utilization
+                        </div>
+                        <div class="modal-body" id="divYarnInfo">
+                            <div class="col-sm-12" id="divGrayYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label id="lblTableTitleDyedYarnUtilization">Dyed Yarn Utilization</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblDyedYarnUtilizationId"></table>
+                                                </div>
+                                                <a class="btn btn-xs btn-default" title="Add Dyed Yarn Utilization" id="btnLoadDyedYarnUtilization" style="margin-top:6px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Dyed Yarn Utilization</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" id="btnDyedYarnPOPUPClose">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnDyedYarnPOPUPOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="@modalFBAckChildReplacementInfoId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Replacement QTY Information
+                        </div>
+                        <div class="modal-body" id="divYarnInfo">
+                            <div class="col-sm-12" id="divGrayYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label id="lblTableTitleFBAckChildReplacementInfo">Replacement QTY</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblFBAckChildReplacementInfoId"></table>
+                                                </div>
+                                                <a class="btn btn-xs btn-default" title="Add Replacement QTY" id="btnLoadFBAckChildReplacementInfo" style="margin-top:6px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Replacement QTY</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnFBAckChildReplacementInfoPOPUPOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="@modalFBAckYarnNetYarnReqQtyInfoId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            Net Req QTY Information
+                        </div>
+                        <div class="modal-body" id="divYarnInfo">
+                            <div class="col-sm-12" id="divGrayYarnInfo">
+                                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
+                                    <div class="panel-heading">
+                                        <label id="lblTableTitleFBAckChildReplacementInfo">Net Req QTY</label>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblFBAckYarnNetYarnReqQtyInfoId"></table>
+                                                </div>
+                                                <a class="btn btn-xs btn-default" title="Add Net Req QTY" id="btnLoadFBAckYarnNetYarnReqQtyInfo" style="margin-top:6px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Net Req QTY</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnFBAckYarnNetYarnReqQtyInfoPOPUPOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalRejectReason" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align:center;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Reason</h4>
+                </div>
+                <div class="modal-body">
+                    <textarea id="txtRejectReason" style="width: 100%; height: 200px; border-color: #ccc; overflow-y: auto; padding: 8px; resize: none;" placeholder="Type reason..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnRejectKI" type="button" class="btn btn-primary" data-dismiss="modal">Confirm</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="divModalFP" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Finishing Process</h4>
+                </div>
+                <div class="modal-body" style="max-height: 400px !important; overflow-y: auto; overflow-x: hidden;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                                <div class="panel-heading">
+                                    General/Commercial Information
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-horizontal">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Booking No</label>
+                                                <div class="col-sm-8">
+                                                    <input id="BookingNoFP" name="BookingNoFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">SL No</label>
+                                                <div class="col-sm-8">
+                                                    <input id="SLNoFP" name="SLNoFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Booking Date</label>
+                                                <div class="col-sm-8">
+                                                    <input id="BookingDateFP" name="BookingDateFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Season</label>
+                                                <div class="col-sm-8">
+                                                    <input id="SeasonNameFP" name="SeasonNameFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Buyer Name</label>
+                                                <div class="col-sm-8">
+                                                    <input id="BuyerNameFP" name="BuyerNameFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Buyer Team</label>
+                                                <div class="col-sm-8">
+                                                    <input id="BuyerTeamNameFP" name="BuyerTeamNameFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Company</label>
+                                                <div class="col-sm-8">
+                                                    <input id="CompanyNameFP" name="CompanyNameFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Remarks</label>
+                                                <div class="col-sm-8">
+                                                    <input id="RemarksFP" name="RemarksFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Style No</label>
+                                                <div class="col-sm-8">
+                                                    <input id="StyleNoFP" name="StyleNoFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Order Qty</label>
+                                                <div class="col-sm-8">
+                                                    <input id="BookingQtyFP" name="BookingQtyFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Supplier Name</label>
+                                                <div class="col-sm-8">
+                                                    <input id="SupplierNameFP" name="SupplierNameFP" class="form-control input-sm fpProps" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                                <div class="panel-heading">
+                                    Product Information
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-horizontal">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Machine Name</label>
+                                                <div class="col-sm-8">
+                                                    <input id="MachineNameFP" name="MachineNameFP" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">GSM</label>
+                                                <div class="col-sm-8">
+                                                    <input id="GsmFP" name="GsmFP" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Technical Name</label>
+                                                <div class="col-sm-8">
+                                                    <input id="TechnicalNameFP" name="TechnicalNameFP" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Composition</label>
+                                                <div class="col-sm-8">
+                                                    <input id="CompositionFP" name="CompositionFP" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                                <div class="panel panel-success col-sm-12" id="divPreDying">
+                                    <div class="panel-heading">
+                                        Pre-Dying Process
+                                        <button type="button" id="btnAddPreProcessFP" class="btn btn-success btn-xs">
+                                            <i class="fa fa-search"></i>&nbsp;&nbsp;Add Item
+                                        </button>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblChildIdFP"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12" id="divNotPreDying" style="padding-left: 80px; ">
+                                    <label style="font:bold">There is no Pre-Dying Process for this Concept</label>
+                                </div>
+                                <div class="panel panel-success col-sm-12" style="border-color:transparent; border-style:none;">
+                                    <div class="panel-heading">
+                                        Finishing Process
+                                        (<span id="spnColorName"></span>)
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblColorChildIdFP"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnModalAddFP">Add</button>
+                    <button type="button" class="btn btn-default" id="btnModalCloseFP">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

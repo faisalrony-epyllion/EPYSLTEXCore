@@ -1921,7 +1921,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 foreach (YarnPRChild item in yarnPRMaster.Childs)
                 {
 
-                    await _connection.ExecuteAsync("sp_Validation_YarnPRChild", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnPRChild, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
 
                 }
                 transaction.Commit();

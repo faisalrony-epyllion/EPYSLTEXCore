@@ -178,7 +178,9 @@
 
     function initChildTable(records) {
         if ($tblChildEl) $tblChildEl.destroy();
-
+        records.map(x => {
+            if (typeof x.IsLive === "undefined") x.IsLive = false;
+        });
         $tblChildEl = new initEJ2Grid({
             tableId: tblChildId,
             data: records,
@@ -189,21 +191,21 @@
             editSettings: { allowAdding: true, allowEditing: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true },
             columns: [
                 { field: 'CCColorID', isPrimaryKey: true, visible: false },
-                { field: 'ConceptID', headerText: 'ConceptID', visible: false, width: 15 },
+                { field: 'ConceptID', headerText: 'ConceptID', visible: false },
                 {
-                    headerText: 'Action', width: 10, commands: [
+                    headerText: 'Action', commands: [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
                         { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
                         { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }
                     ]
                 },
-                { field: 'ColorCode', headerText: 'Code', allowEditing: false, width: 15 },
-                { field: 'ColorName', headerText: 'Name', allowEditing: false, width: 15 },
-                { field: 'Color', headerText: 'Visual', uid: "RGBOrHex", allowEditing: false, valueAccessor: ej2GridColorFormatter, width: 15 },
-                { field: 'Remarks', headerText: 'Remarks', width: 20 },
-                { field: 'IsRecipeDone', headerText: 'IsRecipeDone', width: 20, visible: false },
-                { field: 'IsLive', headerText: 'Live?', width: 15, allowEditing: false, displayAsCheckBox: true, textAlign: 'Center' }
+                { field: 'ColorCode', headerText: 'Code', allowEditing: false },
+                { field: 'ColorName', headerText: 'Name', allowEditing: false },
+                { field: 'Color', headerText: 'Visual', uid: "RGBOrHex", allowEditing: false, valueAccessor: ej2GridColorFormatter },
+                { field: 'Remarks', headerText: 'Remarks' },
+                { field: 'IsRecipeDone', headerText: 'IsRecipeDone', visible: false },
+                { field: 'IsLive', headerText: 'Live?', allowEditing: false, displayAsCheckBox: true, textAlign: 'Center' }
             ],
             actionBegin: function (args) {
                 if (args.requestType === "delete") {
@@ -361,7 +363,7 @@
             editSettings: { allowAdding: true, allowEditing: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true },
             columns: [
                 {
-                    headerText: 'Action', width: 50, commands: [
+                    headerText: 'Action', commands: [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
                         { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
@@ -440,7 +442,7 @@
                     }
                 },
                 {
-                    field: 'CompositionId', headerText: 'Composition', width: 250, valueAccessor: ej2GridDisplayFormatter,
+                    field: 'CompositionId', headerText: 'Composition', valueAccessor: ej2GridDisplayFormatter,
                     dataSource: masterData.CompositionList,
                     displayField: "Composition",
                     edit: ej2GridDropDownObj({
@@ -448,7 +450,7 @@
                     })
                 },
                 //{
-                //    field: 'CompositionId', headerText: 'Composition', width: 350, valueAccessor: ej2GridDisplayFormatterV2, edit: ej2GridDropDownObjV2({
+                //    field: 'CompositionId', headerText: 'Composition', valueAccessor: ej2GridDisplayFormatterV2, edit: ej2GridDropDownObjV2({
                 //        displayField: "Composition",
                 //        dataSource: masterData.CompositionList,
                 //        width: 350,
@@ -457,7 +459,7 @@
                 //    })
                 //},
                 {
-                    field: 'GSMId', headerText: 'GSM', width: 60, valueAccessor: ej2GridDisplayFormatterV2, edit: ej2GridDropDownObjV2({
+                    field: 'GSMId', headerText: 'GSM', valueAccessor: ej2GridDisplayFormatterV2, edit: ej2GridDropDownObjV2({
                         displayField: "GSM",
                         dataSource: masterData.GSMList,
                         onChange: function (selectedData, currentRowData) {
@@ -466,7 +468,7 @@
                 },
                 {
                     field: 'Qty', headerText: 'Quantity(pcs/kg)', editType: "numericedit",
-                    edit: { params: { showSpinButton: false, decimals: 0, format: "N0", min: 1, validateDecimalOnType: true } }, width: 70
+                    edit: { params: { showSpinButton: false, decimals: 0, format: "N0", min: 1, validateDecimalOnType: true } }
                 }
             ]
         });
@@ -1031,7 +1033,8 @@
             fields: "ColorSource,ColorCode,ColorName,RGBOrHex",
             headerTexts: "Source,Code,Name,Visual",
             customFormats: ",,,ej2GridColorFormatter",
-            widths: "50,80,150,100",
+            
+            //widths: "50,80,150,100",
             isMultiselect: true,
             primaryKeyColumn: "PTNID",
             onMultiselect: function (selectedRecords) {
@@ -1047,7 +1050,6 @@
                         RGBOrHex: value.RGBOrHex
                     });
                 });
-                debugger;
                 initChildTable(masterData.ChildColors);
             }
         });

@@ -1,10 +1,15 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace EPYSLTEXCore.Infrastructure.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
 {
-    [Table(TableNames.YARN_QC_REQ_CHILD)]
+    [Table("YarnQCReqChild")]
     public class YarnQCReqChild : DapperBaseEntity
     {
         [ExplicitKey]

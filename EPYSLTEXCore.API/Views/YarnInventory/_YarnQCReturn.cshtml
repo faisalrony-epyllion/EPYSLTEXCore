@@ -1,0 +1,135 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <div>
+                    <button id="btnPending" class="btn btn-success text-white btn-sm">
+                        <i class="fa fa-list"></i>&nbsp;Available For Return
+                    </button>
+                    <button id="btnList" class="btn btn-default text-grey btn-sm">
+                        <i class="fa fa-list"></i>&nbsp;Return Lists
+                    </button>
+                </div>
+                <div style="margin:10px 0 10px 0;" class="divCreate btnTootBar">
+                    <button id="btnCreate" class="btn btn-primary btn-sm btnExtra">
+                        <i class="fa fa-plus"></i>&nbsp;Create
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="QCReturnMasterID" name="QCReturnMasterID" value="-1111" />
+            <input type="hidden" name="QCRemarksMasterID" id="QCRemarksMasterID" />
+            <input type="hidden" name="QCReqMasterID" id="QCReqMasterID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Return No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReturnNo" name="QCReturnNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Return Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReturnDate" name="QCReturnDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqNo" name="QCReqNo" class="form-control input-sm" value="" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqDate" name="QCReqDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Received No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReceiveNo" name="QCReceiveNo" class="form-control input-sm" value="" readonly />
+                                        </div>
+                                    </div>
+                                    @*<div class="form-group">
+                                        <label class="control-label col-sm-4 small">Received Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReceiveDate" name="QCReceiveDate" class="form-control input-sm" readonly/>
+                                        </div>
+                                    </div>*@
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition For</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqFor" name="QCReqFor" class="form-control input-sm" value="" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

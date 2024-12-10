@@ -70,6 +70,7 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IYarnQCReqService, YarnQCReqService>();
             service.AddTransient<IYarnQCRemarksService, YarnQCRemarksService>();
             service.AddTransient<IYarnQCIssueService, YarnQCIssueService>();
+            service.AddTransient<IYarnMRIRService, YarnMRIRService>();
 
 
         }

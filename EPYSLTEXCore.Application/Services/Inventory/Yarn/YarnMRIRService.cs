@@ -1412,7 +1412,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                             item.YarnAllocation.MRIRChildID = item.MRIRChildID;
                             item.YarnAllocation.YarnAllocationID = countAllocationMaster++;
                             //item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await _yarnAllocationService.GetMaxYarnAllocationNoAsync());
-                            item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await GetMaxYarnAllocationNoAsync(transactionGmt,_connectionGmt));
+                            item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await GetMaxYarnAllocationNoAsync(transactionGmt));
                             item.YarnAllocation.Childs.ForEach(c =>
                             {
                                 c.AllocationID = item.YarnAllocation.YarnAllocationID;
@@ -1468,11 +1468,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             }
         }
 
-        private async Task<string> GetMaxYarnAllocationNoAsync(SqlTransaction transactionGmt, SqlConnection connectionGmt)
+        private async Task<string> GetMaxYarnAllocationNoAsync(SqlTransaction transactionGmt)
         {
-            var id = await _service.GetMaxIdAsync(TableNames.YARN_ALLOCATION_NO, RepeatAfterEnum.EveryYear, transactionGmt, connectionGmt);
+            var id = await _service.GetMaxIdAsync(TableNames.YARN_ALLOCATION_NO, RepeatAfterEnum.EveryYear, transactionGmt, _connectionGmt);
             var datePart = DateTime.Now.ToString("yyMMdd");
             return $@"{datePart}{id:00000}";
         }
-	}
+    }
 }

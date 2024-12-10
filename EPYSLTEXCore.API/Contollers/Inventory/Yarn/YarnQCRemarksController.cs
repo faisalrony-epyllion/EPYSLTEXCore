@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Azure.Core;
+using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
+using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
@@ -16,7 +18,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
     {
         private readonly IYarnQCRemarksService _service;
         private readonly IMapper _mapper;
-        public YarnQCRemarksController(IYarnQCRemarksService service, IMapper mapper)
+        public YarnQCRemarksController(IUserService userService, IYarnQCRemarksService service, IMapper mapper) : base(userService)
         {
             _service = service;
             _mapper = mapper;
@@ -24,7 +26,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("list")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetList(Status status)
+        public async Task<IActionResult> GetList(Status status)
         {
             var paginationInfo = Request.GetPaginationInfo();
             List<YarnQCRemarksMaster> records = await _service.GetPagedAsync(status, paginationInfo);
@@ -32,20 +34,20 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         }
         [HttpGet]
         [Route("new/{qcReceiveChildID}")]
-        public async Task<IHttpActionResult> GetNew2(int qcReceiveChildID)
+        public async Task<IActionResult> GetNew2(int qcReceiveChildID)
         {
             return Ok(await _service.GetNew2Async(qcReceiveChildID));
         }
         //[HttpGet]
         //[Route("new/{qcReceiveMasterId}")]
-        //public async Task<IHttpActionResult> GetNew(int qcReceiveMasterId)
+        //public async Task<IActionResult> GetNew(int qcReceiveMasterId)
         //{
         //    return Ok(await _service.GetNewAsync(qcReceiveMasterId));
         //}
 
         [Route("{qcRemarksChildID}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int qcRemarksChildID)
+        public async Task<IActionResult> Get(int qcRemarksChildID)
         {
             YarnQCRemarksMaster record = await _service.Get2Async(qcRemarksChildID);
             return Ok(record);
@@ -54,7 +56,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         /*
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             YarnQCRemarksMaster record = await _service.GetAsync(id);
             Guard.Against.NullObject(id, record);
@@ -65,7 +67,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> SaveYarnQCRemarks(YarnQCRemarksMaster model)
+        public async Task<IActionResult> SaveYarnQCRemarks(YarnQCRemarksMaster model)
         {
             YarnQCRemarksMaster entity = new YarnQCRemarksMaster();
 
@@ -76,7 +78,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 entity.YarnQCRemarksChilds.SetUnchanged();
 
                 entity.IsRetest = true;
-                entity.RetestBy = UserId;
+                entity.RetestBy = AppUser.UserCode;
                 entity.RetestDate = DateTime.Now;
             }
             else if (model.IsModified)
@@ -84,21 +86,21 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 entity = await _service.GetAllAsync(model.QCRemarksMasterID);
                 entity.QCRemarksDate = model.QCRemarksDate;
                 entity.ReceiveID = model.ReceiveID;
-                entity.UpdatedBy = UserId;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;
                 entity.EntityState = EntityState.Modified;
 
                 if (model.IsRetestForRequisition)
                 {
                     entity.IsRetestForRequisition = true;
-                    entity.RetestForRequisitionBy = UserId;
+                    entity.RetestForRequisitionBy = AppUser.UserCode;
                     entity.RetestForRequisitionDate = DateTime.Now;
                 }
 
                 if (model.IsSendForApproval)
                 {
                     entity.IsSendForApproval = true;
-                    entity.SendForApprovalBy = UserId;
+                    entity.SendForApprovalBy = AppUser.UserCode;
                     entity.SendForApprovalDate = DateTime.Now;
 
                     entity.IsApproved = false;
@@ -135,7 +137,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                         if (child.id == "ReTest")
                         {
                             childEntity.ReTest = true;
-                            childEntity.ReTestBy = UserId;
+                            childEntity.ReTestBy = AppUser.UserCode;
                             childEntity.ReTestDate = DateTime.Now;
 
                             childEntity.Approve = false;
@@ -162,7 +164,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             childEntity.Approve = true;
                             childEntity.ApproveDate = DateTime.Now;
-                            childEntity.ApproveBy = UserId;
+                            childEntity.ApproveBy = AppUser.UserCode;
 
                             childEntity.Reject = false;
                             childEntity.RejectDate = null;
@@ -188,7 +190,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             childEntity.Reject = true;
                             childEntity.RejectDate = DateTime.Now;
-                            childEntity.RejectBy = UserId;
+                            childEntity.RejectBy = AppUser.UserCode;
 
                             childEntity.Diagnostic = false;
                             childEntity.DiagnosticDate = null;
@@ -214,7 +216,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             childEntity.Diagnostic = true;
                             childEntity.DiagnosticDate = DateTime.Now;
-                            childEntity.DiagnosticBy = UserId;
+                            childEntity.DiagnosticBy = AppUser.UserCode;
 
                             childEntity.CommerciallyApprove = false;
                             childEntity.CommerciallyApproveDate = null;
@@ -240,7 +242,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             childEntity.CommerciallyApprove = true;
                             childEntity.CommerciallyApproveDate = DateTime.Now;
-                            childEntity.CommerciallyApproveBy = UserId;
+                            childEntity.CommerciallyApproveBy = AppUser.UserCode;
                         }
                         #region YarnQCRemarksChildResult
                         child.YarnQCRemarksChildResults.ToList().ForEach(x =>
@@ -322,15 +324,15 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             else
             {
                 entity = model;
-                entity.AddedBy = UserId;
-                entity.QCRemarksBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
+                entity.QCRemarksBy = AppUser.UserCode;
                 foreach (YarnQCRemarksChild child in entity.YarnQCRemarksChilds)
                 {
                     switch (child.id)
                     {
                         case "ReTest":
                             child.ReTest = true;
-                            child.ReTestBy = UserId;
+                            child.ReTestBy = AppUser.UserCode;
                             child.ReTestDate = DateTime.Now;
 
                             child.Approve = false;
@@ -356,7 +358,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             child.Approve = true;
                             child.ApproveDate = DateTime.Now;
-                            child.ApproveBy = UserId;
+                            child.ApproveBy = AppUser.UserCode;
 
                             child.Reject = false;
                             child.RejectDate = null;
@@ -381,7 +383,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             child.Reject = true;
                             child.RejectDate = DateTime.Now;
-                            child.RejectBy = UserId;
+                            child.RejectBy = AppUser.UserCode;
 
                             child.Diagnostic = false;
                             child.DiagnosticDate = null;
@@ -406,7 +408,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             child.Diagnostic = true;
                             child.DiagnosticDate = DateTime.Now;
-                            child.DiagnosticBy = UserId;
+                            child.DiagnosticBy = AppUser.UserCode;
 
                             child.CommerciallyApprove = false;
                             child.CommerciallyApproveDate = null;
@@ -431,7 +433,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                             child.CommerciallyApprove = true;
                             child.CommerciallyApproveDate = DateTime.Now;
-                            child.CommerciallyApproveBy = UserId;
+                            child.CommerciallyApproveBy = AppUser.UserCode;
                             break;
                         default:
                             // code block
@@ -447,11 +449,11 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("approve")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> ApproveYarnQCRemarks(YarnQCRemarksMaster model)
+        public async Task<IActionResult> ApproveYarnQCRemarks(YarnQCRemarksMaster model)
         {
             YarnQCRemarksMaster entity = await _service.GetAllAsync(model.QCRemarksMasterID);
             entity.IsApproved = true;
-            entity.ApprovedBy = UserId;
+            entity.ApprovedBy = AppUser.UserCode;
             entity.ApprovedDate = DateTime.Now;
             entity.EntityState = EntityState.Modified;
             entity.YarnQCRemarksChilds.SetUnchanged();
@@ -468,7 +470,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                     c.CommerciallyApprove = false;
 
                     c.ReTest = true;
-                    c.ReTestBy = UserId;
+                    c.ReTestBy = AppUser.UserCode;
                     c.ReTestDate = DateTime.Now;
                 }
             });

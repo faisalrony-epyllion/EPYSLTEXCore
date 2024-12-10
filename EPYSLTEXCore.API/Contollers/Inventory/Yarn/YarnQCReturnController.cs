@@ -1,8 +1,11 @@
 ﻿using Azure.Core;
+using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
+using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
+using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
@@ -13,14 +16,14 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
     public class YarnQCReturnController : ApiBaseController
     {
         private readonly IYarnQCReturnService _service;
-        public YarnQCReturnController(IYarnQCReturnService service)
+        public YarnQCReturnController(IUserService userService, IYarnQCReturnService service) : base(userService)
         {
             _service = service;
         }
 
         [Route("list")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetList(Status status)
+        public async Task<IActionResult> GetList(Status status)
         {
             var paginationInfo = Request.GetPaginationInfo();
             List<YarnQCReturnMaster> records = await _service.GetPagedAsync(status, paginationInfo);
@@ -29,14 +32,14 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [HttpGet]
         [Route("new/{reqMasterId}")]
-        public async Task<IHttpActionResult> GetNew(int reqMasterId)
+        public async Task<IActionResult> GetNew(int reqMasterId)
         {
             return Ok(await _service.GetNewAsync(reqMasterId));
         }
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var record = await _service.GetAsync(id);
             Guard.Against.NullObject(id, record);
@@ -45,7 +48,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         }
         [Route("qc-receive-child/{qcReceiveChildIds}")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetDetailsByQCReturnChilds(string qcReceiveChildIds)
+        public async Task<IActionResult> GetDetailsByQCReturnChilds(string qcReceiveChildIds)
         {
             var record = await _service.GetDetailsByQCReturnChilds(qcReceiveChildIds);
             return Ok(record);
@@ -53,7 +56,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> SaveYarnReturn(YarnQCReturnMaster model)
+        public async Task<IActionResult> SaveYarnReturn(YarnQCReturnMaster model)
         {
             YarnQCReturnMaster entity;
             if (model.IsModified)
@@ -61,7 +64,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 entity = await _service.GetAllAsync(model.QCReturnMasterID);
 
                 entity.QCReturnDate = model.QCReturnDate;
-                entity.UpdatedBy = UserId;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;
                 entity.EntityState = EntityState.Modified;
 
@@ -93,8 +96,8 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             else
             {
                 entity = model;
-                entity.AddedBy = UserId;
-                entity.QCReturnBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
+                entity.QCReturnBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
             }
 

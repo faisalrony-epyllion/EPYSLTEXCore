@@ -1,9 +1,12 @@
 ﻿using Azure.Core;
+using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
+using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +18,14 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
     public class YarnQCReceiveController : ApiBaseController
     {
         private readonly IYarnQCReceiveService _service;
-        public YarnQCReceiveController(IYarnQCReceiveService service)
+        public YarnQCReceiveController(IUserService userService, IYarnQCReceiveService service) : base(userService)
         {
             _service = service;
         }
 
         [Route("list")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetList(Status status)
+        public async Task<IActionResult> GetList(Status status)
         {
             var paginationInfo = Request.GetPaginationInfo();
             List<YarnQCReceiveMaster> records = await _service.GetPagedAsync(status, paginationInfo);
@@ -32,7 +35,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [HttpGet]
         [Route("new/{qcIssuerMasterId}")]
         //[Route("new/{QCReqMasterId}")]
-        public async Task<IHttpActionResult> GetNew(int qcIssuerMasterId)
+        public async Task<IActionResult> GetNew(int qcIssuerMasterId)
         {
             return Ok(await _service.GetNewAsync(qcIssuerMasterId));
         }
@@ -40,7 +43,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var record = await _service.GetAsync(id);
             Guard.Against.NullObject(id, record);
@@ -51,7 +54,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> Save(YarnQCReceiveMaster model)
+        public async Task<IActionResult> Save(YarnQCReceiveMaster model)
         {
             YarnQCReceiveMaster entity;
             if (model.IsModified)
@@ -60,7 +63,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
                 entity.QCReceiveDate = model.QCReceiveDate;
                 entity.ReceiveID = model.ReceiveID;
-                entity.UpdatedBy = UserId;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;
                 entity.EntityState = EntityState.Modified;
 
@@ -101,8 +104,8 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                     item.YarnCategory = CommonFunction.GetYarnShortForm(item.Segment1ValueDesc, item.Segment2ValueDesc, item.Segment3ValueDesc, item.Segment4ValueDesc, item.Segment5ValueDesc, item.Segment6ValueDesc, item.ShadeCode);
                     //item.ReqQtyCarton = item.ReqBagPcs;
                 }
-                entity.AddedBy = UserId;
-                entity.QCReceivedBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
+                entity.QCReceivedBy = AppUser.UserCode;
             }
             await _service.SaveAsync(entity);
             return Ok();

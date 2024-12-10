@@ -9,6 +9,9 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
+using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EnumRackBinOperationType = EPYSLTEXCore.Infrastructure.Static.EnumRackBinOperationType;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 {
@@ -17,8 +20,8 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
     {
         private readonly IYarnQCIssueService _service;
         private readonly IYarnRackBinAllocationService _serviceRackBin;
-        public YarnQCIssueController(IYarnQCIssueService service,
-            IYarnRackBinAllocationService serviceRackBin)
+        public YarnQCIssueController(IUserService userService, IYarnQCIssueService service,
+            IYarnRackBinAllocationService serviceRackBin) : base(userService)
         {
             _service = service;
             _serviceRackBin = serviceRackBin;
@@ -26,7 +29,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("list")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetList(Status status)
+        public async Task<IActionResult> GetList(Status status)
         {
             var paginationInfo = Request.GetPaginationInfo();
             List<YarnQCIssueMaster> records = await _service.GetPagedAsync(status, paginationInfo);
@@ -35,14 +38,14 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [HttpGet]
         [Route("new/{qcReqMasterId}")]
-        public async Task<IHttpActionResult> GetNew(int qcReqMasterId)
+        public async Task<IActionResult> GetNew(int qcReqMasterId)
         {
             return Ok(await _service.GetNewAsync(qcReqMasterId));
         }
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var record = await _service.GetAsync(id);
             Guard.Against.NullObject(id, record);
@@ -53,7 +56,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> Save(YarnQCIssueMaster model)
+        public async Task<IActionResult> Save(YarnQCIssueMaster model)
         {
             YarnQCIssueMaster entity;
 
@@ -85,7 +88,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 entity.SupplierId = model.SupplierId;
                 entity.LocationId = model.LocationId;
                 entity.RCompanyId = model.RCompanyId;
-                entity.UpdatedBy = UserId;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;
                 entity.EntityState = EntityState.Modified;
 
@@ -93,7 +96,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 {
                     entity.Approve = true;
                     entity.ApproveDate = DateTime.Now;
-                    entity.ApproveBy = UserId;
+                    entity.ApproveBy = AppUser.UserCode;
                     entity.Reject = false;
                     entity.RejectDate = null;
                     entity.RejectBy = 0;
@@ -105,7 +108,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                     entity.ApproveBy = 0;
                     entity.Reject = true;
                     entity.RejectDate = DateTime.Now;
-                    entity.RejectBy = UserId;
+                    entity.RejectBy = AppUser.UserCode;
                 }
                 entity.YarnQCIssueChilds.ForEach(x =>
                 {
@@ -206,8 +209,8 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             else
             {
                 entity = model;
-                entity.AddedBy = UserId;
-                entity.QCIssueBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
+                entity.QCIssueBy = AppUser.UserCode;
                 foreach (YarnQCIssueChild item in entity.YarnQCIssueChilds)
                 {
                     item.YarnCategory = CommonFunction.GetYarnShortForm(item.Segment1ValueDesc, item.Segment2ValueDesc, item.Segment3ValueDesc, item.Segment4ValueDesc, item.Segment5ValueDesc, item.Segment6ValueDesc, item.ShadeCode);
@@ -217,7 +220,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 {
                     entity.Approve = true;
                     entity.ApproveDate = DateTime.Now;
-                    entity.ApproveBy = UserId;
+                    entity.ApproveBy = AppUser.UserCode;
                     entity.Reject = false;
                     entity.RejectDate = null;
                     entity.RejectBy = 0;
@@ -237,7 +240,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                     entity.ApproveBy = 0;
                     entity.Reject = true;
                     entity.RejectDate = DateTime.Now;
-                    entity.RejectBy = UserId;
+                    entity.RejectBy = AppUser.UserCode;
                 }
                 else
                 {

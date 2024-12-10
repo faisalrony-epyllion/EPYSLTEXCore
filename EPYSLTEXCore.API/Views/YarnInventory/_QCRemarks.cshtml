@@ -1,0 +1,188 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+
+}
+
+<div id="@pageId">
+    <input type="hidden" id="YQCRemarks" value="@ViewBag.YQCRemarks" />
+    <input type="hidden" id="YQCRemarksApproval" value="@ViewBag.YQCRemarksApproval" />
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;Awating for Assessment
+                </button>
+                <button id="btnDraft" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Draft
+                </button>
+                <button id="btnPendingForApproval" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Pending For Approval
+                </button>
+                <button id="btnApproveList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Approve Lists
+                </button>
+                <button id="btnCommerciallyApproveList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Commercially Approved Lists
+                </button>
+                @*<button id="btnRejectList" class="btn btn-default text-grey btn-sm">
+            <i class="fa fa-list"></i>&nbsp;Reject Lists
+        </button>*@
+                <button id="btnRetestList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Re-Test Lists
+                </button>
+                <button id="btnDiagnosticList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Diagnostic Lists
+                </button>
+                <button id="btnAllList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;All
+                </button>
+                <button id="btnPendingListForApproval" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Pending List For Approval
+                </button>
+                <button id="btnApprovalList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Approved List
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="QCRemarksMasterID" name="QCRemarksMasterID" value="-1111" />
+            <input type="hidden" name="QCReqMasterID" id="QCReqMasterID" />
+            <input type="hidden" name="QCIssueMasterID" id="QCIssueMasterID" />
+            <input type="hidden" name="QCReceiveMasterID" id="QCReceiveMasterID" />
+            <input type="hidden" name="ReceiveID" id="ReceiveID" />
+            <input type="hidden" id="LocationId" name="LocationId" />
+            <input type="hidden" id="CompanyId" name="CompanyId" />
+            <input type="hidden" id="RCompanyId" name="RCompanyId" />
+            <input type="hidden" id="SupplierId" name="SupplierId" />
+            <input type="hidden" id="SpinnerId" name="SpinnerId" />
+            <input type="hidden" id="EntityState" name="EntityState" value="4" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Assessment No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCRemarksNo" name="QCRemarksNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Assessment Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCRemarksDate" name="QCRemarksDate" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Receive No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReceiveNo" name="QCReceiveNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Receive Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReceiveDate" name="QCReceiveDate" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqNo" name="QCReqNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqDate" name="QCReqDate" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    @*<button id="btnNewItem" type="button" class="btn btn-default text-grey btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;Add New Item</button>*@
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120 btnAction" id="btnSaveAndSendForApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send For Approval</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnApprove"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnRetest"><i class="fa fa-save"></i>&nbsp;&nbsp;Retest</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnRetestForRequisition"><i class="fa fa-save"></i>&nbsp;&nbsp;Retest For Requisition</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Composition</h4>
+                </div>
+                <div class="modal-body" style="padding: 0 15px">
+                    <table id="tblCreateComposition-@pageId"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

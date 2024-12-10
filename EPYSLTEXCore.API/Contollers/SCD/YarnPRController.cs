@@ -9,6 +9,7 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NLog;
 using System.Data.Entity;
 
@@ -105,14 +106,19 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
         [Route("save")]
         [HttpPost]
     
-        public async Task<IActionResult> Save(YarnPRMaster model)
+        public async Task<IActionResult> Save(dynamic model1)
         {
+            YarnPRMaster model = JsonConvert.DeserializeObject<YarnPRMaster>(Convert.ToString(model1));
+
             string source = model.Childs.Count() > 0 ? model.Childs.First().Source : "";
             string conceptNos = string.Join(",", model.Childs.Select(x => "'" + x.ConceptNo + "'"));
             string itemIds = string.Join(",", model.Childs.Select(x => x.ItemMasterID));
             string bookingNos = string.Join(",", model.Childs.Select(x => "'" + x.BookingNo + "'"));
 
             var tempChildList = CommonFunction.DeepClone(model.Childs);
+
+            //List<YarnPRChild> childRecords = model.Childs;
+            //_itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
 
             List<YarnPRChild> prChilds = source != PRFromName.PROJECTION_YARN_BOOKING ? await _service.GetChilds(conceptNos, itemIds, bookingNos) : new List<YarnPRChild>();
             if (model.IsAdditional)

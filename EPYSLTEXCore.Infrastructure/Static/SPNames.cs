@@ -14,6 +14,6 @@
         public const string spBackupYarnAutoPR = "T_spBackupYarnAutoPR";
         public const string sp_Validation_YarnPRChild_From_PYB = "T_sp_Validation_YarnPRChild_From_PYB";
         public const string sp_Validation_YarnReceiveChild = "T_sp_Validation_YarnReceiveChild";
-
+        public const string sp_Validation_YarnPRChild = "T_sp_Validation_YarnPRChild";
     }
 }

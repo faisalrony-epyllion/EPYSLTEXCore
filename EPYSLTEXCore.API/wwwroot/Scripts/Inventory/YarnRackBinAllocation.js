@@ -337,7 +337,7 @@
                         return [
                             '<span class="btn-group">',
                             '<a class="btn btn-danger btn-xs remove" href="javascript:void(0)" title="Delete Item">',
-                            '<i class="fa fa-remove"></i>',
+                            '<i class="fa fa-times"></i>',
                             '</a>',
                             '</span>'
                         ].join('');
@@ -373,12 +373,12 @@
                     title: "Location",
                     cellStyle: function () { return { classes: 'm-w-80' } },
                     editable: {
-                        type: 'select2',
+                        type: 'select',
                         title: 'Select a Location',
                         inputclass: 'input-sm',
                         showbuttons: false,
                         source: YarnReceive.LocationList,
-                        select2: { width: 150, placeholder: 'Location' }
+                        select: { width: 150, placeholder: 'Location' }
                     }
                 },
                 {
@@ -657,7 +657,6 @@
                 YarnReceive.InvoiceDate = formatDateToDefault(YarnReceive.InvoiceDate);
                 YarnReceive.ChallanDate = formatDateToDefault(YarnReceive.ChallanDate);
                 setFormData($formEl, YarnReceive);
-
                 initChildTable();
                 $tblChildEl.bootstrapTable("load", YarnReceive.YarnReceiveChilds);
                 $tblChildEl.bootstrapTable('hideLoading');

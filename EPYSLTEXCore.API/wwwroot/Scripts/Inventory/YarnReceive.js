@@ -1258,9 +1258,14 @@
         data.YarnReceiveChilds = $tblChildEl.getCurrentViewRecords();
         data.YarnReceiveChilds = checkItemInfos(data.YarnReceiveChilds);
         //Validation Set in Maste
-        initializeValidation($formEl, validationConstraints);
+
+ 
+
+        //initializeValidation($formEl, validationConstraints);
         if (!isValidForm($formEl, validationConstraints)) return toastr.error("Please correct all validation errors!");
         else hideValidationErrors($formEl);
+
+
 
         if (data.YarnReceiveChilds.length === 0) {
             return toastr.error("At least 1 item is required.");

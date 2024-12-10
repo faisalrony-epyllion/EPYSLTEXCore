@@ -55,6 +55,7 @@ function findDuplicateValues(paramArray) {
 
 function initCommonControls($formEl) {
     $(function () { // document ready
+        console.log("i am initCommonControls");
         $formEl.find('.ej2-datepicker').each(function (i, el) {
             $(el).datepicker({
                 todayHighlight: true,
@@ -72,6 +73,7 @@ function initCommonControls($formEl) {
 }
 function ch_initAllDatePicker() {
     $('.ej2-datepicker').each(function (i, el) {
+        console.log("i am ch_initAllDatePicker");
         $(el).datepicker({
             todayHighlight: true,
             format: _ch_date_format_3,
@@ -429,7 +431,19 @@ function formElToJson($formEl) {
 
     return jsonObj;
 }
-
+//function getCorrectionOfProperties(paramObj) {
+//    paramObj = DeepClone(paramObj);
+//    for (var pName in paramObj) {
+//        if (pName.toLowerCase().includes('date')) {
+//            var pValue = getDefaultValueWhenInvalidS(paramObj[pName]);
+//            if (pValue.length > 4) paramObj[pName] = new Date(paramObj[pName]);
+//        }
+//    }
+//    return paramObj;
+//}
+function DeepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 /**
  * Set
  * @param {any} $formEl

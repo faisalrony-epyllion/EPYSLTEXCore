@@ -14,6 +14,7 @@ using EPYSLTEXCore.Application.Services.Inventory;
 using EPYSLTEXCore.Application.Services.RND;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Services;
 namespace EPYSLTEXCore.API.Extension
 {
     public static class ServiceExtensions
@@ -40,7 +41,13 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IYarnPRService, YarnPRService>();
             service.AddTransient<IYarnReceiveService, YarnReceiveService>();
             service.AddTransient<IYarnRackBinAllocationService, YarnRackBinAllocationService>();
-            
+            service.AddScoped(typeof(IItemMasterService<>), typeof(ItemMasterService<>));
+            service.AddScoped(typeof(IChildItemMasterService<>), typeof(ChildItemMasterService<>));
+            service.AddTransient<IItemSetupService, ItemSetupService>();
+            service.AddTransient<IProjectionYarnBookingService, ProjectionYarnPurchaseBookingService>();
+            service.AddTransient<IYarnPOService, YarnPOService>();
+            service.AddTransient<IYarnPIReceiveService, YarnPIReceiveService>();
+
 
 
             //foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
@@ -60,8 +67,11 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IFreeConceptService, FreeConceptService>();
             service.AddTransient<ICommonHelperService, CommonHelperService>();
             service.AddTransient<IFabricColorBookSetupService, FabricColorBookSetupService>();
-            //service.AddTransient<IMapper, Mapper>();
-            //service.AddScoped<IGmtEfRepository<ItemSegmentName>, GmtEfRepository<ItemSegmentName>>();
+            service.AddTransient<IYarnQCReqService, YarnQCReqService>();
+            service.AddTransient<IYarnQCRemarksService, YarnQCRemarksService>();
+            service.AddTransient<IYarnQCIssueService, YarnQCIssueService>();
+            service.AddTransient<IYarnMRIRService, YarnMRIRService>();
+
 
         }
     }

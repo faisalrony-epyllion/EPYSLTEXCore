@@ -259,6 +259,7 @@
         });
 
         $formEl.find("#DepartmentID").change(function () {
+            debugger;
             var selectedDep = $formEl.find("#DepartmentID option:selected").text();
             var isMer = selectedDep.toUpperCase().includes("MERCHANDISING");
             if (isMer) {
@@ -622,6 +623,7 @@
     }
 
     function copyButtonHideShow() {
+        debugger;
         $formEl.find(".divCopyFromExistingBooking").hide();
 
         var selectedDep = $formEl.find("#DepartmentID option:selected").text();
@@ -1159,7 +1161,9 @@
                         }
                         var isDateValidObj = ch_IsDateValid_DayValidDuration(args.data.BookingDate, dayValidDurationId, masterData.DayValidDurations);
                         if (!isDateValidObj.IsValid) {
+                            /*Code OFF FOR CORE Datepicker Issue
                             toastr.error(`Minimum date for this sourcing mode is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
+                            */
                             args.data.BookingDate = isDateValidObj.MinDate;
                             args.rowData.BookingDate = isDateValidObj.MinDate;
                         }
@@ -1214,7 +1218,7 @@
                 status = statusConstants.NEW;
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
-
+                debugger;
                 masterData = response.data;
                 $formEl.find(".divReject").hide();
                 masterData.PYBookingDate = formatDateToDefault(masterData.PYBookingDate);
@@ -1403,15 +1407,24 @@
         return false;
     }
     function save(SendToApprover) {
-
+        debugger;
         $formEl.find("#BuyerIDsList").val($formEl.find("#BuyerIDs").val().map(function (el) {
             return el
         }).toString());
         $formEl.find("#BuyerTeamIDsList").val($formEl.find("#BuyerTeamIDs").val().map(function (el) {
             return el
         }).toString());
-        var data = formDataToJson($formEl.serializeArray());
+        var data = formDataToJson($formEl, $formEl.serializeArray());
 
+        //if (data.DepartmentID == null || typeof data.DepartmentID == 'undefined') {
+        //    data.DepartmentID = masterData.DepartmentID;
+        //}
+        //if (data.SeasonID == null || typeof data.SeasonID == 'undefined') {
+        //    data.SeasonID = masterData.SeasonID;
+        //}
+        //if (data.FinancialYearID == null || typeof data.FinancialYearID == 'undefined') {
+        //    data.FinancialYearID = masterData.FinancialYearID;
+        //}
         data.BuyerIDsList = getDefaultValueWhenInvalidS(data.BuyerIDsList);
         data.BuyerTeamIDsList = getDefaultValueWhenInvalidS(data.BuyerTeamIDsList);
         data.BuyerTeamIDsList = (data.BuyerTeamIDsList.length && data.BuyerTeamIDsList[0] == ',') ? data.BuyerTeamIDsList.slice(1) : data.BuyerTeamIDsList;
@@ -1492,21 +1505,26 @@
 
             var totalQty = 0;
             for (var i = 0; i < pYBookingChild[j].PYBItemChildDetails.length; i++) {
+                debugger;
+                const bookingDate = pYBookingChild[j].PYBItemChildDetails[i].BookingDate;
+                pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(bookingDate).toISOString().split('Z')[0];
                 totalQty += parseInt(pYBookingChild[j].PYBItemChildDetails[i].DetailsQTY);
-                pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(pYBookingChild[j].PYBItemChildDetails[i].BookingDate).toDateString();
+                //pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(pYBookingChild[j].PYBItemChildDetails[i].BookingDate).toDateString();
 
 
                 var dayValidDurationId = getDefaultValueWhenInvalidN(pYBookingChild[j].DayValidDurationId);
                 var isDateValidObj = ch_IsDateValid_DayValidDuration(pYBookingChild[j].PYBItemChildDetails[i].BookingDate, dayValidDurationId, masterData.DayValidDurations);
                 if (!isDateValidObj.IsValid && masterData.IsCheckDVD) {
+                    /*Code OFF FOR CORE Datepicker Issue
                     toastr.error(`Minimum date for this sourcing mode (Yarn Row at ${j + 1}, Booking Date Row at ${i + 1}) is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
                     hasError = true;
                     break;
+                    */
                 }
             }
 
             if (hasError) break;
-
+            debugger;
             if (totalQty != pYBookingChild[j].QTY) {
                 hasError = true;
                 toastr.error(`Sum of booking date qty (${totalQty}) must be ${pYBookingChild[j].QTY} (row ${currentRow})`);
@@ -1520,7 +1538,7 @@
         } else {
             data.isMarketingFlag = isMarketingFlag;
         }
-
+        debugger;
         data.ProjectionYarnBookingItemChilds = pYBookingChild;
         data.BookingByID = $formEl.find("#BookingByID").val();
         data.DepartmentID = $formEl.find("#DepartmentID").val();
@@ -1662,9 +1680,11 @@
                 var dayValidDurationId = getDefaultValueWhenInvalidN(pYBookingChild[j].DayValidDurationId);
                 var isDateValidObj = ch_IsDateValid_DayValidDuration(pYBookingChild[j].PYBItemChildDetails[i].BookingDate, dayValidDurationId, masterData.DayValidDurations);
                 if (!isDateValidObj.IsValid && masterData.IsCheckDVD) {
+                    /*Code OFF FOR CORE Datepicker Issue
                     toastr.error(`Minimum date for this sourcing mode (Yarn Row at ${j + 1}, Booking Date Row at ${i + 1}) is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
                     hasError = true;
                     break;
+                    */
                 }
             }
 
@@ -1778,9 +1798,11 @@
                 var dayValidDurationId = getDefaultValueWhenInvalidN(pYBookingChild[j].DayValidDurationId);
                 var isDateValidObj = ch_IsDateValid_DayValidDuration(pYBookingChild[j].PYBItemChildDetails[i].BookingDate, dayValidDurationId, masterData.DayValidDurations);
                 if (!isDateValidObj.IsValid && masterData.IsCheckDVD) {
+                    /*Code OFF FOR CORE Datepicker Issue
                     toastr.error(`Minimum date for this sourcing mode (Yarn Row at ${j + 1}, Booking Date Row at ${i + 1}) is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
                     hasError = true;
                     break;
+                    */
                 }
             }
         }

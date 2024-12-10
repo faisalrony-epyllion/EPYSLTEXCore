@@ -182,7 +182,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
                 jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = await _signatures.GetMaxIdAsync(parentTable);
                 primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
-                //  _service.Save(parentTable, jsonObject, conn, new List<string> { parentPrimaryKeyColumn }, "add");
+                
             }
 
             if (childGrid != null)

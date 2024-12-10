@@ -13,7 +13,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn
         [ExplicitKey]
         public int PYBookingID { get; set; } = 0;
         public string PYBookingNo { get; set; } = AppConstants.NEW;
-        public DateTime PYBookingDate { get; set; }
+        public DateTime? PYBookingDate { get; set; }
         public int PreProcessRevNo { get; set; } = 0;
         public int RevisionNo { get; set; } = 0;
         public DateTime? RevisionDate { get; set; }
@@ -112,22 +112,22 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn
         public string DepertmentDescription { get; set; } = "";
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> BuyerList { get; set; }
+        public IEnumerable<Select2OptionModel> BuyerList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> BuyerTeamList { get; set; }
+        public IEnumerable<Select2OptionModel> BuyerTeamList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> BookingByList { get; set; }
+        public IEnumerable<Select2OptionModel> BookingByList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> RequiredByList { get; set; }
+        public IEnumerable<Select2OptionModel> RequiredByList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> CompanyList { get; set; }
+        public IEnumerable<Select2OptionModel> CompanyList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> DepartmentList { get; set; }
+        public IEnumerable<Select2OptionModel> DepartmentList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public List<FabricComponentMappingSetup> FabricComponentMappingSetupList { get; set; } = new List<FabricComponentMappingSetup>();
 
@@ -167,25 +167,25 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn
         [Write(false)]
         public YarnPRMaster YarnPR { get; set; } = new YarnPRMaster();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> SeasonList { get; set; }
+        public IEnumerable<Select2OptionModel> SeasonList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> FinancialYearList { get; set; }
+        public IEnumerable<Select2OptionModel> FinancialYearList { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnShadeBooks { get; set; }
+        public IEnumerable<Select2OptionModel> YarnShadeBooks { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; }
+        public IEnumerable<Select2OptionModel> DayValidDurations { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> YarnSubProgramNews { get; set; }
+        public IEnumerable<Select2OptionModel> YarnSubProgramNews { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         [Write(false)]
-        public IEnumerable<Select2OptionModelExtended> Certifications { get; set; }
+        public IEnumerable<Select2OptionModelExtended> Certifications { get; set; } = Enumerable.Empty<Select2OptionModelExtended>();
 
         [Write(false)]
-        public IEnumerable<string> FabricComponents { get; set; }
+        public IEnumerable<string> FabricComponents { get; set; } = Enumerable.Empty<string>();
         [Write(false)]
-        public IEnumerable<Select2OptionModel> FabricComponentsNew { get; set; }
+        public IEnumerable<Select2OptionModel> FabricComponentsNew { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         #endregion Additional Columns
 

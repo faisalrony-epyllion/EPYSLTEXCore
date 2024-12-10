@@ -21,6 +21,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         private readonly IDapperCRUDService<ProjectionYarnBookingMaster> _service;
         //private readonly ISignatureRepository _signatureRepository;
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _connectionGmt;
         //private readonly ItemMasterRepository<ProjectionYarnBookingItemChild> _itemMasterRepository;
         public ProjectionYarnPurchaseBookingService(IDapperCRUDService<ProjectionYarnBookingMaster> service
             //, ISignatureRepository signatureRepository
@@ -30,8 +31,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             )
         {
             _service = service;
-            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+            _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
             //_signatureRepository = signatureRepository;
+            _connectionGmt = service.Connection;
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
             //_itemMasterRepository = itemMasterRepository;
             //_itemMasterRepositoryDetails = itemMasterRepositoryDetails;
@@ -1864,6 +1867,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         public async Task SaveAsync(ProjectionYarnBookingMaster entity, int userId)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 //Backup table data save before YDBookingMaster data update.
@@ -1875,6 +1879,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
+
                 int maxChildId = 0;
                 int maxChildDetailsId = 0;
                 int maxPYBookingBuyerAndBuyerTeamId = 0;
@@ -1882,12 +1890,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity.PYBookingID = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_MASTER);
-                        entity.PYBookingNo = await _service.GetMaxNoAsync(TableNames.PROJECTION_BOOKING_NO);
+                        entity.PYBookingID = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        entity.PYBookingNo = await _service.GetMaxNoAsync(TableNames.PROJECTION_BOOKING_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _connectionGmt);
 
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILD, entity.ProjectionYarnBookingItemChilds.Count);
-                        maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILDDETAILS, entity.ProjectionYarnBookingItemChilds.Sum(x => x.PYBItemChildDetails.Count));
-                        maxPYBookingBuyerAndBuyerTeamId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_BUYER_AND_BUYERTEAM, entity.PYBookingBuyerAndBuyerTeams.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILD, entity.ProjectionYarnBookingItemChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILDDETAILS, entity.ProjectionYarnBookingItemChilds.Sum(x => x.PYBItemChildDetails.Count), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxPYBookingBuyerAndBuyerTeamId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_BUYER_AND_BUYERTEAM, entity.PYBookingBuyerAndBuyerTeams.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                         foreach (ProjectionYarnBookingItemChild item in entity.ProjectionYarnBookingItemChilds)
                         {
@@ -1911,9 +1919,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         break;
 
                     case EntityState.Modified:
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILD, entity.ProjectionYarnBookingItemChilds.FindAll(x => x.EntityState == EntityState.Added).Count);
-                        maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILDDETAILS, entity.ProjectionYarnBookingItemChilds.Sum(x => x.PYBItemChildDetails.Where(y => y.EntityState == EntityState.Added).ToList().Count));
-                        maxPYBookingBuyerAndBuyerTeamId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_BUYER_AND_BUYERTEAM, entity.PYBookingBuyerAndBuyerTeams.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILD, entity.ProjectionYarnBookingItemChilds.FindAll(x => x.EntityState == EntityState.Added).Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILDDETAILS, entity.ProjectionYarnBookingItemChilds.Sum(x => x.PYBItemChildDetails.Where(y => y.EntityState == EntityState.Added).ToList().Count), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxPYBookingBuyerAndBuyerTeamId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_BUYER_AND_BUYERTEAM, entity.PYBookingBuyerAndBuyerTeams.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         foreach (var item in entity.ProjectionYarnBookingItemChilds)
 
                         {
@@ -2042,20 +2050,24 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         public async Task AcknowledgeEntityAsync(ProjectionYarnBookingMaster entity, YarnPRMaster yarnPRMaster)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 await _service.SaveSingleAsync(entity, transaction);
 
                 if (yarnPRMaster.EntityState == EntityState.Added)
                 {
-                    yarnPRMaster.YarnPRMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER);
+                    yarnPRMaster.YarnPRMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                     //yarnPRMaster.YarnPRNo = _signatureRepository.GetMaxNo(TableNames.YARN_PRNO);
                 }
 
-                int maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, yarnPRMaster.Childs.Count(x => x.EntityState == EntityState.Added));
+                int maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, yarnPRMaster.Childs.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                 foreach (YarnPRChild child in yarnPRMaster.Childs.Where(x => x.EntityState == EntityState.Added).ToList())
                 {
                     child.YarnPRChildID = maxChildId++;

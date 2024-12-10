@@ -1373,10 +1373,11 @@
             data.YarnPRNo = masterData.YarnPRNo;
         }
         var url = isCPRPage ? "/api/yarn-pr/save-cpr" : (isFPRPage ? "/api/yarn-pr/save-fpr" : "/api/yarn-pr/save");
+
         axios.post(url, data)
             .then(function () {
                 toastr.success("Saved successfully.");
-                //backToList();
+
                 reloadMasterTable();
             })
             .catch(showResponseError);
@@ -1650,10 +1651,9 @@
     }
 
     async function getYarnSegments() {
-        console.log("i am getYarnSegments");
+  
         var response = await axios.get(getYarnItemsApiUrl([]));
-        console.log(getYarnItemsApiUrl([]));
-        console.log(response);
+
         _yarnSegments = response.data;
     }
 

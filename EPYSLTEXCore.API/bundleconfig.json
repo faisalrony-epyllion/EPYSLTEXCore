@@ -19,6 +19,7 @@
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.css",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.min.css",
       "wwwroot/App_Themes/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css"
+
     ],
     "minify": {
       "enabled": true
@@ -33,7 +34,7 @@
       "wwwroot/App_Themes/lib/axios-progress-bar/index.js",
       "wwwroot/App_Themes/lib/bootstrap/js/bootstrap.js",
       "wwwroot/App_Themes/lib/clockpicker/bootstrap-clockpicker.js",
-      "wwwroot/App_Themes/lib/select2/js/select2.js",
+      "wwwroot/App_Themes/lib/select2/js/select2.full.min.js",
       "wwwroot/App_Themes/lib/toastr.js/toastr.min.js",
       "wwwroot/App_Themes/lib/bootstrap3-editable/js/bootstrap-editable.min.js",
       "wwwroot/App_Themes/lib/HoldOn/HoldOn.min.js",

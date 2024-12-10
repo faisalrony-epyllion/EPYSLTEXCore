@@ -14,6 +14,7 @@ using EPYSLTEXCore.Application.Services.Inventory;
 using EPYSLTEXCore.Application.Services.RND;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Services;
 namespace EPYSLTEXCore.API.Extension
 {
     public static class ServiceExtensions
@@ -41,9 +42,10 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IYarnReceiveService, YarnReceiveService>();
             service.AddTransient<IYarnRackBinAllocationService, YarnRackBinAllocationService>();
             service.AddScoped(typeof(IItemMasterService<>), typeof(ItemMasterService<>));
-            
+            service.AddScoped(typeof(IChildItemMasterService<>), typeof(ChildItemMasterService<>));
             service.AddTransient<IItemSetupService, ItemSetupService>();
             service.AddTransient<IProjectionYarnBookingService, ProjectionYarnPurchaseBookingService>();
+            service.AddTransient<IYarnPOService, YarnPOService>();
 
 
 

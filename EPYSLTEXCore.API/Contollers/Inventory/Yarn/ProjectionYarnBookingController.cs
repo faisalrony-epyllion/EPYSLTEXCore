@@ -1,18 +1,16 @@
-﻿using Azure.Core;
-using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
+using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using System.Data.Entity;
-using EPYSLTEX.Infrastructure.Services;
-using EPYSLTEXCore.Infrastructure.Exceptions;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 {

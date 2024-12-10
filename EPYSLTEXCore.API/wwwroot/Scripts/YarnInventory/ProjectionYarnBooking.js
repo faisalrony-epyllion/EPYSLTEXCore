@@ -259,6 +259,7 @@
         });
 
         $formEl.find("#DepartmentID").change(function () {
+            debugger;
             var selectedDep = $formEl.find("#DepartmentID option:selected").text();
             var isMer = selectedDep.toUpperCase().includes("MERCHANDISING");
             if (isMer) {
@@ -622,6 +623,7 @@
     }
 
     function copyButtonHideShow() {
+        debugger;
         $formEl.find(".divCopyFromExistingBooking").hide();
 
         var selectedDep = $formEl.find("#DepartmentID option:selected").text();
@@ -1414,6 +1416,15 @@
         }).toString());
         var data = formDataToJson($formEl, $formEl.serializeArray());
 
+        //if (data.DepartmentID == null || typeof data.DepartmentID == 'undefined') {
+        //    data.DepartmentID = masterData.DepartmentID;
+        //}
+        //if (data.SeasonID == null || typeof data.SeasonID == 'undefined') {
+        //    data.SeasonID = masterData.SeasonID;
+        //}
+        //if (data.FinancialYearID == null || typeof data.FinancialYearID == 'undefined') {
+        //    data.FinancialYearID = masterData.FinancialYearID;
+        //}
         data.BuyerIDsList = getDefaultValueWhenInvalidS(data.BuyerIDsList);
         data.BuyerTeamIDsList = getDefaultValueWhenInvalidS(data.BuyerTeamIDsList);
         data.BuyerTeamIDsList = (data.BuyerTeamIDsList.length && data.BuyerTeamIDsList[0] == ',') ? data.BuyerTeamIDsList.slice(1) : data.BuyerTeamIDsList;
@@ -1527,7 +1538,7 @@
         } else {
             data.isMarketingFlag = isMarketingFlag;
         }
-
+        debugger;
         data.ProjectionYarnBookingItemChilds = pYBookingChild;
         data.BookingByID = $formEl.find("#BookingByID").val();
         data.DepartmentID = $formEl.find("#DepartmentID").val();

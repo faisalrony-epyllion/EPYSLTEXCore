@@ -1,11 +1,16 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.SupplyChain;
 using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Reflection;
+using System.Security.Cryptography.Xml;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -20,14 +25,16 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         private readonly IUserService _userService;
         private readonly ICommonInterfaceService _service;
         private readonly IConfiguration _configuration;
+        private readonly IDapperCRUDService<Signatures> _signatures;
         private readonly IMemoryCache _memoryCache;
-        public CommonInterfaceController(IUserService userService, ICommonInterfaceService service, IMemoryCache memoryCache
+        public CommonInterfaceController(IUserService userService, ICommonInterfaceService service, IMemoryCache memoryCache, IDapperCRUDService<Signatures> signatures
         ) : base(userService)
         {
 
             _service = service;
             _userService = userService;
             _memoryCache = memoryCache;
+            _signatures = signatures;
             // _sqlQueryRepository = sqlQueryRepository;
         }
         JsonSerializerOptions options = new JsonSerializerOptions
@@ -145,98 +152,78 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         [Route("save/{menuId}")]
         public async Task<IActionResult> Save(int menuId, dynamic entity)
         {
+
+
+            // Retrieve cache and common interface master
             var commonInterfaceMasterlst = await GetOrCreateCacheValue(InMemoryCacheKeys.CommonInterfaceConfig, AppConstants.APPLICATION_ID);
             CommonInterfaceMaster commonInterfaceMaster = commonInterfaceMasterlst.FirstOrDefault(p => p.MenuId == menuId);
-            string parentNameSpace= commonInterfaceMaster.NameSpace.Trim();
-            string childNameSpace = commonInterfaceMaster.ChildGrids.FirstOrDefault().NameSpace.Trim();
-            string parentTable = commonInterfaceMaster.TableName.Trim();
-            string childTable = commonInterfaceMaster.ChildGrids.FirstOrDefault().TableName.Trim();
-            string primaryKeyColumn = commonInterfaceMaster.ChildGrids.FirstOrDefault().PrimaryKeyColumn.Trim();
-
-            string parentTableName = (parentNameSpace + "." + parentTable).Trim();
-            string childTableName =  (childNameSpace + "."+ childTable).Trim();
-            Assembly assembly = Assembly.LoadFrom(@"D:\EPYSLTEXCore\EPYSLTEXCore.API\bin\Debug\net8.0\EPYSLTEXCore.Infrastructure.dll");
-            Type parentEntityType = assembly.GetType(parentTableName);
-            Type childEntityType = assembly.GetType(childTableName);
-            var parentInstance = Activator.CreateInstance(parentEntityType);
-
-            // Step 4: Create an instance of the class dynamically
-            var childInstanceListAdded = new List<object>();
-            var childInstanceListUpdated = new List<object>();
-            var childInstanceListDeleted = new List<object>();
-            string jsonString = JsonSerializer.Serialize(entity);
-
-            // Now parse the string as a JsonObject (or JsonDocument)
-            JsonObject jsonObject = JsonSerializer.Deserialize<JsonObject>(jsonString);
-
-            // Extract the 'Childs' array
-
-            JsonArray childsArray = jsonObject["Childs"].AsArray();
-            string status = "";
-
-            for (int i = 0; i < childsArray.Count; i++)
+            string primaryKeyColumnValue = "";
+            JsonArray childsArray = [];
+            // Deserialize the entity into a JsonObject
+            JsonObject jsonObject = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(entity));
+            List<object> resultList = new List<object>();
+            string parentsqlConnection = commonInterfaceMaster.ConName;
+           
+            // Get child grid details once to avoid multiple calls
+            var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
+            string childsqlConnection = childGrid.ConName;
+            string parentTable = "";
+            string childTable = "";
+            string childGridprimaryKeyColumn = "";
+            string parentPrimaryKeyColumn =  "";
+            if (commonInterfaceMaster.IsAllowAddNew)
             {
-                // Access the current JsonNode (item)
-                JsonNode childNode = childsArray[i];
-                if (childNode is JsonObject jsonObj)
-                {
-                    var childInstance = Activator.CreateInstance(childEntityType);
-                  
+                // Trimmed string values
 
-                    // Loop through the properties of the JsonObject dynamically
-                    foreach (var property in jsonObj)
-                    {
-                        // Get the property name (key) and value
-                        string propertyName = property.Key;
-                        JsonNode propertyValue = property.Value;
+                parentTable = commonInterfaceMaster.TableName.Trim();
 
-                        if(propertyName != null && propertyName.ToLower()=="status")
-                        {
-                            if(propertyValue != null )
-                            {
-                                status=propertyValue.ToString();
-                            }
-                           
-                        }
-                        try
-                        {
-                            SetProperty(childInstance, propertyName, propertyValue);
-                            
-                        }
-                        catch(Exception e)
-                        {
-                            var msg = e.Message;
-                        }
+                  parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
+                string conn = commonInterfaceMaster.ConName.Trim();
 
-                    }
-                    if(status=="add")
-                    {
-                        childInstanceListAdded.Add(childInstance);
-                    }
-                    if(status=="edit")
-
-                    {
-                        childInstanceListUpdated.Add(childInstance);
-                    }
-                    if(status=="delete")
-                    {
-                        childInstanceListDeleted.Add(childInstance);
-                    }
-                 
-                }
+                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = await _signatures.GetMaxIdAsync(parentTable);
+                primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
+                
             }
 
-            // Get the type from the assembly using the full class name
+            if (childGrid != null)
+            { 
+                childTable = childGrid.TableName.Trim(); 
+                childGridprimaryKeyColumn = childGrid.PrimaryKeyColumn.Trim();
+                string childGridParentColumn = childGrid.ParentColumn.Trim();
+                 
+                // Extract the 'Childs' array
+                childsArray = jsonObject["Childs"].AsArray();
+                
+                foreach (JsonNode item in childsArray)
+                {
+
+                    item[childGridParentColumn] = (primaryKeyColumnValue);
+                    item[childGridprimaryKeyColumn] = await _signatures.GetMaxIdAsync(childTable);
+                }
+
+                // Deserialize JsonArray into a List<object>
+                resultList = JsonSerializer.Deserialize<List<object>>(childsArray.ToString());
 
 
-            string conName = commonInterfaceMaster.ConName;
 
-           // _service.Save(childTable, childInstanceListDeleted, conName, new List<string>() { primaryKeyColumn }, status);
-            _service.Save(childTable, childInstanceListUpdated, conName, new List<string>() { primaryKeyColumn }, status);
-            //_service.Save(childTable, childInstanceListAdded, conName,new List<string>() { primaryKeyColumn }, status);
+            }
+ 
+            
+                List<string> tableNames = new List<string>() { parentTable, childTable };
+                List<string> sqlConnection = new List<string>() { parentsqlConnection, childsqlConnection };
+                List<string> primaryKeyColumns = new List<string>() { parentPrimaryKeyColumn, childGridprimaryKeyColumn };
+                List<object> parentChildObject = new List<object>() { jsonObject, jsonObject["Childs"] };
+    
+                
+                _service.Save(tableNames, parentChildObject, sqlConnection, primaryKeyColumns, "add");
+
+           
 
 
-            return Ok();
+
+
+
+            return Ok(primaryKeyColumnValue);
 
         }
         static void SetProperty(object target, string propertyName, JsonNode propertyValue)
@@ -266,6 +253,8 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             if (underlyingType == typeof(int))
             {
+
+
                 // Handle nullable and non-nullable integers
                 return jsonValue.TryGetValue(out int intValue) ? (object)intValue : null;
             }

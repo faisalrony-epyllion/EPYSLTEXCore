@@ -6,11 +6,11 @@ namespace EPYSLTEXCore.Infrastructure.DTOs
 {
     public class TableResponseModel
     {
-        //public TableResponseModel(int t, IEnumerable<object> r)
-        //{
-        //    total = t;
-        //    rows = r;
-        //}
+        public TableResponseModel(int t, IEnumerable<object> r)
+        {
+            total = t;
+            rows = r;
+        }
 
         public TableResponseModel(IEnumerable<dynamic> r, string gridType = "")
         {

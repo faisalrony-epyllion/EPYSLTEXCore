@@ -1,0 +1,462 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+<style>
+    .e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap {
+        border-color: rgba(0,0,0,0.42);
+        width: auto !important;
+        min-width: 200px;
+    }
+</style>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId; 
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="ApprovePage" value="@ViewBag.ApprovePage" />
+
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <button id="btnYPONew" class="btn btn-default btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;New PO
+                </button>
+
+                <button id="btnPendingList" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-pencil-square"></i>&nbsp;Pending
+                </button>
+                <button id="btnAwaitingProposeList" class="btn btn-default btn-sm">
+                    @*<i class="fa fa-pencil-square"></i>&nbsp;Yet to Propose*@
+                    <i class="fa fa-pencil-square"></i>&nbsp;Draft List/Yet to Propose
+                </button>
+                <button id="btnPendingApprovalList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending for Approval
+                </button>
+                <button id="btnApprovedList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Approved Lists
+                </button>
+                <button id="btnRejectList" class="btn btn-default btn-sm">
+                    <i class="fa fa-remove"></i>&nbsp;Reject Lists
+                </button>
+                <button id="btnCancelList" class="btn btn-default btn-sm">
+                    <i class="fa fa-remove"></i>&nbsp;Cancel Lists
+                </button>
+                <button id="btnRevisionList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Revision Lists
+                </button>
+                <button id="btnAllList" class="btn btn-default btn-sm">
+                    <i class="fa fa-angle-down"></i>&nbsp;ALL PO Status
+                </button>
+                <div id="divAddPR" style="margin-top: 5px; margin-left: 10px;">
+                    <button id="btnAddPR" class="btn btn-default btn-sm">
+                        <i class="fa fa-plus"></i>&nbsp;Create PO
+                    </button>
+                </div>
+
+            </div>
+            <div style="font-size:12px">
+                <table id="@tblMasterId"></table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YPOMasterID" name="YPOMasterID" value="-1111" />
+            <input type="hidden" name="PRMasterID" id="PRMasterID" />
+            <input type="hidden" id="CountryOfOriginId" name="CountryOfOriginId" />
+            <input type="hidden" id="CompanyId" name="CompanyId" />
+            <input type="hidden" id="SubGroupID" name="SubGroupID" />
+            <input type="hidden" id="YarnPRChildIDs" name="YarnPRChildIDs" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12" id="divBasicInfo">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">PO No</label>
+                                        <div class="col-sm-7">
+                                            <input id="PoNo" name="PoNo" type="text" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">PO Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="PoDate" name="PoDate" placeholder="PO Date" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Supplier</label>
+                                        <div class="col-sm-7">
+                                            <select id="SupplierId" name="SupplierId" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Company</label>
+                                        <div class="col-sm-7">
+                                            @*<input id="CompanyName" name="CompanyName" class="form-control input-sm" readonly />*@
+                                            <select id="CompanyId" name="CompanyId" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Concept No</label>
+                                        <div class="col-sm-7">
+                                            <input id="ConceptNo" name="ConceptNo" placeholder="Concept No" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group" hidden>
+                                        <label class="control-label col-sm-5 small">Currency</label>
+                                        <div class="col-sm-7">
+                                            <input type="hidden" id="CurrencyId" name="CurrencyId" value="2" />
+                                            <input id="CurrencyCode" name="CurrencyCode" class="form-control input-sm" value="USD" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Delivery Start Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="DeliveryStartDate" name="DeliveryStartDate" placeholder="Start Date" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small" id="DeliveryEndDateLeb">Delivery End Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="DeliveryEndDate" name="DeliveryEndDate" placeholder="End Date" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small" id="YarnInhouseDateLeb">Yarn Inhouse Date</label>
+                                        <div class="col-sm-6">
+                                            <input id="InHouseDate" name="InHouseDate" class="form-control input-sm ej2-datepicker" readonly />
+                                            <button id="btnViewDetailsTNA" type="button" class="btn btn-success btn-xs">
+                                                <i class="fa fa-plus"></i>&nbsp;
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    @*<div class="form-group">
+                                    <label class="control-label col-sm-5 small">Quotation Ref. No</label>
+                                    <div class="col-sm-7">
+                                        <input id="QuotationRefNo" name="QuotationRefNo" placeholder="Quotation Ref. No" class="form-control input-sm" />
+                                    </div>
+                                </div>*@
+
+                                    @*<div class="form-group">
+                                    <label class="control-label col-sm-5 small">Quotation Ref. Date</label>
+                                    <div class="col-sm-7">
+                                        <input id="QuotationRefDate" name="QuotationRefDate" placeholder="Quotation Ref. Date" class="form-control input-sm ej2-datepicker" readonly />
+                                    </div>
+                                </div>*@
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Remarks</label>
+                                        <div class="col-sm-7">
+                                            <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control input-sm"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Internal Notes [For future Allocation/Others]</label>
+                                        <div class="col-sm-7">
+                                            <textarea id="InternalNotes" rows="3" name="InternalNotes" type="text" placeholder="Internal Notes" class="form-control input-sm"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" id="RevisionArea" style="border-color:transparent; display:none; border-style:none;">
+                        <div class="panel-heading">
+                            Revision/Cancel Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-3">
+                                    <div class="icheck-primary">
+                                        <input type="checkbox" id="IsRevision" class="form-control input-sm" name="IsRevision" />
+                                        <label for="IsRevision">Do you want to revise this PO?</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divRevisionReason">
+                                    <label class="control-label col-sm-2 small" style="margin-top:7px">Revision Reason</label>
+                                    <div class="col-sm-6" style="margin-top:7px">
+                                        <textarea id="RevisionReason" rows="2" name="RevisionReason" type="text" placeholder="Revision Reason" class="form-control input-sm"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="icheck-danger">
+                                        <input type="checkbox" id="IsCancel" class="form-control input-sm" name="IsCancel" />
+                                        <label for="IsCancel">Do you want to cancel this PO?</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2 small" style="margin-top:7px" id="lblCancelReason">Cancel Reason</label>
+                                    <div class="col-sm-6" style="margin-top:7px">
+                                        <textarea id="CancelReason" rows="2" name="CancelReason" type="text" placeholder="Cancel Reason" class="form-control input-sm"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divChildInfo">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                            <button type="button" id="btnAddChild" class="btn btn-success btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;Add Items
+                            </button>
+                            <button type="button" id="btnAddFromPRChild" class="btn btn-primary btn-xs" style="display:none;">
+                                <i class="fa fa-plus"></i>&nbsp;Add PR Items
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divTermsCondition">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Terms & Conditions Apply
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Inco Terms</label>
+                                            <div class="col-sm-7">
+                                                <select id="IncoTermsId" name="IncoTermsId" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Payment Terms</label>
+                                            <div class="col-sm-7">
+                                                <select id="PaymentTermsId" name="PaymentTermsId" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="formGroupTypeOfLcId" hidden>
+                                            <label class="control-label col-sm-5 small">Type of L/C</label>
+                                            <div class="col-sm-7">
+                                                <select id="TypeOfLcId" name="TypeOfLcId" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="formGroupCreditDays" hidden>
+                                            <label class="control-label col-sm-5 small">Credit Days</label>
+                                            <div class="col-sm-7">
+                                                <div class="input-group">
+                                                    <select id="CreditDays" name="CreditDays" class="form-control input-sm" style="width:100%" aria-describedby="creditdays-addon"></select>
+                                                    <span class="input-group-addon input-sm" id="creditdays-addon">Days</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="formGroupCalculationofTenure" hidden>
+                                            <label class="control-label col-sm-5 small">Calc. of Tenure</label>
+                                            <div class="col-sm-7">
+                                                <select id="CalculationofTenure" name="CalculationofTenure" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Re-Imbursement Currency</label>
+                                            <div class="col-sm-7">
+                                                <input type="hidden" id="ReImbursementCurrencyId" name="ReImbursementCurrencyId" value="2" />
+                                                <input id="ReImbursmentCurrency" name="ReImbursmentCurrency" class="form-control input-sm" value="USD" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Charges</label>
+                                            <div class="col-sm-7">
+                                                <input id="Charges" name="Charges" type="text" placeholder="Charges" class="form-control input-sm" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Country of Origin</label>
+                                            <div class="col-sm-7">
+                                                <input id="CountryOfOriginName" name="CountryOfOriginName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Shipment Mode</label>
+                                            <div class="col-sm-7">
+                                                <select id="ShipmentModeId" name="ShipmentModeId" class="form-control" style="width:100%"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Offer Validity</label>
+                                            <div class="col-sm-7">
+                                                <select id="OfferValidity" name="OfferValidity" class="form-control" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-5 col-sm-7">
+                                                <div class="icheck-success">
+                                                    <input type="checkbox" id="TransShipmentAllow" class="form-control input-sm" name="TransShipmentAllow" />
+                                                    <label for="TransShipmentAllow">Trans-Shipment Allow?</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="formGroupPortofLoading" hidden>
+                                            <label class="control-label col-sm-5 small">Port of Loading</label>
+                                            <div class="col-sm-7">
+                                                <select id="PortofLoadingID" name="PortofLoadingID" class="form-control" style="width:100%"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="formGroupPortofDischarge" hidden>
+                                            <label class="control-label col-sm-5 small">Port of Destination</label>
+                                            <div class="col-sm-7">
+                                                <select id="PortofDischargeID" name="PortofDischargeID" class="form-control" style="width:100%"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Tolerance</label>
+                                            <div class="col-sm-7">
+                                                <div class="input-group">
+                                                    <input id="ShippingTolerance" name="ShippingTolerance" type="number" value="0" min="0" max="10" class="form-control input-sm" style="text-align:right" aria-describedby="shippingtolerance-addon" />
+                                                    <div class="input-group-addon input-sm" id="shippingtolerance-addon">%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="formGroupQuantityApprovalProcedure" hidden>
+                                            <label class="control-label col-sm-5 small">Quality Approval Procedure</label>
+                                            <div class="col-sm-7">
+                                                <select id="QualityApprovalProcedureId" name="QualityApprovalProcedureId" class="form-control" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnEditCancelYarnPO"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSaveYPO"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSaveYPOShip"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnSaveAndProposeYPO"><i class="fa fa-angle-double-right"></i>&nbsp;Save &amp; Send For Approval</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnApproveYPO" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnRevisionYPO" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Revision</button>
+                            <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPO" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-child-Yarn-TNA">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title" id="childTitle">Yarn TNA Breakdown</h4>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="timeline">
+                                <li class="time-label">
+                                    <span class="bg-red">
+                                        <label id="PODateCurrent"></label>
+                                    </span>
+                                </li>
+                                <li>
+                                    <i class="fa fa-industry bg-blue"></i>
+                                    <div class="timeline-item">
+                                        <h3 class="timeline-header"><span id="SFToPLDays" class="text-bold"></span> days</h3>
+                                        <div class="timeline-body">
+                                            Supplier Factory to Port of Loading
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="time-label">
+                                    <span class="bg-orange">
+                                        <label id="SFToPLDate"></label>
+                                    </span>
+                                </li>
+                                <li>
+                                    <i class="fa fa-ship bg-blue"></i>
+                                    <div class="timeline-item">
+                                        <h3 class="timeline-header"><span id="PLToPDDays" class="text-bold"></span> days</h3>
+                                        <div class="timeline-body">
+                                            Port of Loading to Port of Discharge
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="time-label">
+                                    <span class="bg-light-blue">
+                                        <label id="PLToPDDate"></label>
+                                    </span>
+                                </li>
+                                <li>
+                                    <i class="fa fa-ship bg-blue"></i>
+                                    <div class="timeline-item">
+                                        <h3 class="timeline-header"><span id="PDToCFDays" class="text-bold"></span> days</h3>
+                                        <div class="timeline-body">
+                                            Port of Discharge to Company Factory
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="time-label">
+                                    <span class="bg-green">
+                                        <label id="PDToCFDate"></label>
+                                    </span>
+                                </li>
+                                <li>
+                                    <i class="fa fa-home bg-green-active"></i>
+                                    <div class="timeline-item">
+                                        <h3 class="timeline-header"><span id="InHouseDays" class="text-bold"></span> days</h3>
+                                        <div class="timeline-body">
+                                            Yarn In-house
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+

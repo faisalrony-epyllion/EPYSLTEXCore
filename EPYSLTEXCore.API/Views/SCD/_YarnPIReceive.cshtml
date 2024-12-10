@@ -1,0 +1,415 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblAvailablePOforPIId = "tblAvailablePOforPI" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="YarnPIReceivePage" value="@ViewBag.YarnPIReceivePage" />
+    <input type="hidden" id="CDAPIReceivePage" value="@ViewBag.CDAPIReceivePage" />
+    <input type="hidden" id="YarnPIReceiveAckPage" value="@ViewBag.YarnPIAcknowledgePage" />
+    <input type="hidden" id="CDAPIReceiveAckPage" value="@ViewBag.CDAPIAcknowledgePage" />
+
+
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPendingList" class="btn btn-success btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Waiting For Receive
+                </button>
+                <button id="btnReceivedList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Received PI
+                </button>
+                <button id="btnPendingAkgList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp; Pending for Acknowledge
+                </button>
+                <button id="btnAcknowledgeList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Acknowledge List
+                </button>
+                <button id="btnRejectList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;UnAcknowlege List
+                </button>
+                <button id="btnRejectReviewList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Reject List
+                </button>
+                <button id="btnRevisionList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Revision List
+                </button>
+            </div>
+            <div style="font-size:12px">
+                <table id="@tblMasterId"></table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-12">
+            <form class="form-horizontal" id="@formId">
+                <input type="hidden" id="YPIReceiveMasterID" name="YPIReceiveMasterID" value="-1111" />
+                <input type="hidden" id="EntityState" name="EntityState" value="4" />
+                <input type="hidden" name="YPOMasterID" id="YPOMasterID" />
+                <input type="hidden" name="SupplierID" id="SupplierID" />
+                <input type="hidden" id="CompanyID" name="CompanyID" />
+                <input type="hidden" id="ReImbursementCurrencyID" name="ReImbursementCurrencyID" value="2" />
+                <input type="hidden" id="IsCDA" name="IsCDA" />
+                <input type="hidden" id="RevisionNo" name="RevisionNo" />
+
+                <div class="box-body" id="@divDetailsId" style="display:none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            PI Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-10">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2 small">PI No</label>
+                                            <div class="col-sm-10">
+                                                <input id="YPINo" name="YPINo" type="text" value="" class="form-control input-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2 small">PI Date</label>
+                                            <div class="col-sm-10">
+                                                <input id="PIDate" name="PIDate" placeholder="PI Date" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2 small">Supplier</label>
+                                            <div class="col-sm-10">
+                                                <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2 small">Yarn PO (for PI)</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input type="text" id="PONo" name="PONo" class="form-control" placeholder="Yarn PO (for PI)" readonly />
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-primary" type="button" id="btnAddMorePO"><i class="fa fa-eye"></i>&nbsp; Add More PO</button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="fgRejectReason" style="display:none">
+                                            <label class="control-label col-sm-2 small">Reject Reason</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="3" class="form-control" id="RejectReason" name="RejectReason"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2" id="divPIAttachment">
+                                        <div class="form-group">
+                                            <input id="UploadFile" type="file" class="file" multiple name="UploadFile" accept=".xlsx,.xls,image/*,.doc,.docx,.pdf">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <style>
+                        /*.file-preview {
+                            height: 136px;
+                        }
+
+                        .krajee-default.file-preview-frame .kv-file-content {
+                            width: 134px;
+                            height: 80px;
+                        }
+                        .krajee-default .file-caption-info, .krajee-default .file-size-info {
+                            display: none;
+                        }
+                        .krajee-default.file-preview-frame .file-thumbnail-footer {
+                            display: none;
+                        }
+                        .file-drop-zone {
+                            border: 1px dashed #aaa;
+                            min-height: 135px;
+                            border-radius: 4px;
+                            text-align: center;
+                            vertical-align: middle;
+                            margin: -9px -9px 0px -9px;
+                            padding: 5px;
+                        }
+                        .file-drop-zone-title {
+                            color: #aaa;
+                            font-size: 1.6em;
+                            text-align: center;
+                            padding: 50px 10px;
+                            cursor: default;
+                        }*/
+                    </style>
+
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                            <button type="button" id="btnAddChild" class="btn btn-success btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;Add Items
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            Additional/Deduction PI Value
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">
+                                            <button id="btnAdditionalPIValues" class="btn btn-primary btn-xs">
+                                                <i class="fa fa-plus"></i>&nbsp;Add Additional Value
+                                            </button>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="tblYarnPIReceiveAdditionalValueList"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">
+                                            <button id="btnDeductionPIValues" class="btn btn-primary btn-xs">
+                                                <i class="fa fa-plus"></i>&nbsp;Add Deduction Value
+                                            </button>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="tblYarnPIReceiveDeductionValueList"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">
+                                            Summary PI Values
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-5 small">Total PI Value</label>
+                                                    <div class="col-sm-7">
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">$</div>
+                                                            <input id="TotalPIValue" name="TotalPIValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-5 small">Additional Value</label>
+                                                    <div class="col-sm-7">
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">$</div>
+                                                            <input id="TotalAddValue" name="TotalAddValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-5 small">Deduction Value</label>
+                                                    <div class="col-sm-7">
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">$</div>
+                                                            <input id="TotalDeductionValue" name="TotalDeductionValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-5 small">Net PI Value</label>
+                                                    <div class="col-sm-7">
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">$</div>
+                                                            <input id="NetPIValue" name="NetPIValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;" id="divTermsCondition">
+                        <div class="panel-heading">
+                            PI Terms & Conditions
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Inco Terms</label>
+                                        <div class="col-sm-8">
+                                            <select id="IncoTermsID" name="IncoTermsID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Payment Terms</label>
+                                        <div class="col-sm-8">
+                                            <select id="PaymentTermsID" name="PaymentTermsID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="formGroupTypeOfLcId" hidden>
+                                        <label class="control-label col-sm-4 small">Type of L/C</label>
+                                        <div class="col-sm-8">
+                                            <select id="TypeOfLCID" name="TypeOfLCID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="formGroupCreditDays" hidden>
+                                        <label class="control-label col-sm-4 small">Credit Days</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <select id="CreditDays" name="CreditDays" class="form-control input-sm" style="width:100%" aria-describedby="creditdays-addon"></select>
+                                                <span class="input-group-addon input-sm" id="creditdays-addon">Days</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="formGroupCalculationofTenure" hidden>
+                                        <label class="control-label col-sm-4 small">Calc. of Tenure</label>
+                                        <div class="col-sm-8">
+                                            <select id="CalculationofTenure" name="CalculationofTenure" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Charges</label>
+                                        <div class="col-sm-8">
+                                            <input id="Charges" name="Charges" type="text" placeholder="Charges" class="form-control input-sm" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Country of Origin</label>
+                                        <div class="col-sm-8">
+                                            <select id="CountryOfOriginID" name="CountryOfOriginID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Shipment Mode</label>
+                                        <div class="col-sm-8">
+                                            <select id="ShipmentModeID" name="ShipmentModeID" class="form-control" style="width:100%"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Offer Validity</label>
+                                        <div class="col-sm-8">
+                                            <select id="OfferValidity" name="OfferValidity" class="form-control" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-4 col-sm-8">
+                                            <div class="icheck-success" style="margin-left: -10px;">
+                                                <input type="checkbox" id="TransShipmentAllow" class="form-control input-sm" name="TransShipmentAllow" />
+                                                <label for="TransShipmentAllow">Trans Shipment Allow</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="formGroupPortofLoading" hidden>
+                                        <label class="control-label col-sm-4 small">Port of Loading</label>
+                                        <div class="col-sm-8">
+                                            <select id="PortofLoadingID" name="PortofLoadingID" class="form-control" style="width:100%"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="formGroupPortofDischarge" hidden>
+                                        <label class="control-label col-sm-4 small">Port of Destination</label>
+                                        <div class="col-sm-8">
+                                            <select id="PortofDischargeID" name="PortofDischargeID" class="form-control" style="width:100%"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Tolerance</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input id="ShippingTolerance" name="ShippingTolerance" type="number" value="0" min="0" max="10" class="form-control input-sm" style="text-align:right" aria-describedby="shippingtolerance-addon" />
+                                                <div class="input-group-addon input-sm" id="shippingtolerance-addon">%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-footer btn-e-float-margin">
+                        <div class="col-md-offset-2 col-md-10">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-default m-w-120" id="btCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                                <button type="button" class="btn btn-success m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                                <button type="button" class="btn btn-success m-w-120" id="btnAcknowledge" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
+                                <button type="button" class="btn btn-danger m-w-120" id="btnUnAcknowlege"><i class="fa fa-ban"></i>&nbsp;&nbsp;Unacknowledge</button>
+                                <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-ban"></i>&nbsp;&nbsp;Revise</button>
+                                <button type="button" class="btn btn-success m-w-120" id="btnReviseNew">&nbsp;&nbsp;Revision</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-available-po-for-pi">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content" style="height: 550px; overflow: auto;">
+                <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Available PO for PI</h4>
+                </div>
+                <div class="modal-body" style="font-size:12px">
+                    @*<table id="tbl-available-po-for-pi"></table>*@
+                    <table id="@tblAvailablePOforPIId"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAddAvailablePOForPI" class="btn btn-primary m-w-100">Add</button>
+                    <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

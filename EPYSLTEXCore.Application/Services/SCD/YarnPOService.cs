@@ -11,22 +11,23 @@ using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 
-namespace EPYSLTEX.Infrastructure.Services
+namespace EPYSLTEXCore.Infrastructure.Services
 {
-    public class YarnPOV2Service : IYarnPOService
+    public class YarnPOService : IYarnPOService
     {
         private readonly IDapperCRUDService<YarnPOMaster> _service;
         private readonly IDapperCRUDService<YarnPOChildOrder> _servicePoChildOrder;
         private readonly SqlConnection _connection;
         private readonly SqlConnection _gmtConnection;
 
-        public YarnPOV2Service(
+        public YarnPOService(
             IDapperCRUDService<YarnPOMaster> service
             , IDapperCRUDService<YarnPOChildOrder> servicePoChildOrder
             )
         {
             _service = service;
             _servicePoChildOrder = servicePoChildOrder;
+            service.Connection= service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
             _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }

@@ -46,6 +46,7 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IItemSetupService, ItemSetupService>();
             service.AddTransient<IProjectionYarnBookingService, ProjectionYarnPurchaseBookingService>();
             service.AddTransient<IYarnPOService, YarnPOService>();
+            service.AddTransient<IYarnPIReceiveService, YarnPIReceiveService>();
 
 
 

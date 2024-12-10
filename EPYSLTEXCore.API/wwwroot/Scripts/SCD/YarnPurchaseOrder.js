@@ -163,7 +163,7 @@
             //    return false;
             //}
 
-            var url = `/api/ypov2/get-supplier-info/${e.params.data.id}`;
+            var url = `/api/ypo/get-supplier-info/${e.params.data.id}`;
             axios.get(url)
                 .then(function (response) {
                     
@@ -312,7 +312,7 @@
         $formEl.find("#btnApproveYPO").click(function (e) {
             e.preventDefault();
 
-            var url = "/api/ypov2/approve-ypo/" + $formEl.find("#YPOMasterID").val();
+            var url = "/api/ypo/approve-ypo/" + $formEl.find("#YPOMasterID").val();
             axios.post(url)
                 .then(function () {
                     toastr.success(constants.PROPOSE_SUCCESSFULLY);
@@ -333,7 +333,7 @@
                         UnapproveReason: result
                     };
 
-                    axios.post("/api/ypov2/reject-ypo", data)
+                    axios.post("/api/ypo/reject-ypo", data)
                         .then(function () {
                             toastr.success(constants.REJECT_SUCCESSFULLY);
                             backToList();
@@ -386,7 +386,7 @@
 
             //var url = "/api/ypov2/revision-ypo/" + $formEl.find("#YPOMasterID").val();
             //axios.post(url)
-            axios.post("/api/ypov2/revision-ypo", data)
+            axios.post("/api/ypo/revision-ypo", data)
                 .then(function () {
                     toastr.success("Revision Successfylly!");
                     backToList();
@@ -601,7 +601,7 @@
     }
 
     function getNewData() {
-        var url = "/api/ypov2/new/";
+        var url = "/api/ypo/new/";
         axios.get(url)
             .then(function (response) {
                 $divDetailsEl.fadeIn();
@@ -824,7 +824,7 @@
         $tblMasterEl = new initEJ2Grid({
             tableId: tblMasterId,
             autofitColumns: status != statusConstants.PENDING,
-            apiEndPoint: `/api/ypov2/list?status=${status}`,
+            apiEndPoint: `/api/ypo/list?status=${status}`,
             columns: columns,
             commandClick: handleCommands,
             aggregates: [
@@ -949,7 +949,7 @@
         HoldOn.open({
             theme: "sk-circle"
         });
-        var url = `/api/ypov2/new/${prMasterIDs}/${yarnPRChildIDs}/${companyId}`;
+        var url = `/api/ypo/new/${prMasterIDs}/${yarnPRChildIDs}/${companyId}`;
         axios.get(url)
             .then(function (response) {
 
@@ -1770,7 +1770,7 @@
         if ($tblMasterEl_Modal) $tblMasterEl_Modal.destroy();
         $tblMasterEl_Modal = new initEJ2Grid({
             tableId: modalObj.modalTableId,
-            apiEndPoint: `/api/ypov2/get-pr-items/${masterData.CompanyId}/${prChildIds}`,
+            apiEndPoint: `/api/ypo/get-pr-items/${masterData.CompanyId}/${prChildIds}`,
             columns: getColumns()
         });
         $formEl.find("#btnSelectPRChild").click(function () {
@@ -1871,10 +1871,10 @@
 
         var url = "";
         if (row.IsRevision) {
-            url = `/api/ypov2/revision/${row.YPOMasterID}`;
+            url = `/api/ypo/revision/${row.YPOMasterID}`;
         }
         else {
-            url = `/api/ypov2/${row.YPOMasterID}`;
+            url = `/api/ypo/${row.YPOMasterID}`;
         }
         axios.get(url)
             .then(function (response) {
@@ -1924,7 +1924,7 @@
     function proposePO(row) {
         showBootboxConfirm("Propose Yarn PO", "Are you sure you want to propose this PO?", function (yes) {
             if (yes) {
-                var url = "/api/ypov2/propose-ypo/" + row.YPOMasterID;
+                var url = "/api/ypo/propose-ypo/" + row.YPOMasterID;
                 axios.post(url)
                     .then(function () {
                         toastr.success(constants.PROPOSE_SUCCESSFULLY);
@@ -1940,7 +1940,7 @@
     function approvePO(row) {
         showBootboxConfirm("Approve Yarn PO", "Are you sure you want to approve this PO?", function (yes) {
             if (yes) {
-                var url = "/api/ypov2/approve-ypo/" + row.YPOMasterID;
+                var url = "/api/ypo/approve-ypo/" + row.YPOMasterID;
                 axios.post(url)
                     .then(function () {
                         toastr.success(constants.APPROVE_SUCCESSFULLY);
@@ -1967,7 +1967,7 @@
                     OfferValidity: 0
                 };
 
-                axios.post("/api/ypov2/reject-ypo", data)
+                axios.post("/api/ypo/reject-ypo", data)
                     .then(function () {
                         toastr.success(constants.REJECT_SUCCESSFULLY);
                         initMasterTable();
@@ -2111,7 +2111,7 @@
             }
         }
         if (hasError) return false;
-        axios.post("/api/ypov2/save", data)
+        axios.post("/api/ypo/save", data)
             .then(function (response) {
                 showBootboxAlert("Yarn PO No: <b>" + response.data + "</b> saved successfully.");
                 backToList();

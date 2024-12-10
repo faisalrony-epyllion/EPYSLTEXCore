@@ -26,7 +26,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
         IDapperCRUDService<IDapperBaseEntity> _signatureService;
         //private readonly IEmailService _emailService;
         //private readonly IReportingService _reportingService;
-        private readonly IMapper _mapper;
+
         private static Logger _logger;
         private readonly IItemMasterService<YarnPOChild> _itemMasterService;
 
@@ -34,7 +34,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             , IYarnPOService yarnPOService, IDapperCRUDService<IDapperBaseEntity> signatureService
         //, IEmailService emailService
         //, IReportingService reportingService
-        , IMapper mapper
+     
             , IItemMasterService<YarnPOChild> itemMasterService) : base(userService)
         {
             _select2Service = select2Service;
@@ -42,7 +42,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             _signatureService = signatureService;
             //_emailService = emailService;
             //_reportingService = reportingService;
-            _mapper = mapper;
+
             _logger = LogManager.GetCurrentClassLogger();
             _itemMasterService = itemMasterService;
         }

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System.Text;
+using System.Text.Json;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,10 +21,22 @@ builder.Services.AddMemoryCache(opt =>
 {
     
 });
+//builder.Services.AddControllers().AddJsonOptions(options =>
+//{
+//    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
+//});
+
+
+#region JSON config
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
+    options.JsonSerializerOptions.AllowTrailingCommas = true; // For loose JSON parsing
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // Case-insensitive matching
 });
+#endregion
 
 builder.Services.AddApplication(); // Services LifeTime
  

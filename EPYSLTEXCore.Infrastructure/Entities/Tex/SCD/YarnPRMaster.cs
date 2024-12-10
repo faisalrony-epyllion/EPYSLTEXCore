@@ -61,17 +61,17 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public bool IsAdditional { get; set; } = false;
         [Write(false)]
-        public string GroupConceptNo { get; set; } = "";
+        public string GroupConceptNo { get; set; }
         [Write(false)]
         public List<YarnPRChild> Childs { get; set; } = new List<YarnPRChild>();
         [Write(false)]
         public List<YarnPRCompany> YarnPRCompanies { get; set; } = new List<YarnPRCompany>();
         [Write(false)]
-        public string FiberType { get; set; } = "";
+        public string FiberType { get; set; }
         [Write(false)]
         public string YarnPRByUser { get; set; } = "";
         [Write(false)]
-        public string YpApproveBy { get; set; } = "";
+        public string YpApproveBy { get; set; }
         [Write(false)]
         public string YpRejectBy { get; set; } = "";
         [Write(false)]
@@ -85,7 +85,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public int ConceptStatus { get; set; } = 0;
         [Write(false)]
-        public string PRStatus { get; set; } = "";
+        public string PRStatus { get; set; }
         [Write(false)]
         public string YarnPRName { get; set; } = "";
         [Write(false)]
@@ -168,10 +168,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public IEnumerable<Select2OptionModel> RefSpinnerList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
-        public string YarnPRByName { get; set; } = "";
+        public string YarnPRByName { get; set; }
         [Write(false)]
-        public string CreateBy { get; set; } = "";
-
+        public string CreateBy { get; set; } 
+        [Write(false)]
+        public int MaxValue { get; set; }
         #endregion Additional Property
     }
 }

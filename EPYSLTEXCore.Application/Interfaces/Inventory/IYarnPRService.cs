@@ -15,7 +15,7 @@ namespace EPYSLTEXCore.Application.Interfaces
         Task<List<YarnPRChild>> GetChilds(string conceptNos, string itemIds, string bookingNos);
         Task<List<Select2OptionModel>> GetYarnCompositionsAsync(string fiberType, string yarnType);
         Task SaveAsync(YarnPRMaster entity, int userId);
-        Task SaveCPRAsync(YarnPRMaster entity, int userId);
+        Task SaveCPRAsync(YarnPRMaster yarnPRMaster, int userId);
         Task SaveFPRAsync(YarnPRMaster entity, int userId);
         Task<List<YarnPRChild>> GetCommercialCompany(int id);
         Task<YarnPRMaster> GetAllByIDAsync(int id);

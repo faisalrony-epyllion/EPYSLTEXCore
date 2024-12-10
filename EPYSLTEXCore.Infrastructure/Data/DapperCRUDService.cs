@@ -1240,9 +1240,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
         #region signature Methods
 
 
-        public async Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null)
+        public async Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
-            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter, transaction);
+            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter, transaction, connectionGmt);
 
             if (signature == null)
             {
@@ -1252,23 +1252,21 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = 1
                 };
-                
-                await SaveSingleAsync(signature, transaction);
+                await connectionGmt.InsertAsync(signature, transaction);
             }
             else
             {
                 signature.LastNumber++;
-                await Connection.UpdateAsync(signature);
+                await connectionGmt.UpdateAsync(signature, transaction);
             }
 
             return (int)signature.LastNumber;
         }
 
-        public async Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
+        public async Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             if (increment == 0) return 0;
-            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter);
-            //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
+            var signature = await GetSignatureAsync(field, 1, 1, repeatAfter, transaction, connectionGmt);
 
             if (signature == null)
             {
@@ -1278,16 +1276,13 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = increment
                 };
-                Connection.ConnectionString=_connectionString;
-                await Connection.InsertAsync(signature);
+                await connectionGmt.InsertAsync(signature, transaction);
             }
             else
             {
                 signature.LastNumber += increment;
-                Connection.ConnectionString = _connectionString;
-                await Connection.UpdateAsync(signature);
+                await connectionGmt.UpdateAsync(signature, transaction);
             }
-
             return Convert.ToInt32(signature.LastNumber - increment + 1);
         }
         public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
@@ -1361,7 +1356,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 Connection.Close();
             }
         }
-        private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter, SqlTransaction transaction = null)
+        private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
             var parameters = new
@@ -1387,54 +1382,19 @@ namespace EPYSLTEXCore.Infrastructure.Data
             try
             {
                 Signatures signature = null;
-                if (Connection.State == System.Data.ConnectionState.Closed)
+                if (connectionGmt.State == System.Data.ConnectionState.Closed)
                 {
-                    await Connection.OpenAsync();
+                    await connectionGmt.OpenAsync();
                 }
-                //var records = await Connection.QueryFirstOrDefaultAsync(query, parameters);
-                //string jsonString = JsonConvert.SerializeObject(records);
-                //signature = JsonConvert.DeserializeObject<Signatures>(jsonString);
-                //return records.ToList();
-                //return signature;
-
-                using (var command = Connection.CreateCommand())
-                {
-                    command.CommandText = query;
-                    command.Parameters.AddWithValue("@Field", field);
-                    command.Parameters.AddWithValue("@CompanyId", companyId);
-                    command.Parameters.AddWithValue("@SiteId", siteId);
-
-                    // Ensure that the command is associated with a transaction
-                    if (transaction != null)
-                    {
-                        command.Transaction = transaction;
-                    }
-
-                    // Execute your command (e.g., execute reader, execute non-query, etc.)
-                    // Example with ExecuteReader:
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            signature = new Signatures();
-                            signature.LastNumber = Convert.ToInt32(reader["LastNumber"]);
-                        }
-                    }
-
-                    return signature;
-
-                }
+                var records = await connectionGmt.QueryFirstOrDefaultAsync(query, parameters, transaction);
+                string jsonString = JsonConvert.SerializeObject(records);
+                signature = JsonConvert.DeserializeObject<Signatures>(jsonString);
+                return signature;
             }
             catch (System.Exception ex)
             {
                 throw ex;
             }
-            finally
-            {
-                Connection.Close();
-            }
-
-
         }
         
 

@@ -115,7 +115,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<int> GetMaxIdAsync(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null);
         int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
         Task<IEnumerable<T>> AddManyAsync(IEnumerable<T> entities, string tableName);
-        Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000");
+        Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000", SqlTransaction transaction = null, SqlConnection connectionGmt = null);
 
         #endregion
         int RunSqlCommand(string query, bool transactionRequired, object parameters = null);

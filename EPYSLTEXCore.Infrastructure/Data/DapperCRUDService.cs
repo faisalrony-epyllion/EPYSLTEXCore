@@ -1789,9 +1789,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
             await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, FifthParamValue = fifthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
         }
 
-        public async Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000")
+        public async Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000", SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
-            var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter);
+            var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter, transaction, connectionGmt);
 
             if (signature == null)
             {
@@ -1802,12 +1802,12 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     CompanyID = companyId.ToString(),
                     LastNumber = 1
                 };
-                await Connection.InsertAsync(signature);
+                await connectionGmt.InsertAsync(signature, transaction);
             }
             else
             {
                 signature.LastNumber++;
-                await Connection.UpdateAsync(signature);
+                await connectionGmt.UpdateAsync(signature, transaction);
             }
 
             //await _dbContext.SaveChangesAsync();

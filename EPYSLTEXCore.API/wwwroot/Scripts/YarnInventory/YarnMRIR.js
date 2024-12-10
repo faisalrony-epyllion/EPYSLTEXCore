@@ -1,5 +1,6 @@
 ﻿(function () {
-    var menuId, pageName;
+    //alert("OK");
+    var menuId, pageName, menuParam;
     var toolbarId, $tblOtherItemEl, tblOtherItemId;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, tblChildId, $formEl, tblMasterId, $tblRollEl, $divRollEl, $tblKProductionE1;;
     var status;
@@ -26,6 +27,8 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
+        if (!menuParam)
+            menuParam = localStorage.getItem("menuParam");
 
         pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -37,10 +40,18 @@
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
 
         pageIdWithHash = "#" + pageId;
-
-        menuType = localStorage.getItem("YarnMRIRPage");
+        debugger;
+        //menuType = localStorage.getItem("YarnMRIRPage");
+        if (menuParam === "YarnMRIRSCD") {
+            menuType = 2;
+        }
+        else if (menuParam === "GRN Sign In") {
+            menuType = 1;
+        }
+        else {
+            menuType = 0;
+        }
         menuType = parseInt(menuType);
-
         if (menuType == _paramType.YarnMRIR) {
 
             $toolbarEl.find("#btnPendingMRIRList").show();

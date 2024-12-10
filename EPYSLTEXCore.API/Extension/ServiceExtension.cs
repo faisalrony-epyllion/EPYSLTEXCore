@@ -67,6 +67,9 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IFreeConceptService, FreeConceptService>();
             service.AddTransient<ICommonHelperService, CommonHelperService>();
             service.AddTransient<IFabricColorBookSetupService, FabricColorBookSetupService>();
+            service.AddTransient<IYarnQCReqService, YarnQCReqService>();
+            service.AddTransient<IYarnQCRemarksService, YarnQCRemarksService>();
+            service.AddTransient<IYarnQCIssueService, YarnQCIssueService>();
 
 
         }

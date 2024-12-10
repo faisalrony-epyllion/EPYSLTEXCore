@@ -17,18 +17,18 @@ namespace EPYSLTEX.Infrastructure.Services
     public class CommonInterfaceService : ICommonInterfaceService
     {
         private readonly IDapperCRUDService<CommonInterfaceMaster> _service;
-        
+
         private readonly IConfiguration _configuration;
         private readonly SqlConnection _connection = null;
 
-        public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service,  IConfiguration configuration)
+        public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service, IConfiguration configuration)
         {
-            _configuration = configuration;         
+            _configuration = configuration;
             _service = service;
-           _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION)); ;
+            _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION)); ;
         }
 
-      
+
 
         public async Task<CommonInterfaceMaster> GetConfigurationAsync(int menuId)
         {
@@ -65,7 +65,8 @@ namespace EPYSLTEX.Infrastructure.Services
             {
                 throw ex;
             }
-            finally {
+            finally
+            {
                 _connection.Close();
             }
         }
@@ -107,7 +108,7 @@ namespace EPYSLTEX.Infrastructure.Services
             try
             {
                 await _connection.OpenAsync();
-           
+
                 var records = await _connection.QueryMultipleAsync(query);
 
                 // Read the first result set (CommonInterfaceMaster)
@@ -157,33 +158,33 @@ namespace EPYSLTEX.Infrastructure.Services
             data.Childs = records.Read<CommonInterfaceChild>().ToList();
             return data;
         }
-        public async Task<dynamic> GetFinderData(string sqlQuery,string conKey, string primaryKeyColumn,PaginationInfo paginationInfo)
+        public async Task<dynamic> GetFinderData(string sqlQuery, string conKey, string primaryKeyColumn, PaginationInfo paginationInfo)
         {
             var query = sqlQuery;
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By LEN({primaryKeyColumn}), {primaryKeyColumn} ASC" : paginationInfo.OrderBy;
             var isSp = sqlQuery.ToLower().Contains("sp");
-            query =isSp? sqlQuery: $@"
+            query = isSp ? sqlQuery : $@"
                  {sqlQuery}
                 {paginationInfo.FilterBy}
                 {orderBy}
                 {paginationInfo.PageBy}";
             var commandType = isSp ? CommandType.StoredProcedure : CommandType.Text;
-            SqlConnection conn =  new SqlConnection(_configuration.GetConnectionString(conKey));
+            SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
 
-          // Create a DynamicParameters object
+            // Create a DynamicParameters object
             var parameters = new DynamicParameters();
             parameters.Add("filterBy", paginationInfo.FilterBy); // filterBy parameter
             parameters.Add("orderBy", orderBy); // orderBy parameter
             parameters.Add("@pageBy", paginationInfo.PageBy); // pageBy parameter
-            var records = await _service.GetDynamicDataAsync(query,conn, parameters, commandType);
-            
+            var records = await _service.GetDynamicDataAsync(query, conn, parameters, commandType);
+
             return records;
         }
- 
-        public async Task<dynamic> GetDynamicDataAsync(string sqlQuery, string conKey,object param)
+
+        public async Task<dynamic> GetDynamicDataAsync(string sqlQuery, string conKey, object param)
         {
             SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
-             
+
             var records = await _service.GetDynamicDataAsync(sqlQuery, conn, param);
 
             return records;
@@ -201,46 +202,68 @@ namespace EPYSLTEX.Infrastructure.Services
             var query = $"Select * From CommonInterfaceChild Where MenuId = {menuId}";
             return await _service.GetFirstOrDefaultAsync(query);
         }
-      
+
 
 
         public async Task<int> ExecuteAsync(string query, object param)
         {
             return await _service.ExecuteAsync(query, param);
         }
-        public async Task Save(string tableName,object obj,string conKey, List<string> primaryKeyColumns, string status="")
+        public async Task Save(List<string> tableNames, List<object> objLst, List<string> conKey, List<string> primaryKeyColumns, string status = "")
         {
             try
             {
-                SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey));
-                  conn.OpenAsync();
-               
+
+
+                SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey.FirstOrDefault()));
+                await conn.OpenAsync(); // Ensure connection is opened
+
                 using (var transaction = conn.BeginTransaction()) // Begin a transaction
                 {
                     try
                     {
-                        if (status == "delete")
+
+                        // Ensure the lists are of the same length
+                        int listCount = tableNames.Count;
+                        if (listCount == objLst.Count && listCount == primaryKeyColumns.Count)
                         {
-                            _service.DeleteDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
-                        }
-                        if (status=="add")
-                        {
-                            _service.AddDynamicObjectAsync(tableName, obj,  transaction);
-                        }
-                    if(status=="edit")
-                        {
-                            _service.UpdateDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
+                            for (int i = 0; i < listCount; i++)
+                            {
+                                string tableName = tableNames[i];
+                                object obj = objLst[i];
+                                string primaryKey = primaryKeyColumns[i];
+
+                                if (status == "delete")
+                                {
+                                    // _service.DeleteDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
+                                }
+                                if (status == "add")
+                                {
+
+
+                                    int wi = await _service.AddDynamicObjectAsync(tableName, obj, conn, transaction);
+
+
+                                }
+                                if (status == "edit")
+                                {
+                                    // _service.UpdateDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
+                                }
+                            }
                         }
 
-                
-                        var rowsAffected = _service.AddSingleDynamicObjectAsync(tableName, obj, transaction);
-                        //transaction.Commit();  // Commit the transaction if everything goes well
-                        Console.WriteLine($"{rowsAffected} row(s) inserted.");
+
+
+
+                        // Commit transaction if all operations succeeded
+                        await transaction.CommitAsync();
+
                     }
                     catch (Exception ex)
                     {
-                        transaction.Rollback();  // Rollback in case of an error
-                        Console.WriteLine($"Error: {ex.Message}");
+                        await transaction.RollbackAsync();
+                        Console.WriteLine($"Error during transaction: {ex.Message}");
+                        throw; // Re-throw the exception to be handled by the caller
                     }
                 }
             }

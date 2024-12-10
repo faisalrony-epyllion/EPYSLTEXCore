@@ -6,6 +6,7 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Data;
@@ -13,8 +14,11 @@ using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Dynamic;
+using System.Runtime.InteropServices.JavaScript;
 using System.Security.Cryptography.Xml;
+using System.Text.Json.Nodes;
 using static Dapper.SqlMapper;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -778,7 +782,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             throw new System.NotImplementedException();
         }
 
-          public async Task<T> SaveEntityAsync(T entity)
+        public async Task<T> SaveEntityAsync(T entity)
         {
             SqlTransaction transaction = null;
             try
@@ -1179,7 +1183,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             {
                 Connection.Close();
             }
-        }    
+        }
         public async Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null)
         {
             if (Connection.State != ConnectionState.Open)
@@ -1276,7 +1280,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = increment
                 };
-                Connection.ConnectionString=_connectionString;
+                Connection.ConnectionString = _connectionString;
                 await Connection.InsertAsync(signature);
             }
             else
@@ -1314,7 +1318,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             try
             {
-                
+
                 if (Connection.State == System.Data.ConnectionState.Closed)
                 {
                     await Connection.OpenAsync();
@@ -1343,7 +1347,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             SqlTransaction transaction = null;
             #region Query
             string query = $@"SELECT TOP 1 * FROM Signature WHERE Field = '{field.ToString()}' AND CompanyId = '{companyId}' AND SiteId = '{siteId.ToString()}'";
-            
+
             switch (repeatAfter)
             {
                 case RepeatAfterEnum.EveryYear:
@@ -1411,89 +1415,167 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-        
+
 
         #endregion
 
         #region Dynamic Table Save
         // Get Column Names from Schema
-        private async Task<List<string>> GetColumnNamesAsync(string tableName, IDbTransaction transaction = null)
+        private async Task<List<string>> GetColumnNamesAsync(string tableName, SqlConnection connection, IDbTransaction transaction = null)
         {
             var sql = @"
             SELECT COLUMN_NAME 
             FROM INFORMATION_SCHEMA.COLUMNS 
             WHERE TABLE_NAME = @TableName;";
-            return (await Connection.QueryAsync<string>(sql, new { TableName = tableName }, transaction)).ToList();
+            return (await connection.QueryAsync<string>(sql, new { TableName = tableName }, transaction)).ToList();
         }
 
 
-        public async Task<int> AddDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null)
+
+
+        public async Task<int> AddDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null)
         {
-            // If dataObject is a list, loop through each item
-            if (dataObject is IEnumerable<object> dataObjectList)
+            var columns = await GetColumnNamesAsync(tableName, connection,transaction);
+            var columnNames = "";
+            var parameters = "";
+            var sql = "";
+            var data = new Dictionary<string, object>();
+
+            if (dataObject is IEnumerable<object> dataList)
             {
-                // Get the column names for the table
-                var columns = await GetColumnNamesAsync(tableName, transaction);
-
-                int rowsAffected = 0;
-
-                // Loop through each item in the list
-                foreach (var item in dataObjectList)
+                JsonObject jsonObjectResult = new JsonObject();
+                foreach (var item in dataList)
                 {
-                    // Use reflection to extract properties and their values
-                    var data = item.GetType()
-                                   .GetProperties()
-                                   .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
-                                   .ToDictionary(p => p.Name, p => p.GetValue(item));
-
-                    if (!data.Any())
                     {
-                        throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+                        var jObject = item as JsonObject;
+                        data = BuildInsertDataDictionary(jObject, columns);
+                        columnNames = string.Join(", ", data.Select(p => p.Key));
+                        parameters = string.Join(", ", data.Select(p => "@" + p.Key));
+                        sql = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameters});";
+                        await connection.ExecuteAsync(sql, data,transaction);
                     }
 
-                    var columnNames = string.Join(", ", data.Keys);
-                    var parameters = string.Join(", ", data.Keys.Select(x => "@" + x));
-                    var sql = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameters});";
 
-                    // Execute insert for each object in the list
-                    rowsAffected += await Connection.ExecuteAsync(sql, data, transaction);
                 }
-
-                return rowsAffected;
             }
             else
             {
-                // If it's not a list, proceed with the original code for a single object
-                return await AddSingleDynamicObjectAsync(tableName, dataObject, transaction);
+                JsonObject jsonObject = (JsonObject)dataObject;
+                data = BuildInsertDataDictionary(jsonObject, columns);
+
+                columnNames = string.Join(", ", data.Select(p => p.Key));
+                parameters = string.Join(", ", data.Select(p => "@" + p.Key));
+                sql = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameters});";
+                await connection.ExecuteAsync(sql, data,transaction);
+
             }
+
+            return 0;
+
+
         }
 
-        // AddSingleDynamicObjectAsync method for handling a single object
-        public async Task<int> AddSingleDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null)
+        // Method to build the insert data dictionary
+        private Dictionary<string, object> BuildInsertDataDictionary(JsonObject jObject, List<string> columns)
         {
-            var columns = await GetColumnNamesAsync(tableName, transaction);
+            var data = jObject
+                .Where(property => columns.Contains(property.Key))
+                .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
 
-            // Use reflection to extract properties and their values
-            var data = dataObject.GetType()
-                                 .GetProperties()
-                                 .Where(p => columns.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
-                                 .ToDictionary(p => p.Name, p => p.GetValue(dataObject));
-
+            // Ensure there are valid columns in the data
             if (!data.Any())
             {
                 throw new ArgumentException("The object does not contain any matching columns for the specified table.");
             }
 
-            var columnNames = string.Join(", ", data.Keys);
-            var parameters = string.Join(", ", data.Keys.Select(x => "@" + x));
-            var sql = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameters});";
+            // Add default columns if they exist in the table
+            if (columns.Contains("AddedBy"))
+            {
+                data["AddedBy"] = UserCode;
+            }
+            if (columns.Contains("DateAdded"))
+            {
+                data["DateAdded"] = DateTime.UtcNow;
+            }
 
-            return await Connection.ExecuteAsync(sql, data, transaction);
+            return data;
+        }
+
+
+
+        // General method to convert JsonNode to a specific type (object, string, int, etc.)
+        public static T ConvertJsonNodeToType<T>(JsonNode jsonNode)
+        {
+            if (jsonNode == null)
+            {
+                throw new InvalidCastException("JsonNode is null and cannot be converted.");
+            }
+
+            // Handle each specific type conversion
+            if (jsonNode is JsonValue jsonValue)
+            {
+                // Convert JsonValue to the appropriate type based on T
+                if (typeof(T) == typeof(string))
+                {
+                    return (T)(object)jsonValue.GetValue<string>();
+                }
+                else if (typeof(T) == typeof(int))
+                {
+                    if (int.TryParse(jsonValue.GetValue<string>(), out var result))
+                    {
+                        return (T)(object)result;
+                    }
+                    else
+                    {
+                        throw new InvalidCastException($"Cannot convert {jsonValue} to type {typeof(T)}");
+                    }
+                }
+                else if (typeof(T) == typeof(decimal))
+                {
+                    if (decimal.TryParse(jsonValue.GetValue<string>(), out var result))
+                    {
+                        return (T)(object)result;
+                    }
+                    else
+                    {
+                        throw new InvalidCastException($"Cannot convert {jsonValue} to type {typeof(T)}");
+                    }
+                }
+                else if (typeof(T) == typeof(bool))
+                {
+                    if (bool.TryParse(jsonValue.GetValue<string>(), out var result))
+                    {
+                        return (T)(object)result;
+                    }
+                    else
+                    {
+                        throw new InvalidCastException($"Cannot convert {jsonValue} to type {typeof(T)}");
+                    }
+                }
+                else if (typeof(T) == typeof(DateTime))
+                {
+                    if (DateTime.TryParse(jsonValue.GetValue<string>(), out var result))
+                    {
+                        return (T)(object)result;
+                    }
+                    else
+                    {
+                        throw new InvalidCastException($"Cannot convert {jsonValue} to type {typeof(T)}");
+                    }
+                }
+                else
+                {
+                    // If the type is not one of the known types, try to return the string representation
+                    return (T)(object)jsonValue.ToString();
+                }
+            }
+
+            throw new InvalidCastException($"Cannot convert JsonNode of type {jsonNode.GetType()} to type {typeof(T)}");
         }
 
         public async Task<int> UpdateSingleObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
         {
-            var columns = await GetColumnNamesAsync(tableName, transaction);
+            var columns =  await GetColumnNamesAsync(tableName,new SqlConnection(), transaction);
 
             // Use reflection to extract properties and their values
             var data = dataObject.GetType()
@@ -1527,7 +1609,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             {
 
                 // Retrieve the column names for the table
-                var columns = await GetColumnNamesAsync(tableName, transaction);
+                var columns = await GetColumnNamesAsync(tableName, new SqlConnection(), transaction);
 
                 int rowsAffected = 0;
 
@@ -1583,7 +1665,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
 
                 // Retrieve the column names for the table
-                var columns = await GetColumnNamesAsync(tableName, transaction);
+                var columns = await GetColumnNamesAsync(tableName, new SqlConnection(), transaction);
 
                 int rowsAffected = 0;
 
@@ -1625,7 +1707,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
             else
             {
-             return await   DeleteSingleObjectAsync(tableName, dataObject, primaryKeyColumns, transaction);
+                return await DeleteSingleObjectAsync(tableName, dataObject, primaryKeyColumns, transaction);
 
             }
         }
@@ -1636,7 +1718,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         public async Task<int> DeleteSingleObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null)
         {
-            var columns = await GetColumnNamesAsync(tableName, transaction);
+            var columns = await GetColumnNamesAsync(tableName, new SqlConnection(), transaction);
 
             // Use reflection to extract properties and their values
             var data = dataObject.GetType()
@@ -1767,7 +1849,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             var transaction = Connection.BeginTransaction();
             try
             {
-           
+
                 var maxId = await GetMaxIdAsync(tableName, entities.Count());
 
                 // Prepare insert query
@@ -1790,7 +1872,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 throw; // Rethrow exception for caller to handle
             }
 
-    
+
         }
 
         public int RunSqlCommand(string query, bool transactionRequired, object parameters = null)

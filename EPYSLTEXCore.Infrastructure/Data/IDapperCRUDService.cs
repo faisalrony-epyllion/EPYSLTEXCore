@@ -105,8 +105,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
          Task SaveNestedEntityAsync(Object T, IDbTransaction transaction = null);
         // Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null);
         // Task SaveNestedEntityAsync<T>(T entity, IDbTransaction transaction);
-         Task<int> AddDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null);
-        Task<int> AddSingleDynamicObjectAsync(string tableName, object dataObject, IDbTransaction transaction = null);
+        
+        Task<int> AddDynamicObjectAsync(string tableName, object dataObject,SqlConnection conn, IDbTransaction transaction = null);
         Task<int> DeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null);
         Task<int> UpdateDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null);
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);

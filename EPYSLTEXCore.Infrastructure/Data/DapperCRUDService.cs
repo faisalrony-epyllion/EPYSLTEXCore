@@ -779,7 +779,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             throw new System.NotImplementedException();
         }
 
-          public async Task<T> SaveEntityAsync(T entity)
+        public async Task<T> SaveEntityAsync(T entity)
         {
             SqlTransaction transaction = null;
             try
@@ -1180,7 +1180,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             {
                 Connection.Close();
             }
-        }    
+        }
         public async Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null)
         {
             if (Connection.State != ConnectionState.Open)
@@ -1285,10 +1285,10 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
             return Convert.ToInt32(signature.LastNumber - increment + 1);
         }
-        public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
+        public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             if (increment == 0) return 0;
-            var signature =  GetSignature(field, 1, 1, repeatAfter);
+            var signature = GetSignature(field, 1, 1, repeatAfter);
             //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
             if (signature == null)
@@ -1299,14 +1299,12 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = increment
                 };
-                Connection.ConnectionString = _connectionString;
-                 Connection.InsertAsync(signature);
+                connectionGmt.InsertAsync(signature, transaction);
             }
             else
             {
                 signature.LastNumber += increment;
-                Connection.ConnectionString = _connectionString;
-                 Connection.UpdateAsync(signature);
+                connectionGmt.UpdateAsync(signature, transaction);
             }
 
             return Convert.ToInt32(signature.LastNumber - increment + 1);
@@ -1396,7 +1394,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 throw ex;
             }
         }
-        
+
 
         private async Task<Signatures> GetSignatureCmdAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
@@ -1404,7 +1402,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             SqlTransaction transaction = null;
             #region Query
             string query = $@"SELECT TOP 1 * FROM Signature WHERE Field = '{field.ToString()}' AND CompanyId = '{companyId}' AND SiteId = '{siteId.ToString()}'";
-            
+
             switch (repeatAfter)
             {
                 case RepeatAfterEnum.EveryYear:
@@ -1472,7 +1470,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
-        
+
 
         #endregion
 
@@ -1686,7 +1684,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
             else
             {
-             return await   DeleteSingleObjectAsync(tableName, dataObject, primaryKeyColumns, transaction);
+                return await DeleteSingleObjectAsync(tableName, dataObject, primaryKeyColumns, transaction);
 
             }
         }
@@ -1828,7 +1826,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             var transaction = Connection.BeginTransaction();
             try
             {
-           
+
                 var maxId = await GetMaxIdAsync(tableName, entities.Count());
 
                 // Prepare insert query
@@ -1851,7 +1849,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 throw; // Rethrow exception for caller to handle
             }
 
-    
+
         }
 
         public int RunSqlCommand(string query, bool transactionRequired, object parameters = null)

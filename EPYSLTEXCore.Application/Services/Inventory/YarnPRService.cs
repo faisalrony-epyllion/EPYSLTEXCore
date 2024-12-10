@@ -1948,7 +1948,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 var prNextNumber = await _service.GetUniqueCodeWithoutSignatureAsync(
                                    connection,
                                    transaction,
-                                   "T_YarnPRMaster",
+                                   TableNames.YARN_PR_MASTER,
                                    "YarnPRNo",
                                    entity.GroupConceptNo);
 
@@ -1973,7 +1973,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     var maxCount = await _service.GetUniqueCodeWithoutSignatureAsync(
                                   connection,
                                   transaction,
-                                  "T_YarnPRMaster",
+                                  TableNames.YARN_PR_MASTER,
                                   "YarnPRNo",
                                   entity.GroupConceptNo);
                     entity.YarnPRNo = maxCount > 0 ? entity.YarnPRNo + "-Add-" + maxCount : entity.YarnPRNo;

@@ -1,5 +1,6 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Statics;
 
 namespace EPYSLTEXCore.Application.Interfaces

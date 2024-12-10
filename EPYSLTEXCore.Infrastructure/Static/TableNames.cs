@@ -272,6 +272,8 @@
         public const string YarnPriceSetupChild = "T_YarnPriceSetupChild";
         public const string YarnRateSetup = "T_YarnRateSetup";
         public const string YarnStockMaster = "T_YarnStockMaster";
+        public const string YarnStockChild = "T_YarnStockChild";
+        public const string YarnStockSet = "T_YarnStockSet";
         //public const string YrnA = "YrnA";
         //public const string YrnB = "YrnB";
         public const string YARN_PROPOSED_MaASTER = "T_YarnProposedMaster";

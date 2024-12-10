@@ -7,9 +7,13 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Newtonsoft.Json;
+using System.ComponentModel.Design;
 using System.Data;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace EPYSLTEX.Infrastructure.Services
 {
@@ -18,12 +22,16 @@ namespace EPYSLTEX.Infrastructure.Services
         private readonly IDapperCRUDService<YarnPRMaster> _service;
 
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _connectionGmt;
 
         public YarnPRService(IDapperCRUDService<YarnPRMaster> service
-         
             , IDapperCRUDService<YarnPRChild> itemMasterRepository)
         {
             _service = service;
+
+            _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
+            _connectionGmt = service.Connection;
+
             _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
         }
@@ -1143,7 +1151,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 {CommonQueries.GetYarnSpinners()}
 
                 -- DayValidDuration
-                { CommonQueries.GetDayValidDurations()}";
+                {CommonQueries.GetDayValidDurations()}";
 
             try
             {
@@ -1400,7 +1408,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 {CommonQueries.GetYarnSpinners()}
 
                 -- DayValidDuration
-                { CommonQueries.GetDayValidDurations()}";
+                {CommonQueries.GetDayValidDurations()}";
 
             try
             {
@@ -1588,7 +1596,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 {CommonQueries.GetYarnSpinners()}
 
                 -- DayValidDuration
-                { CommonQueries.GetDayValidDurations()}";
+                {CommonQueries.GetDayValidDurations()}";
 
             try
             {
@@ -1753,7 +1761,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 {CommonQueries.GetYarnSpinners()}
 
                 -- DayValidDuration
-                { CommonQueries.GetDayValidDurations()}";
+                {CommonQueries.GetDayValidDurations()}";
 
             try
             {
@@ -1762,7 +1770,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 YarnPRMaster data = records.Read<YarnPRMaster>().FirstOrDefault();
                 data.Childs = records.Read<YarnPRChild>().ToList();
                 int prChildId = 1;
-               
+
                 data.ConceptNo = data.Childs.Count() > 0 ? data.Childs.First().ConceptNo : "";
                 data.GroupConceptNo = data.Childs.Count() > 0 ? data.Childs.First().GroupConceptNo : "";
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
@@ -1876,6 +1884,8 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task SaveAsync(YarnPRMaster yarnPRMaster, int userId)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 //Backup table data save before YarnPR data update.
@@ -1884,14 +1894,17 @@ namespace EPYSLTEX.Infrastructure.Services
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 switch (yarnPRMaster.EntityState)
                 {
                     case EntityState.Added:
-                        yarnPRMaster = await AddAsync(yarnPRMaster);
+                        yarnPRMaster = await AddAsync(yarnPRMaster, transaction, transactionGmt, _connection, _connectionGmt);
                         break;
 
                     case EntityState.Modified:
-                        yarnPRMaster = await UpdateAsync(yarnPRMaster);
+                        yarnPRMaster = await UpdateAsync(yarnPRMaster, transaction, transactionGmt, _connection, _connectionGmt);
                         break;
 
                     default:
@@ -1907,29 +1920,41 @@ namespace EPYSLTEX.Infrastructure.Services
                 await _service.SaveAsync(yarnPRMaster.Childs, transaction);
                 foreach (YarnPRChild item in yarnPRMaster.Childs)
                 {
-                 
+
                     await _connection.ExecuteAsync("sp_Validation_YarnPRChild", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
 
                 }
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
-        
-        public async Task<YarnPRMaster> AddAsync(YarnPRMaster entity)
+
+        public async Task<YarnPRMaster> AddAsync(YarnPRMaster entity, SqlTransaction transaction, SqlTransaction transactionGmt, SqlConnection connection, SqlConnection connectionGmt)
         {
-            entity.YarnPRMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER);
+            entity.YarnPRMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, connectionGmt);
             if (!entity.IsAdditional)
             {
-                var prNextNumber = await this.GetMaxReqNo(entity.GroupConceptNo);
+                var prNextNumber = await _service.GetUniqueCodeWithoutSignatureAsync(
+                                   connection,
+                                   transaction,
+                                   "T_YarnPRMaster",
+                                   "YarnPRNo",
+                                   entity.GroupConceptNo);
+
+
+
+                //var prNextNumber = await this.GetMaxReqNo(entity.GroupConceptNo, transaction);
                 if (prNextNumber > 0)
                 {
                     entity.YarnPRNo = entity.GroupConceptNo + "_" + prNextNumber;
@@ -1944,13 +1969,19 @@ namespace EPYSLTEX.Infrastructure.Services
                 if (entity.YarnPRNo.IsNotNullOrEmpty())
                 {
                     string parentRnDReqNo = entity.YarnPRNo;
-                    int maxCount = await this.GetMaxReqNo(parentRnDReqNo);
+                    //int maxCount = await this.GetMaxReqNo(parentRnDReqNo, transaction);
+                    var maxCount = await _service.GetUniqueCodeWithoutSignatureAsync(
+                                  connection,
+                                  transaction,
+                                  "T_YarnPRMaster",
+                                  "YarnPRNo",
+                                  entity.GroupConceptNo);
                     entity.YarnPRNo = maxCount > 0 ? entity.YarnPRNo + "-Add-" + maxCount : entity.YarnPRNo;
                     entity.AdditionalNo = maxCount;
                 }
             }
-            int maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, entity.Childs.Count);
-            int maxCompanyId = await _service.GetMaxIdAsync(TableNames.YARN_PR_COMPANY, entity.Childs.Sum(x => x.YarnPRCompanies.Count()));
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, entity.Childs.Count, RepeatAfterEnum.NoRepeat, transactionGmt, connectionGmt);
+            int maxCompanyId = await _service.GetMaxIdAsync(TableNames.YARN_PR_COMPANY, entity.Childs.Sum(x => x.YarnPRCompanies.Count()), RepeatAfterEnum.NoRepeat, transactionGmt, connectionGmt);
 
             foreach (YarnPRChild child in entity.Childs)
             {
@@ -1959,9 +1990,12 @@ namespace EPYSLTEX.Infrastructure.Services
             }
             return entity;
         }
-
-        private async Task<int> GetMaxReqNo(string rnDReqNo)
+        /*
+        private async Task<int> GetMaxReqNo(string rnDReqNo, SqlTransaction transaction)
         {
+            int maxNo = 0;
+
+            
             string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["TexConnection"].ConnectionString;
             var queryString = $"SELECT MaxValue=COUNT(*) FROM YarnPRMaster WHERE YarnPRNo LIKE '{rnDReqNo}%'";
 
@@ -1983,14 +2017,16 @@ namespace EPYSLTEX.Infrastructure.Services
                     reader.Close();
                 }
             }
+            
             if (maxNo == 0) maxNo = 1;
             return maxNo;
         }
+        */
 
-        public async Task<YarnPRMaster> UpdateAsync(YarnPRMaster entity)
+        public async Task<YarnPRMaster> UpdateAsync(YarnPRMaster entity, SqlTransaction transaction, SqlTransaction transactionGmt, SqlConnection connection, SqlConnection connectionGmt)
         {
-            int maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, entity.Childs.Count(x => x.EntityState == EntityState.Added));
-            int maxCompanyId = await _service.GetMaxIdAsync(TableNames.YARN_PR_COMPANY, entity.Childs.Sum(x => x.YarnPRCompanies.Where(y => y.EntityState == EntityState.Added).Count()));
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, entity.Childs.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, connectionGmt);
+            int maxCompanyId = await _service.GetMaxIdAsync(TableNames.YARN_PR_COMPANY, entity.Childs.Sum(x => x.YarnPRCompanies.Where(y => y.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, connectionGmt);
 
             foreach (YarnPRChild child in entity.Childs)
             {
@@ -2027,13 +2063,20 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task SaveCPRAsync(YarnPRMaster yarnPRMaster, int userId)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
-                int newCompnayCount = yarnPRMaster.Childs.Sum(x => x.YarnPRCompanies.Where(c => c.EntityState == EntityState.Added).Count());
-                int maxCompanyId = await _service.GetMaxIdAsync(TableNames.YARN_PR_COMPANY, newCompnayCount);
-
+               
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connection.BeginTransaction();
+
+                int newCompnayCount = yarnPRMaster.Childs.Sum(x => x.YarnPRCompanies.Where(c => c.EntityState == EntityState.Added).Count());
+                int maxCompanyId = await _service.GetMaxIdAsync(TableNames.YARN_PR_COMPANY, newCompnayCount, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+
 
                 foreach (YarnPRChild child in yarnPRMaster.Childs)
                 {
@@ -2044,20 +2087,23 @@ namespace EPYSLTEX.Infrastructure.Services
                 await _service.SaveAsync(yarnPRMaster.Childs, transaction);
                 foreach (YarnPRChild item in yarnPRMaster.Childs)
                 {
-                    
+
                     await _connection.ExecuteAsync("sp_Validation_YarnPRChild", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
 
                 }
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 

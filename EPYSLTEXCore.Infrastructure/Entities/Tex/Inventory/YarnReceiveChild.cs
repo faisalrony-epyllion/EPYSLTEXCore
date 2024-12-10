@@ -97,8 +97,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex
         [Write(false)]
         public decimal TotalQty { get; set; } = 0;
         [Write(false)]
-        public string YarnSubProgramIds { get; set; } = "";
-        [Write(false)]
         public string DisplayUnitDesc { get; set; } = "";
         [Write(false)]
         public decimal PIQtyN { get; set; } = 0;

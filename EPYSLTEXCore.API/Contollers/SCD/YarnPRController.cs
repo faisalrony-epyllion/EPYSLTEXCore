@@ -1,23 +1,24 @@
 ﻿using EPYSLTEX.Core.Interfaces;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Infrastructure.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Server;
+using Newtonsoft.Json;
 using NLog;
 using System.Data.Entity;
 
 namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
 {
-   
-       
+
+    [Authorize]
     [Route("api/yarn-pr")]
     [ApiController]
     public class YarnPRController : ApiBaseController
@@ -47,6 +48,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
         [Route("list")]
         public async Task<IActionResult> GetList(Status status, string pageName)
         {
+            pageName = CommonFunction.ReplaceInvalidChar(pageName);
             var paginationInfo = Request.GetPaginationInfo();
             List<YarnPRMaster> records = await _service.GetPagedAsync(status, pageName, paginationInfo);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
@@ -106,14 +108,19 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
         [Route("save")]
         [HttpPost]
     
-        public async Task<IActionResult> Save(YarnPRMaster model)
+        public async Task<IActionResult> Save(dynamic model1)
         {
+            YarnPRMaster model = JsonConvert.DeserializeObject<YarnPRMaster>(Convert.ToString(model1));
+
             string source = model.Childs.Count() > 0 ? model.Childs.First().Source : "";
             string conceptNos = string.Join(",", model.Childs.Select(x => "'" + x.ConceptNo + "'"));
             string itemIds = string.Join(",", model.Childs.Select(x => x.ItemMasterID));
             string bookingNos = string.Join(",", model.Childs.Select(x => "'" + x.BookingNo + "'"));
 
             var tempChildList = CommonFunction.DeepClone(model.Childs);
+
+            //List<YarnPRChild> childRecords = model.Childs;
+            //_itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
 
             List<YarnPRChild> prChilds = source != PRFromName.PROJECTION_YARN_BOOKING ? await _service.GetChilds(conceptNos, itemIds, bookingNos) : new List<YarnPRChild>();
             if (model.IsAdditional)

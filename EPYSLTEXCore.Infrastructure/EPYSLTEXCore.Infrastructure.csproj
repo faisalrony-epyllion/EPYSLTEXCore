@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Entities\Gmt\Security\**" />
+    <EmbeddedResource Remove="Entities\Gmt\Security\**" />
+    <None Remove="Entities\Gmt\Security\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Entities\Gmt\General\GroupUser.cs" />
   </ItemGroup>
 
@@ -23,8 +29,6 @@
 
   <ItemGroup>
     <Folder Include="CustomAttributes\" />
-    <Folder Include="Entities\DTOs\Item\" />
-    <Folder Include="Entities\Gmt\Security\" />
   </ItemGroup>
 
 </Project>

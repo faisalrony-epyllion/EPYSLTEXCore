@@ -8,6 +8,7 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Booking;
 using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces.RND;
+using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
@@ -19,6 +20,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
@@ -31,14 +33,16 @@ namespace EPYSLTEXCore.API.Contollers.Inventory
     public class YarnReceiveController : ApiBaseController
     {
         private readonly IYarnReceiveService _service;
-        //private readonly ItemMasterRepository<YarnReceiveChild> _itemMasterRepository;
+        private readonly IItemMasterService<YarnReceiveChild> _itemMasterService;
+
         //IUserService _userService = null;
 
-        public YarnReceiveController(IUserService userService
-             //, IGmtEfRepository<ItemSegmentName> itemSegmentNameRepository
-             , IYarnReceiveService service) : base(userService)
+        public YarnReceiveController(IUserService userService, IYarnReceiveService service
+        , IItemMasterService<YarnReceiveChild> itemMasterService
+        , ICommonHelperService commonService) : base(userService)
         {
             _service = service;
+            _itemMasterService = itemMasterService;
         }
 
         [Route("list")]
@@ -84,7 +88,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory
         {
             YarnReceiveMaster entity = new YarnReceiveMaster();
             List<YarnReceiveChild> childRecords = model.YarnReceiveChilds;
-            //_itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
 
             if (model.ReceiveID > 0)
             {

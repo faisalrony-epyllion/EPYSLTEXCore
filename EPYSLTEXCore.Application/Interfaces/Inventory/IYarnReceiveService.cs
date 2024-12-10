@@ -1,11 +1,6 @@
-﻿using EPYSLTEXCore.Infrastructure.Entities.Tex;
-using EPYSLTEXCore.Infrastructure.Entities;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Statics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Interfaces
 {

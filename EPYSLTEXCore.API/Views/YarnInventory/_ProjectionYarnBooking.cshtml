@@ -1,0 +1,280 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+<link href="~/Content/SyncfusionSelect2.css" rel="stylesheet" />
+<div id="@pageId">
+    @* 
+    <input type="hidden" id="AcknowledgePage" value="@ViewBag.AcknowledgePage" />
+    <input type="hidden" id="ApprovePage" value="@ViewBag.ApprovePage" />
+    <input type="hidden" id="CPRPage" value="@ViewBag.CPRPage" />
+    <input type="hidden" id="FPRPage" value="@ViewBag.FPRPage" />
+    <input type="hidden" id="PendingMnMPage" value="@ViewBag.PendingMnMPage" />
+    <input type="hidden" id="ApproveMnMPage" value="@ViewBag.ApproveMnMPage" />
+    <input type="hidden" id="AcknowledgeMnMPage" value="@ViewBag.AcknowledgeMnMPage" />
+ *@
+    <div class="row" id="@divTblId">
+        <div class="col-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <button id="btnNew" class="btn btn-default btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;New
+                </button>
+                <button id="btnPendingList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Projection Booking Lists
+                </button>
+                <button id="btnSendList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Send To Approver Lists
+                </button>
+                <button id="btnPendingApprovalList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending for Approval
+                </button>
+                <button id="btnApprovedList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Approved Lists
+                </button>
+                <button id="btnRejectdList" class="btn btn-default btn-sm">
+                    <i class="fa fa-remove"></i>&nbsp;Reject Lists
+                </button>
+                <button id="btnPendingAcknowledgeList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending Acknowledge List
+                </button>
+                <button id="btnAcknowledgeList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Acknowledge List
+                </button>
+                <button id="btnUnAcknowledgeList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Unacknowledge List
+                </button>
+                <button id="btnAllList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;All Lists
+                </button>
+            </div>
+            <div style="font-size:12px">
+                <table id="@tblMasterId"></table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="row" id="@formId">
+            <input type="hidden" id="PYBookingID" name="PYBookingID" value="-1111" />
+            <input type="hidden" id="FiberTypeID" name="FiberTypeID" />
+            <input type="hidden" id="BuyerID" name="BuyerID" />
+            <input type="hidden" id="BuyerIDsList" name="BuyerIDsList" />
+            <input type="hidden" id="BuyerTeamIDsList" name="BuyerTeamIDsList" />
+            <input type="hidden" id="DepertmentDescription" name="DepertmentDescription" />
+            <input type="hidden" id="PBookingType" name="PBookingType" />
+            @*             <input type="hidden" id="DepartmentID" name="DepartmentID" />
+            <input type="hidden" id="SeasonID" name="SeasonID" />
+            <input type="hidden" id="FinancialYearID" name="FinancialYearID" /> *@
+
+            <div class="card card-default" id="@divDetailsId" style="display:none">
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="card" style="border-color:transparent; border-style:none;">
+                        <div class="card-header">
+                            <h3 class="card-title">  General Information</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Booking No</label>
+                                       
+                                            <input id="PYBookingNo" name="PYBookingNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                      
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Booking Date</label>
+                                       
+                                            <input id="PYBookingDate" name="PYBookingDate" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Booking By</label>
+                                    
+                                            <select id="BookingByID" name="BookingByID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Company</label>
+                                  
+                                            <select id="CompanyID" name="CompanyID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Buyer</label>
+                                        <select id="BuyerIDs" name="BuyerIDs" class="form-control input-sm" style="width:100%" multiple></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Buyer Team</label>
+                                        <select id="BuyerTeamIDs" name="BuyerTeamIDs" class="form-control input-sm" style="width:100%" multiple></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>From Depertment</label>
+                                        <select id="DepartmentID" name="DepartmentID" class="form-control input-sm" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Remarks</label>
+                                        <textarea rows="2" id="Remarks" name="Remarks" class="form-control" placeholder="Enter additional notes"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Season</label>
+                                        <select id="SeasonID" name="SeasonID" class="form-control input-sm" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Session</label>
+                                        <select id="FinancialYearID" name="FinancialYearID" class="form-control input-sm" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Fabric Booking Strat (Month)</label>
+                                        <input id="FabricBookingStartMonth" name="FabricBookingStartMonth" class="form-control input-sm ej2-datepicker" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Fabric Booking End (Month)</label>
+                                        <input id="FabricBookingEndMonth" name="FabricBookingEndMonth" class="form-control input-sm ej2-datepicker" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3" id="divRevisionNo">
+                                    <div class="form-group">
+                                        <label>RevisionNo</label>
+                                        <input id="RevisionNo" name="RevisionNo" class="form-control input-sm" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3" id="divRevisionDate">
+                                    <div class="form-group">
+                                        <label>Revision Date</label>
+                                        <input id="RevisionDate" name="RevisionDate" class="form-control input-sm ej2-datepicker" disabled="disabled" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3" id="divRevisionReason">
+                                    <div class="form-group">
+                                        <label>Revision Reason</label>
+                                        <input id="RevisionReason" name="RevisionReason" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3 divReject" style="display:none;">
+                                    <div class="form-group">
+                                        <label>Reject Reason</label>
+                                            <input id="RejectReason" name="RejectReason" class="form-control input-sm" disabled />
+                                        </div>
+                                    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group divCopyFromExistingBooking" style="display:none;">
+                                        <label class="col-form-label col-sm-5 small"></label>
+
+                                        <button id="btnCopyFromExistingBooking" class="btn btn-default btn-sm" style="width:100%;">
+                                            <i class="fa fa-plus"></i>&nbsp;Copy From Existing Booking
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-color:transparent; border-style:none;">
+                    <div class="card-header">
+                        <h3 class="card-title">  Item Information</h3>
+                        <button type="button" id="addYarnComposition" class="btn btn-success btn-xs">
+                            <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Composition
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                @*<button id="btnNewItem" type="button" class="btn btn-default text-grey btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;Add New Item</button>*@
+                                <div class="form-group">
+                                    <table id="@tblChildId"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            @*<button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>*@
+                            <button type="button" class="btn btn-primary m-w-120" id="btnReviseAndSendToApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise & Send To Approver</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                            <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnMnMAck" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge(M&M)</button>
+                            <button type="button" class="btn btn-danger m-w-120" id="btnUnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;UnAcknowledge</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnSendYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Send To Approver</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Create New Composition</h4>
+                </div>
+                <div class="modal-body" style="padding: 0 15px">
+                    <div class="icheck-primary icheck-inline">
+                        <input type="radio" id="non-blended-pyb" name="BlendedPYB" value="0" checked />
+                        <label for="non-blended-pyb">Non Blended</label>
+                    </div>
+                    <div class="icheck-primary icheck-inline">
+                        <input type="radio" id="blended-pyb" name="BlendedPYB" value="1" />
+                        <label for="blended-pyb">Blended</label>
+                    </div>
+                    <table id="tblCreateComposition-@pageId"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

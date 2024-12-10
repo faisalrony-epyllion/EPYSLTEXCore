@@ -12,6 +12,8 @@
         public const int ITEM_SUB_GROUP_YARN_NEW = 102;
         public const int ITEM_SUB_GROUP_YARN = 39;
         public const int APPLICATION_ID=11;
+        public const string YARN_PI_FILE_PATH = "/Uploads/YarnPI";
+        public const string ITEM_SUB_GROUP_FABRIC = "Fabric";
     }
     public static class DbNames
     {
@@ -57,6 +59,31 @@
         public const string UserID = "UserID";
         public const string CompanyId = "CompanyId"; 
 
+    }
+    public static class ItemSegmentConstants
+    {
+        public const int COMPOSITION = 2;
+        public const int CONSTRUCTION = 3;
+        public const int COLOR = 23;
+        public const int YARN_TYPE = 108;
+        public const int YARN_COMPOSITION = 111;
+        public const int YARN_COUNT = 109;
+        public const int YARN_COLOR = 131;
+        public const int YARN_SHADE = 112;
+        public const int YARN_KNITTING_TYPE = 14;
+        public const int YARN_GSM = 4;
+        public const int CDA_ITEM_DYES = 251;
+        public const int CDA_AGENT_DYES = 250;
+        public const int CDA_ITEM_CHEM = 252;
+        public const int CDA_AGENT_CHEM = 253;
+        public const int FIBER_TYPE = 258;
+        public const int BLEND_TYPE = 259;
+        public const int YARN_PROGRAM = 260;
+        public const int YARN_SUB_PROGRAM = 261;
+        public const int MANUFACTURING_LINE = 262;
+        public const int MANUFACTURING_PROCESS = 263;
+        public const int MANUFACTURING_SUB_PROCESS = 264;
+        public const int COLOR_GRADE = 265;
     }
 
     /// <summary>

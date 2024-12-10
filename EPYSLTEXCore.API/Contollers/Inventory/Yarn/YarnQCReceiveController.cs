@@ -3,6 +3,7 @@ using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Interfaces.Inventory;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
@@ -12,7 +13,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 
-namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
+namespace EPYSLTEXCore.API.Contollers.Inventory
 {
     [Route("api/yarn-qc-receive")]
     public class YarnQCReceiveController : ApiBaseController

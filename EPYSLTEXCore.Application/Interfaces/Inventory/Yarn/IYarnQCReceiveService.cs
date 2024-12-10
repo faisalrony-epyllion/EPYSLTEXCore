@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EPYSLTEXCore.Application.Interfaces.Inventory.Yarn
+namespace EPYSLTEXCore.Application.Interfaces.Inventory
 {
     public interface IYarnQCReceiveService
     {

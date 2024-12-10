@@ -13,7 +13,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [ExplicitKey]
         public int YarnPRMasterID { get; set; } = 0;
         public int YarnPRFromID { get; set; } = 0;
-        public DateTime YarnPRDate { get; set; }
+        public DateTime YarnPRDate { get; set; } = DateTime.Now;
         public string YarnPRNo { get; set; } = AppConstants.NEW;
         public DateTime YarnPRRequiredDate { get; set; }
         public int YarnPRBy { get; set; } = 0;
@@ -37,7 +37,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         public string RejectReason { get; set; } = "";
         public bool IsRNDPR { get; set; } = false;
         public int AddedBy { get; set; } = 0;
-        public DateTime DateAdded { get; set; }
+        public DateTime DateAdded { get; set; } = DateTime.Now;
         public int? UpdatedBy { get; set; } = 0;
         public DateTime? DateUpdated { get; set; }
         public string ConceptNo { get; set; } = "";

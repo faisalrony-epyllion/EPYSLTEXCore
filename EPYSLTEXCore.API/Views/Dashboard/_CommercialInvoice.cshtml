@@ -1,0 +1,515 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+<style type="text/css">
+    .tblImage ::placeholder {
+        opacity: .2;
+    }
+
+    .tblImage thead tr th {
+        text-align: center;
+    }
+
+    .tblImage tbody tr td {
+        text-align: center;
+    }
+
+    .txtImg {
+        width: 100%;
+        border: none;
+        height: 60px;
+        padding-left: 10px;
+    }
+
+    .cellSelect {
+        max-width: 200px !important;
+    }
+
+        .cellSelect select {
+            font-size: 14px;
+        }
+
+    .cellImg {
+        min-width: 150px !important;
+    }
+
+    .trImg {
+        text-align: center;
+        height: 62px !important;
+    }
+
+        .trImg td {
+            padding: 0px !important;
+        }
+
+        .trImg .tdStatic {
+            vertical-align: middle;
+        }
+
+    .zoom {
+        transition: transform .2s; /* Animation */
+        margin: 0 auto;
+    }
+
+        .zoom:hover {
+            transform: scale(3.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+        }
+</style>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblYarnPIItemsId = "tblYarnPIItems" + pageId;
+    var tblDocsId = "tblDocs" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblAcceptanceCIInfoId = "tblAcceptanceCIInfoId" + pageId;
+    var tblAcceptanceChargeDetailsId = "tblAcceptanceChargeDetailsId" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="AcceptancePage" value="@ViewBag.AcceptancePage" />
+    <input type="hidden" id="CDAPage" value="@ViewBag.CDAPage" />
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;L/C List
+                </button>
+                <button id="btnPartialCompleteList" class="btn btn-default btn-sm">
+                    <i class="fa fa-bell"></i>&nbsp;Awaiting for Own Acceptance
+                </button>
+                <button id="btnAwaitingForBankAcceptance" class="btn btn-default btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Awaiting for Bank Acceptance
+                </button>
+                <button id="btnAcceptedInvoice" class="btn btn-default btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Accepted Invoice
+                </button>
+
+                <div id="divAddKPForGrouping" style="margin: 5px 0 5px 10px;">
+                    <button id="btnCreateBankAcceptance" class="btn btn-default btn-sm">
+                        <i class="fa fa-plus"></i>&nbsp;Create Bank Acceptance
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="CIID" name="CIID" value="-1111" />
+            <input type="hidden" name="LCID" id="LCID" />
+            <input type="hidden" name="CompanyId" id="CompanyId" />
+            <input type="hidden" name="SupplierId" id="SupplierId" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-md-12 ciAForBankAccept">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3 small">Document Type</label>
+                        <div class="col-sm-7">
+                            <input type="checkbox" style="margin:5px;" id="OD" name="OD" value="OD" />
+                            <label for="OD">Original Document</label>
+                            <input type="checkbox" style="margin:5px;" id="SG" name="SG" value="SG" />
+                            <label for="SG">Shipping Guarantee</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success ciAForBankAccept" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C No</label>
+                                        <div class="col-sm-7">
+                                            <input id="LcNo" name="LcNo" class="form-control input-sm" placeholder="L/C No" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="LcDate" name="LcDate" placeholder="L/C Date" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Value</label>
+                                        <div class="col-sm-7" style="text-align:right">
+                                            <input id="LcValue" name="LcValue" class="form-control input-sm" value="0" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Qty</label>
+                                        <div class="col-sm-7" style="text-align:right">
+                                            <input id="LcQty" name="LcQty" class="form-control input-sm" value="0" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Customer</label>
+                                        <div class="col-sm-7">
+                                            <input id="CustomerName" name="CustomerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="divBLNo">
+                                        <label class="control-label col-sm-5 small">BL No</label>
+                                        <div class="col-sm-7">
+                                            <input id="BLNo" name="BLNo" class="form-control input-sm" placeholder="BL No" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">BL Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="BLDate" name="BLDate" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="divContainerStatus">
+                                        <label class="control-label col-sm-5 small">Container Status</label>
+                                        <div class="col-sm-7">
+                                            <input id="ContainerStatus" name="ContainerStatus" class="form-control input-sm" placeholder="Container Status" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group owncia" id="divContainerStatus">
+                                        <label class="control-label col-sm-5 small">Own Accept Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="AcceptanceDate" name="AcceptanceDate" class="form-control input-sm ej2-datepicker" placeholder="Acceptance Date" />
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Receive Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="LcReceiveDate" name="LcReceiveDate" class="form-control input-sm" placeholder="L/C Receive Date" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Expiry Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="LcExpiryDate" name="LcExpiryDate" placeholder="L/C Expiry Date" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Issueing Bank</label>
+                                        <div class="col-sm-7">
+                                            <input id="IssueBank" name="IssueBank" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Advising Bank</label>
+                                        <div class="col-sm-7">
+                                            <input id="PaymentBank" name="PaymentBank" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Tenure of L/C</label>
+                                        <div class="col-sm-4">
+                                            <input id="PaymentMethodName" name="PaymentMethodName" class="form-control input-sm" readonly />
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <input id="TenorOfCalculation" name="TenorOfCalculation" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Tolerance %(+/-)</label>
+                                        <div class="col-sm-7">
+                                            <input id="Tolerance" name="Tolerance" class="form-control input-sm" placeholder="Tolerance %(+/-)" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Value With Tolerance</label>
+                                        <div class="col-sm-7" style="text-align:right">
+                                            <input id="MaxLCValue" name="MaxLCValue" class="form-control input-sm" value="0" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Currency</label>
+                                        <div class="col-sm-7">
+                                            <input id="CurrencyCode" name="CurrencyCode" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">HS Code</label>
+                                        <div class="col-sm-7">
+                                            <input id="HsCode" name="HsCode" class="form-control input-sm" placeholder="HS Code" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Invoice Image</label>
+                                        <div class="col-sm-7">
+                                            <input id="UploadFile" type="file" class="file" multiple name="UploadFile" accept=".xlsx,.xls,image/*,.doc,.docx,.pdf">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-success" id="acceptInfo" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">Acceptance Information</div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group cia">
+                                        <label class="control-label col-sm-5 small">Bank Ref No</label>
+                                        <div class="col-sm-7" style="text-align:right">
+                                            <input id="BankRefNumber" name="BankRefNumber" class="form-control input-sm" value="0" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group cia" id="divContainerStatus">
+                                        <label class="control-label col-sm-5 small">Bank Accept Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="BankAcceptDate" name="BankAcceptDate" class="form-control input-sm ej2-datepicker" placeholder="Bank Accept Date" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group cia" id="divContainerStatus">
+                                        <label class="control-label col-sm-5 small">Maturity Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="MaturityDate" name="MaturityDate" class="form-control input-sm ej2-datepicker" placeholder="Maturity Date" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 ciAForBankAccept">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Commercial Invoice Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Invoice No</label>
+                                            <div class="col-sm-7">
+                                                <input id="CINo" name="CINo" class="form-control input-sm" value="" placeholder="Invoice No" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Invoice Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="CIDate" name="CIDate" placeholder="Invoice Date" class="form-control input-sm" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Invoice Value ($)</label>
+                                            <div class="col-sm-7">
+                                                <input id="CIValue" name="CIValue" class="form-control input-sm" placeholder="Invoice Value" value="0" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Consignee</label>
+                                            <div class="col-sm-7">
+                                                <select id="ConsigneeId" name="ConsigneeId" class="form-control" style="width:100%"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Exp No</label>
+                                            <div class="col-sm-7">
+                                                <input id="ExpNo" name="ExpNo" class="form-control input-sm" placeholder="ExpNo" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Exp Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="ExpDate" name="ExpDate" class="form-control input-sm" placeholder="Exp Date" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Notify Party</label>
+                                            <div class="col-sm-7">
+                                                <select id="NotifyPartyId" name="NotifyPartyId" class="form-control" style="width:100%"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Bill of Exchange No</label>
+                                            <div class="col-sm-7">
+                                                <input id="BOENo" name="BOENo" class="form-control input-sm" placeholder="Bill of Exchange No" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Bill of Exchange Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="BOEDate" name="BOEDate" class="form-control input-sm" placeholder="Bill of Exchange Date" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 ciAForBankAccept">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Other Attachments  <button type="button" id="btnAddDoc" class="btn btn-success btn-xs" style="position:absolute;">
+                                <i class="fa fa-plus"></i>&nbsp;Add Doc
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblDocsId" class="table table-bordered table-striped tblImage">
+                                            <thead>
+                                                <tr>
+                                                    <th class="cellActionDoc"></th>
+                                                    <th>SL</th>
+                                                    <th class="cellSelect">Document Type</th>
+                                                    <th>File Name</th>
+                                                    @*<th class="cellImg">Document</th>*@
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 ciAForBankAccept">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Attached PI Information  <button type="button" id="btnAddItem" class="btn btn-success btn-xs" style="position:absolute;">
+                                <i class="fa fa-plus"></i>&nbsp;Add PI
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblYarnPIItemsId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 ciAForBankAccept">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Invoice Item Details Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 AcceptanceChargeShowHide">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">Commercial Invoice Information</div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblAcceptanceCIInfoId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 AcceptanceChargeShowHide">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">Acceptance Charge</div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblAcceptanceChargeDetailsId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120 ciAForBankAccept" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnAccept"><i class="fa fa-angle-double-right"></i>&nbsp;&nbsp;Accept</button>
+                            <button type="button" class="btn btn-danger m-w-120 ciAForBankAccept" id="btnReject"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="divModalDoc" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select Document</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select id="cboDocType" style="width:100%;"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <input id="UploadFileDoc" type="file" class="file" name="UploadFileDoc" accept=".xlsx,.xls,image/*,.doc,.docx,.pdf">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modalAddDoc">Add</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

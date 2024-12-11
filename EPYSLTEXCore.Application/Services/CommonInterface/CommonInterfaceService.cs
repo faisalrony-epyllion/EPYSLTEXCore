@@ -213,8 +213,6 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             try
             {
-
-
                 SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey.FirstOrDefault()));
                 await conn.OpenAsync(); // Ensure connection is opened
 
@@ -227,7 +225,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         int listCount = tableNames.Count;
                         if (listCount == objLst.Count && listCount == primaryKeyColumns.Count)
                         {
-                            for (int i = 0; i < 1; i++)
+                            for (int i = 0; i < listCount; i++)
                             {
                                 string tableName = tableNames[i];
                                 object obj = objLst[i];

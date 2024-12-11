@@ -46,10 +46,10 @@
         public const string ACCEPT = "Accept";
         public const string REJECT = "Reject";
         public const string CANCEL = "Cancel";
-        public const string STATUS_KEY = "STATUS";
-        public const string ADD = "ADD";
-        public const string UPDATE = "UPDATE";
-        public const string DELETE = "DELETE";
+        public const string STATUS = "Status";
+        public const string ADD = "add";
+        public const string UPDATE = "update";
+        public const string DELETE = "delete";
        
     }
 

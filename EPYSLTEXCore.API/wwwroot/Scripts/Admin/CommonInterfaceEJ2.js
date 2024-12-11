@@ -16,7 +16,7 @@
     var selectedChild = null;
     const localStorageKeys = {
         baseKey: "localstorageKey-",
-        edit: "edit",
+        edit: "update",
         delete: "delete",
         add: "add"
     };

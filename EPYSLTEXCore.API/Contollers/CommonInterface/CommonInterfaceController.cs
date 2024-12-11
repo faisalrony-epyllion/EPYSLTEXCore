@@ -185,7 +185,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                   parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
                 string conn = commonInterfaceMaster.ConName.Trim();
 
-                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable,1,1)).LastNumber+1;
+                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable, 1, 1)).LastNumber+1;
                 jsonObject[StatusConstants.STATUS] = StatusConstants.ADD;
                 primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
                 tableNames.Add(parentTable);
@@ -203,12 +203,12 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                  
                 // Extract the 'Childs' array
                 childsArray = jsonObject["Childs"].AsArray();
-                
+                int count = 0;
                 foreach (JsonNode item in childsArray)
                 {
-
+                    count=count+1;
                     item[childGridParentColumn] = (primaryKeyColumnValue);
-                    item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber + 1;
+                    item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber + count;
                 }
 
                 // Deserialize JsonArray into a List<object>

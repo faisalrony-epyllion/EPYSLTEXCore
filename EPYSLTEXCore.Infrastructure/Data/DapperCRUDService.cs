@@ -1282,8 +1282,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = increment
                 };
-                Connection.ConnectionString = _connectionString;
-                await Connection.InsertAsync(signature);
+                await connectionGmt.InsertAsync(signature, transaction);
             }
             else
             {

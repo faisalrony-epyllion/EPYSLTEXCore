@@ -888,6 +888,9 @@
         public const string BondEntitlementMaster = "BondEntitlementMaster";
         public const string BondEntitlementChild = "BondEntitlementChild";
         public const string BondEntitlementChildItem = "BondEntitlementChildItem";
+
+        public const string BankLimitMaster = "BankLimitMaster";
+        public const string BankLimitChild = "BankLimitChild";
     }
   
 }

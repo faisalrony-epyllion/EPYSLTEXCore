@@ -23,6 +23,7 @@ using static Dapper.SqlMapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using EPYSLTEX.Core.Statics;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -1550,7 +1551,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     var jObject = item as JsonObject;
                     if (jObject != null)
                     {
-                        await ProcessStatusAsync(tableName, jObject, connection, transaction);
+                        await ProcessStatusAsync(tableName, jObject, primaryKeyColumns, connection, transaction);
                     }
                 }
             }
@@ -1559,14 +1560,14 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 var jObject = dataObject as JsonObject;
                 if (jObject != null)
                 {
-                    await ProcessStatusAsync(tableName, jObject, connection, transaction);
+                    await ProcessStatusAsync(tableName, jObject, primaryKeyColumns, connection, transaction);
                 }
             }
 
             return 0;
         }
 
-        private async Task ProcessStatusAsync(string tableName, JsonObject jObject, SqlConnection connection, IDbTransaction transaction = null)
+        private async Task ProcessStatusAsync(string tableName, JsonObject jObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null)
         {
             var objStatus = jObject[StatusConstants.STATUS]?.ToString();
             if (objStatus != null)
@@ -1577,10 +1578,10 @@ namespace EPYSLTEXCore.Infrastructure.Data
                         await AddDynamicObjectAsync(tableName, jObject, connection, transaction);
                         break;
                     case StatusConstants.UPDATE:
-                        await UpdateDynamicObjectAsync(tableName, jObject, new List<string>(), connection, transaction);
+                        await UpdateDynamicObjectAsync(tableName, jObject, primaryKeyColumns, connection, transaction);
                         break;
                     case StatusConstants.DELETE:
-                        await DeleteDynamicObjectAsync(tableName, jObject, new List<string>(), connection, transaction);
+                        await DeleteDynamicObjectAsync(tableName, jObject, primaryKeyColumns, connection, transaction);
                         break;
                 }
             }
@@ -1713,34 +1714,53 @@ namespace EPYSLTEXCore.Infrastructure.Data
         {
             var columns = await GetColumnNamesAsync(tableName, connection, transaction);
 
-            // Use reflection to extract properties and their values
-            var data = dataObject
-             .Where(property => columns.Contains(property.Key))
-             .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
-
-
-
-
-
-            if (!data.Any())
+            try
             {
-                throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+
+                if (columns.Contains("UpdatedBy"))
+                {
+                    dataObject["UpdatedBy"] = UserCode;
+                }
+                if (columns.Contains("DateUpdated"))
+                {
+                    dataObject["DateUpdated"] = DateTime.UtcNow.ToString("yyyy-MM-dd"); 
+                 
+                }
+
+                var data = dataObject
+                 .Where(property => columns.Contains(property.Key))
+                 .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
+
+                if (!data.Any())
+                {
+                    throw new ArgumentException("The object does not contain any matching columns for the specified table.");
+                }
+
+                // Separate key columns and update columns
+                var keyData = primaryKeyColumns
+                    .ToDictionary(pk => pk, pk => data.ContainsKey(pk) ? data[pk] : throw new ArgumentException($"Primary key '{pk}' is missing in the object."));
+
+                var updateColumns = data.Keys
+                    .Except(primaryKeyColumns, StringComparer.OrdinalIgnoreCase)
+                    .Select(col => $"{col} = @{col}");
+
+                var setClause = string.Join(", ", updateColumns);
+                var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
+
+                var sql = $"UPDATE {tableName} SET {setClause} WHERE {whereClause};";
+
+                return await connection.ExecuteAsync(sql, data, transaction);
             }
-
-            // Separate key columns and update columns
-            var keyData = primaryKeyColumns
-                .ToDictionary(pk => pk, pk => data.ContainsKey(pk) ? data[pk] : throw new ArgumentException($"Primary key '{pk}' is missing in the object."));
-
-            var updateColumns = data.Keys
-                .Except(primaryKeyColumns, StringComparer.OrdinalIgnoreCase)
-                .Select(col => $"{col} = @{col}");
-
-            var setClause = string.Join(", ", updateColumns);
-            var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
-
-            var sql = $"UPDATE {tableName} SET {setClause} WHERE {whereClause};";
-
-            return await Connection.ExecuteAsync(sql, data, transaction);
+            catch (ArgumentException argEx)
+            {
+                // Handle argument exceptions (e.g., missing matching columns)
+                throw new ArgumentException("Invalid argument encountered.", argEx);
+            }
+            catch (Exception ex)
+            {
+                // Catch any other general exceptions
+                throw new ApplicationException("An unexpected error occurred.", ex);
+            }
         }
 
 
@@ -1748,32 +1768,45 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         public async Task<int> DeleteDynamicObjectAsync(string tableName, JsonObject dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null)
         {
-            var columns = await GetColumnNamesAsync(tableName, connection, transaction);
-
-            // Use reflection to extract properties and their values
-            var data = dataObject
-             .Where(property => columns.Contains(property.Key))
-             .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
-
-
-            if (!data.Any())
+            try
             {
-                throw new ArgumentException("The object does not contain any matching columns for the specified table.");
-            }
+                var columns = await GetColumnNamesAsync(tableName, connection, transaction);
 
-            // Ensure primary key values exist in the object
-            foreach (var pk in primaryKeyColumns)
-            {
-                if (!data.ContainsKey(pk))
+                // Use reflection to extract properties and their values
+                var data = dataObject
+                 .Where(property => columns.Contains(property.Key))
+                 .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
+
+
+                if (!data.Any())
                 {
-                    throw new ArgumentException($"Primary key '{pk}' is missing in the object.");
+                    throw new ArgumentException("The object does not contain any matching columns for the specified table.");
                 }
+
+                // Ensure primary key values exist in the object
+                foreach (var pk in primaryKeyColumns)
+                {
+                    if (!data.ContainsKey(pk))
+                    {
+                        throw new ArgumentException($"Primary key '{pk}' is missing in the object.");
+                    }
+                }
+
+                var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
+                var sql = $"DELETE FROM {tableName} WHERE {whereClause};";
+
+                return await connection.ExecuteAsync(sql, data, transaction);
             }
-
-            var whereClause = string.Join(" AND ", primaryKeyColumns.Select(pk => $"{pk} = @{pk}"));
-            var sql = $"DELETE FROM {tableName} WHERE {whereClause};";
-
-            return await Connection.ExecuteAsync(sql, data, transaction);
+            catch (ArgumentException argEx)
+            {
+                // Handle argument exceptions (e.g., missing matching columns)
+                throw new ArgumentException("Invalid argument encountered.", argEx);
+            }
+            catch (Exception ex)
+            {
+                // Catch any other general exceptions
+                throw new ApplicationException("An unexpected error occurred.", ex);
+            }
         }
 
         #endregion

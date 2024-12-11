@@ -48,7 +48,7 @@
         public const string CANCEL = "Cancel";
         public const string STATUS = "Status";
         public const string ADD = "add";
-        public const string UPDATE = "update";
+        public const string UPDATE = "edit";
         public const string DELETE = "delete";
        
     }

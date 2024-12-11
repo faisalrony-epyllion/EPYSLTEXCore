@@ -16,7 +16,7 @@
     var selectedChild = null;
     const localStorageKeys = {
         baseKey: "localstorageKey-",
-        edit: "update",
+        edit: "edit",
         delete: "delete",
         add: "add"
     };
@@ -160,7 +160,7 @@
                 },
                 
                 actionComplete: function (args) {
-                   
+                    debugger;
                   var keyName='';
                   var keyValue='';
                     if (args.action == localStorageKeys.add) {

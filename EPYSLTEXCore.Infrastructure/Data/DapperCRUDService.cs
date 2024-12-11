@@ -21,6 +21,7 @@ using System.Transactions;
 using System.Text.Json.Nodes;
 using static Dapper.SqlMapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using EPYSLTEX.Core.Statics;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -1400,6 +1401,51 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
         }
 
+        public async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
+        {
+            // Initialize the base query
+            string query = @"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature 
+                     WHERE Field = @Field 
+                     AND CompanyId = @CompanyId 
+                     AND SiteId = @SiteId";
+
+            // Set parameters
+            var parameters = new
+            {
+                Field = field,
+                CompanyId = companyId,  // Pass as integer (assuming CompanyId is integer)
+                SiteId = siteId         // Pass as integer (assuming SiteId is integer)
+            };
+
+            // Add conditions based on RepeatAfterEnum
+            switch (repeatAfter)
+            {
+                case RepeatAfterEnum.EveryYear:
+                    query += " AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryMonth:
+                    query += " AND MONTH(Dates) = MONTH(GETDATE()) AND YEAR(Dates) = YEAR(GETDATE())";
+                    break;
+                case RepeatAfterEnum.EveryDay:
+                    query += " AND CAST(Dates AS DATE) = CAST(GETDATE() AS DATE)";
+                    break;
+            }
+
+            try
+            {
+                // Execute the query asynchronously and retrieve a single record
+                var records = await Connection.QueryAsync<Signatures>(query, parameters);
+
+                // Check if the query returned a result and return it
+                return records?.FirstOrDefault();  // Assuming records is a list, return the first one
+            }
+            catch (Exception ex)
+            {
+                // Log or rethrow the exception with more context if needed
+                throw new ApplicationException("Error fetching signature.", ex);
+            }
+        }
+
 
         private async Task<Signatures> GetSignatureCmdAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
@@ -1493,7 +1539,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
 
 
-        public async Task<int> AddDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null)
+        public async Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null)
         {
             var columns = await GetColumnNamesAsync(tableName, connection,transaction);
             var columnNames = "";
@@ -1533,6 +1579,10 @@ namespace EPYSLTEXCore.Infrastructure.Data
             return 0;
 
 
+        }
+        public async Task<int> AddDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null)
+        {
+            return 0;
         }
 
         // Method to build the insert data dictionary

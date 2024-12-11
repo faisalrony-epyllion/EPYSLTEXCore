@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Static;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
 {
-    [Table("YarnQCReceiveMaster")]
+    [Table(TableNames.YARN_QC_RECEIVE_MASTER)]
     public class YarnQCReceiveMaster : DapperBaseEntity
     {
         [ExplicitKey]

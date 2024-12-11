@@ -53,9 +53,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         RM.TransportTypeID, RM.CContractorID, RM.VehicalNo, RM.ShipmentStatus, RM.Remarks, SpinnerID = CASE WHEN RMC.SpinnerID > 0 THEN RMC.SpinnerID ELSE RM.SpinnerID END, RM.POID, RM.CIID, RM.LCID, RM.ReceivedById, RM.GPTime,
                         RM.PONo, RM.PODate,RMC.ItemMasterID,RMC.ShadeCode,RMC.LotNo,RMC.ChallanLot, RMC.ReceiveQty, RMC.PhysicalCount,
                         RF.ReceiveForName, RMC.YarnCategory
-		                FROM YarnReceiveChild RMC
-                        INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
-                        Left Join YarnQCReqChild LTRM On LTRM.ReceiveID = RM.ReceiveID AND LTRM.ItemMasterID = RMC.ItemMasterID AND LTRM.PhysicalCount = RMC.PhysicalCount AND LTRM.LotNo = RMC.LotNo 
+		                FROM {TableNames.YARN_RECEIVE_CHILD} RMC
+                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
+                        Left Join {TableNames.YARN_QC_REQ_CHILD} LTRM On LTRM.ReceiveID = RM.ReceiveID AND LTRM.ItemMasterID = RMC.ItemMasterID AND LTRM.PhysicalCount = RMC.PhysicalCount AND LTRM.LotNo = RMC.LotNo 
                         LEFT JOIN ReceiveFor RF ON RF.ReceiveForId = RMC.ReceiveForId
 		                WHERE LTRM.ReceiveID IS NULL 
                         AND RM.IsCDA = 'False' AND RMC.IsNoTest = 0 AND RMC.TagYarnReceiveChildID=0
@@ -63,7 +63,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					PrevReq As(
 						Select YQC.LotNo, YQC.ItemMasterID,HasPrevQCReq = CONVERT(bit, Case When count(*)>0 Then 1 Else 0 End )
 						from M
-						Inner Join YarnQCReqChild YQC ON YQC.LotNo = M.LotNo AND YQC.ItemMasterID = M.ItemMasterID
+						Inner Join {TableNames.YARN_QC_REQ_CHILD} YQC ON YQC.LotNo = M.LotNo AND YQC.ItemMasterID = M.ItemMasterID
 						GROUP BY YQC.LotNo, YQC.ItemMasterID
 						),
                     POInfo AS
@@ -71,8 +71,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         SELECT M.ReceiveChildID
 	                    ,BuyerName = CASE WHEN ISNULL(PoC.BuyerID,0) > 0 THEN C1.ShortName ELSE STRING_AGG(C.ShortName,',') END
                         FROM M
-                        INNER join YarnPOChild PoC On Poc.YPOChildID = M.POChildID
-                        LEFT Join YarnPOChildBuyer YPB ON YPB.YPOChildID = PoC.YPOChildID
+                        INNER join {TableNames.YarnPOChild} PoC On Poc.YPOChildID = M.POChildID
+                        LEFT Join {TableNames.YarnPOChildBuyer} YPB ON YPB.YPOChildID = PoC.YPOChildID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YPB.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts C1 ON C1.ContactID = PoC.BuyerID AND C1.ContactID > 0
                         GROUP BY M.ReceiveChildID,PoC.BuyerID,C1.ShortName
@@ -82,12 +82,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    SELECT M.ReceiveChildID,
 	                    EWO = CASE WHEN ISNULL(M.POID,0) = 0 THEN M.ReceiveForName ELSE IsNull(YRCO.EWONo,IsNull(YPOC.BookingNo,IsNull(FCM.GroupConceptNo,IsNull(YPOCO.EWONo,IsNull(EOM.ExportOrderNo,''))))) END
 	                    FROM M
-	                    Left JOIN YarnPOChildOrder YO ON YO.YPOChildID = M.POChildID
-	                    Left Join YarnReceiveChildOrder YRCO On YRCO.ReceiveChildID = M.ReceiveChildID
-	                    Left Join YarnPOChildOrder YPOCO ON YPOCO.YPOChildID = M.POChildID
+	                    Left JOIN {TableNames.YarnPOChildOrder} YO ON YO.YPOChildID = M.POChildID
+	                    Left Join {TableNames.YARN_RECEIVE_CHILD_ORDER} YRCO On YRCO.ReceiveChildID = M.ReceiveChildID
+	                    Left Join {TableNames.YarnPOChildOrder} YPOCO ON YPOCO.YPOChildID = M.POChildID
 	                    Left Join {DbNames.EPYSL}..ExportOrderMaster EOM On EOm.ExportOrderID = YPOCO.ExportOrderID
-	                    Left Join YarnPOChild YPOC ON YPOC.YPOMasterID = M.POID And YPOC.ItemMasterID = M.ItemMasterID And YPOC.YPOChildID = M.POChildID
-	                    Left Join FreeConceptMaster FCM On FCM.ConceptID = YPOC.ConceptID
+	                    Left Join {TableNames.YarnPOChild} YPOC ON YPOC.YPOMasterID = M.POID And YPOC.ItemMasterID = M.ItemMasterID And YPOC.YPOChildID = M.POChildID
+	                    Left Join {TableNames.RND_FREE_CONCEPT_MASTER} FCM On FCM.ConceptID = YPOC.ConceptID
                         GROUP BY M.ReceiveChildID, M.ReceiveForName, ISNULL(M.POID,0), YRCO.EWONo, YPOC.BookingNo, FCM.GroupConceptNo, YPOCO.EWONo, EOM.ExportOrderNo
                     ),
                     AllocatedOrdersDistinct AS
@@ -106,7 +106,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     (
                         SELECT M.ReceiveChildID, POFor = STRING_AGG(PO.ValueName,',') 
                         FROM M
-                        INNER join YarnPOChild PoC On Poc.YPOMasterID = M.POID And Poc.ItemMasterID = M.ItemMasterID
+                        INNER join {TableNames.YarnPOChild} PoC On Poc.YPOMasterID = M.POID And Poc.ItemMasterID = M.ItemMasterID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PO ON PO.ValueID = PoC.POForID
                         GROUP BY M.ReceiveChildID
                     ),
@@ -114,12 +114,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     (
                         Select M.ReceiveChildID, RackNo = STRING_AGG(RC.RackNo,',')
                         From M
-                        INNER JOIN YarnReceiveChildRackBin RB ON RB.ChildID = M.ReceiveChildID
+                        INNER JOIN {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB ON RB.ChildID = M.ReceiveChildID
                         INNER JOIN {DbNames.EPYSL}..Rack RC ON RC.RackID = RB.RackID
                         GROUP BY M.ReceiveChildID
                     ),RackBinDate As(
                         Select M.ReceiveChildID,DateAdded = Max(RB.DateAdded)
-                        From YarnReceiveChildRackBin RB
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
                         INNER JOIN M  ON RB.ChildID = M.ReceiveChildID
                         GROUP BY M.ReceiveChildID
 
@@ -140,9 +140,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    RackBinDate  = RBD.DateAdded, HasPrevQCReq = ISNULL(PVR.HasPrevQCReq,0)
 	                    FROM M 
 						LEFT JOIN PrevReq PVR ON PVR.LotNo = M.LotNo AND PVR.ItemMasterID = M.ItemMasterID 
-	                    Left Join YarnReceiveChildOrder YRCO On YRCO.ReceiveChildID = M.ReceiveChildID
-	                    Left Join YarnPOChild YPOC ON YPOC.YPOMasterID = M.POID And YPOC.ItemMasterID = M.ItemMasterID And YPOC.YPOChildID = M.POChildID
-	                    Left Join FreeConceptMaster FCM On FCM.ConceptID = YPOC.ConceptID
+	                    Left Join {TableNames.YARN_RECEIVE_CHILD_ORDER} YRCO On YRCO.ReceiveChildID = M.ReceiveChildID
+	                    Left Join {TableNames.YarnPOChild} YPOC ON YPOC.YPOMasterID = M.POID And YPOC.ItemMasterID = M.ItemMasterID And YPOC.YPOChildID = M.POChildID
+	                    Left Join {TableNames.RND_FREE_CONCEPT_MASTER} FCM On FCM.ConceptID = YPOC.ConceptID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
 	                    LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo ACI ON ACI.ContactID = CC.ContactID
 	                    LEFT JOIN {DbNames.EPYSL}..BankBranch BB ON BB.BankBranchID = M.BankBranchID
@@ -175,9 +175,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     RM.TransportTypeID, RM.CContractorID, RM.VehicalNo, RM.ShipmentStatus, RM.Remarks, SpinnerID = CASE WHEN RMC.SpinnerID > 0 THEN RMC.SpinnerID ELSE RM.SpinnerID END, RM.POID, RM.CIID, RM.LCID, RM.ReceivedById, RM.GPTime,
                     RM.PONo, RM.PODate,RMC.ItemMasterID,RMC.ShadeCode,RMC.LotNo,RMC.ChallanLot, RMC.ReceiveQty, RMC.PhysicalCount, RMC.NoTestRemarks, RMC.YarnCategory,
                     RMC.POChildID
-                    FROM YarnReceiveChild RMC
-	                INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
-                    Left Join YarnQCReqChild LTRM On LTRM.ReceiveID = RM.ReceiveID AND LTRM.ItemMasterID = RMC.ItemMasterID AND LTRM.PhysicalCount = RMC.PhysicalCount AND LTRM.LotNo = RMC.LotNo 
+                    FROM {TableNames.YARN_RECEIVE_CHILD} RMC
+	                INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
+                    Left Join {TableNames.YARN_QC_REQ_CHILD} LTRM On LTRM.ReceiveID = RM.ReceiveID AND LTRM.ItemMasterID = RMC.ItemMasterID AND LTRM.PhysicalCount = RMC.PhysicalCount AND LTRM.LotNo = RMC.LotNo 
                     WHERE LTRM.ReceiveID IS NULL
                     AND RM.IsCDA = 'False' AND RMC.IsNoTest = 1
                 ),
@@ -186,8 +186,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     SELECT M.ReceiveChildID
 	                ,BuyerName = CASE WHEN ISNULL(PoC.BuyerID,0) > 0 THEN C1.ShortName ELSE STRING_AGG(C.ShortName,',') END
                     FROM M
-                    INNER join YarnPOChild PoC On Poc.YPOChildID = M.POChildID
-                    LEFT Join YarnPOChildBuyer YPB ON YPB.YPOChildID = PoC.YPOChildID
+                    INNER join {TableNames.YarnPOChild} PoC On Poc.YPOChildID = M.POChildID
+                    LEFT Join {TableNames.YarnPOChildBuyer} YPB ON YPB.YPOChildID = PoC.YPOChildID
                     LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YPB.BuyerID AND C.ContactID > 0
 	                LEFT JOIN {DbNames.EPYSL}..Contacts C1 ON C1.ContactID = PoC.BuyerID AND C1.ContactID > 0
                     GROUP BY M.ReceiveChildID,PoC.BuyerID,C1.ShortName
@@ -196,7 +196,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select M.ReceiveChildID, EWO = STRING_AGG(EOM.ExportOrderNo,',')
 	                From M
-	                INNER JOIN YarnPOChildOrder YO ON YO.YPOMasterID = M.POID
+	                INNER JOIN {TableNames.YarnPOChildOrder} YO ON YO.YPOMasterID = M.POID
 	                LEFT JOIN {DbNames.EPYSL}..ExportOrderMaster EOM ON EOM.ExportOrderID = YO.ExportOrderID
 	                GROUP BY M.ReceiveChildID
                 ),
@@ -204,7 +204,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                SELECT M.ReceiveChildID, POFor = STRING_AGG(PO.ValueName,',') 
 	                FROM M
-	                INNER join YarnPOChild PoC On Poc.YPOMasterID = M.POID And Poc.ItemMasterID = M.ItemMasterID
+	                INNER join {TableNames.YarnPOChild} PoC On Poc.YPOMasterID = M.POID And Poc.ItemMasterID = M.ItemMasterID
 	                LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PO ON PO.ValueID = PoC.POForID
 	                GROUP BY M.ReceiveChildID
                 ),
@@ -212,12 +212,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select M.ReceiveChildID, RackNo = STRING_AGG(RC.RackNo,',')
 	                From M
-	                INNER JOIN YarnReceiveChildRackBin RB ON RB.ChildID = M.ReceiveChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB ON RB.ChildID = M.ReceiveChildID
 	                INNER JOIN {DbNames.EPYSL}..Rack RC ON RC.RackID = RB.RackID
 	                GROUP BY M.ReceiveChildID
                 ),RackBinDate As(
                         Select M.ReceiveChildID,DateAdded = Max(RB.DateAdded)
-                        From YarnReceiveChildRackBin RB
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
                         INNER JOIN M  ON RB.ChildID = M.ReceiveChildID
                         GROUP BY M.ReceiveChildID
 
@@ -268,8 +268,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Child AS
                 (
 	                SELECT RC.QCReqMasterID, ItemMasterID = MAX(RC.ItemMasterID)
-	                FROM YarnQCReqChild RC
-                    INNER JOIN YarnQCReqMaster RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
+	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
+                    INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
 	                WHERE RCM.IsSendForApproval = 1 AND RCM.IsApprove = 0
 	                GROUP BY RC.QCReqMasterID
                 ),
@@ -277,9 +277,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select M.QCReqMasterID, M.QCReqNo, U.Name QCReqByUser, M.QCReqDate, QCReqFor.ValueName QCReqFor, M.IsApprove, M.IsAcknowledge,
 	                M.ReceiveID, RC.ItemMasterID,M.PhysicalCount,M.LotNo,RM.ChallanNo, RM.ChallanDate,RM.ReceiveNo,RM.ReceiveDate, M.RetestQCReqMasterID, M.IsRetestForRequisition, M.RetestForRequisitionQCReqMasterID
-	                From YarnQCReqMaster M
+	                From {TableNames.YARN_QC_REQ_MASTER} M
 	                INNER JOIN Child RC ON RC.QCReqMasterID = M.QCReqMasterID --Max can have 1 Child
-	                LEFT JOIN YarnReceiveMaster RM ON RM.ReceiveID=M.ReceiveID
+	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID=M.ReceiveID
 	                LEFT Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On M.QCForID = QCReqFor.ValueID
 	                LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode
                     WHERE M.IsSendForApproval = 1 AND M.IsApprove = 0
@@ -287,9 +287,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 RackBinDate As(
 					
                         Select  RM.ReceiveID, RackBinDate = Max(RB.DateAdded)
-                        From YarnReceiveChildRackBin RB
-						Inner Join YarnReceiveChild RMC On RMC.ChildID = RB.ChildID
-                        INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
+						Inner Join {TableNames.YARN_RECEIVE_CHILD} RMC On RMC.ChildID = RB.ChildID
+                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
                         INNER JOIN YQCReq M  ON M.ReceiveID = RM.ReceiveID
                         GROUP BY RM.ReceiveID
 
@@ -326,8 +326,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Child AS
                 (
 	                SELECT RC.QCReqMasterID, ItemMasterID = MAX(RC.ItemMasterID)
-	                FROM YarnQCReqChild RC
-                    INNER JOIN YarnQCReqMaster RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
+	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
+                    INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
 	                WHERE RCM.IsApprove = 1
 	                GROUP BY RC.QCReqMasterID
                 ),
@@ -335,18 +335,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select M.QCReqMasterID, M.QCReqNo, U.Name QCReqByUser, M.QCReqDate, QCReqFor.ValueName QCReqFor, M.IsApprove, M.IsAcknowledge,
 	                M.ReceiveID, RC.ItemMasterID,M.PhysicalCount,M.LotNo,RM.ChallanNo, RM.ChallanDate,RM.ReceiveNo,RM.ReceiveDate, M.RetestQCReqMasterID, M.IsRetestForRequisition, M.RetestForRequisitionQCReqMasterID
-	                From YarnQCReqMaster M
+	                From {TableNames.YARN_QC_REQ_MASTER} M
 	                INNER JOIN Child RC ON RC.QCReqMasterID = M.QCReqMasterID --Max can have 1 Child
-	                LEFT JOIN YarnReceiveMaster RM ON RM.ReceiveID=M.ReceiveID
+	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID=M.ReceiveID
 	                LEFT Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On M.QCForID = QCReqFor.ValueID
 	                LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode
                     WHERE M.IsApprove = 1
                 ),RackBinDate As(
 					
                         Select  RM.ReceiveID, RackBinDate = Max(RB.DateAdded)
-                        From YarnReceiveChildRackBin RB
-						Inner Join YarnReceiveChild RMC On RMC.ChildID = RB.ChildID
-                        INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
+						Inner Join {TableNames.YARN_RECEIVE_CHILD} RMC On RMC.ChildID = RB.ChildID
+                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
                         INNER JOIN YQCReq M  ON M.ReceiveID = RM.ReceiveID
                         GROUP BY RM.ReceiveID
 
@@ -382,8 +382,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Child AS
                 (
 	                SELECT RC.QCReqMasterID, ItemMasterID = MAX(RC.ItemMasterID)
-	                FROM YarnQCReqChild RC
-                    INNER JOIN YarnQCReqMaster RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
+	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
+                    INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
 	                WHERE RCM.IsReject = 1
 	                GROUP BY RC.QCReqMasterID
                 ),
@@ -392,18 +392,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                Select M.QCReqMasterID, M.QCReqNo, U.Name QCReqByUser, M.QCReqDate, QCReqFor.ValueName QCReqFor, M.IsApprove, M.IsAcknowledge,
 	                M.ReceiveID, RC.ItemMasterID,M.PhysicalCount,M.LotNo,RM.ChallanNo, RM.ChallanDate,RM.ReceiveNo,RM.ReceiveDate, M.RetestQCReqMasterID, M.RetestForRequisitionQCReqMasterID,
                     M.RejectReason
-	                From YarnQCReqMaster M
+	                From {TableNames.YARN_QC_REQ_MASTER} M
 	                INNER JOIN Child RC ON RC.QCReqMasterID = M.QCReqMasterID --Max can have 1 Child
-	                LEFT JOIN YarnReceiveMaster RM ON RM.ReceiveID=M.ReceiveID
+	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID=M.ReceiveID
 	                LEFT Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On M.QCForID = QCReqFor.ValueID
 	                LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode
                     WHERE M.IsReject = 1
                 ),
                 RackBinDate As(
                         Select  RM.ReceiveID, RackBinDate = Max(RB.DateAdded)
-                        From YarnReceiveChildRackBin RB
-						Inner Join YarnReceiveChild RMC On RMC.ChildID = RB.ChildID
-                        INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
+						Inner Join {TableNames.YARN_RECEIVE_CHILD} RMC On RMC.ChildID = RB.ChildID
+                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
                         INNER JOIN YQCReq M  ON M.ReceiveID = RM.ReceiveID
                         GROUP BY RM.ReceiveID
 				),
@@ -446,15 +446,15 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 		            ParentQCRemarksNo = CASE WHEN ISNULL(QCRM.IsRetest,0) = 1 THEN QCRM.QCRemarksNo ELSE '' END, 
 		            RetestParentQCRemarksMasterID = CASE WHEN ISNULL(QCRM.IsRetest,0) = 1 THEN QCRM.QCRemarksMasterID ELSE 0 END,
                     RMC.POChildID
-                    FROM YarnQCRemarksChild QCRC
-		            INNER JOIN YarnQCRemarksMaster QCRM ON QCRM.QCRemarksMasterID = QCRC.QCRemarksMasterID
-	                INNER JOIN YarnQCReceiveChild RC1 ON RC1.QCReceiveChildID = QCRC.QCReceiveChildID
-	                INNER JOIN YarnQCIssueChild RIC ON RIC.QCIssueChildID = RC1.QCIssueChildID
-	                INNER JOIN YarnQCReqChild RMC2 ON RMC2.QCReqChildID = RIC.QCReqChildID
-                    INNER JOIN YarnQCReqMaster RMM2 ON RMM2.QCReqMasterID = RMC2.QCReqMasterID
-	                INNER JOIN YarnReceiveChild RMC ON RMC.ChildID = RMC2.ReceiveChildID
-	                INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
-					LEFT JOIN YarnMRIRChild YMC ON YMC.ReceiveChildID=RMC.ChildID
+                    FROM {TableNames.YARN_QC_REMARKS_CHILD} QCRC
+		            INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} QCRM ON QCRM.QCRemarksMasterID = QCRC.QCRemarksMasterID
+	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC1 ON RC1.QCReceiveChildID = QCRC.QCReceiveChildID
+	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} RIC ON RIC.QCIssueChildID = RC1.QCIssueChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RMC2 ON RMC2.QCReqChildID = RIC.QCReqChildID
+                    INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RMM2 ON RMM2.QCReqMasterID = RMC2.QCReqMasterID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} RMC ON RMC.ChildID = RMC2.ReceiveChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
+					LEFT JOIN {TableNames.YARN_MRIR_CHILD} YMC ON YMC.ReceiveChildID=RMC.ChildID
                     WHERE QCRC.Diagnostic = 1 
 	                OR QCRC.ReTest = 1 
 	                OR QCRM.IsRetest = 1 
@@ -466,8 +466,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     SELECT M.ReceiveChildID
 	                ,BuyerName = CASE WHEN ISNULL(PoC.BuyerID,0) > 0 THEN C1.ShortName ELSE STRING_AGG(C.ShortName,',') END
                     FROM M
-                    INNER join YarnPOChild PoC On Poc.YPOChildID = M.POChildID
-                    LEFT Join YarnPOChildBuyer YPB ON YPB.YPOChildID = PoC.YPOChildID
+                    INNER join {TableNames.YarnPOChild} PoC On Poc.YPOChildID = M.POChildID
+                    LEFT Join {TableNames.YarnPOChildBuyer} YPB ON YPB.YPOChildID = PoC.YPOChildID
                     LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YPB.BuyerID AND C.ContactID > 0
 	                LEFT JOIN {DbNames.EPYSL}..Contacts C1 ON C1.ContactID = PoC.BuyerID AND C1.ContactID > 0
                     GROUP BY M.ReceiveChildID,PoC.BuyerID,C1.ShortName
@@ -476,7 +476,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select M.ReceiveChildID, EWO = STRING_AGG(EOM.ExportOrderNo,',')
 	                From M
-	                INNER JOIN YarnPOChildOrder YO ON YO.YPOMasterID = M.POID
+	                INNER JOIN {TableNames.YarnPOChildOrder} YO ON YO.YPOMasterID = M.POID
 	                LEFT JOIN {DbNames.EPYSL}..ExportOrderMaster EOM ON EOM.ExportOrderID = YO.ExportOrderID
 	                GROUP BY M.ReceiveChildID
                 ),
@@ -484,7 +484,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                SELECT M.ReceiveChildID, POFor = STRING_AGG(PO.ValueName,',') 
 	                FROM M
-	                INNER join YarnPOChild PoC On Poc.YPOMasterID = M.POID And Poc.ItemMasterID = M.ItemMasterID
+	                INNER join {TableNames.YarnPOChild} PoC On Poc.YPOMasterID = M.POID And Poc.ItemMasterID = M.ItemMasterID
 	                LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PO ON PO.ValueID = PoC.POForID
 	                GROUP BY M.ReceiveChildID
                 ),
@@ -492,13 +492,13 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select M.ReceiveChildID, RackNo = STRING_AGG(RC.RackNo,',')
 	                From M
-	                INNER JOIN YarnReceiveChildRackBin RB ON RB.ChildID = M.ReceiveChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB ON RB.ChildID = M.ReceiveChildID
 	                INNER JOIN {DbNames.EPYSL}..Rack RC ON RC.RackID = RB.RackID
 	                GROUP BY M.ReceiveChildID
                 ),
                 RackBinDate As(
                         Select M.ReceiveChildID,DateAdded = Max(RB.DateAdded)
-                        From YarnReceiveChildRackBin RB
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
                         INNER JOIN M  ON RB.ChildID = M.ReceiveChildID
                         GROUP BY M.ReceiveChildID
 
@@ -544,8 +544,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Child AS
                 (
 	                SELECT RC.QCReqMasterID, RC.ChallanLot, ItemMasterID = MAX(RC.ItemMasterID)
-	                FROM YarnQCReqChild RC
-                    INNER JOIN YarnQCReqMaster RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
+	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
+                    INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
 	                WHERE RCM.IsSendForApproval = 0 AND RCM.IsApprove = 0
 	                GROUP BY RC.QCReqMasterID, RC.ChallanLot
                 ),
@@ -553,18 +553,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select M.QCReqMasterID, M.QCReqNo, U.Name QCReqByUser, M.QCReqDate, QCReqFor.ValueName QCReqFor, M.IsApprove, M.IsAcknowledge,
 	                M.ReceiveID, RC.ItemMasterID,M.PhysicalCount,M.LotNo,RC.ChallanLot,RM.ChallanNo, RM.ChallanDate,RM.ReceiveNo,RM.ReceiveDate, M.RetestQCReqMasterID, M.IsRetestForRequisition, M.RetestForRequisitionQCReqMasterID
-	                From YarnQCReqMaster M
+	                From {TableNames.YARN_QC_REQ_MASTER} M
 	                INNER JOIN Child RC ON RC.QCReqMasterID = M.QCReqMasterID --Max can have 1 Child
-	                LEFT JOIN YarnReceiveMaster RM ON RM.ReceiveID=M.ReceiveID
+	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID=M.ReceiveID
 	                LEFT Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On M.QCForID = QCReqFor.ValueID
 	                LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode
                     WHERE M.IsSendForApproval = 0 AND M.IsApprove = 0
                 ),RackBinDate As(
 					
                         Select  RM.ReceiveID, RackBinDate = Max(RB.DateAdded)
-                        From YarnReceiveChildRackBin RB
-						Inner Join YarnReceiveChild RMC On RMC.ChildID = RB.ChildID
-                        INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
+						Inner Join {TableNames.YARN_RECEIVE_CHILD} RMC On RMC.ChildID = RB.ChildID
+                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
                         INNER JOIN YQCReq M  ON M.ReceiveID = RM.ReceiveID
                         GROUP BY RM.ReceiveID
 
@@ -624,7 +624,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ORDER BY ValueName;
 
                 Select Cast(ReceiveID As varchar) [id], ReceiveNo [text], C.ShortName [desc] 
-                From YarnReceiveMaster RM
+                From {TableNames.YARN_RECEIVE_MASTER} RM
                 Inner Join {DbNames.EPYSL}..Contacts C On RM.SupplierID = C.ContactID
                 Order By RM.DateAdded Desc";
             try
@@ -664,7 +664,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				    RM.InvoiceNo, RM.InvoiceDate, RM.BLNo, RM.BLDate, RM.BankBranchID, RM.PLNo, RM.PLDate, RM.ChallanNo, RM.ChallanDate, RM.GPNo, RM.GPDate, RM.TransportMode,
 				    RM.TransportTypeID, RM.CContractorID, RM.VehicalNo, RM.ShipmentStatus, RM.Remarks, RM.SpinnerID, RM.POID, RM.CIID, RM.LCID, RM.ReceivedById, RM.GPTime, 
 				    RM.CurrencyID, RM.PONo, RM.PODate, RM.ACompanyInvoice
-                    FROM YarnReceiveMaster RM WHERE RM.ReceiveId = {id}
+                    FROM {TableNames.YARN_RECEIVE_MASTER} RM WHERE RM.ReceiveId = {id}
                 )
                 SELECT	M.ReceiveID, M.ReceiveDate, M.ReceiveNo, M.LocationID, M.RCompanyID, M.OCompanyID, M.SupplierID, M.LCNo, M.LCDate, M.Tolerance,
 				M.InvoiceNo, M.InvoiceDate, M.BLNo, M.BLDate, M.BankBranchID, M.PLNo, M.PLDate, M.ChallanNo, M.ChallanDate, M.GPNo, M.GPDate, M.TransportMode,
@@ -681,7 +681,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 X AS (
 	                SELECT RC.ChildID, RC.ReceiveID, RC.ItemMasterID, RC.InvoiceChildID, RC.POChildID, RC.UnitID, RC.InvoiceQty, RC.ChallanQty, RC.ShortQty, RC.ExcessQty,
 	                RC.ReceiveQty, RC.Rate, RC.Remarks, RC.LotNo, RC.ChallanLot, RC.NoOfCartoon, RC.NoOfCone, RC.POQty, RC.YarnProgramId, RC.ChallanCount, RC.PhysicalCount, RC.ShadeCode
-	                FROM YarnReceiveChild RC 
+	                FROM {TableNames.YARN_RECEIVE_CHILD} RC 
                     WHERE RC.ReceiveID = {id}
                 )
                 SELECT X.ChildID, ReceiveChildID = X.ChildID, X.ReceiveID, X.ItemMasterID, X.InvoiceChildID, X.POChildID, X.UnitID, X.InvoiceQty, X.POQty, X.ChallanQty, X.ShortQty, X.ExcessQty, X.ReceiveQty, 
@@ -705,7 +705,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ORDER BY ValueName;
 
                 ;Select Cast(ReceiveID As varchar) [id], ReceiveNo [text], C.ShortName [desc] 
-                From YarnReceiveMaster RM
+                From {TableNames.YARN_RECEIVE_MASTER} RM
                 Inner Join {DbNames.EPYSL}..Contacts C On RM.SupplierID = C.ContactID
                 Order By RM.DateAdded Desc;";
             }
@@ -716,12 +716,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;WITH M AS (
                     Select NeedUSTER,NeedYarnTRF,NeedFabricTRF,QCReqMasterID, QCReqNo, QCReqBy, QCReqDate, QCForID, IsApprove, ApproveDate, ApproveBy, IsAcknowledge, AcknowledgeDate, AcknowledgeBy, ReceiveID, 
                     LocationID, RCompanyID, CompanyID, SupplierID, SpinnerID, RejectReason
-                    From YarnQCReqMaster Where QCReqMasterID = {id}
+                    From {TableNames.YARN_QC_REQ_MASTER} Where QCReqMasterID = {id}
                 )
                 SELECT M.NeedUSTER,M.NeedYarnTRF,M.NeedFabricTRF,M.QCReqMasterID, M.QCReqNo, M.QCReqBy, M.QCReqDate, QCForID, M.IsApprove, M.ApproveDate, M.ApproveBy, M.IsAcknowledge, M.AcknowledgeDate, M.AcknowledgeBy, M.ReceiveID, 
                 M.LocationID, M.RCompanyID, M.CompanyID, M.SupplierID, M.SpinnerID, CC.[Name] Supplier, SS.[Name] Spinner, COM.CompanyName RCompany, RM.ReceiveNo, RM.ReceiveDate, M.RejectReason
                 FROM M
-				LEFT JOIN YarnReceiveMaster RM ON RM.ReceiveID = M.ReceiveID
+				LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = M.ReceiveID
                 LEFT JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                 LEFT JOIN {DbNames.EPYSL}..Contacts SS ON SS.ContactID = M.SpinnerID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity COM ON COM.CompanyID = M.RCompanyID;
@@ -733,16 +733,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     RC.MachineTypeId, RC.TechnicalNameId, RC.BuyerID, RC.ReqBagPcs,
 		            SpinnerID = CASE WHEN YRC.SpinnerID > 0 THEN YRC.SpinnerID ELSE YRM.SpinnerId END, 
 		            YRM.SupplierID, YRM.POID, YRC.POChildID, YRC.NoOfCartoon, YRC.NoOfCone,RC.QCReqRemarks, YRC.YarnCategory
-	                FROM YarnQCReqChild RC
-		            LEFT JOIN YarnReceiveChild YRC ON YRC.ChildID = RC.ReceiveChildID
-		            LEFT JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC.ReceiveID
+	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
+		            LEFT JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC.ReceiveChildID
+		            LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = YRC.ReceiveID
 		            WHERE RC.QCReqMasterID = {id} {itemCon}
                 ),
 	            POFor AS
                 (
 	                SELECT YRC.POChildID, POFor = STRING_AGG(PO.ValueName,','), Poc.YPOMasterID
 	                FROM YRC
-	                INNER join YarnPOChild PoC ON Poc.YPOMasterID = YRC.POID And Poc.ItemMasterID = YRC.ItemMasterID
+	                INNER join {TableNames.YarnPOChild} PoC ON Poc.YPOMasterID = YRC.POID And Poc.ItemMasterID = YRC.ItemMasterID
 	                LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PO ON PO.ValueID = PoC.POForID
 	                GROUP BY YRC.POChildID, Poc.YPOMasterID
                 )
@@ -778,23 +778,23 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ORDER BY ValueName;
 
                 ;Select Cast(ReceiveID As varchar) [id], ReceiveNo [text], C.ShortName [desc] 
-                From YarnReceiveMaster RM
+                From {TableNames.YARN_RECEIVE_MASTER} RM
                 Inner Join {DbNames.EPYSL}..Contacts C On RM.SupplierID = C.ContactID
                 Order By RM.DateAdded Desc;
 
                 --Machine Type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner Join {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                  --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 -- Buyers
@@ -839,14 +839,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;WITH M AS (
                     SELECT M.NeedUSTER,M.NeedYarnTRF,M.NeedFabricTRF,M.QCReqMasterID,M.QCReqNo,M.QCReqBy,M.QCReqDate,M.QCForID,M.IsApprove,M.ApproveDate,M.ApproveBy,M.IsAcknowledge,M.AcknowledgeDate,M.AcknowledgeBy,M.ReceiveID,
                     M.LocationID, M.RCompanyID, M.CompanyID, M.SupplierID, M.SpinnerID 
-                    FROM YarnQCReqMaster M
+                    FROM {TableNames.YARN_QC_REQ_MASTER} M
 				    WHERE M.QCReqMasterID = {id}
                 ),
 			    RemarksMaster AS
 			    (
 				    SELECT M.QCReqMasterID, M.QCRemarksMasterID, M.IsRetestForRequisition
-				    FROM YarnQCRemarksChild C
-				    INNER JOIN YarnQCRemarksMaster M ON M.QCRemarksMasterID = C.QCRemarksMasterID
+				    FROM {TableNames.YARN_QC_REMARKS_CHILD} C
+				    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} M ON M.QCRemarksMasterID = C.QCRemarksMasterID
 				    WHERE C.QCRemarksChildID = {qcRemarksChildID} AND (M.IsRetest = 1 OR M.IsRetestForRequisition = 1)
 			    )
                 SELECT M.NeedUSTER,M.NeedYarnTRF,M.NeedFabricTRF,M.QCReqMasterID, M.QCReqNo, M.QCReqBy, M.QCReqDate, M.QCForID, M.IsApprove, M.ApproveDate, M.ApproveBy, M.IsAcknowledge, M.AcknowledgeDate, M.AcknowledgeBy, M.ReceiveID, 
@@ -854,7 +854,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 			    RetestParentQCRemarksMasterID = ISNULL(REM.QCRemarksMasterID,0), IsRetestForRequisition = ISNULL(REM.IsRetestForRequisition,0)
                 FROM M
 			    LEFT JOIN RemarksMaster REM ON REM.QCReqMasterID = M.QCReqMasterID
-			    LEFT JOIN YarnReceiveMaster RM ON RM.ReceiveID = M.ReceiveID
+			    LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = M.ReceiveID
                 LEFT JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                 LEFT JOIN {DbNames.EPYSL}..Contacts SS ON SS.ContactID = M.SpinnerID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity COM ON COM.CompanyID = M.RCompanyID;
@@ -866,19 +866,19 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     RC.MachineTypeId, RC.TechnicalNameId, RC.BuyerID, RC.ReqBagPcs,
 		            SpinnerID = CASE WHEN YRC.SpinnerID > 0 THEN YRC.SpinnerID ELSE YRM.SpinnerId END, 
 		            YRM.SupplierID, YRM.POID, YRC.POChildID, YRC.NoOfCartoon, YRC.NoOfCone, YRC.YarnCategory
-	                FROM YarnQCRemarksChild QCRC
-	                INNER JOIN YarnQCReceiveChild RC1 ON RC1.QCReceiveChildID = QCRC.QCReceiveChildID
-	                INNER JOIN YarnQCIssueChild RIC ON RIC.QCIssueChildID = RC1.QCIssueChildID
-	                INNER JOIN YarnQCReqChild RC ON RC.QCReqChildID = RIC.QCReqChildID
-	                LEFT JOIN YarnReceiveChild YRC ON YRC.ChildID = RC.ReceiveChildID
-	                LEFT JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC.ReceiveID
+	                FROM {TableNames.YARN_QC_REMARKS_CHILD} QCRC
+	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC1 ON RC1.QCReceiveChildID = QCRC.QCReceiveChildID
+	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} RIC ON RIC.QCIssueChildID = RC1.QCIssueChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RC ON RC.QCReqChildID = RIC.QCReqChildID
+	                LEFT JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC.ReceiveChildID
+	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = YRC.ReceiveID
 	                WHERE QCRC.QCRemarksChildID = {qcRemarksChildID}
                 ),
 	            POFor AS
                 (
 	                SELECT YRC.POChildID, POFor = STRING_AGG(PO.ValueName,','), Poc.YPOMasterID
 	                FROM YRC
-	                INNER join YarnPOChild PoC ON Poc.YPOMasterID = YRC.POID And Poc.ItemMasterID = YRC.ItemMasterID
+	                INNER join {TableNames.YarnPOChild} PoC ON Poc.YPOMasterID = YRC.POID And Poc.ItemMasterID = YRC.ItemMasterID
 	                LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PO ON PO.ValueID = PoC.POForID
 	                GROUP BY YRC.POChildID, Poc.YPOMasterID
                 )
@@ -914,23 +914,23 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ORDER BY ValueName;
 
                 ;Select Cast(ReceiveID As varchar) [id], ReceiveNo [text], C.ShortName [desc] 
-                From YarnReceiveMaster RM
+                From {TableNames.YARN_RECEIVE_MASTER} RM
                 Inner Join {DbNames.EPYSL}..Contacts C On RM.SupplierID = C.ContactID
                 Order By RM.DateAdded Desc;
 
                 --Machine Type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner Join {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                  --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 -- Buyers
@@ -974,7 +974,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 --master data
                 ;WITH M AS (
                     SELECT RM.ReceiveID, RM.ReceiveDate, RM.ReceiveNo, RM.LocationID, RM.RCompanyID, RM.OCompanyID CompanyID, RM.SupplierID, RM.SpinnerID
-                    FROM YarnReceiveMaster RM WHERE RM.ReceiveId = {receiveId}
+                    FROM {TableNames.YARN_RECEIVE_MASTER} RM WHERE RM.ReceiveId = {receiveId}
                 )
 
                 SELECT	M.ReceiveID, M.ReceiveDate, M.ReceiveNo, M.LocationID, M.RCompanyID, M.CompanyID, M.SupplierID, M.SpinnerID,
@@ -988,7 +988,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;WITH YRC AS (
 	                SELECT RC.ChildID, RC.ReceiveID, RC.ItemMasterID, RC.InvoiceChildID, RC.POChildID, RC.UnitID, RC.InvoiceQty, RC.ChallanQty, RC.ShortQty, RC.ExcessQty,
 	                RC.ReceiveQty, RC.Rate, RC.Remarks, RC.LotNo, RC.ChallanLot, RC.NoOfCartoon, RC.NoOfCone, RC.POQty, RC.YarnProgramId, RC.ChallanCount, RC.PhysicalCount
-	                FROM YarnReceiveChild RC WHERE RC.ReceiveID = {receiveId}
+	                FROM {TableNames.YARN_RECEIVE_CHILD} RC WHERE RC.ReceiveID = {receiveId}
                 )
                 SELECT YRC.ItemMasterID, YRC.UnitID,  YRC.Rate, YRC.LotNo, YRC.ChallanLot, UU.DisplayUnitDesc Uom, YRC.YarnProgramId, YRC.ChallanCount, YRC.PhysicalCount, 
 				YRC.PhysicalCount POCount, YRC.ReceiveQty, YRC.ReceiveQty ReqQty, 0 NoOfThread,''YarnCategory, ISV1.SegmentValue Segment1ValueDesc, 
@@ -1033,9 +1033,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         public async Task<YarnQCReqMaster> GetAllAsync(int id)
         {
             var sql = $@"
-            ;Select * From YarnQCReqMaster Where QCReqMasterID = {id}
+            ;Select * From {TableNames.YARN_QC_REQ_MASTER} Where QCReqMasterID = {id}
 
-            ;Select * From YarnQCReqChild Where QCReqMasterID = {id}";
+            ;Select * From {TableNames.YARN_QC_REQ_CHILD} Where QCReqMasterID = {id}";
 
             try
             {
@@ -1063,8 +1063,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	            RM.InvoiceNo, RM.InvoiceDate, RM.BLNo, RM.BLDate, RM.BankBranchID, RM.PLNo, RM.PLDate, RM.ChallanNo, RM.ChallanDate, RM.GPNo, RM.GPDate, RM.TransportMode,
 	            RM.TransportTypeID, RM.CContractorID, RM.VehicalNo, RM.ShipmentStatus, RM.Remarks, RM.SpinnerID, RM.POID, RM.CIID, RM.LCID, RM.ReceivedById, RM.GPTime, 
 	            RM.CurrencyID, RM.PONo, RM.PODate, RM.ACompanyInvoice
-	            FROM YarnReceiveChild YRC
-	            INNER JOIN YarnReceiveMaster RM ON RM.ReceiveId = YRC.ReceiveID 
+	            FROM {TableNames.YARN_RECEIVE_CHILD} YRC
+	            INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveId = YRC.ReceiveID 
 	            WHERE YRC.ChildID IN ({receiveChildIds})
             )
             SELECT	M.ReceiveID, M.ReceiveDate, M.ReceiveNo, M.LocationID, M.RCompanyID, M.OCompanyID, M.SupplierID, M.LCNo, M.LCDate, M.Tolerance,
@@ -1084,21 +1084,21 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	            RC.ReceiveQty, RC.Rate, RC.Remarks, RC.LotNo, RC.ChallanLot, RC.NoOfCartoon, RC.NoOfCone, RC.POQty, RC.YarnProgramId, RC.ChallanCount, RC.PhysicalCount, RC.ShadeCode,
 	            SpinnerID = CASE WHEN RC.SpinnerID > 0 THEN RC.SpinnerID ELSE RM.SpinnerId END, 
 				RM.SupplierID, RM.ReceiveDate, RM.POID, RC.YarnCategory
-	            FROM YarnReceiveChild RC
-	            INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RC.ReceiveID
+	            FROM {TableNames.YARN_RECEIVE_CHILD} RC
+	            INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RC.ReceiveID
 	            WHERE RC.ChildID IN ({receiveChildIds})
             ),
 			PrevReq As(
 			    Select YQC.LotNo, YQC.ItemMasterID,HasPrevQCReq = CONVERT(bit, Case When count(*)>0 Then 1 Else 0 End )
 			    from X
-			    Inner Join YarnQCReqChild YQC ON YQC.LotNo = X.LotNo AND YQC.ItemMasterID = X.ItemMasterID
+			    Inner Join {TableNames.YARN_QC_REQ_CHILD} YQC ON YQC.LotNo = X.LotNo AND YQC.ItemMasterID = X.ItemMasterID
 			    GROUP BY YQC.LotNo, YQC.ItemMasterID
 			),
             POFor AS
             (
 	            SELECT X.POChildID, POFor = STRING_AGG(PO.ValueName,','), Poc.YPOMasterID, PoC.BuyerID, BuyerName = C.ShortName
 	            FROM X
-	            INNER join YarnPOChild PoC ON Poc.YPOChildID = X.POChildID
+	            INNER join {TableNames.YarnPOChild} PoC ON Poc.YPOChildID = X.POChildID
 	            LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = PoC.BuyerID AND C.ContactID > 0
 	            LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PO ON PO.ValueID = PoC.POForID
 	            GROUP BY X.POChildID, Poc.YPOMasterID,C.ShortName,PoC.BuyerID
@@ -1136,23 +1136,23 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             ORDER BY ValueName;
 
             ;Select Cast(ReceiveID As varchar) [id], ReceiveNo [text], C.ShortName [desc] 
-            From YarnReceiveMaster RM
+            From {TableNames.YARN_RECEIVE_MASTER} RM
             Inner Join {DbNames.EPYSL}..Contacts C On RM.SupplierID = C.ContactID
             Order By RM.DateAdded Desc;
             
             --Machine Type
             ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-            FROM KnittingMachine a
-            INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-            Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+            FROM {TableNames.KNITTING_MACHINE} a
+            INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+            Inner Join {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
             --Where c.TypeName != 'Flat Bed'
             GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
              --Technical Name
             SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-            FROM FabricTechnicalName T
-            LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-            LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+            FROM {TableNames.FabricTechnicalName} T
+            LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+            LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
             Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
             -- Buyers
@@ -1192,12 +1192,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;WITH M AS (
                 Select NeedUSTER,NeedYarnTRF,NeedFabricTRF,QCReqMasterID, QCReqNo, QCReqBy, QCReqDate, QCForID, IsApprove, ApproveDate, ApproveBy, IsAcknowledge, AcknowledgeDate, AcknowledgeBy, ReceiveID, 
                 LocationID, RCompanyID, CompanyID, SupplierID, SpinnerID
-                From YarnQCReqMaster Where QCReqMasterID = {id}
+                From {TableNames.YARN_QC_REQ_MASTER} Where QCReqMasterID = {id}
                 )
                 SELECT	NeedUSTER,NeedYarnTRF,NeedFabricTRF,QCReqMasterID, QCReqNo, QCReqBy, QCReqDate, QCForID, IsApprove, M.ApproveDate, M.ApproveBy, IsAcknowledge, AcknowledgeDate, AcknowledgeBy, M.ReceiveID, 
                 M.LocationID, M.RCompanyID, M.CompanyID, M.SupplierID, M.SpinnerID, CC.[Name] Supplier, SS.[Name] Spinner, COM.CompanyName RCompany, RM.ReceiveNo, RM.ReceiveDate
                 FROM M
-				LEFT JOIN YarnReceiveMaster RM ON RM.ReceiveID = M.ReceiveID
+				LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = M.ReceiveID
                 LEFT JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                 LEFT JOIN {DbNames.EPYSL}..Contacts SS ON SS.ContactID = M.SpinnerID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity COM ON COM.CompanyID = M.RCompanyID;
@@ -1205,7 +1205,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;WITH YRC AS (
 	                SELECT RC.QCReqChildID, RC.QCReqMasterID, RC.LotNo, RC.ChallanLot, RC.ItemMasterID, RC.ReqQty,  RC.ReqCone,RC.UnitID, RC.Rate,
 	                RC.YarnProgramId, RC.ChallanCount, RC.POCount, RC.PhysicalCount, RC.YarnCategory, RC.NoOfThread,RC.ShadeCode, RC.ReceiveNo
-	                FROM YarnQCReqChild RC WHERE RC.QCReqMasterID = {id}
+	                FROM {TableNames.YARN_QC_REQ_CHILD} RC WHERE RC.QCReqMasterID = {id}
                 )
                 SELECT YRC.QCReqChildID, YRC.QCReqMasterID, YRC.LotNo, YRC.ChallanLot, YRC.ItemMasterID, YRC.ReqQty, YRC.ReqCone,YRC.ReqQty ReceiveQty,  YRC.UnitID, YRC.Rate, YRC.ReceiveNo,
 	                YRC.YarnProgramId, YRC.ChallanCount, YRC.POCount, YRC.PhysicalCount, YRC.YarnCategory, YRC.NoOfThread, UU.DisplayUnitDesc Uom, 
@@ -1228,23 +1228,23 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ORDER BY ValueName;
 
                 ;Select Cast(ReceiveID As varchar) [id], ReceiveNo [text], C.ShortName [desc] 
-                From YarnReceiveMaster RM
+                From {TableNames.YARN_RECEIVE_MASTER} RM
                 Inner Join {DbNames.EPYSL}..Contacts C On RM.SupplierID = C.ContactID
                 Order By RM.DateAdded Desc;
 
                 --Machine Type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner Join {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                  --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 -- Buyers

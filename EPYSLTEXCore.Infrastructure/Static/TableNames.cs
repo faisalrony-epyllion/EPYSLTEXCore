@@ -871,6 +871,23 @@
 
         public const string YD_BOOKING_MASTER = "T_YDBookingMaster";
         public const string BDS_DEPENDENT_TNA_EVENT_HK = "T_BDSDependentTNAEvent_HK";
+        public const string YarnReceiveChild = "T_YarnReceiveChild";
+        public const string YarnReceiveMaster = "T_YarnReceiveMaster";
+        public const string YarnQCReqChild = "T_YarnQCReqChild";
+        public const string YarnQCReqMaster = "T_YarnQCReqMaster";
+        public const string YarnQCIssueChild = "T_YarnQCIssueChild";
+        public const string YarnQCIssueMaster = "T_YarnQCIssueMaster";
+        public const string YarnQCReceiveChild = "T_YarnQCReceiveChild";
+        public const string YarnQCReceiveMaster = "T_YarnQCReceiveMaster";
+        public const string YarnQCRemarksChild = "T_YarnQCRemarksChild";
+        public const string YarnQCRemarksMaster = "T_YarnQCRemarksMaster";
+        public const string YarnPRChild = "T_YarnPRChild";
+        public const string YarnMRIRChild = "T_YarnMRIRChild";
+        public const string YarnMRIRMaster = "T_YarnMRIRMaster";
+
+        public const string BondEntitlementMaster = "BondEntitlementMaster";
+        public const string BondEntitlementChild = "BondEntitlementChild";
+        public const string BondEntitlementChildItem = "BondEntitlementChildItem";
         public const string ImportDocumentAcceptanceChargeDetails = "T_ImportDocumentAcceptanceChargeDetails";
         public const string FinishingMachineProcess_HK = "T_FinishingMachineProcess_HK";
         public const string IssueProcessReceiveChild = "T_IssueProcessReceiveChild";

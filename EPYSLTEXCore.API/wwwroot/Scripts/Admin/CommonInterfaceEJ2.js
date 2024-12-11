@@ -16,7 +16,7 @@
     var selectedChild = null;
     const localStorageKeys = {
         baseKey: "localstorageKey-",
-        edit: "edit",
+        edit: "update",
         delete: "delete",
         add: "add"
     };
@@ -249,6 +249,7 @@
     }
     // Function to check for duplicates and push the object if it's not a duplicate
     function addUniqueObjectToLocalStorage(obj) {
+  
        const array = getLocalStorage(localStorageKeys.baseKey);
        const firstChildGrid = interfaceConfigs.ChildGrids.at(0);
        const primaryKeyColumn = firstChildGrid?.PrimaryKeyColumn;
@@ -256,7 +257,7 @@
         if (primaryKeyColumn) {
             const indexToRemove = array.findIndex(p => p[primaryKeyColumn] === obj[primaryKeyColumn]);
     
-            if (indexToRemove !== -1) {
+            if (indexToRemove !== -1 && obj.Status != localStorageKeys.add) {
                 const itemToRemove = array[indexToRemove];
                 const isItemNew = itemToRemove.Status === localStorageKeys.add;
                  obj.Status = isItemNew ? localStorageKeys.add : obj.Status;                
@@ -962,7 +963,8 @@
     }
     function resetChildForm() {
         childForm.trigger("reset");
-       updateSysID(-1111);
+        updateSysID(-1111);
+        removeLocalStorage(localStorageKeys.baseKey);
        /// childForm.find("#EntityState").val(4);
     }
     function updateSysID(id)
@@ -974,7 +976,8 @@
     function newId() {
     
         resetForm();
-      updateSysID(-1111);
+        updateSysID(-1111);
+        removeLocalStorage(localStorageKeys.baseKey);
   
     }
 

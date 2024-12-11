@@ -136,6 +136,7 @@
             columns: columns,
             commandClick: handleCommands
         });
+        alert("Grid has been initialized!");
     }
     function handleCommands(args) {
         if (status === statusConstants.PENDING) {

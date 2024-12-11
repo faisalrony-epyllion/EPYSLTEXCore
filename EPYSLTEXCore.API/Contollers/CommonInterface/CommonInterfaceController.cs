@@ -220,7 +220,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             }
                 
-                _service.Save(tableNames, parentChildObject, sqlConnection, primaryKeyColumns, "add");
+                _service.Save(tableNames, parentChildObject, sqlConnection, primaryKeyColumns);
 
            
 

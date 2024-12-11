@@ -1540,7 +1540,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
 
 
-        public async Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null)
+        public async Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null)
         {
             
             var data = new Dictionary<string, object>();

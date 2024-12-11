@@ -888,6 +888,17 @@
         public const string BondEntitlementMaster = "BondEntitlementMaster";
         public const string BondEntitlementChild = "BondEntitlementChild";
         public const string BondEntitlementChildItem = "BondEntitlementChildItem";
+        public const string ImportDocumentAcceptanceChargeDetails = "T_ImportDocumentAcceptanceChargeDetails";
+        public const string FinishingMachineProcess_HK = "T_FinishingMachineProcess_HK";
+        public const string IssueProcessReceiveChild = "T_IssueProcessReceiveChild";
+        public const string IssueProcessReceiveMaster = "T_IssueProcessReceiveMaster";
+        public const string IssueProcessReceiveChildRoll = "T_IssueProcessReceiveChildRoll";
+        public const string FinishFabricSWOChild = "T_FinishFabricSWOChild";
+        public const string FinishFabricSWOMaster = "T_FinishFabricSWOMaster";
+        public const string FinishFabricSWORoll = "T_FinishFabricSWORoll";
+        public const string ChangeMaster = "T_ChangeMaster";
+        public const string ChangeChild = "T_ChangeChild";
+        public const string ChangeChildRoll = "T_ChangeChildRoll";
     }
   
 }

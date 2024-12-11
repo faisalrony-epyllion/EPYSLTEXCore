@@ -233,22 +233,10 @@ namespace EPYSLTEX.Infrastructure.Services
                                 object obj = objLst[i];
                                 string primaryKey = primaryKeyColumns[i];
 
-                                if (status == "delete")
-                                {
-                                    // _service.DeleteDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
-                                }
-                                if (status == "add")
-                                {
+                                
 
-
-                                    int wi = await _service.AddDynamicObjectAsync(tableName, obj, conn, transaction);
-
-
-                                }
-                                if (status == "edit")
-                                {
-                                    // _service.UpdateDynamicObjectAsync(tableName, obj, primaryKeyColumns, transaction);
-                                }
+                                    int wi = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, conn, transaction);
+                                      
                             }
                         }
 

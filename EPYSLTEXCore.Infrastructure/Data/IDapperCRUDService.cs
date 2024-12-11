@@ -121,5 +121,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
         int RunSqlCommand(string query, bool transactionRequired, object parameters = null);
         Task<int> GetUniqueCodeWithoutSignatureAsync(IDbConnection connection, IDbTransaction transaction, string tableName, string fieldName);
         Task<int> GetUniqueCodeWithoutSignatureAsync(IDbConnection connection, IDbTransaction transaction, string tableName, string fieldName, string preFix);
+
+        Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
+        Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null);
     }
 }

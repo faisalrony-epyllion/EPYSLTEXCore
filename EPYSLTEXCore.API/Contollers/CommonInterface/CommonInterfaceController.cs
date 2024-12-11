@@ -171,6 +171,11 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             string childTable = "";
             string childGridprimaryKeyColumn = "";
             string parentPrimaryKeyColumn =  "";
+            List<string> tableNames = new List<string>();
+            List<string> sqlConnection = new List<string>();
+            List<string> primaryKeyColumns = new List<string>();
+            List<object> parentChildObject = new List<object>();
+
             if (commonInterfaceMaster.IsAllowAddNew)
             {
                 // Trimmed string values
@@ -180,9 +185,13 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                   parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
                 string conn = commonInterfaceMaster.ConName.Trim();
 
-                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = await _signatures.GetMaxIdAsync(parentTable);
+                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable,1,1)).LastNumber;
                 primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
-                
+                tableNames.Add(parentTable);
+                sqlConnection.Add(parentsqlConnection);
+                primaryKeyColumns.Add(parentPrimaryKeyColumn);
+                parentChildObject.Add(jsonObject);
+
             }
 
             if (childGrid != null)
@@ -198,22 +207,18 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                 {
 
                     item[childGridParentColumn] = (primaryKeyColumnValue);
-                    item[childGridprimaryKeyColumn] = await _signatures.GetMaxIdAsync(childTable);
+                    item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber;   
                 }
 
                 // Deserialize JsonArray into a List<object>
                 resultList = JsonSerializer.Deserialize<List<object>>(childsArray.ToString());
 
-
+                tableNames.Add(childTable);
+                sqlConnection.Add(childsqlConnection);
+                primaryKeyColumns.Add(childGridprimaryKeyColumn);
+                parentChildObject.Add(jsonObject["Childs"]);
 
             }
- 
-            
-                List<string> tableNames = new List<string>() { parentTable, childTable };
-                List<string> sqlConnection = new List<string>() { parentsqlConnection, childsqlConnection };
-                List<string> primaryKeyColumns = new List<string>() { parentPrimaryKeyColumn, childGridprimaryKeyColumn };
-                List<object> parentChildObject = new List<object>() { jsonObject, jsonObject["Childs"] };
-    
                 
                 _service.Save(tableNames, parentChildObject, sqlConnection, primaryKeyColumns, "add");
 

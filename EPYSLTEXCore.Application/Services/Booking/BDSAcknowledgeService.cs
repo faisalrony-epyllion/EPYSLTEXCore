@@ -72,7 +72,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 queryProjConcept = $@"FCM AS
 					(
 						SELECT FCM.BookingID 
-						FROM FreeConceptMaster FCM 
+						FROM {TableNames.RND_FREE_CONCEPT_MASTER} FCM 
 						WHERE FCM.IsBDS = 3
 						GROUP BY FCM.BookingID 
 					),";
@@ -192,9 +192,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         ,PendingRevision= (CASE WHEN FBA.PreRevisionNo <> SBM.RevisionNo THEN 'Booking Revision No ' + CONVERT(VARCHAR(10),SBM.RevisionNo) ELSE '' END), SBM.ImagePath
 	                From SBM
 	                Inner Join {DbNames.EPYSL}..SampleType ST On SBM.SampleID = ST.SampleTypeID
-					LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBM.BookingID
-					LEFT JOIN FBookingAcknowledge FBA On FBA.BookingID = SBM.BookingID
-                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBM.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA On FBA.BookingID = SBM.BookingID
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
                    -- Where ST.DisplayCode <> 'LR' AND FBA.BookingID IS NULL
                     Where ST.DisplayCode <> 'LR'  AND (FBA.BookingID IS NULL or FBA.PreRevisionNo <> SBM.RevisionNo)
                 ),
@@ -215,7 +215,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 	                LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 	                LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
                     Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                     LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID
                     LEFT JOIN AppList AL ON AL.BookingID = M.BookingID
@@ -287,9 +287,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         ,PendingRevision= (CASE WHEN FBA.PreRevisionNo <> SBM.RevisionNo THEN 'Booking Revision No ' + CONVERT(VARCHAR(10),SBM.RevisionNo) ELSE '' END), SBM.ImagePath
 	                From SBM
 	                Inner Join {DbNames.EPYSL}..SampleType ST On SBM.SampleID = ST.SampleTypeID
-					LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBM.BookingID
-					LEFT JOIN FBookingAcknowledge FBA On FBA.BookingID = SBM.BookingID
-                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBM.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA On FBA.BookingID = SBM.BookingID
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
                    -- Where ST.DisplayCode <> 'LR' AND FBA.BookingID IS NULL
                     Where ST.DisplayCode <> 'LR' AND (FBA.BookingID IS NULL or FBA.PreRevisionNo <> SBM.RevisionNo)
                     {queryIsProjectionAnd}
@@ -311,8 +311,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 	                LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 	                LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
-                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
                     Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                     LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID
                     LEFT JOIN AppList AL ON AL.BookingID = M.BookingID
@@ -380,16 +380,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
 		                , SBM.SupplierID,SBM.ExecutionCompanyID,FBC.ItemMasterID,FBC.ConsumptionID,FBC.SubGroupID,SBM.Remarks,SBM.SeasonID, SBM.AddedBy BookingBy, SBM.ImagePath
 	                From SBM
 	                Inner Join {DbNames.EPYSL}..SampleType ST On SBM.SampleID = ST.SampleTypeID
-					LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBM.BookingID
-					LEFT JOIN FBookingAcknowledge FBA On FBA.BookingID = SBM.BookingID
-                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBM.BookingID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA On FBA.BookingID = SBM.BookingID
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
                     Where ST.DisplayCode <> 'LR' AND (FBA.BookingID IS NULL OR SBM.SwatchReceive = 0)
                 )
                 , MF AS (
                     SELECT M.BookingID, M.BookingNo, M.BookingDate, M.SLNo, M.StyleNo, M.OrderQty, M.BuyerID, M.BuyerTeamID
 		                , M.SupplierID,M.ExecutionCompanyID
                     FROM M
-	                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = M.BookingID
+	                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = M.BookingID
                     WHERE FBC.BookingID IS NULL
                 ),
                 AppList AS
@@ -440,7 +440,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         FBC.UnAcknowledgeDate, BM.AddedBy BookingBy,
                         LU.Name UnAckByName,
                         ISNULL(IMG.ImagePath,'') ImagePath
-                        FROM FBookingAcknowledge FBC
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                         {queryConceptJoin}
                         LEFT Join {DbNames.EPYSL}..SampleBookingMaster BM On BM.BookingID = FBC.BookingID
                         LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
@@ -476,7 +476,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         FBC.UnAcknowledgeDate, BM.AddedBy BookingBy,
                         LU.Name UnAckByName,
                         ISNULL(IMG.ImagePath,'') ImagePath
-                        FROM FBookingAcknowledge FBC
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                         {queryConceptJoin}
                         LEFT Join {DbNames.EPYSL}..SampleBookingMaster BM On BM.BookingID = FBC.BookingID
                         LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
@@ -527,7 +527,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     {queryProjConcept}
                     SBM AS (
                         SELECT FBC.FBAckID,	FBC.BookingID,FBC.BookingNo,FBC.BookingDate,FBC.SLNo,FBC.StyleNo,FBC.BookingQty,FBC.BuyerID,FBC.BuyerTeamID,FBC.SupplierID,FBC.ExecutionCompanyID, SBM.AddedBy BookingBy, ISNULL(IMG.ImagePath,'') ImagePath
-                        FROM FBookingAcknowledge FBC
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                         {queryConceptJoin}
                         Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                         Left Join IMG ON IMG.BookingID = SBM.BookingID
@@ -558,7 +558,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     {queryProjConcept}
                     SBM AS (
                         SELECT FBC.FBAckID,	FBC.BookingID,FBC.BookingNo,FBC.BookingDate,FBC.SLNo,FBC.StyleNo,FBC.BookingQty,FBC.BuyerID,FBC.BuyerTeamID,FBC.SupplierID,FBC.ExecutionCompanyID, SBM.AddedBy BookingBy, ISNULL(IMG.ImagePath,'') ImagePath
-                        FROM FBookingAcknowledge FBC
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                         {queryConceptJoin}
                         Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                         Left Join IMG ON IMG.BookingID = SBM.BookingID
@@ -629,7 +629,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             INNER JOIN SIG ON SIG.BookingID = SBM.BookingID
                             {buyerTeamJoin}
@@ -651,7 +651,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
 		                    FROM {DbNames.EPYSL}..SampleBookingMaster SBM
-		                    LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+		                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = SBM.BookingID
 		                    LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = SBM.AddedBy
                             Left Join BIMG ON BIMG.BookingID = SBM.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingChildImage SBC ON SBC.ChildImgID = BIMG.ChildImgID
@@ -716,7 +716,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             {buyerTeamJoin}
                             {queryConceptJoin}
@@ -817,14 +817,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
                             UnAcknowledgeReason='',
                             YarnRevisionNo = MAX(YB.RevisionNo), YarnRevisedDate = MAX(YB.RevisedDate)
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN OEC ON OEC.ExportOrderID = a.ExportOrderID
 							LEFT JOIN OBP ON OBP.OrderBankMasterID = OEC.OrderBankMasterID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            INNER JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            INNER JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                        --WHERE a.IsApprovedByPMC = 1 AND (YB.IsRevised = 1 OR YB.PreProcessRevNo <> a.RevisionNo) 
                             WHERE a.IsApprovedByPMC = 1 AND (YB.PreProcessRevNo <> a.RevisionNo OR a.IsValidForYarnBookingAcknowledge = 1) 
 							--AND YB.RevisionNo > 0
@@ -858,14 +858,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
                             UnAcknowledgeReason='',
                             YarnRevisionNo = MAX(YB.RevisionNo), YarnRevisedDate = MAX(YB.RevisedDate)
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN OEC ON OEC.ExportOrderID = a.ExportOrderID
 							LEFT JOIN OBP ON OBP.OrderBankMasterID = OEC.OrderBankMasterID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            INNER JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            INNER JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                        --WHERE a.IsApprovedByPMC = 1 AND (YB.IsRevised = 1 OR YB.PreProcessRevNo <> a.RevisionNo) 
                             WHERE YB.IsAddition = 1 AND a.ExportOrderID > 0 AND 
 							YB.IsOperationHeadApprove = 1 --AND (YB.PreProcessRevNo <> a.RevisionNo OR a.IsValidForYarnBookingAcknowledge = 1) 
@@ -917,8 +917,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        OBP.CalendarDays,OBP.EDD FirstShipmentDate,YarnBookingDate = MIN(YB.YBookingDate), --OEC.EventDate YarnBookingDate,
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
                             UnAcknowledgeReason=''
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        Outer Apply
@@ -932,8 +932,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                            Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 	                            ORDER BY EDD desc 
 	                        )OBP
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            INNER JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            INNER JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                        WHERE a.DateAdded >= '{_startingDate}'
                             AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 AND a.IsInternalRevise = 0
                             AND a.IsApprovedByAllowance = 1 AND a.IsCheckByKnittingHead = 1 AND a.IsApprovedByProdHead = 1 AND a.IsApprovedByPMC = 1
@@ -998,14 +998,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             UnAcknowledgeReason='',
                             YarnAcknowledgeDate = MIN(YB.AcknowledgeDate),
 	                        YarnAcknowledgeBy = ISNULL(E.EmployeeName,'')
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN OEC ON OEC.ExportOrderID = a.ExportOrderID
 							LEFT JOIN OBP ON OBP.OrderBankMasterID = OEC.OrderBankMasterID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            INNER JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            INNER JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YB.AcknowledgeBy
 	                        LEFT JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = LU.EmployeeCode
 	                        WHERE a.DateAdded >= '{_startingDate}' 
@@ -1073,14 +1073,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             UnAcknowledgeReason = YB.UnAckReason,
                             YarnUnAcknowledgeDate = MIN(YB.UnAcknowledgeDate),
 		                    YarnUnAcknowledgeBy = ISNULL(E.EmployeeName,'')
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN OEC ON OEC.ExportOrderID = a.ExportOrderID
 							LEFT JOIN OBP ON OBP.OrderBankMasterID = OEC.OrderBankMasterID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            INNER JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            INNER JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YB.UnAcknowledgeBy
 		                    LEFT JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = LU.EmployeeCode
 	                        WHERE a.DateAdded >= '{_startingDate}' 
@@ -1147,14 +1147,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        OBP.CalendarDays,OBP.EDD FirstShipmentDate,YarnBookingDate = MIN(YB.YBookingDate), --OEC.EventDate YarnBookingDate,
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
                             UnAcknowledgeReason=''
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 							LEFT JOIN OEC ON OEC.ExportOrderID = a.ExportOrderID
 							LEFT JOIN OBP ON OBP.OrderBankMasterID = OEC.OrderBankMasterID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            INNER JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            INNER JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                        WHERE --a.IsUnAcknowledge = 0 
 							YB.IsAddition=0
 							AND a.IsInternalRevise = 0
@@ -1194,14 +1194,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        OBP.CalendarDays,OBP.EDD FirstShipmentDate,YarnBookingDate = MIN(YB.YBookingDate), --OEC.EventDate YarnBookingDate,
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
                             UnAcknowledgeReason=''
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 							LEFT JOIN OEC ON OEC.ExportOrderID = a.ExportOrderID
 							LEFT JOIN OBP ON OBP.OrderBankMasterID = OEC.OrderBankMasterID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            INNER JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            INNER JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                        WHERE --a.IsUnAcknowledge = 0 
 							YB.IsAddition=1
 							AND a.IsInternalRevise = 0
@@ -1267,9 +1267,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         FBAC AS
                         (
                             SELECT FBA1.BookingNo, FBA1.ExportOrderID, MktAcknowledgeDate = MIN(FBAC.AcknowledgeDate), FBAcknowledgeDate = MIN(FBA.AcknowledgeDate)
-	                        FROM FBookingAcknowledgeChild FBAC
-	                        INNER JOIN FBookingAcknowledge FBA1 ON FBA1.FBAckID = FBAC.AcknowledgeID
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = FBA1.BookingID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC
+	                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA1 ON FBA1.FBAckID = FBAC.AcknowledgeID
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = FBA1.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA1.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA1.BookingID
 	                        WHERE (BM.BookingDate >= '{_startingDate}' OR SBM.BookingDate >= '{_startingDate}') AND ISNULL(SendToMktAck,0) > 0 AND ISNULL(IsMktAck,0) = 0 AND ISNULL(IsMktUnAck,0) = 0
@@ -1298,9 +1298,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             MktAcknowledgeDate = MAX(FBAC.MktAcknowledgeDate),
 	                        FBAcknowledgeDate = MAX(FBAC.FBAcknowledgeDate)
 
-	                        FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                             LEFT JOIN FBAC ON FBAC.ExportOrderID = a.ExportOrderID
@@ -1346,9 +1346,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         (
 	                        SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample,
 	                        a.ExportOrderID, a.BuyerID, a.BuyerTeamID
-	                        FROM FBookingAcknowledge a
-                            INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                            INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}'
                             YB.YBookingID IS NOT NULL
 		                    AND	a.IsKnittingComplete = 0
@@ -1409,12 +1409,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         InternalRivisionReason=a.RivisionReason,
                         DateUpdated = MAX(a.DateUpdated)
 
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         --AND a.IsUnAcknowledge = 0 
@@ -1500,8 +1500,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				    case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 					case when a.IsRejectByPMC=1 then a.RejectDatePMC else a.ApprovedDatePMC end ApproveRejectDatePMC,
 					case when a.IsRejectByPMC=1 then LURPMCE.EmployeeName else LUAPMCE.EmployeeName end PMCApprovedRejectedBy
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 					Outer Apply
@@ -1515,8 +1515,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					    ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -1607,8 +1607,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				    case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 					case when a.IsRejectByPMC=1 then a.RejectDatePMC else a.ApprovedDatePMC end ApproveRejectDatePMC,
 					case when a.IsRejectByPMC=1 then LURPMCE.EmployeeName else LUAPMCE.EmployeeName end PMCApprovedRejectedBy
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -1623,8 +1623,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					    ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -1707,8 +1707,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				    case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 					case when a.IsRejectByPMC=1 then a.RejectDatePMC else a.ApprovedDatePMC end ApproveRejectDatePMC,
 					case when a.IsRejectByPMC=1 then LURPMCE.EmployeeName else LUAPMCE.EmployeeName end PMCApprovedRejectedBy
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -1723,8 +1723,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					    ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -1813,8 +1813,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				    case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 					case when a.IsRejectByPMC=1 then a.RejectDatePMC else a.ApprovedDatePMC end ApproveRejectDatePMC,
 					case when a.IsRejectByPMC=1 then LURPMCE.EmployeeName else LUAPMCE.EmployeeName end PMCApprovedRejectedBy
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -1829,8 +1829,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					    ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -1890,10 +1890,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID), Reason = a.RejectReasonAllowance,YB.YBookingNo,
                         StatusText = CASE WHEN ISNULL(a.IsReviseBBKI,0) = 1 THEN 'Revise' ELSE '' END,
                         RejectDateAllowance = MAX(a.RejectDateAllowance)
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
@@ -1942,10 +1942,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID), YB.YBookingNo,
                             StatusText = CASE WHEN ISNULL(a.IsReviseBBKI,0) = 1 THEN 'Revise' ELSE '' END,
                             CheckDateKnittingHead = MAX(a.CheckDateKnittingHead)
-                            FROM FBookingAcknowledge a
-                            INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                            INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                             --AND a.IsUnAcknowledge = 0 
                             AND a.IsKnittingComplete = 1 
@@ -1998,10 +1998,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID), Reason = a.RejectReasonKnittingHead,YB.YBookingNo,
                         StatusText = CASE WHEN ISNULL(a.IsReviseBBKI,0) = 1 THEN 'Revise' ELSE '' END,
                         RejectDateKnittingHead = MAX(a.RejectDateKnittingHead)
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
@@ -2073,8 +2073,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
                             UnAcknowledgeReason='',
                             ApprovedDateProdHead = MAX(a.ApprovedDateProdHead)
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 							LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                             LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -2089,8 +2089,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 							    ORDER BY EDD desc 
 							)OBP
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                             WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                             --AND a.IsUnAcknowledge = 0 
                             AND a.IsKnittingComplete = 1 AND a.IsInternalRevise = 0
@@ -2126,8 +2126,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
                             a.UnAcknowledgeReason,
                             ApprovedDateProdHead = MAX(a.ApprovedDateProdHead)
-                            FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 							LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                             LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -2142,8 +2142,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 							ORDER BY EDD desc 
 							)OBP
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                             AND a.IsUnAcknowledge = 1 AND a.IsInternalRevise = 0
                             AND a.ExportOrderID > 0
@@ -2210,10 +2210,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID),Reason = a.RejectReasonProdHead,YB.YBookingNo,
                         StatusText = CASE WHEN ISNULL(a.IsReviseBBKI,0) = 1 THEN 'Revise' ELSE '' END,
                         RejectDateProdHead = MAX(a.RejectDateProdHead)
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
@@ -2278,8 +2278,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        OBP.CalendarDays,OBP.EDD FirstShipmentDate,YarnBookingDate = MIN(YB.YBookingDate), --OEC.EventDate YarnBookingDate,
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 	                        ApprovedDatePMC = MAX(a.ApprovedDatePMC),LUE.EmployeeName PMCApprovedBy
-                            FROM FBookingAcknowledge a
-                            INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                            INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
                             LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -2294,8 +2294,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 		                        Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 		                        ORDER BY EDD desc 
 	                        ) OBP
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                        LEFT JOIN {DbNames.EPYSL}..LoginUser U ON U.UserCode=a.ApprovedByPMC
 	                        LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = U.EmployeeCode
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
@@ -2368,8 +2368,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						OBP.CalendarDays,OBP.EDD FirstShipmentDate,YarnBookingDate = MIN(YB.YBookingDate), --OEC.EventDate YarnBookingDate,
 				        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 						Format(a.RejectDatePMC,'yyyy-MM-dd') RejectDatePMC,LUE.EmployeeName PMCRejectedBy
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 						LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                         LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -2384,8 +2384,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 							ORDER BY EDD desc 
 							)OBP
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 						LEFT JOIN {DbNames.EPYSL}..LoginUser U ON U.UserCode=a.RejectByPMC
 						LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = U.EmployeeCode
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
@@ -2445,7 +2445,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                        FROM RunningEWO EOM
 	                        INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                        GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                         ),
@@ -2455,7 +2455,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                        FROM RunningEWO EOM
 	                        INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                        GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                         ),
@@ -2506,8 +2506,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -2586,10 +2586,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID),YB.YBookingNo,
                         StatusText = CASE WHEN ISNULL(a.IsReviseBBKI,0) = 1 THEN 'Revise' ELSE '' END
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND 
 	                          a.IsKnittingComplete = 1 AND 
 	                          a.IsInternalRevise = 0 AND 
@@ -2649,12 +2649,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						                    when a.IsRejectByPMC=1 then a.RejectReasonPMC 
 						                    when a.IsRejectByAllowance=1 then a.RejectReasonAllowance 
 						                    when YB.UnAcknowledge = 1 then YB.UnAckReason else '' end
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND (a.IsRejectByAllowance = 1 OR
 		                        a.IsRejectByKnittingHead = 1 OR
@@ -2690,10 +2690,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID),YB.YBookingNo,
                         AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID --AND YB.IsAddition = 0
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID --AND YB.IsAddition = 0
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
@@ -2762,12 +2762,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    YarnBookingStatus = case when a.RevisionNo>0 then 'Internal Revision No. '+Convert(varchar(100),a.RevisionNo) else '' end,
 	                    YarnBookingRevisionDate = case when a.RevisionNo>0 then Format(a.RevisionDate,'yyyy-MM-dd HH:mm') else '' end,
 	                    RejectReason = case when a.IsRejectByKnittingHead=1 then a.RejectReasonKnittingHead when a.IsRejectByProdHead=1 then a.RejectReasonProdHead when a.IsRejectByPMC=1 then a.RejectReasonPMC when a.IsRejectByAllowance=1 then a.RejectReasonAllowance else '' end
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND (a.IsUnAcknowledge = 1 OR a.IsRejectByPMC = 1) AND a.IsInternalRevise = 0
                         AND a.ExportOrderID > 0
@@ -2830,10 +2830,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
 				        ELSE '' END,
                         AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' --AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         AND a.ExportOrderID > 0 AND YB.IsAddition = 1
 	                    GROUP BY a.BookingNo, a.ExportOrderID, a.BuyerID, a.BuyerTeamID, a.IsSample, YB.YBookingNo,ISNULL(a.IsReviseBBKI,0),
@@ -2878,10 +2878,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						WHEN YB.IsQtyFinalizationPMCApprove = 0 THEN 'Waiting For Qty Finalized PMC'
 
 				        ELSE '' END
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         AND a.ExportOrderID > 0
 	                    GROUP BY a.BookingNo, a.ExportOrderID, a.BuyerID, a.BuyerTeamID, a.IsSample, YB.YBookingNo,ISNULL(a.IsReviseBBKI,0),
@@ -2927,8 +2927,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        OBP.CalendarDays,OBP.EDD FirstShipmentDate,YarnBookingDate = MIN(YB.YBookingDate), --OEC.EventDate YarnBookingDate,
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 	                        ApprovedDatePMC = MAX(a.ApprovedDatePMC),LUE.EmployeeName PMCApprovedBy
-                            FROM FBookingAcknowledge a
-                            INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                            INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 	                        Outer Apply
@@ -2942,8 +2942,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 		                        Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 		                        ORDER BY EDD desc 
 	                        ) OBP
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                        LEFT JOIN {DbNames.EPYSL}..LoginUser U ON U.UserCode=a.ApprovedByPMC
 	                        LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = U.EmployeeCode
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
@@ -2996,8 +2996,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        OBP.CalendarDays,OBP.EDD FirstShipmentDate,YarnBookingDate = MIN(YB.YBookingDate), --OEC.EventDate YarnBookingDate,
 	                        case when YB.IsAddition=1 then 'Add-'+Convert(varchar(100),YB.AdditionNo) when a.RevisionNo>0 then 'Rev-'+Convert(varchar(100),a.RevisionNo) else 'Main' end BookingType,
 	                        ApprovedDatePMC = MAX(a.ApprovedDatePMC),LUE.EmployeeName PMCApprovedBy
-                            FROM FBookingAcknowledge a
-                            INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                            INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 	                        Outer Apply
@@ -3011,8 +3011,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 		                        Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 		                        ORDER BY EDD desc 
 	                        ) OBP
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                        LEFT JOIN {DbNames.EPYSL}..LoginUser U ON U.UserCode=a.ApprovedByPMC
 	                        LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = U.EmployeeCode
 	                        WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
@@ -3049,10 +3049,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample,YB.Acknowledge, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID),YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID 
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID 
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0
                         AND a.PreRevisionNoBBKI = a.RevisionNoBBKI
@@ -3075,10 +3075,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, CompanyID = MAX(b.CompanyID),YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID 
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID 
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
@@ -3138,9 +3138,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         FBAC AS
                         (
 	                        SELECT FBAC.AcknowledgeID, MktAcknowledgeDate = MIN(FBAC.AcknowledgeDate), FBAcknowledgeDate = MIN(FBA.AcknowledgeDate)
-	                        FROM FBookingAcknowledgeChild FBAC
-	                        INNER JOIN FBookingAcknowledge FBA1 ON FBA1.FBAckID = FBAC.AcknowledgeID
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = FBA1.BookingID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC
+	                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA1 ON FBA1.FBAckID = FBAC.AcknowledgeID
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = FBA1.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA1.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA1.BookingID
 	                        WHERE (CONVERT(date,BM.BookingDate) >= CONVERT(date,'{_startingDate}') OR CONVERT(date,SBM.BookingDate) >= CONVERT(date,'{_startingDate}')) AND 
@@ -3151,9 +3151,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         FBACIsAck AS
                         (
 	                        SELECT FBAC.AcknowledgeID, IsTxtAck = MAX(CAST(IsTxtAck AS INT))
-	                        FROM FBookingAcknowledgeChild FBAC
-	                        INNER JOIN FBookingAcknowledge FBA1 ON FBA1.FBAckID = FBAC.AcknowledgeID
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = FBA1.BookingID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC
+	                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA1 ON FBA1.FBAckID = FBAC.AcknowledgeID
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = FBA1.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA1.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA1.BookingID
 	                        WHERE (CONVERT(date,BM.BookingDate) >= CONVERT(date,'{_startingDate}') OR CONVERT(date,SBM.BookingDate) >= CONVERT(date,'{_startingDate}')) 
@@ -3179,14 +3179,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             MktAcknowledgeDate = MAX(FBAC.MktAcknowledgeDate),
 	                        FBAcknowledgeDate = MAX(FBAC.FBAcknowledgeDate)
 
-	                        FROM FBookingAcknowledge a
-	                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
 	                        LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = a.BuyerID
 	                        LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = a.BuyerTeamID
-	                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.IsAddition = 0
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.IsAddition = 0
                             LEFT JOIN FBAC ON FBAC.AcknowledgeID = a.FBAckID
                             LEFT JOIN FBACIsAck ON FBACIsAck.AcknowledgeID = a.FBAckID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -3289,10 +3289,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3329,10 +3329,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             (
 	                            SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                            a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                                FROM FBookingAcknowledge a
-                                INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                            LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                                LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                                FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                                INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                            LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                                LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                            WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                                 --AND a.IsApprovedByPMC = 1
                                 --AND a.ExportOrderID > 0
@@ -3369,10 +3369,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3409,10 +3409,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3449,10 +3449,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         (
 	                        SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                        a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                            FROM FBookingAcknowledge a
-                            INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                            INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                        WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                             --AND a.IsApprovedByPMC = 1
                             --AND a.ExportOrderID > 0
@@ -3489,10 +3489,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         (
 	                        SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                        a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                            FROM FBookingAcknowledge a
-                            INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                            LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                            INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                            LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                        WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                             --AND a.IsApprovedByPMC = 1
                             AND a.ExportOrderID > 0
@@ -3536,10 +3536,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3576,10 +3576,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3616,10 +3616,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3656,10 +3656,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3696,10 +3696,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         --AND a.ExportOrderID > 0
@@ -3736,10 +3736,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    SELECT a.BookingNo, BookingDate = MIN(a.BookingDate), a.IsSample, 
 	                    a.ExportOrderID, a.BuyerID, a.BuyerTeamID, b.CompanyID, YB.YBookingNo, AddYarnBookingDate = YB.DateAdded
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID
 	                    WHERE a.DateAdded >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                         --AND a.IsApprovedByPMC = 1
                         AND a.ExportOrderID > 0
@@ -3835,7 +3835,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BKAcknowledgeDate = Max(OSI.BKAcknowledgeDate), FBAcknowledgeDate = Max(FBA.AcknowledgeDate), OSI.WithoutOB
                         From InHouseItemList OSI
 	                    Left Join {DbNames.EPYSL}..ExportWorkOrderLifeCycleChild EL On EL.ExportOrderID = OSI.ExportOrderID And EL.BookingID = OSI.BookingID And EL.ContactID = OSI.ContactID
-                        Left Join FabricBookingAcknowledge FBA On FBA.BookingID = OSI.BookingID 
+                        Left JOIN {TableNames.FabricBookingAcknowledge} FBA On FBA.BookingID = OSI.BookingID 
                         Where FBA.AcknowledgeID IS NULL
 		                    Group By OSI.ExportOrderID,OSI.ExportOrderNo,OSI.BOMMasterID,OSI.ExportOrderID,ISNULL(FBA.RevisionNo,0), OSI.BuyerTeamID,Isnull(EL.FabBSCAckStatus,''),
 		                    OSI.BookingID,OSI.BookingNo, OSI.WithoutOB
@@ -3867,14 +3867,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 	                    from {DbNames.EPYSL}..BookingMaster BM
 	                    Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-	                    left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
                         where BM.IsCancel = 0 And BM.SubGroupID in (1,11,12) AND FBA.PreRevisionNo <> BM.RevisionNo
 	                    Union All
 	                    Select BM.BookingID, BM.BookingNo, BM.ExportOrderID, BM.SupplierID, 1 SubGroupID, WithOutOB = Convert(bit,1),
 	                    EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 	                    from {DbNames.EPYSL}..SampleBookingMaster BM
 	                    Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-	                    left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
                         where BM.IsCancel = 0 And BM.ExportOrderID <> 0 AND FBA.PreRevisionNo <> BM.RevisionNo
                     ),
                     ISG As
@@ -3910,7 +3910,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BKAcknowledgeDate = Max(OSI.BKAcknowledgeDate), FBAcknowledgeDate = Max(FBA.AcknowledgeDate), OSI.WithoutOB
                         From InHouseItemList OSI
 	                    Left Join {DbNames.EPYSL}..ExportWorkOrderLifeCycleChild EL On EL.ExportOrderID = OSI.ExportOrderID And EL.BookingID = OSI.BookingID And EL.ContactID = OSI.ContactID
-                        Left Join FabricBookingAcknowledge FBA On FBA.BookingID = OSI.BookingID  And FBA.SubGroupID = OSI.SubGroupID And FBA.ItemGroupID = OSI.ItemGroupID And FBA.WithoutOB = OSI.WithoutOB
+                        Left JOIN {TableNames.FabricBookingAcknowledge} FBA On FBA.BookingID = OSI.BookingID  And FBA.SubGroupID = OSI.SubGroupID And FBA.ItemGroupID = OSI.ItemGroupID And FBA.WithoutOB = OSI.WithoutOB
                         /* Where Case When FBA.AcknowledgeID IS NULL Then 0
 					                    When FBA.AcknowledgeID IS NOT NULL And ISNULL(FBA.PreProcessRevNo,0) <> ISNULL(FBA.RevisionNo,0) Then 2 Else 1 End 
 			                    = Case When '{sts}'='N' Then 0
@@ -3946,14 +3946,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 						from {DbNames.EPYSL}..BookingMaster BM
 						Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-						left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+						left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
 						where BM.IsCancel = 0 And BM.SubGroupID in (1,11,12) AND FBA.PreRevisionNo = BM.RevisionNo
 						Union All
 						Select BM.BookingID, BM.BookingNo, BM.ExportOrderID, BM.SupplierID, 1 SubGroupID, WithOutOB = Convert(bit,1),
 						EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 						from {DbNames.EPYSL}..SampleBookingMaster BM
 						Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-						left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+						left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
 						where BM.IsCancel = 0 And BM.ExportOrderID <> 0 AND FBA.PreRevisionNo = BM.RevisionNo
                     ),
                     ISG As
@@ -3989,8 +3989,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BKAcknowledgeDate = Max(OSI.BKAcknowledgeDate), FBAcknowledgeDate = Max(FBA.AcknowledgeDate), OSI.WithoutOB
                         From InHouseItemList OSI
 	                    Left Join {DbNames.EPYSL}..ExportWorkOrderLifeCycleChild EL On EL.ExportOrderID = OSI.ExportOrderID And EL.BookingID = OSI.BookingID And EL.ContactID = OSI.ContactID
-                        Inner Join FabricBookingAcknowledge FBA On FBA.BookingID = OSI.BookingID
-                        Left Join FBookingAcknowledgeChild FBC On FBC.BookingID = OSI.BookingID
+                        Inner JOIN {TableNames.FabricBookingAcknowledge} FBA On FBA.BookingID = OSI.BookingID
+                        Left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC On FBC.BookingID = OSI.BookingID
                         Where (IsNull(FBC.IsMktAck,0)=1)  Or ( IsNull(FBC.IsMktUnAck,0)=0 And IsNull(FBC.IsTxtAck,0) = 0 And FBA.Status=1)
 		                    Group By OSI.ExportOrderID,OSI.ExportOrderNo,OSI.BOMMasterID,OSI.ExportOrderID,ISNULL(FBA.RevisionNo,0), OSI.BuyerTeamID,Isnull(EL.FabBSCAckStatus,''),
 		                    OSI.BookingID,OSI.BookingNo, OSI.WithoutOB
@@ -4024,14 +4024,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 						from {DbNames.EPYSL}..BookingMaster BM
 						Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-						left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+						left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
 						where BM.IsCancel = 0 And BM.SubGroupID in (1,11,12) AND FBA.PreRevisionNo = BM.RevisionNo
 						Union All
 						Select BM.BookingID, BM.BookingNo, BM.ExportOrderID, BM.SupplierID, 1 SubGroupID, WithOutOB = Convert(bit,1),
 						EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 						from {DbNames.EPYSL}..SampleBookingMaster BM
 						Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-						left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+						left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
 						where BM.IsCancel = 0 And BM.ExportOrderID <> 0 AND FBA.PreRevisionNo = BM.RevisionNo
                     ),
                     ISG As
@@ -4067,8 +4067,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BKAcknowledgeDate = Max(OSI.BKAcknowledgeDate), FBAcknowledgeDate = Max(FBA.AcknowledgeDate), OSI.WithoutOB
                         From InHouseItemList OSI
 	                    Left Join {DbNames.EPYSL}..ExportWorkOrderLifeCycleChild EL On EL.ExportOrderID = OSI.ExportOrderID And EL.BookingID = OSI.BookingID And EL.ContactID = OSI.ContactID
-                        Inner Join FabricBookingAcknowledge FBA On FBA.BookingID = OSI.BookingID
-                        Left Join FBookingAcknowledgeChild FBC On FBC.BookingID = OSI.BookingID
+                        Inner JOIN {TableNames.FabricBookingAcknowledge} FBA On FBA.BookingID = OSI.BookingID
+                        Left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC On FBC.BookingID = OSI.BookingID
                         Where IsNull(FBC.SendToMktAck,0)=1 And IsNull(FBC.IsMktAck,0)=0 And IsNull(FBC.IsMktUnAck,0)=0 And IsNull(FBC.IsTxtAck,0) = 0 And IsNull(FBC.IsTxtAck,0) = 0 And FBA.Status=1
 		                    Group By OSI.ExportOrderID,OSI.ExportOrderNo,OSI.BOMMasterID,OSI.ExportOrderID,ISNULL(FBA.RevisionNo,0), OSI.BuyerTeamID,Isnull(EL.FabBSCAckStatus,''),
 		                    OSI.BookingID,OSI.BookingNo, OSI.WithoutOB
@@ -4102,14 +4102,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 						from {DbNames.EPYSL}..BookingMaster BM
 						Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-						left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+						left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
 						where BM.IsCancel = 0 And BM.SubGroupID in (1,11,12) AND FBA.PreRevisionNo = BM.RevisionNo
 						Union All
 						Select BM.BookingID, BM.BookingNo, BM.ExportOrderID, BM.SupplierID, 1 SubGroupID, WithOutOB = Convert(bit,1),
 						EOM.ExportOrderNo, EOM.StyleMasterID, BM.RevisionNo, EOM.BuyerID, EOM.BuyerTeamID
 						from {DbNames.EPYSL}..SampleBookingMaster BM
 						Inner Join RunningEWO EOM On EOM.ExportOrderID = BM.ExportOrderID
-						left join FBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+						left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = BM.BookingID
 						where BM.IsCancel = 0 And BM.ExportOrderID <> 0 AND FBA.PreRevisionNo = BM.RevisionNo
                     ),
                     ISG As
@@ -4145,8 +4145,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BKAcknowledgeDate = Max(OSI.BKAcknowledgeDate), FBAcknowledgeDate = Max(FBA.AcknowledgeDate), OSI.WithoutOB
                         From InHouseItemList OSI
 	                    Left Join {DbNames.EPYSL}..ExportWorkOrderLifeCycleChild EL On EL.ExportOrderID = OSI.ExportOrderID And EL.BookingID = OSI.BookingID And EL.ContactID = OSI.ContactID
-                        Inner Join FabricBookingAcknowledge FBA On FBA.BookingID = OSI.BookingID
-                        Left Join FBookingAcknowledgeChild FBC On FBC.BookingID = OSI.BookingID
+                        Inner JOIN {TableNames.FabricBookingAcknowledge} FBA On FBA.BookingID = OSI.BookingID
+                        Left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC On FBC.BookingID = OSI.BookingID
                         Where IsNull(FBC.IsMktUnAck,0)=1 And IsNull(FBC.SendToTxtAck,0)=1 
 		                    Group By OSI.ExportOrderID,OSI.ExportOrderNo,OSI.BOMMasterID,OSI.ExportOrderID,ISNULL(FBA.RevisionNo,0), OSI.BuyerTeamID,Isnull(EL.FabBSCAckStatus,''),
 		                    OSI.BookingID,OSI.BookingNo, OSI.WithoutOB
@@ -4172,18 +4172,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        SELECT a.YBookingID,a.YBookingNo,a.YBookingDate,a.BookingID,a.SubGroupID,
 	                        a.Remarks,a.ExportOrderID, a.BuyerID, a.BuyerTeamID,a.CompanyID,
 	                        b.BookingNo,b.BookingDate,b.ExportOrderNo,a.WithoutOB
-                            FROM YarnBookingMaster_New a
+                            FROM {TableNames.YarnBookingMaster_New} a
 	                        INNER JOIN {DbNames.EPYSL}..BookingMaster b ON b.BookingID = a.BookingID
-	                        WHERE a.WithoutOB = 0 AND a.SubGroupID=1 AND a.BookingID NOT IN (SELECT AA.BookingID FROM FBookingAcknowledge AA)
+	                        WHERE a.WithoutOB = 0 AND a.SubGroupID=1 AND a.BookingID NOT IN (SELECT AA.BookingID FROM {TableNames.FBBOOKING_ACKNOWLEDGE} AA)
                         ),
                         FBA2 AS
                         (
 	                        SELECT a.YBookingID,a.YBookingNo,a.YBookingDate,a.BookingID,a.SubGroupID,
 	                        a.Remarks,a.ExportOrderID, a.BuyerID, a.BuyerTeamID,a.CompanyID,
 	                        b.BookingNo,b.BookingDate,ExportOrderNo='',a.WithoutOB
-	                        FROM YarnBookingMaster_New a
+	                        FROM {TableNames.YarnBookingMaster_New} a
 	                        INNER JOIN {DbNames.EPYSL}..SampleBookingMaster b ON b.BookingID = a.BookingID
-	                        WHERE a.WithoutOB = 1 AND a.SubGroupID=1 AND a.BookingID NOT IN (SELECT AA.BookingID FROM FBookingAcknowledge AA)
+	                        WHERE a.WithoutOB = 1 AND a.SubGroupID=1 AND a.BookingID NOT IN (SELECT AA.BookingID FROM {TableNames.FBBOOKING_ACKNOWLEDGE} AA)
                         ),
                         FBA AS
                         (
@@ -4239,9 +4239,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             ,PendingRevision = (CASE WHEN FBA.PreRevisionNo <> SBM.RevisionNo THEN 'Booking Revision No ' + CONVERT(VARCHAR(10),SBM.RevisionNo) WHEN SBM.LabdipRevisionNo <> SBM.RevisionNo THEN 'Booking Revision No ' + CONVERT(VARCHAR(10),SBM.RevisionNo) ELSE '' END), SBM.ImagePath
 	                        From SBM
 	                        Inner Join {DbNames.EPYSL}..SampleType ST On SBM.SampleID = ST.SampleTypeID
-	                        LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBM.BookingID
-	                        LEFT JOIN FBookingAcknowledge FBA On FBA.BookingID = SBM.BookingID
-	                        LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBM.BookingID
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA On FBA.BookingID = SBM.BookingID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
 	                        Where FBA.FBAckID IS NULL or SBM.RevisionNo<>isnull(SBM.LabdipRevisionNo,0)
                         )
                         , F AS (
@@ -4252,7 +4252,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 	                        LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 	                        LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-	                        LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
 	                        Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
 	                        LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID
 	                        Group By M.BookingID,M.BookingNo, M.BookingDate, M.SLNo, M.StyleNo, M.OrderQty, M.BuyerID, M.BuyerTeamID, M.SupplierID
@@ -4288,9 +4288,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             ,PendingRevision = (CASE WHEN ISNULL(FBA.PreRevisionNo,0) <> ISNULL(SBM.RevisionNo,0) THEN 'Booking Revision No ' + CONVERT(VARCHAR(10),SBM.RevisionNo) ELSE '' END), SBM.ImagePath,SBM.LabdipUnAcknowledgeReason
 	                        From SBM
 	                        Inner Join {DbNames.EPYSL}..SampleType ST On SBM.SampleID = ST.SampleTypeID
-	                        LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBM.BookingID
-	                        LEFT JOIN FBookingAcknowledge FBA On FBA.BookingID = SBM.BookingID
-	                        LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBM.BookingID
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA On FBA.BookingID = SBM.BookingID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
 	                        --Where FBA.FBAckID IS NULL OR ISNULL(SBM.RevisionNo,0) > 0
                         )
                         , F AS (
@@ -4301,7 +4301,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 	                        LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 	                        LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-	                        LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID AND FBA.IsUnAcknowledge=1
 	                        Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
 	                        LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID
 	                        Group By M.BookingID,M.BookingNo, M.BookingDate, M.SLNo, M.StyleNo, M.OrderQty, M.BuyerID, M.BuyerTeamID, M.SupplierID
@@ -4324,7 +4324,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             Left Join BIMG ON BIMG.BookingID = SBM.BookingID
@@ -4341,7 +4341,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             Left Join BIMG ON BIMG.BookingID = SBM.BookingID
@@ -4368,7 +4368,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             Left Join BIMG ON BIMG.BookingID = SBM.BookingID
@@ -4398,7 +4398,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             Left Join BIMG ON BIMG.BookingID = SBM.BookingID
@@ -4416,7 +4416,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             FBC.UnAcknowledgeDate, E.EmployeeName UnAckByName, UnAcknowledgeReason = FBC.UnAcknowledgeReason,
                             ImagePath = ISNULL(SBC.ImagePath,''), SupplierName = Supplier.ShortName,
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID, Season.SeasonName
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             LEFT JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = LU.EmployeeCode
@@ -4446,7 +4446,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             FBC.UnAcknowledgeDate, E.EmployeeName UnAckByName, UnAcknowledgeReason = FBC.UnAcknowledgeReason,
                             ImagePath = ISNULL(SBC.ImagePath,''), SupplierName = Supplier.ShortName,
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID, Season.SeasonName
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             LEFT JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = LU.EmployeeCode
@@ -4478,7 +4478,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             Left Join BIMG ON BIMG.BookingID = SBM.BookingID
@@ -4502,7 +4502,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName, 
                             ImagePath = ISNULL(SBC.ImagePath,''),
                             ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
-                            FROM FBookingAcknowledge FBC
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBC
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingID = FBC.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBC.AddedBy
                             Left Join BIMG ON BIMG.BookingID = SBM.BookingID
@@ -4544,9 +4544,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             ,PendingRevision = (CASE WHEN FBA.PreRevisionNo <> SBM.RevisionNo THEN 'Booking Revision No ' + CONVERT(VARCHAR(10),SBM.RevisionNo) ELSE '' END), SBM.ImagePath
 	                        From SBM
 	                        Inner Join {DbNames.EPYSL}..SampleType ST On SBM.SampleID = ST.SampleTypeID
-	                        LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBM.BookingID
-	                        LEFT JOIN FBookingAcknowledge FBA On FBA.BookingID = SBM.BookingID
-	                        LEFT JOIN FreeConceptMaster FCM ON FCM.BookingID = FBA.BookingID
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBM.BookingID
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA On FBA.BookingID = SBM.BookingID
+	                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingID = FBA.BookingID
                             Where FBA.FBAckID IS NULL
                         )
                         , F AS (
@@ -4557,7 +4557,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 	                        LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 	                        LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-	                        LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+	                        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
 	                        Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
 	                        LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID
 	                        Group By M.BookingID,M.BookingNo, M.BookingDate, M.SLNo, M.StyleNo, M.OrderQty, M.BuyerID, M.BuyerTeamID, M.SupplierID
@@ -4569,7 +4569,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        SELECT FBA.FBAckID, M.BookingID,M.BookingNo, M.BookingDate, M.SLNo, M.StyleNo, M.OrderQty BookingQty, M.BuyerID, M.BuyerTeamID, M.SupplierID
 	                        ,M.ExecutionCompanyID, CTO.ShortName BuyerName, CCT.TeamName BuyerTeamName,C.CompanyName,M.Remarks, Supplier.ShortName [SupplierName],Season.SeasonName, BookingBy = M.AddedBy
 	                        ,PendingRevision = 0, M.ImagePath, ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID,M.LabdipAcknowledge, M.LabdipAcknowledgeBY, M.LabdipAcknowledgeDate, StatusText = 'Revise'
-                            FROM FBookingAcknowledge FBA
+                            FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
                             Inner Join {DbNames.EPYSL}..SampleBookingMaster M On M.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = FBA.AddedBy
                             LEFT JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = LU.EmployeeCode
@@ -4630,12 +4630,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     PendingListAll AS
                     (
 	                    SELECT a.BookingNo, a.ExportOrderID
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
                         LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                         LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
                         WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
@@ -4659,8 +4659,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 SendForApprivalListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-					FROM FBookingAcknowledge a
-					INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+					FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+					INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 					LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 					Outer Apply
@@ -4674,8 +4674,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					    ORDER BY EDD desc 
 					)OBP
-					LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-					LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+					LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 					LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -4708,10 +4708,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 RejectListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsRejectByAllowance = 1
@@ -4741,7 +4741,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                     ),
@@ -4751,7 +4751,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                     ),
@@ -4802,8 +4802,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -4909,8 +4909,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 PendingListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 					Outer Apply
@@ -4924,8 +4924,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					    ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -4954,10 +4954,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 CheckListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsApprovedByAllowance = 1 AND a.IsCheckByKnittingHead = 1 AND a.IsApprovedByProdHead = 0 AND a.IsApprovedByPMC = 0
@@ -4976,10 +4976,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 RejectListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsRejectByKnittingHead = 1
@@ -5008,7 +5008,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                     ),
@@ -5018,7 +5018,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                     ),
@@ -5069,8 +5069,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -5177,10 +5177,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 PendingListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsApprovedByAllowance = 1 AND a.IsCheckByKnittingHead = 1 AND a.IsApprovedByProdHead = 0 AND a.IsApprovedByPMC = 0
@@ -5198,10 +5198,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 List1All AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-	                INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsApprovedByAllowance = 1 AND a.IsCheckByKnittingHead = 1 AND a.IsApprovedByProdHead = 1 AND a.IsApprovedByPMC = 0
@@ -5218,8 +5218,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 RejectByBBKI AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-	                INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                     LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -5234,8 +5234,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 	                ORDER BY EDD desc 
 	                )OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                     AND a.IsUnAcknowledge = 1 AND a.IsInternalRevise = 0
                     AND a.ExportOrderID > 0
@@ -5259,10 +5259,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 CheckListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsApprovedByAllowance = 1 AND a.IsCheckByKnittingHead = 1 AND a.IsApprovedByProdHead = 0 AND a.IsApprovedByPMC = 0
@@ -5281,10 +5281,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 RejectListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsRejectByProdHead = 1
@@ -5313,7 +5313,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                     ),
@@ -5323,7 +5323,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                     ),
@@ -5374,8 +5374,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -5482,8 +5482,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 List1All AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-	                FROM FBookingAcknowledge a
-	                INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                     LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -5498,8 +5498,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 		                Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 		                ORDER BY EDD desc 
 	                )OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 AND a.IsInternalRevise = 0
                     AND a.IsApprovedByAllowance = 1 AND a.IsCheckByKnittingHead = 1 AND a.IsApprovedByProdHead = 1 AND a.IsApprovedByPMC = 0
                     AND a.IsRejectByAllowance = 0 AND a.IsRejectByKnittingHead = 0 AND a.IsRejectByProdHead = 0 AND a.IsRejectByPMC = 0
@@ -5520,8 +5520,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 RejectByKIAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-	                INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                     LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -5536,8 +5536,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 	                ORDER BY EDD desc 
 	                )OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                     AND a.IsUnAcknowledge = 1 AND a.IsInternalRevise = 0
                     AND a.ExportOrderID > 0
@@ -5566,8 +5566,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 ApproveListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
                     LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                     LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -5582,8 +5582,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 	                    ORDER BY EDD desc 
                     ) OBP
-                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN {DbNames.EPYSL}..LoginUser U ON U.UserCode=a.ApprovedByPMC
                     LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = U.EmployeeCode
                     WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
@@ -5608,10 +5608,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 RejectListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-                    FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                     LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
                     AND a.IsRejectByPMC = 1
@@ -5642,7 +5642,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                     ),
@@ -5652,7 +5652,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                     ),
@@ -5703,8 +5703,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -5811,8 +5811,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 UtilizationProposalListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-					FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+					FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 					Outer Apply
@@ -5826,8 +5826,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -5871,7 +5871,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                     ),
@@ -5881,7 +5881,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                     ),
@@ -5932,8 +5932,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -6030,8 +6030,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 UtilizationConfirmationPendingListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-	                FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 					Outer Apply
@@ -6045,8 +6045,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -6077,8 +6077,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 UtilizationConfirmedListAll AS
                 (
 	                SELECT a.BookingNo, a.ExportOrderID
-	                 FROM FBookingAcknowledge a
-                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                 FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 				    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 					LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
 					Outer Apply
@@ -6092,8 +6092,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 					ORDER BY EDD desc 
 					)OBP
-	                LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 					LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = a.AddedBy
 	                LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = LU.EmployeeCode
 	                LEFT JOIN {DbNames.EPYSL}..LoginUser LUAPMC ON LUAPMC.UserCode = a.ApprovedByPMC
@@ -6132,7 +6132,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                     ),
@@ -6142,7 +6142,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                     ),
@@ -6193,8 +6193,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -6298,14 +6298,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     PendingList AS
                     (
 	                    SELECT a.BookingNo, a.ExportOrderID
-	                    FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupID = a.SubGroupID
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = a.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = a.BuyerID
 	                    LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = a.BuyerTeamID
-	                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.IsAddition = 0
 	                    LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE (BM.BookingDate >= '{_startingDate}' OR SBM.BookingDate >= '{_startingDate}') AND a.IsUnAcknowledge = 0 
 	                    AND a.IsKnittingComplete = 0
@@ -6322,9 +6322,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     DraftList AS
                     (
 	                    SELECT a.BookingNo, a.ExportOrderID
-	                    FROM FBookingAcknowledge a
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
-	                    LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+	                    LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                    LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -6340,12 +6340,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     SendingForApprovalList AS
                     (
 	                    SELECT a.BookingNo, YB.YBookingNo, a.ExportOrderID
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
                         AND a.IsUnAcknowledge = 0 AND a.IsKnittingComplete = 1 
@@ -6363,12 +6363,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     RejectList AS
                     (
 	                    SELECT a.BookingNo, a.ExportOrderID
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
 	                    LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND (a.IsUnAcknowledge = 1 OR a.IsRejectByPMC = 1) AND a.IsInternalRevise = 0
                         AND a.ExportOrderID > 0
@@ -6384,8 +6384,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ApprovedList AS
                     (
                         SELECT a.BookingNo, a.ExportOrderID
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
                         LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                         LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
@@ -6400,8 +6400,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        Select TOP 1 * FROM {DbNames.EPYSL}..OrderBankPO OBP WHERE OBP.OrderBankMasterID=OEC.OrderBankMasterID
 	                        ORDER BY EDD desc 
                         ) OBP
-                        LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN {DbNames.EPYSL}..LoginUser U ON U.UserCode=a.ApprovedByPMC
                         LEFT JOIN {DbNames.EPYSL}..Employee LUE ON LUE.EmployeeCode = U.EmployeeCode
                         WHERE FBA.AcknowledgeDate >= '{_startingDate}' 
@@ -6421,12 +6421,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     InternalRejectList AS
                     (
 	                    SELECT a.BookingNo, a.ExportOrderID
-                        FROM FBookingAcknowledge a
-                        INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} a
+                        INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = a.BookingID AND FBA.SubGroupId = a.SubGroupId
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = a.BookingID
-	                    LEFT JOIN FreeConceptMaster b ON b.BookingID = a.BookingID
-                        LEFT JOIN YarnBookingMaster_New YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} b ON b.BookingID = a.BookingID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YB ON YB.BookingID = a.BookingID AND YB.SubGroupID = a.SubGroupID AND YB.IsAddition = 0
                         LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = a.ExportOrderID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND (a.IsRejectByAllowance = 1 OR
 		                        a.IsRejectByKnittingHead = 1 OR
@@ -6460,7 +6460,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BM.ExportOrderID, BM.BuyerID, BM.BuyerTeamID, BM.CompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = BM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = BM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND BM.ExportOrderID > 0 AND BM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY BM.BookingNo,BM.ExportOrderID,BM.BuyerID,BM.BuyerTeamID,BM.CompanyID
                     ),
@@ -6470,7 +6470,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    SBM.ExportOrderID, SBM.BuyerID, SBM.BuyerTeamID, CompanyID = SBM.ExecutionCompanyID
 	                    FROM RunningEWO EOM
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.ExportOrderID = EOM.ExportOrderID
-	                    INNER JOIN FabricBookingAcknowledge FBA ON FBA.BookingID = SBM.BookingID
+	                    INNER JOIN {TableNames.FabricBookingAcknowledge} FBA ON FBA.BookingID = SBM.BookingID
 	                    WHERE FBA.AcknowledgeDate >= '{_startingDate}' AND SBM.ExportOrderID > 0 AND SBM.IsCancel = 0 AND FBA.Status=1
 	                    GROUP BY SBM.BookingNo,SBM.ExportOrderID,SBM.BuyerID,SBM.BuyerTeamID,SBM.ExecutionCompanyID
                     ),
@@ -6521,8 +6521,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        PMCApprovedRejectedBy = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN MAX(LUEA.EmployeeName) ELSE MAX(LUER.EmployeeName) END,
 	                        ApproveRejectDatePMC = CASE WHEN ISNULL(MAX(FBA.ApprovedByPMC),0) > 0 THEN CAST(MAX(FBA.ApprovedDatePMC) AS DATE) ELSE CAST(MAX(FBA.RejectDatePMC) AS DATE) END
 
-	                        FROM FBookingAcknowledge FBA
-	                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                        LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                             LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                        LEFT JOIN PreBookingAdditionList PB ON PB.ExportOrderID = FBA.ExportOrderID
@@ -6640,7 +6640,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 				LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 				LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-		        LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+		        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
 
@@ -6662,7 +6662,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID={bookingId} AND SBC.SubGroupID=1;
 
                 ----- Sample Booking Consumption Child (Collor & Cuff)
@@ -6756,9 +6756,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                  --YarnSource data load
@@ -6769,19 +6769,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                  GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-               ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+               ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                 --Liability Process
 				Select LChildID = 0,BookingChildID = 0,AcknowledgeID = 0,BookingID = 0,UnitID = 0, Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=0
@@ -6793,7 +6793,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				Select LChildID = IsNull(F.LChildID,0),BookingChildID = IsNull(F.BookingChildID,0),AcknowledgeID = IsNull(F.AcknowledgeID,0),BookingID = IsNull(F.BookingID,0),UnitID = IsNull(F.UnitID,0), Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=IsNull(F.LiabilityQty,0)
 				From {DbNames.EPYSL}..EntityTypeValue a
 				Inner Join {DbNames.EPYSL}..EntityType b on b.EntityTypeID = a.EntityTypeID
-				Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty From FBookingAcknowledgementLiabilityDistribution Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
+				Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty FROM {TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION} Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
 				Where b.EntityTypeName = 'Process Liability';
 
                 -- DayValidDuration
@@ -6973,7 +6973,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 				LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 				LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-		        LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+		        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
 
@@ -6996,7 +6996,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID --And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID --And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID = {bookingId} AND SBC.SubGroupID=1;
 
                 ----- Sample Booking Consumption Child (Collor & Cuff)
@@ -7020,7 +7020,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID --And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID --And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID = {bookingId} AND SBC.SubGroupID IN (11, 12);
 
                ----Sample Booking Consumption AddProcess
@@ -7089,9 +7089,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                  --YarnSource data load
@@ -7102,19 +7102,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                  GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-               ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+               ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                 --Liability Process
 				Select LChildID = 0,BookingChildID = 0,AcknowledgeID = 0,BookingID = 0,UnitID = 0, Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=0
@@ -7126,7 +7126,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				Select LChildID = IsNull(F.LChildID,0),BookingChildID = IsNull(F.BookingChildID,0),AcknowledgeID = IsNull(F.AcknowledgeID,0),BookingID = IsNull(F.BookingID,0),UnitID = IsNull(F.UnitID,0), Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=IsNull(F.LiabilityQty,0)
 				From {DbNames.EPYSL}..EntityTypeValue a
 				Inner Join {DbNames.EPYSL}..EntityType b on b.EntityTypeID = a.EntityTypeID
-				Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty From FBookingAcknowledgementLiabilityDistribution Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
+				Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty FROM {TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION} Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
 				Where b.EntityTypeName = 'Process Liability';
 
                 -- DayValidDuration
@@ -7305,7 +7305,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
 				LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
 				LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-		        LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+		        LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
                 --FBookingAcknowledgeList
@@ -7330,7 +7330,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,WithoutOB=0,BookingQty= SUM(BC.BookingQty)
                     FROM {DbNames.EPYSL}..BookingMaster B
                     Inner Join {DbNames.EPYSL}..BookingChild BC On BC.BookingID = B.BookingID
-	                LEFT JOIN FabricBookingAcknowledge A on b.BookingID = a.BookingID
+	                LEFT JOIN {TableNames.FabricBookingAcknowledge} A on b.BookingID = a.BookingID
 	                LEFT JOIN {DbNames.EPYSL}..ExportOrderMaster EO ON EO.ExportOrderID = B.ExportOrderID
 	                LEFT JOIN {DbNames.EPYSL}..StyleMaster SM ON SM.StyleMasterID = EO.StyleMasterID
                     WHERE B.BookingNo in (Select BookingNo From BKK)
@@ -7349,7 +7349,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     FROM {DbNames.EPYSL}..SampleBookingMaster b
 	                Inner Join {DbNames.EPYSL}..SampleBookingItemGroup SBIG On SBIG.BookingID = b.BookingID
 					Inner Join {DbNames.EPYSL}..SampleBookingConsumptionChild c ON c.BookingID = b.BookingID
-	                LEFT Join FabricBookingAcknowledge A on b.BookingID = a.BookingID
+	                LEFT JOIN {TableNames.FabricBookingAcknowledge} A on b.BookingID = a.BookingID
 	                LEFT JOIN {DbNames.EPYSL}..StyleMaster SM ON SM.StyleMasterID = b.StyleMasterID
                     WHERE B.BookingNo in (Select BookingNo From BKK)
 					Group By b.BookingID,a.BOMMasterID,SBIG.ItemGroupID,SBIG.SubGroupID,a.Status,a.PreProcessRevNo,
@@ -7396,7 +7396,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID={bookingId} AND SBC.SubGroupID=1;
 
                 ----- Sample Booking Consumption Child (Collor & Cuff)
@@ -7486,9 +7486,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                  --YarnSource data load
@@ -7499,19 +7499,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                  GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-               ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+               ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                 --Liability Process
 				Select LChildID = 0,BookingChildID = 0,AcknowledgeID = 0,BookingID = 0,UnitID = 0, Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=0
@@ -7523,7 +7523,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				Select LChildID = IsNull(F.LChildID,0),BookingChildID = IsNull(F.BookingChildID,0),AcknowledgeID = IsNull(F.AcknowledgeID,0),BookingID = IsNull(F.BookingID,0),UnitID = IsNull(F.UnitID,0), Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=IsNull(F.LiabilityQty,0)
 				From {DbNames.EPYSL}..EntityTypeValue a
 				Inner Join {DbNames.EPYSL}..EntityType b on b.EntityTypeID = a.EntityTypeID
-				Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty From FBookingAcknowledgementLiabilityDistribution Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
+				Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty FROM {TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION} Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
 				Where b.EntityTypeName = 'Process Liability';";
 
             try
@@ -7648,7 +7648,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             SELECT a.BookingID,a.BOMMasterID,a.ItemGroupID,a.SubGroupID,a.Status,PreRevisionNo=a.PreProcessRevNo,
 	                        b.BookingNo,b.BookingDate,b.Remarks,StyleNo='',b.ExportOrderID,SLNo='',StyleMasterID=0,
 	                        b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,SeasonID=0,a.WithoutOB
-                            FROM FabricBookingAcknowledge A
+                            FROM {TableNames.FabricBookingAcknowledge} A
 							INNER JOIN {DbNames.EPYSL}..BookingMaster b on b.BookingID = a.BookingID
                             WHERE A.BookingID={bookingId} AND a.WithoutOB = 0
                         ),
@@ -7657,7 +7657,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             SELECT a.BookingID,a.BOMMasterID,a.ItemGroupID,a.SubGroupID,a.Status,PreRevisionNo=a.PreProcessRevNo,
 	                        b.BookingNo,b.BookingDate,b.Remarks,b.StyleNo,b.ExportOrderID,b.SLNo,b.StyleMasterID,
 	                        b.BuyerID,b.BuyerTeamID,CompanyID=b.ExecutionCompanyID,b.SupplierID,b.SeasonID,a.WithoutOB
-                            FROM FabricBookingAcknowledge A
+                            FROM {TableNames.FabricBookingAcknowledge} A
 							Inner Join {DbNames.EPYSL}..SampleBookingMaster b on b.BookingID = a.BookingID
                             WHERE A.BookingID={bookingId} AND a.WithoutOB = 1
                         ),
@@ -7692,7 +7692,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							FROM {DbNames.EPYSL}..BookingChild A
 							LEFT JOIN {DbNames.EPYSL}..BookingMaster B ON B.BookingID=A.BookingID
 							LEFT JOIN {DbNames.EPYSL}..BOMConsumption C ON C.ConsumptionID=A.ConsumptionID
-                            LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 							WHERE A.BookingID={bookingId} AND A.SubGroupID = 1
                         ),
 						FBA2 AS
@@ -7707,7 +7707,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						   FROM {DbNames.EPYSL}..SampleBookingConsumptionChild A
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster B ON B.BookingID=A.BookingID
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingConsumption C ON C.ConsumptionID=A.ConsumptionID
-                           LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                           LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 						   WHERE A.BookingID={bookingId} AND A.SubGroupID = 1
                         ),
 						FBA AS
@@ -7748,7 +7748,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							FROM {DbNames.EPYSL}..BookingChild A
 							LEFT JOIN {DbNames.EPYSL}..BookingMaster B ON B.BookingID=A.BookingID
 							LEFT JOIN {DbNames.EPYSL}..BOMConsumption C ON C.ConsumptionID=A.ConsumptionID
-                            LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 							WHERE A.BookingID={bookingId} AND A.SubGroupID IN (11,12)
                         ),
 						FBA2 AS
@@ -7763,7 +7763,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						   FROM {DbNames.EPYSL}..SampleBookingConsumptionChild A
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster B ON B.BookingID=A.BookingID
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingConsumption C ON C.ConsumptionID=A.ConsumptionID
-                            LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 						   WHERE A.BookingID={bookingId} AND A.SubGroupID IN (11,12)
                         ),
 						FBA AS
@@ -7857,9 +7857,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                         --Technical Name
                         SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                        FROM FabricTechnicalName T
-                        LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                        LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                        FROM {TableNames.FabricTechnicalName} T
+                        LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                         Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                          --YarnSource data load
@@ -7870,19 +7870,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                         --M/c type
                         ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                        FROM KnittingMachine a
-                        INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                        Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                        FROM {TableNames.KNITTING_MACHINE} a
+                        INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                        Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                         --Where c.TypeName != 'Flat Bed'
                         GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                         --CriteriaNames
                          ;SELECT CriteriaName,CriteriaSeqNo, (CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                        FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                        FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                         GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                         --FBAChildPlannings
-                        ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                        ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
                         
                         --Liability Process
 				        Select LChildID = 0,BookingChildID = 0,AcknowledgeID = 0,BookingID = 0,UnitID = 0, Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=0
@@ -7894,7 +7894,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				        Select LChildID = IsNull(F.LChildID,0),BookingChildID = IsNull(F.BookingChildID,0),AcknowledgeID = IsNull(F.AcknowledgeID,0),BookingID = IsNull(F.BookingID,0),UnitID = IsNull(F.UnitID,0), Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=IsNull(F.LiabilityQty,0)
 				        From {DbNames.EPYSL}..EntityTypeValue a
 				        Inner Join {DbNames.EPYSL}..EntityType b on b.EntityTypeID = a.EntityTypeID
-				        Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty From FBookingAcknowledgementLiabilityDistribution Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
+				        Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty FROM {TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION} Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
 				        Where b.EntityTypeName = 'Process Liability';";
             try
             {
@@ -8019,7 +8019,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        b.BookingNo,b.BookingDate,b.Remarks,StyleNo='',b.ExportOrderID,SLNo='',StyleMasterID=0,
 	                        b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,SeasonID=0,a.WithoutOB
                             FROM {DbNames.EPYSL}..BookingMaster B
-							LEFT JOIN FabricBookingAcknowledge A on b.BookingID = a.BookingID
+							LEFT JOIN {TableNames.FabricBookingAcknowledge} A on b.BookingID = a.BookingID
                             WHERE B.BookingID={bookingId}
                         ),
 						FBA2 AS
@@ -8028,7 +8028,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                        b.BookingNo,b.BookingDate,b.Remarks,b.StyleNo,b.ExportOrderID,b.SLNo,b.StyleMasterID,
 	                        b.BuyerID,b.BuyerTeamID,CompanyID=b.ExecutionCompanyID,b.SupplierID,b.SeasonID,a.WithoutOB
                             FROM {DbNames.EPYSL}..SampleBookingMaster b
-							LEFT Join FabricBookingAcknowledge A on b.BookingID = a.BookingID
+							LEFT JOIN {TableNames.FabricBookingAcknowledge} A on b.BookingID = a.BookingID
                             WHERE B.BookingID={bookingId}
                         ),
 						FBA AS
@@ -8062,7 +8062,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							FROM {DbNames.EPYSL}..BookingChild A
 							LEFT JOIN {DbNames.EPYSL}..BookingMaster B ON B.BookingID=A.BookingID
 							LEFT JOIN {DbNames.EPYSL}..BOMConsumption C ON C.ConsumptionID=A.ConsumptionID
-                            LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 							WHERE A.BookingID={bookingId} AND A.SubGroupID = 1
                         ),
 						FBA2 AS
@@ -8077,7 +8077,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						   FROM {DbNames.EPYSL}..SampleBookingConsumptionChild A
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster B ON B.BookingID=A.BookingID
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingConsumption C ON C.ConsumptionID=A.ConsumptionID
-                           LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                           LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 						   WHERE A.BookingID={bookingId} AND A.SubGroupID = 1
                         ),
 						FBA AS
@@ -8118,7 +8118,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							FROM {DbNames.EPYSL}..BookingChild A
 							LEFT JOIN {DbNames.EPYSL}..BookingMaster B ON B.BookingID=A.BookingID
 							LEFT JOIN {DbNames.EPYSL}..BOMConsumption C ON C.ConsumptionID=A.ConsumptionID
-                            LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 							WHERE A.BookingID={bookingId} AND A.SubGroupID IN (11,12)
                         ),
 						FBA2 AS
@@ -8133,7 +8133,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						   FROM {DbNames.EPYSL}..SampleBookingConsumptionChild A
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster B ON B.BookingID=A.BookingID
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingConsumption C ON C.ConsumptionID=A.ConsumptionID
-                            LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 						   WHERE A.BookingID={bookingId} AND A.SubGroupID IN (11,12)
                         ),
 						FBA AS
@@ -8227,9 +8227,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                         --Technical Name
                         SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                        FROM FabricTechnicalName T
-                        LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                        LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                        FROM {TableNames.FabricTechnicalName} T
+                        LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                         Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                          --YarnSource data load
@@ -8240,19 +8240,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                         --M/c type
                         ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                        FROM KnittingMachine a
-                        INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                        Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                        FROM {TableNames.KNITTING_MACHINE} a
+                        INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                        Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                         --Where c.TypeName != 'Flat Bed'
                         GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                         --CriteriaNames
                          ;SELECT CriteriaName,CriteriaSeqNo, (CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                        FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                        FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                         GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                         --FBAChildPlannings
-                        ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                        ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                         --Liability Process
 				        Select LChildID = 0,BookingChildID = 0,AcknowledgeID = 0,BookingID = 0,UnitID = 0, Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=0
@@ -8264,13 +8264,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				        Select LChildID = IsNull(F.LChildID,0),BookingChildID = IsNull(F.BookingChildID,0),AcknowledgeID = IsNull(F.AcknowledgeID,0),BookingID = IsNull(F.BookingID,0),UnitID = IsNull(F.UnitID,0), Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=IsNull(F.LiabilityQty,0)
 				        From {DbNames.EPYSL}..EntityTypeValue a
 				        Inner Join {DbNames.EPYSL}..EntityType b on b.EntityTypeID = a.EntityTypeID
-				        Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty From FBookingAcknowledgementLiabilityDistribution Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
+				        Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty FROM {TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION} Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
 				        Where b.EntityTypeName = 'Process Liability';
 
                         -- Yarn Booking Child Items
                     ;With YBM As
                     (
-                        Select * From YarnBookingMaster_New Where BookingID = {bookingId}
+                        Select * FROM {TableNames.YarnBookingMaster_New} Where BookingID = {bookingId}
                     ),
                     YBCI As (
                         Select YBCI.YItemMasterID As ItemMasterID, YBCI.UnitID, U.DisplayUnitDesc, YBCI.Blending,
@@ -8281,8 +8281,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc,
                         ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc, YBM.SubGroupID, ISG.SubGroupName,
                         LiabilityQty = IsNull(FBAY.LiabilityQty,0)
-                        From YBM Inner Join YarnBookingChild_New YBC On YBM.YBookingID = YBC.YBookingID
-                        Inner Join YarnBookingChildItem_New YBCI On YBCI.YBChildID = YBC.YBChildID
+                        From YBM Inner JOIN {TableNames.YarnBookingChild_New} YBC On YBM.YBookingID = YBC.YBookingID
+                        Inner JOIN {TableNames.YarnBookingChildItem_New} YBCI On YBCI.YBChildID = YBC.YBChildID
                         Left Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = YBM.SubGroupID
                         INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -8294,10 +8294,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV8 ON ISV8.SegmentValueID = IM.Segment8ValueID
                         LEFT JOIN {DbNames.EPYSL}..Unit U ON U.UnitID = YBCI.UnitID
-                        LEFT JOIN YarnShadeBook Y ON Y.ShadeCode = YBCI.ShadeCode
-                        LEFT Join YDBookingMaster YDBM ON YDBM.YBookingID = YBM.YBookingID And YDBM.YBookingID = YBCI.YBookingID
-                        LEFT Join YDProductionMaster YPM ON YPM.YDBookingMasterID = YDBM.YDBookingMasterID
-						Left Join FBookingAcknowledgementYarnLiability FBAY On FBAY.BookingID = YBM.BookingID And FBAY.ItemMasterID = YBCI.YItemMasterID
+                        LEFT JOIN {TableNames.YARN_SHADE_BOOK} Y ON Y.ShadeCode = YBCI.ShadeCode
+                        LEFT JOIN {TableNames.YD_BOOKING_MASTER} YDBM ON YDBM.YBookingID = YBM.YBookingID And YDBM.YBookingID = YBCI.YBookingID
+                        LEFT JOIN {TableNames.YD_PRODUCTION_MASTER} YPM ON YPM.YDBookingMasterID = YDBM.YDBookingMasterID
+						Left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES} FBAY On FBAY.BookingID = YBM.BookingID And FBAY.ItemMasterID = YBCI.YItemMasterID
 						Group By YBCI.YItemMasterID, YBCI.UnitID, U.DisplayUnitDesc, YBCI.Blending,
                         (Case When Blending = 1 then 'Blend' else 'Non-Blend' End), YBCI.YarnCategory, 
                         IsNull(YBCI.ShadeCode,''), Y.ShadeCode,
@@ -8425,14 +8425,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
         }
         public async Task<FBookingAcknowledge> GetNewBulkFabricAsync(int bookingId)
         {
-            var query = $@"Select *From FabricBookingAcknowledge WHERE BookingID = {bookingId};
+            var query = $@"Select *FROM {TableNames.FabricBookingAcknowledge} WHERE BookingID = {bookingId};
 
                         WITH FBA1 AS
                         (
                             SELECT a.BookingID,a.BOMMasterID,a.ItemGroupID,a.SubGroupID,a.Status,PreRevisionNo=a.PreProcessRevNo,RevisionNo=a.RevisionNo,
 	                        b.BookingNo,b.BookingDate,b.Remarks,StyleNo='',b.ExportOrderID,SLNo='',StyleMasterID=0,
 	                        b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,SeasonID=0,a.WithoutOB
-                            FROM FabricBookingAcknowledge A
+                            FROM {TableNames.FabricBookingAcknowledge} A
 							INNER JOIN {DbNames.EPYSL}..BookingMaster b on b.BookingID = a.BookingID
                             WHERE A.BookingID = {bookingId}
                         ),
@@ -8441,7 +8441,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             SELECT a.BookingID,a.BOMMasterID,a.ItemGroupID,a.SubGroupID,a.Status,PreRevisionNo=a.PreProcessRevNo,RevisionNo=a.RevisionNo,
 	                        b.BookingNo,b.BookingDate,b.Remarks,b.StyleNo,b.ExportOrderID,b.SLNo,b.StyleMasterID,
 	                        b.BuyerID,b.BuyerTeamID,CompanyID=b.ExecutionCompanyID,b.SupplierID,b.SeasonID,a.WithoutOB
-                            FROM FabricBookingAcknowledge A
+                            FROM {TableNames.FabricBookingAcknowledge} A
 							Inner Join {DbNames.EPYSL}..SampleBookingMaster b on b.BookingID = a.BookingID
                             WHERE A.BookingID = {bookingId}
                         ),
@@ -8476,7 +8476,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 							FROM {DbNames.EPYSL}..BookingChild A
 							LEFT JOIN {DbNames.EPYSL}..BookingMaster B ON B.BookingID=A.BookingID
 							LEFT JOIN {DbNames.EPYSL}..BOMConsumption C ON C.ConsumptionID=A.ConsumptionID
-                            LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 							WHERE A.BookingID = {bookingId} AND A.SubGroupID = 1
                         ),
 						FBA2 AS
@@ -8491,7 +8491,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						   FROM {DbNames.EPYSL}..SampleBookingConsumptionChild A
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster B ON B.BookingID=A.BookingID
 						   LEFT JOIN {DbNames.EPYSL}..SampleBookingConsumption C ON C.ConsumptionID=A.ConsumptionID
-                           LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
+                           LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = C.ConsumptionID And FBAC.ItemMasterID = A.ItemMasterID
 						   WHERE A.BookingID = {bookingId} AND A.SubGroupID = 1
                         ),
 						FBA AS
@@ -8639,9 +8639,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                         --Technical Name
                         SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                        FROM FabricTechnicalName T
-                        LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                        LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                        FROM {TableNames.FabricTechnicalName} T
+                        LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                         Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                          --YarnSource data load
@@ -8652,19 +8652,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                         --M/c type
                         ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                        FROM KnittingMachine a
-                        INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                        Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                        FROM {TableNames.KNITTING_MACHINE} a
+                        INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                        Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                         --Where c.TypeName != 'Flat Bed'
                         GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                         --CriteriaNames
                          ;SELECT CriteriaName,CriteriaSeqNo, (CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                        FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                        FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                         GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                         --FBAChildPlannings
-                        ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                        ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
                         
                         --Liability Process
 				        Select LChildID = 0,BookingChildID = 0,AcknowledgeID = 0,BookingID = 0,UnitID = 0, Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=0
@@ -8676,13 +8676,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				        Select LChildID = IsNull(F.LChildID,0),BookingChildID = IsNull(F.BookingChildID,0),AcknowledgeID = IsNull(F.AcknowledgeID,0),BookingID = IsNull(F.BookingID,0),UnitID = IsNull(F.UnitID,0), Cast(a.ValueID as varchar) LiabilitiesProcessID, a.ValueName LiabilitiesName,LiabilityQty=IsNull(F.LiabilityQty,0)
 				        From {DbNames.EPYSL}..EntityTypeValue a
 				        Inner Join {DbNames.EPYSL}..EntityType b on b.EntityTypeID = a.EntityTypeID
-				        Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty From FBookingAcknowledgementLiabilityDistribution Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
+				        Left Join (Select LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty FROM {TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION} Where BookingID = {bookingId} Group By LChildID,BookingChildID,AcknowledgeID,BookingID,LiabilitiesProcessID,UnitID,LiabilityQty)F On F.LiabilitiesProcessID = a.ValueID
 				        Where b.EntityTypeName = 'Process Liability';
                     
 
                     ;With YBM As
                     (
-                        Select * From YarnBookingMaster_New Where BookingID = {bookingId}
+                        Select * FROM {TableNames.YarnBookingMaster_New} Where BookingID = {bookingId}
                     ),
                     YBCI As (
                         Select YBCI.YItemMasterID As ItemMasterID, YBCI.UnitID, U.DisplayUnitDesc, YBCI.Blending,
@@ -8693,8 +8693,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         ISV4.SegmentValue As _segment4ValueDesc, ISV5.SegmentValue As _segment5ValueDesc, ISV6.SegmentValue As _segment6ValueDesc,
                         ISV7.SegmentValue As _segment7ValueDesc, ISV8.SegmentValue As _segment8ValueDesc, YBM.SubGroupID, ISG.SubGroupName,
                         LiabilityQty = IsNull(FBAY.LiabilityQty,0)
-                        From YBM Inner Join YarnBookingChild_New YBC On YBM.YBookingID = YBC.YBookingID
-                        Inner Join YarnBookingChildItem_New YBCI On YBCI.YBChildID = YBC.YBChildID
+                        From YBM Inner JOIN {TableNames.YarnBookingChild_New} YBC On YBM.YBookingID = YBC.YBookingID
+                        Inner JOIN {TableNames.YarnBookingChildItem_New} YBCI On YBCI.YBChildID = YBC.YBChildID
                         Left Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = YBM.SubGroupID
                         INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -8706,10 +8706,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV8 ON ISV8.SegmentValueID = IM.Segment8ValueID
                         LEFT JOIN {DbNames.EPYSL}..Unit U ON U.UnitID = YBCI.UnitID
-                        LEFT JOIN YarnShadeBook Y ON Y.ShadeCode = YBCI.ShadeCode
-                        LEFT Join YDBookingMaster YDBM ON YDBM.YBookingID = YBM.YBookingID And YDBM.YBookingID = YBCI.YBookingID
-                        LEFT Join YDProductionMaster YPM ON YPM.YDBookingMasterID = YDBM.YDBookingMasterID
-						Left Join FBookingAcknowledgementYarnLiability FBAY On FBAY.BookingID = YBM.BookingID And FBAY.ItemMasterID = YBCI.YItemMasterID
+                        LEFT JOIN {TableNames.YARN_SHADE_BOOK} Y ON Y.ShadeCode = YBCI.ShadeCode
+                        LEFT JOIN {TableNames.YD_BOOKING_MASTER} YDBM ON YDBM.YBookingID = YBM.YBookingID And YDBM.YBookingID = YBCI.YBookingID
+                        LEFT JOIN {TableNames.YD_PRODUCTION_MASTER} YPM ON YPM.YDBookingMasterID = YDBM.YDBookingMasterID
+						Left JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES} FBAY On FBAY.BookingID = YBM.BookingID And FBAY.ItemMasterID = YBCI.YItemMasterID
 						Group By YBCI.YItemMasterID, YBCI.UnitID, U.DisplayUnitDesc, YBCI.Blending,
                         (Case When Blending = 1 then 'Blend' else 'Non-Blend' End), YBCI.YarnCategory, 
                         IsNull(YBCI.ShadeCode,''), Y.ShadeCode,
@@ -8848,7 +8848,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					SeasonID = CASE WHEN FBA.WithoutOB=1 THEN SBM.SeasonID ELSE 0 END,
 					BookingBy = CASE WHEN FBA.WithoutOB=1 THEN SBM.AddedBy ELSE BM.AddedBy END
 
-                    FROM FBookingAcknowledge FBA
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
 	                LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 					LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                     WHERE FBA.FBAckID={fbAckId}
@@ -8893,9 +8893,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 BAC.StructureDays, ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID, KMS.TypeID As KTypeId
                 ,BAC.DayValidDurationId
 
-                FROM FBookingAcknowledgeChild BAC
-	            LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.BookingChildID = BAC.BookingChildID  AND FCM.ConsumptionID = BAC.ConsumptionID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+	            LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingChildID = BAC.BookingChildID  AND FCM.ConsumptionID = BAC.ConsumptionID
 
                 LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = BAC.SubGroupID
@@ -8908,8 +8908,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	            LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	            LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BAC.YarnBrandID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BAC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BAC.MachineTypeId
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BAC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BAC.MachineTypeId
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV2 ON ETV2.ValueID = BAC.BrandID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = BA.SupplierID
                 WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID = 1;
@@ -8945,9 +8945,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 BAC.StructureDays, ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID, KMS.TypeID As KTypeId
                 ,BAC.DayValidDurationId
 
-                FROM FBookingAcknowledgeChild BAC
-                LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.BookingChildID = BAC.BookingChildID  AND FCM.ConsumptionID = BAC.ConsumptionID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingChildID = BAC.BookingChildID  AND FCM.ConsumptionID = BAC.ConsumptionID
 
                 LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = BAC.SubGroupID
@@ -8960,69 +8960,69 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BAC.YarnBrandID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BAC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BAC.MachineTypeId
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BAC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BAC.MachineTypeId
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV2 ON ETV2.ValueID = BAC.BrandID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = BA.SupplierID
                 WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (11,12);
 
                 ;With A As(
 	                select Min(FBAChildPlanningID) FBAChildPlanningID, BookingChildID, AcknowledgeID, CriteriaID
-	                From FBAChildPlanning
+	                FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING}
 	                Where AcknowledgeID = {fbAckId}
 	                Group By BookingChildID, AcknowledgeID, CriteriaID
                 )
                 SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                 FROM A CP
-                INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                 GROUP BY cp.BookingChildID, CR.CriteriaName
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                 GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-                ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
 	            --FBookingAcknowledgeChildDetails (Fabric)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={fbAckId} AND B.SubGroupID IN (1);
 
 			    --FBookingAcknowledgeChildDetails (Collar & Cuff)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={fbAckId} AND B.SubGroupID IN (11,12);
 
                 --Brand List
 				;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-				FROM KnittingMachine KM
-				LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+				FROM {TableNames.KNITTING_MACHINE} KM
+				LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
 				ORDER BY [text];
 
                 --Distribution List
                 ;SELECT A.*
-                FROM FBookingAcknowledgeChildDistribution A
-                LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
                 WHERE B.AcknowledgeID={fbAckId};
 
                 -- DayValidDuration
@@ -9156,7 +9156,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
                 LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
 
@@ -9172,16 +9172,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID 
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID={bookingId} AND SBC.SubGroupID=1 {condition};
 
                 -- Booking Acknowledge Child (Collar & Cuff)
@@ -9197,9 +9197,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
@@ -9210,61 +9210,61 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 ;With A As(
 	                select Min(FCP.FBAChildPlanningID) FBAChildPlanningID, FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
-	                From FBAChildPlanning FCP
-					Inner Join FBookingAcknowledgeChild FBAC ON FCP.BookingChildID=FBAC.BookingChildID
+	                FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FCP
+					Inner JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FCP.BookingChildID=FBAC.BookingChildID
 	                Where FBAC.BookingID = {bookingId}
 	                Group By FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
                 )
                 SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                 FROM A CP
-                INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                 GROUP BY cp.BookingChildID, CR.CriteriaName
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                 GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-                ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
 	            --FBookingAcknowledgeChildDetails (Fabric)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (1);
 
 			    --FBookingAcknowledgeChildDetails (Collar & Cuff)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (11,12);
 
                 --Brand List
 				;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-				FROM KnittingMachine KM
-				LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+				FROM {TableNames.KNITTING_MACHINE} KM
+				LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
 				ORDER BY [text];
                 --Distribution List
                 ;SELECT A.*
-                FROM FBookingAcknowledgeChildDistribution A
-                LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
                 WHERE B.AcknowledgeID={bookingId};
                 
                 ";
@@ -9354,7 +9354,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
                 LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
 
@@ -9366,13 +9366,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 IM.Segment3ValueID ColorId,IM.Segment7ValueID KnittingTypeId,IM.Segment4ValueID GSMId,FBC.IsFabricReq,
                 ISV.SegmentValue YarnType, ETV.ValueName YarnProgram, ISV6.SegmentValue DyeingType, FBC.Remarks Instruction, SBC.ForBDSStyleNo, ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID,LiabilitiesBookingQty=ISNULL(FBAC.LiabilitiesBookingQty,0),ActualBookingQty=ISNULL(FBAC.ActualBookingQty,0)
                 ,FBC.MachineTypeId, FBC.TechnicalNameID,FBC.TotalDays, T.TechnicalName, MachineType = b.SubClassName, b.SubClassID         
-				FROM FBookingAcknowledgeChild FBC
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC
 				INNER JOIN {DbNames.EPYSL}..SampleBookingConsumption SBC ON SBC.BookingID = FBC.BookingID AND SBC.ConsumptionID = FBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = FBC.ConsumptionID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID=FBC.BookingID 
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=FBC.BookingID 
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = FBC.SubGroupID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FBC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = FBC.A1ValueID
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
@@ -9386,7 +9386,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = FBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = FBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = FBA.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = FBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = FBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE FBC.BookingID={bookingId} AND FBC.SubGroupID=1  {condition};
 
                 -- Booking Acknowledge Child (Collar & Cuff)
@@ -9398,13 +9398,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 IM.Segment4ValueID GSMId, ISV.SegmentValue YarnType, ETV.ValueName YarnProgram, ISV6.SegmentValue DyeingType,
                 ISV1.SegmentValue Description,ISV2.SegmentValue Type, ISV3.SegmentValue Length, ISV4.SegmentValue Height, ISV5.SegmentValue Color, ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID
                 ,FBC.MachineTypeId, FBC.TechnicalNameID, T.TechnicalName, MachineType = b.SubClassName, b.SubClassID
-                FROM FBookingAcknowledgeChild FBC
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC
 				INNER JOIN {DbNames.EPYSL}..SampleBookingConsumption SBC ON SBC.BookingID = FBC.BookingID AND SBC.ConsumptionID = FBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID=FBC.BookingID 
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=FBC.BookingID 
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = FBC.SubGroupID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FBC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = FBC.A1ValueID
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
@@ -9422,61 +9422,61 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 ;With A As(
 	                select Min(FCP.FBAChildPlanningID) FBAChildPlanningID, FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
-	                From FBAChildPlanning FCP
-					Inner Join FBookingAcknowledgeChild FBAC ON FCP.BookingChildID=FBAC.BookingChildID
+	                FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FCP
+					Inner JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FCP.BookingChildID=FBAC.BookingChildID
 	                Where FBAC.BookingID = {bookingId}
 	                Group By FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
                 )
                 SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                 FROM A CP
-                INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                 GROUP BY cp.BookingChildID, CR.CriteriaName
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                 GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-                ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
 	            --FBookingAcknowledgeChildDetails (Fabric)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (1);
 
 			    --FBookingAcknowledgeChildDetails (Collar & Cuff)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (11,12);
 
                 --Brand List
 				;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-				FROM KnittingMachine KM
-				LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+				FROM {TableNames.KNITTING_MACHINE} KM
+				LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
 				ORDER BY [text];
                 --Distribution List
                 ;SELECT A.*
-                FROM FBookingAcknowledgeChildDistribution A
-                LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
                 WHERE B.AcknowledgeID={bookingId};
                 
                 ";
@@ -9498,7 +9498,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
                 LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
 
@@ -9514,16 +9514,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID 
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID={bookingId} AND SBC.SubGroupID=1 {condition};
 
                 -- Booking Acknowledge Child (Collar & Cuff)
@@ -9539,9 +9539,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
@@ -9552,61 +9552,61 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 ;With A As(
 	                select Min(FCP.FBAChildPlanningID) FBAChildPlanningID, FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
-	                From FBAChildPlanning FCP
-					Inner Join FBookingAcknowledgeChild FBAC ON FCP.BookingChildID=FBAC.BookingChildID
+	                FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FCP
+					Inner JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FCP.BookingChildID=FBAC.BookingChildID
 	                Where FBAC.BookingID = {bookingId}
 	                Group By FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
                 )
                 SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                 FROM A CP
-                INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                 GROUP BY cp.BookingChildID, CR.CriteriaName
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                 GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-                ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
 	            --FBookingAcknowledgeChildDetails (Fabric)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (1);
 
 			    --FBookingAcknowledgeChildDetails (Collar & Cuff)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (11,12);
 
                 --Brand List
 				;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-				FROM KnittingMachine KM
-				LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+				FROM {TableNames.KNITTING_MACHINE} KM
+				LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
 				ORDER BY [text];
                 --Distribution List
                 ;SELECT A.*
-                FROM FBookingAcknowledgeChildDistribution A
-                LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
                 WHERE B.AcknowledgeID={bookingId};
                 
                 ";
@@ -9690,7 +9690,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
                 LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
 
@@ -9706,16 +9706,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID 
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID={bookingId} AND SBC.SubGroupID=1;
 
                 -- Booking Acknowledge Child (Collar & Cuff)
@@ -9731,9 +9731,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
@@ -9744,61 +9744,61 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 ;With A As(
 	                select Min(FCP.FBAChildPlanningID) FBAChildPlanningID, FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
-	                From FBAChildPlanning FCP
-					Inner Join FBookingAcknowledgeChild FBAC ON FCP.BookingChildID=FBAC.BookingChildID
+	                FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FCP
+					Inner JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FCP.BookingChildID=FBAC.BookingChildID
 	                Where FBAC.BookingID = {bookingId}
 	                Group By FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
                 )
                 SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                 FROM A CP
-                INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                 GROUP BY cp.BookingChildID, CR.CriteriaName
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                 GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-                ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
 	            --FBookingAcknowledgeChildDetails (Fabric)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (1);
 
 			    --FBookingAcknowledgeChildDetails (Collar & Cuff)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (11,12);
 
                 --Brand List
 				;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-				FROM KnittingMachine KM
-				LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+				FROM {TableNames.KNITTING_MACHINE} KM
+				LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
 				ORDER BY [text];
                 --Distribution List
                 ;SELECT A.*
-                FROM FBookingAcknowledgeChildDistribution A
-                LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
                 WHERE B.AcknowledgeID={bookingId};
                 
                 ";
@@ -9820,7 +9820,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
                 LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = M.ExecutionCompanyID
-                LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=M.BookingID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=M.BookingID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 LEFT Join {DbNames.EPYSL}..ContactSeason Season On M.SeasonID = Season.SeasonID;
 
@@ -9836,16 +9836,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID 
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
                 Left Join {DbNames.EPYSL}..EntityTypeValue RSETV ON RSETV.ValueID = SBC.ReferenceSourceID
                 Left Join {DbNames.EPYSL}..EntityTypeValue YSETV ON YSETV.ValueID = SBC.YarnSourceID
                 LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = SBM.SupplierID
-                LEFT JOIN FBookingAcknowledgeChild FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC On FBAC.ConsumptionID = SBC.ConsumptionID And FBAC.ItemMasterID = CC.ItemMasterID
                 WHERE SBC.BookingID={bookingId} AND SBC.SubGroupID=1;
 
                 -- Booking Acknowledge Child (Collar & Cuff)
@@ -9861,9 +9861,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {DbNames.EPYSL}..SampleBookingConsumptionChild CC ON CC.ConsumptionID = SBC.ConsumptionID
                 INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID=SBC.BookingID
                 INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
-                LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBC.TechnicalNameID
-                LEFT JOIN KnittingMachineSubClass b ON b.SubClassID = FBC.MachineTypeId
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingID = SBC.BookingID AND FBC.ConsumptionID = SBC.ConsumptionID
+                LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBC.TechnicalNameID
+                LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = FBC.MachineTypeId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = CC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = SBC.A1ValueID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = SBC.YarnBrandID
@@ -9874,61 +9874,61 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 ;With A As(
 	                select Min(FCP.FBAChildPlanningID) FBAChildPlanningID, FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
-	                From FBAChildPlanning FCP
-					Inner Join FBookingAcknowledgeChild FBAC ON FCP.BookingChildID=FBAC.BookingChildID
+	                FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FCP
+					Inner JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FCP.BookingChildID=FBAC.BookingChildID
 	                Where FBAC.BookingID = {bookingId}
 	                Group By FCP.BookingChildID, FCP.AcknowledgeID, FCP.CriteriaID
                 )
                 SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                 FROM A CP
-                INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                 GROUP BY cp.BookingChildID, CR.CriteriaName
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                FROM FabricTechnicalName T
-                LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                FROM {TableNames.FabricTechnicalName} T
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                 Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                 --M/c type
                 ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                FROM KnittingMachine a
-                INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                FROM {TableNames.KNITTING_MACHINE} a
+                INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                 --Where c.TypeName != 'Flat Bed'
                 GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                 --CriteriaNames
                  ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                 GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                 --FBAChildPlannings
-                ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
 	            --FBookingAcknowledgeChildDetails (Fabric)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (1);
 
 			    --FBookingAcknowledgeChildDetails (Collar & Cuff)
 				SELECT *
-				FROM FBookingAcknowledgeChildDetails A
-				LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+				FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
 				WHERE B.AcknowledgeID={bookingId} AND B.SubGroupID IN (11,12);
 
                 --Brand List
 				;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-				FROM KnittingMachine KM
-				LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+				FROM {TableNames.KNITTING_MACHINE} KM
+				LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
 				ORDER BY [text];
                 --Distribution List
                 ;SELECT A.*
-                FROM FBookingAcknowledgeChildDistribution A
-                LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
                 WHERE B.AcknowledgeID={bookingId};
                 
                 ";
@@ -9997,90 +9997,90 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query =
                 $@"SELECT FBA.*
-                    FROM FBookingAcknowledge FBA
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
                     LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                     LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                     WHERE FBA.FBAckID={fbAckId};
 
                     SELECT BAC.*
-                    FROM FBookingAcknowledgeChild BAC
-                    LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildAddProcess A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildGarmentPart A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildProcess A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildDistribution A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildText A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildYarnSubBrand A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM BDSDependentTNACalander A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.BDS_Dependent_TNA_Calander} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeImage A
-                    LEFT JOIN FBookingAcknowledge BA ON BA.BookingID=A.BookingID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_IMAGE} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.BookingID=A.BookingID
                     WHERE BA.FBAckID={fbAckId};
 
                     SELECT FBAC.*
-                    FROM FBAChildPlanning FBAC
+                    FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FBAC
                     WHERE FBAC.AcknowledgeID = {fbAckId};
 
                     --All FBAChildPlannings
-                    ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                    ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                     --For Bulk Booking
                     WITH 
                     FBA AS
                     (
 	                    SELECT BookingNo
-	                    FROM FBookingAcknowledge
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE}
 	                    WHERE FBAckID = {fbAckId}
                     )
                     SELECT FBA1.*
-                    FROM FBookingAcknowledge FBA1
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA1
                     INNER JOIN FBA ON FBA.BookingNo = FBA1.BookingNo;
 
                     WITH 
                     FBA AS
                     (
 	                    SELECT BookingNo
-	                    FROM FBookingAcknowledge
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE}
 	                    WHERE FBAckID = {fbAckId}
                     )
                     SELECT FBC.*
-                    FROM FBookingAcknowledgeChild FBC
-                    INNER JOIN FBookingAcknowledge FBA1 ON FBA1.FBAckID = FBC.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA1 ON FBA1.FBAckID = FBC.AcknowledgeID
                     INNER JOIN FBA ON FBA.BookingNo = FBA1.BookingNo;";
 
             try
@@ -10126,14 +10126,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query =
                 $@"SELECT FBA.*
-                    FROM FBookingAcknowledge FBA
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
                     LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
                     LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
                     WHERE FBA.FBAckID={fbAckId};
 
                     SELECT BAC.*
-                    FROM FBookingAcknowledgeChild BAC
-                    LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                     WHERE BAC.AcknowledgeID = {fbAckId} AND BAC.SubGroupID IN (1,11,12);";
 
             try
@@ -10161,25 +10161,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             var query =
                 $@"SELECT FBA.*, PreProcessRevNo = FBA1.RevisionNo
-                FROM FBookingAcknowledge FBA
-                LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                 WHERE FBA.BookingNo = '{bookingNo}'
 
                 ;WITH
                 BBC AS
                 (
 	                SELECT BAC.*
-	                FROM FBookingAcknowledgeChild BAC
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
 	                INNER Join {DbNames.EPYSL}..BookingChild A on A.ConsumptionID = BAC.ConsumptionID AND A.ItemMasterID = BAC.ItemMasterID
-	                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID = BAC.AcknowledgeID
+	                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID = BAC.AcknowledgeID
 	                WHERE BA.BookingNo = '{bookingNo}' AND BAC.BookingQty > 0 AND BAC.SubGroupID IN (1,11,12) AND BAC.IsDeleted=0
                 ),
                 SBC AS
                 (
 	                SELECT BAC.*
-	                FROM FBookingAcknowledgeChild BAC
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
 	                INNER Join {DbNames.EPYSL}..SampleBookingConsumption A on A.ConsumptionID = BAC.ConsumptionID
-	                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID = BAC.AcknowledgeID
+	                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID = BAC.AcknowledgeID
 	                WHERE BA.BookingNo = '{bookingNo}' AND BAC.BookingQty > 0 AND BAC.SubGroupID IN (1,11,12)
                 ),
                 Childs AS
@@ -10191,25 +10191,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 SELECT * FROM Childs
 
                 SELECT A.*
-                FROM FBookingAcknowledgeChildDetails A
-                INNER JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID = A.BookingChildID AND BAC.BookingID = A.BookingID AND BAC.BookingQty > 0
-                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID = A.BookingChildID AND BAC.BookingID = A.BookingID AND BAC.BookingQty > 0
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                 WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12);
 
                 --SELECT YBM.*
-                --FROM YarnBookingMaster_New YBM 
+                --FROM {TableNames.YarnBookingMaster_New} YBM 
 				--WHERE YBM.YBookingNo LIKE '{bookingNo}%' {additionQuery}
 
                 SELECT YBM.*
-                FROM YarnBookingMaster_New YBM 
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                FROM {TableNames.YarnBookingMaster_New} YBM 
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
 				WHERE FBA.BookingNo = '{bookingNo}' {additionQuery}
 
                 SELECT YBC.* 
-                FROM YarnBookingChild_New YBC
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                FROM {TableNames.YarnBookingChild_New} YBC
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                 WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                 SELECT YBCI.*, YBC.BookingChildID, YBC.ConsumptionID
@@ -10225,11 +10225,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,Segment5ValueDesc = ISV5.SegmentValue
                     ,Segment6ValueId = ISV6.SegmentValueID
                     ,Segment6ValueDesc = ISV6.SegmentValue
-                FROM YarnBookingChildItem_New YBCI
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                FROM {TableNames.YarnBookingChildItem_New} YBCI
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -10242,11 +10242,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 --FBookingAckChildFinishingProcess
                 SELECT FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
                 FMC.FMProcessID ProcessID, FMC.ProcessName ProcessName, FMC.ProcessTypeID, ET.ValueName ProcessType,FMC.FMCMasterID, b.ProcessName MachineName
-                FROM FBookingAckChildFinishingProcess FP
-                INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                FROM {TableNames.FBookingAckChildFinishingProcess} FP
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                 Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                 WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                 GROUP BY FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
@@ -10255,12 +10255,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 --FBookingAckChildFinishingProcessItem
                 SELECT FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
                 FMC.FMProcessID, FMC.ProcessName, FMC.ProcessTypeID, ET.ValueName,FMC.FMCMasterID, b.ProcessName
-                FROM FBookingAckChildFinishingProcessItem FPI
-                INNER JOIN FBookingAckChildFinishingProcess FP ON FP.FPChildID = FPI.FPChildID
-                INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                FROM {TableNames.FBookingAckChildFinishingProcessItem} FPI
+                INNER JOIN {TableNames.FBookingAckChildFinishingProcess} FP ON FP.FPChildID = FPI.FPChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                 Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                 WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                 GROUP BY FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
@@ -10329,25 +10329,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             var query =
                 $@"SELECT FBA.*, PreProcessRevNo = FBA1.RevisionNo
-                FROM FBookingAcknowledge FBA
-                LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                 WHERE FBA.BookingNo = '{bookingNo}'
 
                 ;WITH
                 BBC AS
                 (
 	                SELECT BAC.*
-	                FROM FBookingAcknowledgeChild BAC
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
 	                INNER Join {DbNames.EPYSL}..BookingChild A on A.ConsumptionID = BAC.ConsumptionID AND A.ItemMasterID = BAC.ItemMasterID
-	                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID = BAC.AcknowledgeID
+	                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID = BAC.AcknowledgeID
 	                WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12) AND BAC.IsDeleted=0
                 ),
                 SBC AS
                 (
 	                SELECT BAC.*
-	                FROM FBookingAcknowledgeChild BAC
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
 	                INNER Join {DbNames.EPYSL}..SampleBookingConsumption A on A.ConsumptionID = BAC.ConsumptionID
-	                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID = BAC.AcknowledgeID
+	                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID = BAC.AcknowledgeID
 	                WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12)
                 ),
                 Childs AS
@@ -10359,20 +10359,20 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 SELECT * FROM Childs
 
                 SELECT A.*
-                FROM FBookingAcknowledgeChildDetails A
-                INNER JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
-                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                 WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12);
 
                 SELECT YBM.*
-                FROM YarnBookingMaster_New YBM 
+                FROM {TableNames.YarnBookingMaster_New} YBM 
 				WHERE YBM.YBookingNo LIKE '{yBookingNo}' {additionQuery};
 
                 SELECT YBC.* 
-                FROM YarnBookingChild_New YBC
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                FROM {TableNames.YarnBookingChild_New} YBC
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                 WHERE YBM.YBookingNo ='{yBookingNo}' {additionQuery};
 
                 SELECT YBCI.*, YBC.BookingChildID, YBC.ConsumptionID
@@ -10388,11 +10388,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,Segment5ValueDesc = ISV5.SegmentValue
                     ,Segment6ValueId = ISV6.SegmentValueID
                     ,Segment6ValueDesc = ISV6.SegmentValue
-                FROM YarnBookingChildItem_New YBCI
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                FROM {TableNames.YarnBookingChildItem_New} YBCI
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -10405,11 +10405,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 --FBookingAckChildFinishingProcess
                 SELECT FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
                 FMC.FMProcessID ProcessID, FMC.ProcessName ProcessName, FMC.ProcessTypeID, ET.ValueName ProcessType,FMC.FMCMasterID, b.ProcessName MachineName
-                FROM FBookingAckChildFinishingProcess FP
-                INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                FROM {TableNames.FBookingAckChildFinishingProcess} FP
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                 Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                 WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                 GROUP BY FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
@@ -10418,29 +10418,29 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 --FBookingAckChildFinishingProcessItem
                 SELECT FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
                 FMC.FMProcessID, FMC.ProcessName, FMC.ProcessTypeID, ET.ValueName,FMC.FMCMasterID, b.ProcessName
-                FROM FBookingAckChildFinishingProcessItem FPI
-                INNER JOIN FBookingAckChildFinishingProcess FP ON FP.FPChildID = FPI.FPChildID
-                INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                FROM {TableNames.FBookingAckChildFinishingProcessItem} FPI
+                INNER JOIN {TableNames.FBookingAckChildFinishingProcess} FP ON FP.FPChildID = FPI.FPChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                 Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                 WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                 GROUP BY FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
                 FMC.FMProcessID, FMC.ProcessName, FMC.ProcessTypeID, ET.ValueName,FMC.FMCMasterID, b.ProcessName;
 
                 SELECT FFU.*,C.BookingChildID
-                FROM BulkBookingFinishFabricUtilization FFU
-                INNER JOIN YarnBookingChild_New C ON C.YBChildID = FFU.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = C.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                FROM {TableNames.BulkBookingFinishFabricUtilization} FFU
+                INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = FFU.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = C.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                 WHERE YBM.YBookingNo ='{yBookingNo}' {additionQuery};
                     
                 SELECT GFU.*,C.BookingChildID
-                FROM FBookingAcknowledgeChildGFUtilization GFU
-                INNER JOIN YarnBookingChild_New C ON C.YBChildID = GFU.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = C.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                FROM {TableNames.FBookingAcknowledgeChildGFUtilization} GFU
+                INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = GFU.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = C.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                 WHERE YBM.YBookingNo ='{yBookingNo}' {additionQuery};
 
                 ---BulkBookingGreyYarnUtilization
@@ -10451,11 +10451,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 YarnDetails = YSS.YarnCategory,
                 YSM.SampleStockQty, YSM.LiabilitiesStockQty, YSM.UnusableStockQty, YSM.LeftoverStockQty,
                 GYU.*
-                From BulkBookingGreyYarnUtilization GYU
-                INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
-                INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = C.YBookingID
-				INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                FROM {TableNames.BulkBookingGreyYarnUtilization} GYU
+                INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
+                INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = C.YBookingID
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                 INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
                 INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
@@ -10467,30 +10467,30 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 ---BulkBookingDyedYarnUtilization
                 Select 
                 DYU.*
-                From BulkBookingDyedYarnUtilization DYU
-                INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
-                INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = C.YBookingID
-				INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                FROM {TableNames.BulkBookingDyedYarnUtilization} DYU
+                INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
+                INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = C.YBookingID
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                 Where YBM.YBookingNo ='{yBookingNo}' {additionQuery}; 
 
                 ----FBookingAcknowledgeChildReplacement
                 SELECT U.*
-                FROM FBookingAcknowledgeChildReplacement U
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                --INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = U.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
-                --INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+                FROM {TableNames.FBookingAcknowledgeChildReplacement} U
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = U.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+                --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
                 Where YBM.YBookingNo ='{yBookingNo}' {additionQuery};
 
                 ----FBookingAcknowledgeChildItemNetReqQTY
                 SELECT U.*
-                FROM FBookingAcknowledgeChildItemNetReqQTY U
-				INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = U.YBChildItemID
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                --INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
-                --INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+                FROM {TableNames.FBookingAcknowledgeChildItemNetReqQTY} U
+				INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = U.YBChildItemID
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+                --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
                 Where YBM.YBookingNo ='{yBookingNo}' {additionQuery}
                 Group By U.ReplacementID,	U.YBChildItemID,	U.ReasonID,	
 				U.DepertmentID,	U.ReplacementQTY,	U.Remarks,	U.AddedBy,	
@@ -10584,25 +10584,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             var query =
                 $@"SELECT FBA.*, PreProcessRevNo = FBA1.RevisionNo
-                FROM FBookingAcknowledge FBA
-                LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                 WHERE FBA.BookingNo = '{bookingNo}'
 
                 ;WITH
                 BBC AS
                 (
 	                SELECT BAC.*
-	                FROM FBookingAcknowledgeChild BAC
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
 	                INNER Join {DbNames.EPYSL}..BookingChild A on A.ConsumptionID = BAC.ConsumptionID AND A.ItemMasterID = BAC.ItemMasterID
-	                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID = BAC.AcknowledgeID
+	                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID = BAC.AcknowledgeID
 	                WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12) AND BAC.IsDeleted=0 AND BAC.BookingQty > 0
                 ),
                 SBC AS
                 (
 	                SELECT BAC.*
-	                FROM FBookingAcknowledgeChild BAC
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
 	                INNER Join {DbNames.EPYSL}..SampleBookingConsumption A on A.ConsumptionID = BAC.ConsumptionID
-	                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID = BAC.AcknowledgeID
+	                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID = BAC.AcknowledgeID
 	                WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12) AND BAC.BookingQty > 0
                 ),
                 Childs AS
@@ -10614,25 +10614,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 SELECT * FROM Childs
 
                 SELECT A.*
-                FROM FBookingAcknowledgeChildDetails A
-                INNER JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
-                INNER JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                 WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12);
 
                 --SELECT YBM.*
-                --FROM YarnBookingMaster_New YBM 
+                --FROM {TableNames.YarnBookingMaster_New} YBM 
 				--WHERE YBM.YBookingNo LIKE '{bookingNo}%' {additionQuery}
 
                 SELECT YBM.*
-                FROM YarnBookingMaster_New YBM 
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                FROM {TableNames.YarnBookingMaster_New} YBM 
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
 				WHERE FBA.BookingNo = '{bookingNo}' {additionQuery}
 
                 SELECT YBC.* 
-                FROM YarnBookingChild_New YBC
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                FROM {TableNames.YarnBookingChild_New} YBC
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                 WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                 SELECT YBCI.*, YBC.BookingChildID, YBC.ConsumptionID
@@ -10648,11 +10648,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,Segment5ValueDesc = ISV5.SegmentValue
                     ,Segment6ValueId = ISV6.SegmentValueID
                     ,Segment6ValueDesc = ISV6.SegmentValue
-                FROM YarnBookingChildItem_New YBCI
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                FROM {TableNames.YarnBookingChildItem_New} YBCI
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -10663,21 +10663,21 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                 SELECT YBCI.*, YBC.BookingChildID, YBC.ConsumptionID
-                FROM YarnBookingChildItem_New_Revision YBCI
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                FROM {TableNames.YarnBookingChildItem_New_Revision} YBCI
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                 WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                 --FBookingAckChildFinishingProcess
                 SELECT FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
                 FMC.FMProcessID ProcessID, FMC.ProcessName ProcessName, FMC.ProcessTypeID, ET.ValueName ProcessType,FMC.FMCMasterID, b.ProcessName MachineName
-                FROM FBookingAckChildFinishingProcess FP
-                INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                FROM {TableNames.FBookingAckChildFinishingProcess} FP
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                 Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                 WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                 GROUP BY FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
@@ -10686,12 +10686,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 --FBookingAckChildFinishingProcessItem
                 SELECT FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
                 FMC.FMProcessID, FMC.ProcessName, FMC.ProcessTypeID, ET.ValueName,FMC.FMCMasterID, b.ProcessName
-                FROM FBookingAckChildFinishingProcessItem FPI
-                INNER JOIN FBookingAckChildFinishingProcess FP ON FP.FPChildID = FPI.FPChildID
-                INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                FROM {TableNames.FBookingAckChildFinishingProcessItem} FPI
+                INNER JOIN {TableNames.FBookingAckChildFinishingProcess} FP ON FP.FPChildID = FPI.FPChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                 Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                 WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                 GROUP BY FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
@@ -10700,20 +10700,20 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 ---- BulkBookingFinishFabricUtilization
                 SELECT U.*, FBC.BookingChildID
-				FROM BulkBookingFinishFabricUtilization U
-				INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
-				INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+				FROM {TableNames.BulkBookingFinishFabricUtilization} U
+				INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
 				WHERE FBA.BookingNo = '{bookingNo}';
 
                 -----FBookingAcknowledgeChildGFUtilization
 				SELECT U.*, FBC.BookingChildID
-				FROM FBookingAcknowledgeChildGFUtilization U
-				INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
-				INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+				FROM {TableNames.FBookingAcknowledgeChildGFUtilization} U
+				INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
 				WHERE FBA.BookingNo = '{bookingNo}';";
 
             try
@@ -10797,20 +10797,20 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             var query =
                 $@"SELECT FBA.*, PreProcessRevNo = FBA1.RevisionNo
-                    FROM FBookingAcknowledge FBA
-                    LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                    LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT YBM.*, FBA.BookingNo
-                    FROM YarnBookingMaster_New YBM
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                    FROM {TableNames.YarnBookingMaster_New} YBM
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}' {additionQuery}
 
                     SELECT YBC.*
-                    FROM YarnBookingChild_New YBC
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                     WHERE FBA.BookingNo = '{bookingNo}' {additionQuery}
 
                     SELECT YBCI.*
@@ -10826,11 +10826,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,Segment5ValueDesc = ISV5.SegmentValue
                     ,Segment6ValueId = ISV6.SegmentValueID
                     ,Segment6ValueDesc = ISV6.SegmentValue
-                    FROM YarnBookingChildItem_New YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChildItem_New} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -10877,19 +10877,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             var query =
                 $@"SELECT FBA.*, PreProcessRevNo = FBA1.RevisionNo
-                    FROM FBookingAcknowledge FBA
-                    LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                    LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT YBM.*, FBA.BookingNo
-                    FROM YarnBookingMaster_New YBM
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                    FROM {TableNames.YarnBookingMaster_New} YBM
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                     SELECT YBC.*
-                    FROM YarnBookingChild_New YBC
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                    FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                     SELECT YBCI.*
@@ -10905,10 +10905,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,Segment5ValueDesc = ISV5.SegmentValue
                     ,Segment6ValueId = ISV6.SegmentValueID
                     ,Segment6ValueDesc = ISV6.SegmentValue
-                    FROM YarnBookingChildItem_New YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                    FROM {TableNames.YarnBookingChildItem_New} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -10919,27 +10919,27 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                     SELECT YBCI.*
-                    FROM YarnBookingChildItem_New_Revision YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                    FROM {TableNames.YarnBookingChildItem_New_Revision} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
 
                     ---BulkBookingFinishFabricUtilization
                     SELECT U.*, FBC.BookingChildID
-				    FROM BulkBookingFinishFabricUtilization U
-				    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-				    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID
-				    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+				    FROM {TableNames.BulkBookingFinishFabricUtilization} U
+				    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+				    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID
+				    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
 				    WHERE FBA.BookingNo = '{bookingNo}';
 
                     ----FBookingAcknowledgeChildGFUtilization
 				    SELECT U.*, FBC.BookingChildID
-				    FROM FBookingAcknowledgeChildGFUtilization U
-				    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-				    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID
-				    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+				    FROM {TableNames.FBookingAcknowledgeChildGFUtilization} U
+				    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+				    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID
+				    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
 				    WHERE FBA.BookingNo ='{bookingNo}';";
             try
             {
@@ -10988,25 +10988,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query =
                 $@"SELECT FBA.*, PreProcessRevNo = FBA1.RevisionNo
-                    FROM FBookingAcknowledge FBA
-                    LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                    LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT BAC.*
-                    FROM FBookingAcknowledgeChild BAC
-                    INNER JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                     WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT YBM.*, FBA.BookingNo
-                    FROM YarnBookingMaster_New YBM
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                    FROM {TableNames.YarnBookingMaster_New} YBM
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT YBC.*
-                    FROM YarnBookingChild_New YBC
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT YBCI.*
@@ -11022,11 +11022,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,Segment5ValueDesc = ISV5.SegmentValue
                     ,Segment6ValueId = ISV6.SegmentValueID
                     ,Segment6ValueDesc = ISV6.SegmentValue
-                    FROM YarnBookingChildItem_New YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChildItem_New} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -11080,25 +11080,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query =
                 $@"SELECT FBA.*, PreProcessRevNo = FBA1.RevisionNo
-                    FROM FBookingAcknowledge FBA
-                    LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                    LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT BAC.*
-                    FROM FBookingAcknowledgeChild BAC
-                    INNER JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                     WHERE BA.BookingNo = '{bookingNo}' AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT YBM.*, FBA.BookingNo
-                    FROM YarnBookingMaster_New YBM
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
+                    FROM {TableNames.YarnBookingMaster_New} YBM
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT YBC.*
-                    FROM YarnBookingChild_New YBC
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT YBCI.*
@@ -11114,11 +11114,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,Segment5ValueDesc = ISV5.SegmentValue
                     ,Segment6ValueId = ISV6.SegmentValueID
                     ,Segment6ValueDesc = ISV6.SegmentValue
-                    FROM YarnBookingChildItem_New YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChildItem_New} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -11129,11 +11129,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     WHERE FBA.BookingNo = '{bookingNo}'
 
                     SELECT YBCI.*
-                    FROM YarnBookingChildItem_New_Revision YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = YBM.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChildItem_New_Revision} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND ISNULL(FBC.BookingQty,0) > 0
                     WHERE FBA.BookingNo = '{bookingNo}'";
             try
             {
@@ -11186,17 +11186,17 @@ namespace EPYSLTEXCore.Application.Services.Booking
             var query =
                 $@" 
                     SELECT M.*
-                    FROM YarnBookingMaster_New M
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.YarnBookingMaster_New} M
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT C.*,
 		                    Construction = ISV1.SegmentValue, 
 		                    Composition = ISV2.SegmentValue,
 		                    Color = CASE WHEN M.SubGroupID = 1 THEN ISV3.SegmentValue ELSE ISV5.SegmentValue END 
-                    FROM YarnBookingChild_New C
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.YarnBookingChild_New} C
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -11208,24 +11208,24 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT CI.*
-                    FROM YarnBookingChildItem_New CI
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = CI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.YarnBookingChildItem_New} CI
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = CI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT FFU.*
-                    FROM BulkBookingFinishFabricUtilization FFU
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = FFU.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.BulkBookingFinishFabricUtilization} FFU
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = FFU.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     WHERE FBA.BookingNo ='{bookingNo}';
                     
                     SELECT GFU.*
-                    FROM FBookingAcknowledgeChildGFUtilization GFU
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = GFU.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.FBookingAcknowledgeChildGFUtilization} GFU
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = GFU.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}'";
             try
             {
@@ -11266,18 +11266,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
             var query =
                 $@" 
                     SELECT M.*
-                    FROM YarnBookingMaster_New M
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.YarnBookingMaster_New} M
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT C.*,
 		                    Construction = ISV1.SegmentValue, 
 		                    Composition = ISV2.SegmentValue,
 		                    Color = CASE WHEN M.SubGroupID = 1 THEN ISV3.SegmentValue ELSE ISV5.SegmentValue END 
-                    FROM YarnBookingChild_New C
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                    FROM {TableNames.YarnBookingChild_New} C
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -11289,35 +11289,35 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT CI.*
-                    FROM YarnBookingChildItem_New CI
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = CI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                    FROM {TableNames.YarnBookingChildItem_New} CI
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = CI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT CI.*
-                    FROM YarnBookingChildItem_New_Revision CI
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = CI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                    FROM {TableNames.YarnBookingChildItem_New_Revision} CI
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = CI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     SELECT FFU.*
-                    FROM BulkBookingFinishFabricUtilization FFU
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = FFU.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                    FROM {TableNames.BulkBookingFinishFabricUtilization} FFU
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = FFU.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                     WHERE FBA.BookingNo ='{bookingNo}';
                     
                     SELECT GFU.*
-                    FROM FBookingAcknowledgeChildGFUtilization GFU
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = GFU.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                    FROM {TableNames.FBookingAcknowledgeChildGFUtilization} GFU
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = GFU.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                     WHERE FBA.BookingNo = '{bookingNo}';
 
                     ---BulkBookingGreyYarnUtilization
@@ -11328,12 +11328,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     YarnDetails = YSS.YarnCategory,
                     YSM.SampleStockQty, YSM.LiabilitiesStockQty, YSM.UnusableStockQty, YSM.LeftoverStockQty,
                     GYU.*
-                    From BulkBookingGreyYarnUtilization GYU
-                    INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-					INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                    FROM {TableNames.BulkBookingGreyYarnUtilization} GYU
+                    INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+					INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                     INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
                     INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
@@ -11345,12 +11345,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ---BulkBookingDyedYarnUtilization
                     Select 
                     DYU.*
-                    From BulkBookingDyedYarnUtilization DYU
-                    INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-					INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
+                    FROM {TableNames.BulkBookingDyedYarnUtilization} DYU
+                    INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+					INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
                     Where FBA.BookingNo =  '{bookingNo}';   ";
             try
             {
@@ -11404,70 +11404,70 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query =
                 $@"SELECT FBA.*
-                    FROM FBookingAcknowledge FBA
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
                     WHERE FBA.BookingID={BookingID};
                     
                     SELECT FBA.*
-                    FROM FabricBookingAcknowledge FBA
+                    FROM {TableNames.FabricBookingAcknowledge} FBA
                     WHERE FBA.BookingID={BookingID};
 
                     SELECT BAC.*
-                    FROM FBookingAcknowledgeChild BAC
-                    LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildAddProcess A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildGarmentPart A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildProcess A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildDistribution A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildText A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeChildYarnSubBrand A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM BDSDependentTNACalander A
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=A.BookingChildID
+                    FROM {TableNames.BDS_Dependent_TNA_Calander} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=A.BookingChildID
                     WHERE BAC.BookingID = {BookingID} AND BAC.SubGroupID IN (1,11,12);
 
                     SELECT A.*
-                    FROM FBookingAcknowledgeImage A
-                    LEFT JOIN FBookingAcknowledge BA ON BA.BookingID=A.BookingID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_IMAGE} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.BookingID=A.BookingID
                     WHERE BA.BookingID={BookingID};
 
                     SELECT FBAC.*
-                    FROM FBAChildPlanning FBAC
-                    LEFT JOIN FBookingAcknowledgeChild BAC ON BAC.BookingChildID=FBAC.BookingChildID
+                    FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FBAC
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC ON BAC.BookingChildID=FBAC.BookingChildID
                     WHERE BAC.BookingID = {BookingID};
 
                     --All FBAChildPlannings
-                    ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;";
+                    ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;";
 
             try
             {
@@ -11544,10 +11544,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         FBA.RevisionNo, FBA.PreRevisionNo,
 						IsIncreaseRevisionNo = Case When FBA.IsApprovedByPMC = 1 Then 1 Else 0 End,
                         YBM.PMCFinalApproveCount
-	                    FROM FBookingAcknowledge FBA
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
-	                    LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+	                    LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
 	                    LEFT JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YBM.AddedBy
 	                    LEFT JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = LU.EmployeeCode
 	                    WHERE FBA.BookingNo = '{bookingNo}'  AND YBM.YBookingNo = '{bookingNo}-YB'  
@@ -11558,7 +11558,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    b.BookingNo,b.BookingDate,b.Remarks,SM.StyleNo,b.ExportOrderID,SLNo='',SM.StyleMasterID,
 	                    b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,SM.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(BC.BookingQty),
 	                    IsSample = 0, b.AddedBy
-	                    FROM FabricBookingAcknowledge A
+	                    FROM {TableNames.FabricBookingAcknowledge} A
 	                    Inner JOIN {DbNames.EPYSL}..BookingMaster b on b.BookingID = a.BookingID
 	                    Inner Join {DbNames.EPYSL}..BookingChild BC On BC.BookingID = A.BookingID
 	                    JOIN {DbNames.EPYSL}..ExportOrderMaster EO ON EO.ExportOrderID = B.ExportOrderID
@@ -11579,7 +11579,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    b.BookingNo,b.BookingDate,b.Remarks,b.StyleNo,b.ExportOrderID,b.SLNo,b.StyleMasterID,
 	                    b.BuyerID,b.BuyerTeamID,CompanyID=b.ExecutionCompanyID,b.SupplierID,b.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(c.RequiredQty),
 	                    IsSample = 1, b.AddedBy
-	                    FROM FabricBookingAcknowledge A
+	                    FROM {TableNames.FabricBookingAcknowledge} A
 	                    Inner Join {DbNames.EPYSL}..SampleBookingMaster b on b.BookingID = a.BookingID
 	                    Inner Join {DbNames.EPYSL}..SampleBookingConsumptionChild c ON c.BookingID = a.BookingID
 	                    WHERE b.BookingNo in ('{bookingNo}')
@@ -11698,7 +11698,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     (
 	                    Select FBAC.BookingID, SUM(FBAC.BookingQty)OrderQtyKG 
 	                    from M
-						INNER JOIN FBookingAcknowledgeChild FBAC ON FBAC.AcknowledgeID = M.FBAckID AND FBAC.IsDeleted = 0
+						INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.AcknowledgeID = M.FBAckID AND FBAC.IsDeleted = 0
 	                    INNER JOIN {DbNames.EPYSL}..BookingChild BC ON BC.ConsumptionID = FBAC.ConsumptionID AND BC.BookingID = FBAC.BookingID
 						GROUP BY FBAC.BookingID
                     )
@@ -11729,7 +11729,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,FabricRequireDateEnd = OEC1112.EventDate
                     ,M.RevisionNo, M.PreRevisionNo, M.IsIncreaseRevisionNo, M.PMCFinalApproveCount
                     FROM M
-                    LEFT JOIN BuyerTeamWiseTeamLeaderSetup BTL ON BTL.BuyerTeamID = M.BuyerTeamID
+                    LEFT JOIN {TableNames.Buyer_Team_Wise_TeamLeader_Setup} BTL ON BTL.BuyerTeamID = M.BuyerTeamID
                     LEFT JOIN {DbNames.EPYSL}..Employee TL ON TL.EmployeeCode=BTL.TeamLeaderEmployeeCode
                     LEFT JOIN {DbNames.EPYSL}..ExportOrderMaster EOM ON EOM.ExportOrderID = M.ExportOrderID
                     LEFT Join {DbNames.EPYSL}..OrderBankMaster OBM On OBM.StyleMasterID = EOM.StyleMasterID
@@ -11796,9 +11796,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BAC.StructureDays, ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID, KMS.TypeID As KTypeId,
                         BAC.RefSourceID,BAC.RefSourceNo
 
-	                    FROM FBookingAcknowledgeChild BAC
-	                    LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = {joinName}.SubGroupID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = BAC.A1ValueID
@@ -11810,8 +11810,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BAC.YarnBrandID
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BAC.TechnicalNameID
-	                    LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BAC.MachineTypeId
+	                    LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BAC.TechnicalNameID
+	                    LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BAC.MachineTypeId
 	                    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV2 ON ETV2.ValueID = BAC.BrandID
 	                    LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = BA.SupplierID
                         WHERE ISG.SubGroupID = 1 {deletedItemIgnoreQuery}
@@ -11870,9 +11870,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    YarnProgram = CASE WHEN BA.IsSample = 0 THEN ETV.ValueName ELSE ETV1.ValueName END,
 	                    YarnBrandID = CASE WHEN BA.IsSample = 0 THEN A.YarnBrandID ELSE SBCon.YarnBrandID END
 
-	                    FROM FBookingAcknowledgeChild BAC
-	                    LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
 
 	                    LEFT Join {DbNames.EPYSL}..BookingChild A on A.ConsumptionID = BAC.ConsumptionID AND A.ItemMasterID = BAC.ItemMasterID
 	                    LEFT Join {DbNames.EPYSL}..SampleBookingConsumption SBCon On SBCon.ConsumptionID = BAC.ConsumptionID
@@ -11887,8 +11887,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV5 ON ISV5.SegmentValueID = IM.Segment5ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BAC.TechnicalNameID
-	                    LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BAC.MachineTypeId
+	                    LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BAC.TechnicalNameID
+	                    LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BAC.MachineTypeId
 	                    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV2 ON ETV2.ValueID = BAC.BrandID
 	                    LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = BA.SupplierID
 
@@ -11918,57 +11918,57 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     ;With A As(
 	                    select Min(FBP.FBAChildPlanningID) FBAChildPlanningID, FBP.BookingChildID, FBP.AcknowledgeID, FBP.CriteriaID
-	                    From FBAChildPlanning FBP
-	                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBP.AcknowledgeID
+	                    FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FBP
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBP.AcknowledgeID
 	                    Where FBA.BookingNo = '{bookingNo}'
 	                    Group By BookingChildID, AcknowledgeID, CriteriaID
                     )
                     SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                     FROM A CP
-                    INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                    INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                     GROUP BY cp.BookingChildID, CR.CriteriaName
 
                     --Technical Name
                     SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                    FROM FabricTechnicalName T
-                    LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                    LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                    FROM {TableNames.FabricTechnicalName} T
+                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                    LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                     Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                     --M/c type
                     ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                    FROM KnittingMachine a
-                    INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                    Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                    FROM {TableNames.KNITTING_MACHINE} a
+                    INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                    Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                     --Where c.TypeName != 'Flat Bed'
                     GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                     --CriteriaNames
                         ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                    FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                    FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                     GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                     --FBAChildPlannings
-                    ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                    ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                     --FBookingAcknowledgeChildDetails (Fabric)
                     SELECT *
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID = A.BookingChildID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID=B.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID = A.BookingChildID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID=B.AcknowledgeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND B.SubGroupID IN (1) AND B.IsDeleted = 0;
 
                     --FBookingAcknowledgeChildDetails (Collar & Cuff)
                     SELECT *
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID = A.BookingChildID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID=B.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID = A.BookingChildID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID=B.AcknowledgeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND B.SubGroupID IN (11,12) AND B.IsDeleted = 0;
 
                     --Brand List
                     ;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-                    FROM KnittingMachine KM
-                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    FROM {TableNames.KNITTING_MACHINE} KM
+                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
                     ORDER BY [text];
 
@@ -11979,8 +11979,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChild_New YBC
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
+                    FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBC.ItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -12000,10 +12000,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChildItem_New YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChildItem_New} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
 					LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YBCI.SpinnerId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -12024,10 +12024,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChildItem_New_Revision YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                    INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+                    FROM {TableNames.YarnBookingChildItem_New_Revision} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
 					LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YBCI.SpinnerId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -12045,12 +12045,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    Select ISF.BookingID, RollID, ISF.ItemMasterID, RollNo, Shade, ISF.BatchNo, TagNo, ISF.GSM, LengthInInch, WidthInInch, CCID1, CCID4, RollQtyInKG = RollQtyInKG, 
 	                    RollQtyInKGPcs = RollQtyInKGPcs, AOPRoll, ReceiveStatus, ISF.WeightSheetNo, IsReject, IsExcess, IsQtyDecrease, IsOrderCancel, IsReturn, IsOrderCCBreakDown,
 	                    LocationID, RackID
-	                    From EPYSLTEX..ItemFinishStockRoll ISF
+	                    FROM {TableNames.ItemFinishStockRoll} ISF
 	                    Inner Join  {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = ISF.ItemMasterID
-	                    Inner Join BulkBookingFinishFabricUtilization BB On BB.ItemMasterID  = IM.ItemMasterID
-	                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = BB.YBChildID
-	                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-	                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+	                    Inner JOIN {TableNames.BulkBookingFinishFabricUtilization} BB On BB.ItemMasterID  = IM.ItemMasterID
+	                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = BB.YBChildID
+	                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+	                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
 	                    WHERE FBA.BookingNo ='{bookingNo}'
                     ),FFQTY As(
 						Select 
@@ -12067,12 +12067,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				                                        When (ISG.SubGroupName = 'Collar' Or ISG.SubGroupName = 'Cuff') and ISF.IsReject = 0 and ISF.IsQtyDecrease = 0 and ISF.IsOrderCancel = 1 and ISF.IsOrderCCBreakDown = 0 Then Sum(ISF.RollQtyInKGPcs) Else 0 End
                                        				             
                                        
-						FROM BulkBookingFinishFabricUtilization FFU
+						FROM {TableNames.BulkBookingFinishFabricUtilization} FFU
 						Inner Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = FFU.SubGroupID
 						Inner Join ISF On ISF.ItemMasterID = FFU.ItemMasterID
-	                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = FFU.YBChildID
-	                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-	                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+	                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = FFU.YBChildID
+	                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+	                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
 						WHERE FBA.BookingNo ='{bookingNo}'
 	                    Group By FFU.BBFFUtilizationID, ISG.SubGroupName,ISF.IsExcess,ISF.IsQtyDecrease,ISF.IsOrderCancel,ISF.IsOrderCCBreakDown,ISF.IsReject
 
@@ -12089,10 +12089,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					                   --      (Case When FFU.SubGroupID = 1 Then 0 Else Sum(ISF.RollQtyInKGPcs) End)
 					    ,UserName = IIF(ISNULL(FFU.UpdatedBy,0) = 0,EAd.EmployeeName,EUP.EmployeeName)
 
-                        FROM BulkBookingFinishFabricUtilization FFU
-                        INNER JOIN YarnBookingChild_New C ON C.YBChildID = FFU.YBChildID
-                        INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                        INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                        FROM {TableNames.BulkBookingFinishFabricUtilization} FFU
+                        INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = FFU.YBChildID
+                        INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                         Left Join {DbNames.EPYSL}..ExportOrderMaster EOM On EOM.ExportOrderID = FFU.ExportOrderID
                         Left Join {DbNames.EPYSL}..ItemSegmentValue ISVC On ISVC.SegmentValueID = FFU.ColorID
                         Left Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = FFU.BuyerID And CT.ContactID >0
@@ -12126,10 +12126,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     Select GFU.* ,ExportOrderNo = ISNULL(EOM.ExportOrderNo,''), ColorName = ISNULL(ISVC.SegmentValue,''), Buyer = ISNULL(CT.ShortName,''),
                     FabricType = ISVFT.SegmentValue,Composition  = ISVCOM.SegmentValue
-                    From FBookingAcknowledgeChildGFUtilization GFU
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = GFU.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.FBookingAcknowledgeChildGFUtilization} GFU
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = GFU.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     Left Join {DbNames.EPYSL}..ExportOrderMaster EOM On EOM.ExportOrderID = GFU.ExportOrderID
                     Left Join {DbNames.EPYSL}..ItemSegmentValue ISVC On ISVC.SegmentValueID = GFU.ColorID
                     Left Join {DbNames.EPYSL}..ItemSegmentValue ISVFT On ISVFT.SegmentValueID = GFU.FabricTypeID
@@ -12146,10 +12146,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     YarnDetails = YSS.YarnCategory,
                     YSM.SampleStockQty, YSM.LiabilitiesStockQty, YSM.UnusableStockQty, YSM.LeftoverStockQty,
                     GYU.*
-                    From BulkBookingGreyYarnUtilization GYU
-                    INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
+                    FROM {TableNames.BulkBookingGreyYarnUtilization} GYU
+                    INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
                     INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
                     INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
@@ -12161,11 +12161,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ---BulkBookingDyedYarnUtilization
                     Select 
                     DYU.*,EOM.ExportOrderNo, Buyer = CC.ShortName
-                    From BulkBookingDyedYarnUtilization DYU
-                    INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-					INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.BulkBookingDyedYarnUtilization} DYU
+                    INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+					INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
 					INNER JOIN {DbNames.EPYSL}..ExportOrderMaster EOM On EOM.ExportOrderID = DYU.ExportOrderID
 				    INNER JOIN {DbNames.EPYSL}..Contacts CC On CC.ContactID = DYU.BuyerID
                     Where  M.YBookingNo =  '{yBookingNo}';
@@ -12173,7 +12173,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                   
                     --Shade book
-                    SELECT ShadeCode [id], ShadeCode [text] FROM YarnShadeBook;
+                    SELECT ShadeCode [id], ShadeCode [text] FROM {TableNames.YARN_SHADE_BOOK};
               
                     -- YarnBookingChildItemYarnSubBrand
                     Select ETV.ValueID id, ETV.ValueName [text]
@@ -12188,11 +12188,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                      --FBookingAckChildFinishingProcess
                     SELECT FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
                     FMC.FMProcessID ProcessID, FMC.ProcessName ProcessName, FMC.ProcessTypeID, ET.ValueName ProcessType,FMC.FMCMasterID, b.ProcessName MachineName
-                    FROM FBookingAckChildFinishingProcess FP
-                    INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                    Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                    Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                    FROM {TableNames.FBookingAckChildFinishingProcess} FP
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                    Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                    Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                     Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != '' AND FAC.IsDeleted = 0
                     GROUP BY FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
@@ -12201,12 +12201,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     --FBookingAckChildFinishingProcessItem
                     SELECT FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
                     FMC.FMProcessID, FMC.ProcessName, FMC.ProcessTypeID, ET.ValueName,FMC.FMCMasterID, b.ProcessName
-                    FROM FBookingAckChildFinishingProcessItem FPI
-                    INNER JOIN FBookingAckChildFinishingProcess FP ON FP.FPChildID = FPI.FPChildID
-                    INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                    Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                    Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                    FROM {TableNames.FBookingAckChildFinishingProcessItem} FPI
+                    INNER JOIN {TableNames.FBookingAckChildFinishingProcess} FP ON FP.FPChildID = FPI.FPChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                    Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                    Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                     Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != '' AND FAC.IsDeleted = 0
                     GROUP BY FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
@@ -12217,14 +12217,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     --Gauge List
                     SELECT DISTINCT id = KM.GG, [text] = KM.GG
-                    from KnittingMachine KM
+                    FROM {TableNames.KNITTING_MACHINE} KM
                     WHERE KM.GG > 0
                     GROUP BY KM.GG
                     ORDER BY KM.GG;
 
                     --Dia List
                     SELECT id = KM.Dia, [text] = KM.Dia, additionalValue = KM.GG
-                    from KnittingMachine KM
+                    FROM {TableNames.KNITTING_MACHINE} KM
                     WHERE KM.GG > 0
                     GROUP BY KM.Dia, KM.GG
                     ORDER BY KM.GG
@@ -12256,8 +12256,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     SELECT KM.KnittingMachineID,KM.KnittingUnitID,KM.MachineNo,KM.MachineTypeID,KM.MachineSubClassID,
                     KM.GG,KM.Dia,KM.BrandID,KM.Capacity,KU.ShortName AS Contact,EV.ValueName AS Brand,
                     IsSubContact = 0
-                    from KnittingMachine KM
-                    Left Join KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    FROM {TableNames.KNITTING_MACHINE} KM
+                    Left JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
                     Left Join {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = KM.BrandID
                     Left Join {DbNames.EPYSL}..Contacts C ON C.ContactID = KU.ContactID
                     Left Join {DbNames.EPYSL}..ContactAdditionalInfo CAI ON CAI.ContactID = C.ContactID
@@ -12265,8 +12265,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     -- Machine Brand Collar/Cuff
                     SELECT KM.BrandID,EV.ValueName AS Brand
-                    from KnittingMachine KM
-                    Left Join KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    FROM {TableNames.KNITTING_MACHINE} KM
+                    Left JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
                     Left Join {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = KM.BrandID
                     Left Join {DbNames.EPYSL}..Contacts C ON C.ContactID = KU.ContactID
                     Left Join {DbNames.EPYSL}..ContactAdditionalInfo CAI ON CAI.ContactID = C.ContactID
@@ -13129,10 +13129,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     YBM.YBookingNo, ParentYBookingNo = YBM.YBookingNo, FBA.IsSample,YBM.YRequiredDate,
                     FBA.CollarSizeID,FBA.CollarWeightInGm,FBA.CuffSizeID,FBA.CuffWeightInGm,YBM.AddedBy YarnBookingBy,
 		            FBA.SeasonID, AddYarnBookingDate = YBM.DateAdded
-                    FROM FBookingAcknowledge FBA
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
 	                LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
-                    LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
                     WHERE FBA.BookingNo = '{bookingNo}' AND YBM.YBookingNo = '{yBookingNo}'
                 ),
             FBA1 AS
@@ -13141,7 +13141,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	            b.BookingNo,b.BookingDate,b.Remarks,SM.StyleNo,b.ExportOrderID,SLNo='',SM.StyleMasterID,
 	            b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,SM.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(BC.BookingQty),
 	            IsSample = 0
-                FROM FabricBookingAcknowledge A
+                FROM {TableNames.FabricBookingAcknowledge} A
 	            JOIN {DbNames.EPYSL}..BookingMaster b on b.BookingID = a.BookingID
 	            Inner Join {DbNames.EPYSL}..BookingChild BC On BC.BookingID = A.BookingID
 	            JOIN {DbNames.EPYSL}..ExportOrderMaster EO ON EO.ExportOrderID = B.ExportOrderID
@@ -13162,7 +13162,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	            b.BookingNo,b.BookingDate,b.Remarks,b.StyleNo,b.ExportOrderID,b.SLNo,b.StyleMasterID,
 	            b.BuyerID,b.BuyerTeamID,CompanyID=b.ExecutionCompanyID,b.SupplierID,b.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(c.RequiredQty),
 	            IsSample = 1
-                FROM FabricBookingAcknowledge A
+                FROM {TableNames.FabricBookingAcknowledge} A
 	            Inner Join {DbNames.EPYSL}..SampleBookingMaster b on b.BookingID = a.BookingID
 	            Inner Join {DbNames.EPYSL}..SampleBookingConsumptionChild c ON c.BookingID = a.BookingID
                 WHERE b.BookingNo in ('{bookingNo}')
@@ -13214,7 +13214,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             (
 	            Select FBAC.BookingID, SUM(FBAC.BookingQty)OrderQtyKG 
 	            from M
-				INNER JOIN FBookingAcknowledgeChild FBAC ON FBAC.AcknowledgeID = M.FBAckID AND FBAC.IsDeleted = 0
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.AcknowledgeID = M.FBAckID AND FBAC.IsDeleted = 0
 	            INNER JOIN {DbNames.EPYSL}..BookingChild BC ON BC.ConsumptionID = FBAC.ConsumptionID AND BC.BookingID = FBAC.BookingID
 				GROUP BY FBAC.BookingID
             )
@@ -13225,7 +13225,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             M.CollarSizeID,M.CollarWeightInGm,M.CuffSizeID,M.CuffWeightInGm,E.EmployeeName BookingByName,M.YRequiredDate YarnRequiredDate,
 	        ET.TeamName MerchandisingTeam,'' YarnProjectionReference,null FabricRequireDate,E2.EmployeeName YarnBookingByName,OBP.EDD GarmentsShipmentDate, M.AddYarnBookingDate
             FROM M
-            LEFT JOIN BuyerTeamWiseTeamLeaderSetup BTL ON BTL.BuyerTeamID=M.BuyerTeamID
+            LEFT JOIN {TableNames.Buyer_Team_Wise_TeamLeader_Setup} BTL ON BTL.BuyerTeamID=M.BuyerTeamID
 	        LEFT JOIN {DbNames.EPYSL}..Employee TL ON TL.EmployeeCode=BTL.TeamLeaderEmployeeCode
             LEFT JOIN {DbNames.EPYSL}..ExportOrderMaster EOM ON EOM.ExportOrderID = M.ExportOrderID
             LEFT Join {DbNames.EPYSL}..OrderBankMaster OBM On OBM.StyleMasterID = EOM.StyleMasterID
@@ -13258,10 +13258,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     YBM.YBookingNo, ParentYBookingNo = YBM.YBookingNo, FBA.IsSample,YBM.YRequiredDate,
                     FBA.CollarSizeID,FBA.CollarWeightInGm,FBA.CuffSizeID,FBA.CuffWeightInGm,YBM.AddedBy YarnBookingBy,
 		            FBA.SeasonID
-                    FROM FBookingAcknowledge FBA
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
 	                LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
-                    LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+                    LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
                     WHERE FBA.BookingNo = '{bookingNo}' AND YBM.YBookingNo = '{yBookingNo}'
                 ),
             FBA1 AS
@@ -13270,7 +13270,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	            b.BookingNo,b.BookingDate,b.Remarks,SM.StyleNo,b.ExportOrderID,SLNo='',SM.StyleMasterID,
 	            b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,SM.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(BC.BookingQty),
 	            IsSample = 0
-                FROM FabricBookingAcknowledge A
+                FROM {TableNames.FabricBookingAcknowledge} A
 	            JOIN {DbNames.EPYSL}..BookingMaster b on b.BookingID = a.BookingID
 	            Inner Join {DbNames.EPYSL}..BookingChild BC On BC.BookingID = A.BookingID
 	            JOIN {DbNames.EPYSL}..ExportOrderMaster EO ON EO.ExportOrderID = B.ExportOrderID
@@ -13291,7 +13291,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	            b.BookingNo,b.BookingDate,b.Remarks,b.StyleNo,b.ExportOrderID,b.SLNo,b.StyleMasterID,
 	            b.BuyerID,b.BuyerTeamID,CompanyID=b.ExecutionCompanyID,b.SupplierID,b.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(c.RequiredQty),
 	            IsSample = 1
-                FROM FabricBookingAcknowledge A
+                FROM {TableNames.FabricBookingAcknowledge} A
 	            Inner Join {DbNames.EPYSL}..SampleBookingMaster b on b.BookingID = a.BookingID
 	            Inner Join {DbNames.EPYSL}..SampleBookingConsumptionChild c ON c.BookingID = a.BookingID
                 WHERE b.BookingNo in ('{bookingNo}')
@@ -13323,7 +13323,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 M.CollarSizeID,M.CollarWeightInGm,M.CuffSizeID,M.CuffWeightInGm,E.EmployeeName BookingByName,M.YRequiredDate YarnRequiredDate,
 	            ET.TeamName MerchandisingTeam,'' YarnProjectionReference,null FabricRequireDate,E2.EmployeeName YarnBookingByName,OBP.EDD GarmentsShipmentDate
                 FROM M
-                LEFT JOIN BuyerTeamWiseTeamLeaderSetup BTL ON BTL.BuyerTeamID=M.BuyerTeamID
+                LEFT JOIN {TableNames.Buyer_Team_Wise_TeamLeader_Setup} BTL ON BTL.BuyerTeamID=M.BuyerTeamID
 	            LEFT JOIN {DbNames.EPYSL}..Employee TL ON TL.EmployeeCode=BTL.TeamLeaderEmployeeCode
                 LEFT JOIN {DbNames.EPYSL}..ExportOrderMaster EOM ON EOM.ExportOrderID = M.ExportOrderID
                 LEFT Join {DbNames.EPYSL}..OrderBankMaster OBM On OBM.StyleMasterID = EOM.StyleMasterID
@@ -13361,7 +13361,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	            Outer Apply
 	            (
 		            Select SUM(FBAC.BookingQty)OrderQtyKG 
-                    from FBookingAcknowledgeChild FBAC
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC
 		            INNER JOIN {DbNames.EPYSL}..BookingChild BC ON BC.BookingChildID =FBAC.BookingChildID
 		            Where FBAC.BookingID=M.BookingID AND FBAC.IsDeleted = 0
 	            )OQK;
@@ -13399,12 +13399,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BAC.StructureDays, ISNULL(Supplier.MappingCompanyID,0) TextileCompanyID, KMS.TypeID As KTypeId,
                         BAC.RefSourceID,BAC.RefSourceNo
 
-	                    FROM FBookingAcknowledgeChild BAC
-	                    LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
-                        INNER JOIN YarnBookingChild_New YBC ON YBC.BookingChildID=BAC.BookingChildID
-						INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID=YBC.YBookingID AND YBM.BookingID = BAC.BookingID
-                        INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
+                        INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.BookingChildID=BAC.BookingChildID
+						INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID=YBC.YBookingID AND YBM.BookingID = BAC.BookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = {joinName}.SubGroupID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = BAC.A1ValueID
@@ -13416,8 +13416,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BAC.YarnBrandID
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BAC.TechnicalNameID
-	                    LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BAC.MachineTypeId
+	                    LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BAC.TechnicalNameID
+	                    LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BAC.MachineTypeId
 	                    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV2 ON ETV2.ValueID = BAC.BrandID
 	                    LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = BA.SupplierID
                         WHERE ISG.SubGroupID = 1  AND BAC.IsDeleted = 0 AND BAC.BookingQty > 0
@@ -13476,12 +13476,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    YarnProgram = CASE WHEN BA.IsSample = 0 THEN ETV.ValueName ELSE ETV1.ValueName END,
 	                    YarnBrandID = CASE WHEN BA.IsSample = 0 THEN A.YarnBrandID ELSE SBCon.YarnBrandID END
 
-	                    FROM FBookingAcknowledgeChild BAC
-	                    LEFT JOIN FBookingAcknowledge BA ON BA.FBAckID=BAC.AcknowledgeID
-                        INNER JOIN YarnBookingChild_New YBC ON YBC.BookingChildID=BAC.BookingChildID
-						INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID=YBC.YBookingID AND YBM.BookingID = BAC.BookingID
-                        INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
+	                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} BA ON BA.FBAckID=BAC.AcknowledgeID
+                        INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.BookingChildID=BAC.BookingChildID
+						INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID=YBC.YBookingID AND YBM.BookingID = BAC.BookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID AND FBC.BookingId = YBM.BookingId AND ISNULL(FBC.BookingQty,0) > 0
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingChildID = BAC.BookingChildID AND FCM.ConsumptionID = BAC.ConsumptionID
 
 	                    LEFT Join {DbNames.EPYSL}..BookingChild A on A.ConsumptionID = BAC.ConsumptionID AND A.ItemMasterID = BAC.ItemMasterID
 	                    LEFT Join {DbNames.EPYSL}..SampleBookingConsumption SBCon On SBCon.ConsumptionID = BAC.ConsumptionID
@@ -13496,8 +13496,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV5 ON ISV5.SegmentValueID = IM.Segment5ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BAC.TechnicalNameID
-	                    LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BAC.MachineTypeId
+	                    LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BAC.TechnicalNameID
+	                    LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BAC.MachineTypeId
 	                    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV2 ON ETV2.ValueID = BAC.BrandID
 	                    LEFT Join {DbNames.EPYSL}..Contacts Supplier On Supplier.ContactID = BA.SupplierID
 
@@ -13527,57 +13527,57 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     ;With A As(
 	                    select Min(FBP.FBAChildPlanningID) FBAChildPlanningID, FBP.BookingChildID, FBP.AcknowledgeID, FBP.CriteriaID
-	                    From FBAChildPlanning FBP
-	                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBP.AcknowledgeID
+	                    FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FBP
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBP.AcknowledgeID
 	                    Where FBA.BookingNo = '{bookingNo}'
 	                    Group By BookingChildID, AcknowledgeID, CriteriaID
                     )
                     SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                     FROM A CP
-                    INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                    INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                     GROUP BY cp.BookingChildID, CR.CriteriaName
 
                     --Technical Name
                     SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                    FROM FabricTechnicalName T
-                    LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                    LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                    FROM {TableNames.FabricTechnicalName} T
+                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                    LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                     Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                     --M/c type
                     ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                    FROM KnittingMachine a
-                    INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                    Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                    FROM {TableNames.KNITTING_MACHINE} a
+                    INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                    Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                     --Where c.TypeName != 'Flat Bed'
                     GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                     --CriteriaNames
                         ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                    FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                    FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                     GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                     --FBAChildPlannings
-                    ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                    ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                     --FBookingAcknowledgeChildDetails (Fabric)
                     SELECT *
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID = A.BookingChildID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID=B.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID = A.BookingChildID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID=B.AcknowledgeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND B.SubGroupID IN (1) AND B.IsDeleted = 0;
 
                     --FBookingAcknowledgeChildDetails (Collar & Cuff)
                     SELECT *
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID = A.BookingChildID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID=B.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID = A.BookingChildID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID=B.AcknowledgeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND B.SubGroupID IN (11,12) AND B.IsDeleted = 0;
 
                     --Brand List
                     ;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-                    FROM KnittingMachine KM
-                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    FROM {TableNames.KNITTING_MACHINE} KM
+                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
                     ORDER BY [text];
 
@@ -13588,14 +13588,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 						THEN SUBSTRING(YBM.YBookingNo, 1, CHARINDEX('-Add', YBM.YBookingNo) - 1)
 						ELSE YBM.YBookingNo
 					END AS YBookingNo
-					FROM YarnBookingChild_New YBC
-					INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
+					FROM {TableNames.YarnBookingChild_New} YBC
+					INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
 					WHERE YBM.YBookingNo = '{yBookingNo}'
 					),
 					PrevAllowance AS(
 					Select YBM.SubGroupID, YBC.ConsumptionID, YBC.YarnAllowance
-					FROM YarnBookingChild_New YBC
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
+					FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
 					INNER JOIN DefaultBookingNo DBN ON DBN.YBookingNo=YBM.YBookingNo
 					)
                     SELECT YBC.*, ExistingYarnAllowance = PA.YarnAllowance, TotalYarnAllowance =  PA.YarnAllowance + YBC.YarnAllowance,
@@ -13605,8 +13605,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChild_New YBC
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
+                    FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
 					INNER JOIN PrevAllowance PA ON PA.ConsumptionID = YBC.ConsumptionID
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBC.ItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -13627,9 +13627,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChildItem_New YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
+                    FROM {TableNames.YarnBookingChildItem_New} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
 					LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YBCI.SpinnerId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -13650,9 +13650,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChildItem_New_Revision YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
+                    FROM {TableNames.YarnBookingChildItem_New_Revision} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
 					LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YBCI.SpinnerId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -13670,12 +13670,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    Select ISF.BookingID, RollID, ISF.ItemMasterID, RollNo, Shade, ISF.BatchNo, TagNo, ISF.GSM, LengthInInch, WidthInInch, CCID1, CCID4, RollQtyInKG = RollQtyInKG, 
 	                    RollQtyInKGPcs = RollQtyInKGPcs, AOPRoll, ReceiveStatus, ISF.WeightSheetNo, IsReject, IsExcess, IsQtyDecrease, IsOrderCancel, IsReturn, IsOrderCCBreakDown,
 	                    LocationID, RackID
-	                    From EPYSLTEX..ItemFinishStockRoll ISF
+	                    FROM {TableNames.ItemFinishStockRoll} ISF
 	                    Inner Join  {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = ISF.ItemMasterID
-	                    Inner Join BulkBookingFinishFabricUtilization BB On BB.ItemMasterID  = IM.ItemMasterID
-	                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = BB.YBChildID
-	                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-	                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+	                    Inner JOIN {TableNames.BulkBookingFinishFabricUtilization} BB On BB.ItemMasterID  = IM.ItemMasterID
+	                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = BB.YBChildID
+	                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+	                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
 	                    WHERE M.YBookingNo ='{yBookingNo}'
                     ),FFQTY As(
 						Select 
@@ -13692,12 +13692,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
 				                                        When (ISG.SubGroupName = 'Collar' Or ISG.SubGroupName = 'Cuff') and ISF.IsReject = 0 and ISF.IsQtyDecrease = 0 and ISF.IsOrderCancel = 1 and ISF.IsOrderCCBreakDown = 0 Then Sum(ISF.RollQtyInKGPcs) Else 0 End
                                        				             
                                        
-					    FROM BulkBookingFinishFabricUtilization FFU
+					    FROM {TableNames.BulkBookingFinishFabricUtilization} FFU
 						Inner Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = FFU.SubGroupID
 						Inner Join ISF On ISF.ItemMasterID = FFU.ItemMasterID
-	                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = FFU.YBChildID
-	                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-	                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+	                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = FFU.YBChildID
+	                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+	                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
 						WHERE FBA.BookingNo ='{yBookingNo}'
 						Group By FFU.BBFFUtilizationID, ISG.SubGroupName,ISF.IsExcess,ISF.IsQtyDecrease,ISF.IsOrderCancel,ISF.IsOrderCCBreakDown,ISF.IsReject
 
@@ -13712,10 +13712,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 					                   --      (Case When FFU.SubGroupID = 1 Then 0 Else Sum(ISF.RollQtyInKGPcs) End)
                         ,UserName = IIF(ISNULL(FFU.UpdatedBy,0) = 0,EAd.EmployeeName,EUP.EmployeeName)
 
-                        FROM BulkBookingFinishFabricUtilization FFU
-                        INNER JOIN YarnBookingChild_New C ON C.YBChildID = FFU.YBChildID
-                        INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                        INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                        FROM {TableNames.BulkBookingFinishFabricUtilization} FFU
+                        INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = FFU.YBChildID
+                        INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                         Left Join {DbNames.EPYSL}..ExportOrderMaster EOM On EOM.ExportOrderID = FFU.ExportOrderID
                         Left Join {DbNames.EPYSL}..ItemSegmentValue ISVC On ISVC.SegmentValueID = FFU.ColorID
                         Left Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = FFU.BuyerID And CT.ContactID >0
@@ -13752,10 +13752,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     Select GFU.* ,ExportOrderNo = ISNULL(EOM.ExportOrderNo,''), ColorName = ISNULL(ISVC.SegmentValue,''), Buyer = ISNULL(CT.ShortName,''),
                     FabricType = ISVFT.SegmentValue,Composition  = ISVCOM.SegmentValue
-                    From FBookingAcknowledgeChildGFUtilization GFU
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = GFU.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.FBookingAcknowledgeChildGFUtilization} GFU
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = GFU.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     Left Join {DbNames.EPYSL}..ExportOrderMaster EOM On EOM.ExportOrderID = GFU.ExportOrderID
                     Left Join {DbNames.EPYSL}..ItemSegmentValue ISVC On ISVC.SegmentValueID = GFU.ColorID
                     Left Join {DbNames.EPYSL}..ItemSegmentValue ISVFT On ISVFT.SegmentValueID = GFU.FabricTypeID
@@ -13771,10 +13771,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     YarnDetails = YSS.YarnCategory,
                     YSM.SampleStockQty, YSM.LiabilitiesStockQty, YSM.UnusableStockQty, YSM.LeftoverStockQty,
                     GYU.*
-                    From BulkBookingGreyYarnUtilization GYU
-                    INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
+                    FROM {TableNames.BulkBookingGreyYarnUtilization} GYU
+                    INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
                     INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
                     INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
@@ -13786,32 +13786,32 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ---BulkBookingDyedYarnUtilization
                     Select 
                     DYU.*,EOM.ExportOrderNo, Buyer = CC.ShortName
-                    From BulkBookingDyedYarnUtilization DYU
-                    INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
-                    INNER JOIN YarnBookingChild_New C ON C.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = C.YBookingID
-					INNER JOIN FBookingAcknowledge FBA ON FBA.BookingID = M.BookingID
+                    FROM {TableNames.BulkBookingDyedYarnUtilization} DYU
+                    INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = DYU.YBChildItemID
+                    INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
+					INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
 					INNER JOIN {DbNames.EPYSL}..ExportOrderMaster EOM On EOM.ExportOrderID = DYU.ExportOrderID
 				    INNER JOIN {DbNames.EPYSL}..Contacts CC On CC.ContactID = DYU.BuyerID
                     Where  M.YBookingNo =  '{yBookingNo}';
 
                     ---FBookingAcknowledgeChildReplacement
                     SELECT U.*
-                    FROM FBookingAcknowledgeChildReplacement U
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = YBC.YBookingID
-                    --INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = U.BookingChildID
-                    --INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+                    FROM {TableNames.FBookingAcknowledgeChildReplacement} U
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = YBC.YBookingID
+                    --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = U.BookingChildID
+                    --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
                     WHERE M.YBookingNo =  '{yBookingNo}';
 
                     ---FBookingAcknowledgeChildItemNetReqQTY
                     SELECT U.*
-                    FROM FBookingAcknowledgeChildItemNetReqQTY U
-					INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = U.YBChildItemID
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN YarnBookingMaster_New M ON M.YBookingID = YBC.YBookingID
-                    --INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID
-                    --INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+                    FROM {TableNames.FBookingAcknowledgeChildItemNetReqQTY} U
+					INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = U.YBChildItemID
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = YBC.YBookingID
+                    --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID
+                    --INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
                     WHERE M.YBookingNo =  '{yBookingNo}'
                     Group By U.ReplacementID,	U.YBChildItemID,	U.ReasonID,	
 				    U.DepertmentID,	U.ReplacementQTY,	U.Remarks,	U.AddedBy,	
@@ -13819,7 +13819,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                   
                     --Shade book
-                    SELECT ShadeCode [id], ShadeCode [text] FROM YarnShadeBook;
+                    SELECT ShadeCode [id], ShadeCode [text] FROM {TableNames.YARN_SHADE_BOOK};
               
                     -- YarnBookingChildItemYarnSubBrand
                     Select ETV.ValueID id, ETV.ValueName [text]
@@ -13834,11 +13834,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                      --FBookingAckChildFinishingProcess
                     SELECT FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
                     FMC.FMProcessID ProcessID, FMC.ProcessName ProcessName, FMC.ProcessTypeID, ET.ValueName ProcessType,FMC.FMCMasterID, b.ProcessName MachineName
-                    FROM FBookingAckChildFinishingProcess FP
-                    INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                    Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                    Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                    FROM {TableNames.FBookingAckChildFinishingProcess} FP
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                    Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                    Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                     Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != '' AND FAC.IsDeleted = 0
                     GROUP BY FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
@@ -13847,12 +13847,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     --FBookingAckChildFinishingProcessItem
                     SELECT FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
                     FMC.FMProcessID, FMC.ProcessName, FMC.ProcessTypeID, ET.ValueName,FMC.FMCMasterID, b.ProcessName
-                    FROM FBookingAckChildFinishingProcessItem FPI
-                    INNER JOIN FBookingAckChildFinishingProcess FP ON FP.FPChildID = FPI.FPChildID
-                    INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                    Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                    Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                    FROM {TableNames.FBookingAckChildFinishingProcessItem} FPI
+                    INNER JOIN {TableNames.FBookingAckChildFinishingProcess} FP ON FP.FPChildID = FPI.FPChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                    Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                    Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                     Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != '' AND FAC.IsDeleted = 0
                     GROUP BY FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
@@ -13863,14 +13863,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     --Gauge List
                     SELECT DISTINCT id = KM.GG, [text] = KM.GG
-                    from KnittingMachine KM
+                    FROM {TableNames.KNITTING_MACHINE} KM
                     WHERE KM.GG > 0
                     GROUP BY KM.GG
                     ORDER BY KM.GG;
 
                     --Dia List
                     SELECT id = KM.Dia, [text] = KM.Dia, additionalValue = KM.GG
-                    from KnittingMachine KM
+                    FROM {TableNames.KNITTING_MACHINE} KM
                     WHERE KM.GG > 0
                     GROUP BY KM.Dia, KM.GG
                     ORDER BY KM.GG
@@ -13902,8 +13902,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     SELECT KM.KnittingMachineID,KM.KnittingUnitID,KM.MachineNo,KM.MachineTypeID,KM.MachineSubClassID,
                     KM.GG,KM.Dia,KM.BrandID,KM.Capacity,KU.ShortName AS Contact,EV.ValueName AS Brand,
                     IsSubContact = 0
-                    from KnittingMachine KM
-                    Left Join KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    FROM {TableNames.KNITTING_MACHINE} KM
+                    Left JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
                     Left Join {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = KM.BrandID
                     Left Join {DbNames.EPYSL}..Contacts C ON C.ContactID = KU.ContactID
                     Left Join {DbNames.EPYSL}..ContactAdditionalInfo CAI ON CAI.ContactID = C.ContactID
@@ -13911,8 +13911,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     -- Machine Brand Collar/Cuff
                     SELECT KM.BrandID,EV.ValueName AS Brand
-                    from KnittingMachine KM
-                    Left Join KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    FROM {TableNames.KNITTING_MACHINE} KM
+                    Left JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
                     Left Join {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = KM.BrandID
                     Left Join {DbNames.EPYSL}..Contacts C ON C.ContactID = KU.ContactID
                     Left Join {DbNames.EPYSL}..ContactAdditionalInfo CAI ON CAI.ContactID = C.ContactID
@@ -14788,10 +14788,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BookingBy = CASE WHEN FBA.WithoutOB=1 THEN SBM.AddedBy ELSE BM.AddedBy END,
                         YBM.YBookingNo
 
-                        FROM FBookingAcknowledge FBA
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
 	                    LEFT JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = FBA.BookingID
 	                    LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = FBA.BookingID
-                        LEFT JOIN YarnBookingMaster_New YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
+                        LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.BookingID = FBA.BookingID AND YBM.SubGroupID = FBA.SubGroupID
                         WHERE FBA.BookingNo = '{bookingNo}'
                     ),
                 FBA1 AS
@@ -14799,7 +14799,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     SELECT a.BookingID,a.BOMMasterID,a.ItemGroupID,a.SubGroupID,a.Status,PreRevisionNo=a.PreProcessRevNo,RevisionNo=a.RevisionNo,
 	                b.BookingNo,b.BookingDate,b.Remarks,SM.StyleNo,b.ExportOrderID,SLNo='',SM.StyleMasterID,
 	                b.BuyerID,b.BuyerTeamID,b.CompanyID,b.SupplierID,SM.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(BC.BookingQty)
-                    FROM FabricBookingAcknowledge A
+                    FROM {TableNames.FabricBookingAcknowledge} A
 				    JOIN {DbNames.EPYSL}..BookingMaster b on b.BookingID = a.BookingID
 					Inner Join {DbNames.EPYSL}..BookingChild BC On BC.BookingID = A.BookingID
 				    JOIN {DbNames.EPYSL}..ExportOrderMaster EO ON EO.ExportOrderID = B.ExportOrderID
@@ -14814,7 +14814,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     SELECT a.BookingID,a.BOMMasterID,a.ItemGroupID,a.SubGroupID,a.Status,PreRevisionNo=a.PreProcessRevNo,RevisionNo=a.RevisionNo,
 	                b.BookingNo,b.BookingDate,b.Remarks,b.StyleNo,b.ExportOrderID,b.SLNo,b.StyleMasterID,
 	                b.BuyerID,b.BuyerTeamID,CompanyID=b.ExecutionCompanyID,b.SupplierID,b.SeasonID,a.WithoutOB,b.InHouseDate,BookingQty= SUM(c.RequiredQty)
-                    FROM FabricBookingAcknowledge A
+                    FROM {TableNames.FabricBookingAcknowledge} A
 				    Inner Join {DbNames.EPYSL}..SampleBookingMaster b on b.BookingID = a.BookingID
 					Inner Join {DbNames.EPYSL}..SampleBookingConsumptionChild c ON c.BookingID = a.BookingID
                     WHERE b.BookingNo in ('{bookingNo}')
@@ -14861,7 +14861,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BC.Remarks, BC.LabDipNo, FBC.MachineGauge, FBC.MachineDia
 	                    FROM {DbNames.EPYSL}..BookingChild BC
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = BC.BookingID
-	                    LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = BC.BookingChildID
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = BC.BookingChildID
 	                    WHERE BM.BookingNo = '{bookingNo}' AND BC.SubGroupID = 1
 
 	                    UNION
@@ -14872,7 +14872,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BC.Remarks, BC.LabDipNo, FBC.MachineGauge, FBC.MachineDia
 	                    FROM {DbNames.EPYSL}..SampleBookingConsumption BC
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster BM ON BM.BookingID = BC.BookingID
-	                    LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.ConsumptionID = BC.ConsumptionID AND FBC.BookingID = BC.BookingID AND FBC.SubGroupID = BC.SubGroupID
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.ConsumptionID = BC.ConsumptionID AND FBC.BookingID = BC.BookingID AND FBC.SubGroupID = BC.SubGroupID
 	                    WHERE BM.BookingNo = '{bookingNo}' AND BC.SubGroupID = 1
                      ),
                     FBAC AS
@@ -14902,7 +14902,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    FabricWidth = CASE WHEN ISG.SubGroupID = 1 THEN ISV5.SegmentValue ELSE '' END
 
 	                    From AllChilds SBC 
-	                    INNER Join FBookingAcknowledge M On M.BookingID = SBC.BookingID
+	                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} M On M.BookingID = SBC.BookingID
 	                    Left Join {DbNames.EPYSL}..Unit U On U.UnitID = SBC.BookingUnitID
 	                    INNER Join {DbNames.EPYSL}..ItemGroup IG On IG.ItemGroupID = SBC.ItemGroupID
 	                    INNER Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = M.SubGroupID
@@ -14950,8 +14950,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BookingQty = CASE WHEN FBAC.SubGroupID = 1 THEN Sum(FBAC.BookingQty) ELSE (0.045 * ((Convert(decimal(18,3), ISNULL(FBAC.Length,0)) * Convert(decimal(18,3), ISNULL(FBAC.Width,0)))/420)) * (Sum(FBAC.BookingQty) * FBAC.RelativeFactor) END
 	                    ,RS.RefSourceID, RS.RefSourceNo, RS.SourceConsumptionID, RS.SourceItemMasterID, FBAC.FabricWidth, T.TechnicalName, KMS.SubClassName MachineType
                         FROM FBAC
-                        LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = FBAC.MachineTypeId
-                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBAC.TechnicalNameID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = FBAC.MachineTypeId
+                        LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBAC.TechnicalNameID
                         LEFT JOIN RSN RS ON RS.BookingID = FBAC.BookingID AND RS.ConsumptionID = FBAC.ConsumptionID
 	                    Group By FBAC.BookingID, FBAC.BookingChildID, FBAC.ItemGroupID, FBAC.SubGroupID, FBAC.ItemMasterID, FBAC.SubGroupName, FBAC.MachineGauge, FBAC.MachineDia,
 	                    BookingUnitID,LengthYds,LengthInch,FUPartID,YarnBrandID, LabDipNo,Remarks,YarnType,YarnBrand,PartName, FBAC.BuyerID, FBAC.
@@ -14972,7 +14972,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BC.Remarks, BC.LabDipNo
 	                    FROM {DbNames.EPYSL}..BookingChild BC
 	                    INNER JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = BC.BookingID
-	                    LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = BC.BookingChildID
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = BC.BookingChildID
 	                    WHERE BM.BookingNo = '{bookingNo}' AND BC.SubGroupID IN (11,12)
 
 	                    UNION
@@ -14984,7 +14984,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
 	                    FROM {DbNames.EPYSL}..SampleBookingConsumption BC
 	                    INNER JOIN {DbNames.EPYSL}..SampleBookingMaster BM ON BM.BookingID = BC.BookingID
-	                    LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.ConsumptionID = BC.ConsumptionID AND FBC.BookingID = BC.BookingID AND FBC.SubGroupID = BC.SubGroupID
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.ConsumptionID = BC.ConsumptionID AND FBC.BookingID = BC.BookingID AND FBC.SubGroupID = BC.SubGroupID
 	                    WHERE BM.BookingNo = '{bookingNo}' AND BC.SubGroupID IN (11,12)
                      ),
                     FBAC AS
@@ -15014,7 +15014,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    FabricWidth = CASE WHEN ISG.SubGroupID = 1 THEN ISV5.SegmentValue ELSE '' END
 
 	                    From AllChilds SBC 
-	                    INNER Join FBookingAcknowledge M On M.FBAckID = SBC.AcknowledgeID
+	                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} M On M.FBAckID = SBC.AcknowledgeID
 	                    Left Join {DbNames.EPYSL}..Unit U On U.UnitID = SBC.BookingUnitID
 	                    INNER Join {DbNames.EPYSL}..ItemGroup IG On IG.ItemGroupID = SBC.ItemGroupID
 	                    INNER Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = {joinName2}.SubGroupID
@@ -15062,8 +15062,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                    BookingQty = CASE WHEN FBAC.SubGroupID = 1 THEN Sum(FBAC.BookingQty) ELSE (0.045 * ((Convert(decimal(18,3), ISNULL(FBAC.Length,0)) * Convert(decimal(18,3), ISNULL(FBAC.Width,0)))/420)) * (Sum(FBAC.BookingQty) * FBAC.RelativeFactor) END
 	                    ,RS.RefSourceID, RS.RefSourceNo, RS.SourceConsumptionID, RS.SourceItemMasterID, FBAC.FabricWidth, T.TechnicalName, KMS.SubClassName MachineType
                         FROM FBAC
-                        LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = FBAC.MachineTypeId
-                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBAC.TechnicalNameID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = FBAC.MachineTypeId
+                        LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBAC.TechnicalNameID
                         LEFT JOIN RSN RS ON RS.BookingID = FBAC.BookingID AND RS.ConsumptionID = FBAC.ConsumptionID
 	                    Group By FBAC.BookingID, FBAC.BookingChildID, FBAC.ItemGroupID, FBAC.SubGroupID, FBAC.ItemMasterID, FBAC.SubGroupName,
 	                    BookingUnitID,LengthYds,LengthInch,FUPartID,YarnBrandID,
@@ -15078,57 +15078,57 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     ;With A As(
 	                    select Min(FBP.FBAChildPlanningID) FBAChildPlanningID, FBP.BookingChildID, FBP.AcknowledgeID, FBP.CriteriaID
-	                    From FBAChildPlanning FBP
-	                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBP.AcknowledgeID
+	                    FROM {TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING} FBP
+	                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBP.AcknowledgeID
 	                    Where FBA.BookingNo = '{bookingNo}'
 	                    Group By BookingChildID, AcknowledgeID, CriteriaID
                     )
                     SELECT cp.BookingChildID, CR.CriteriaName, Sum(CR.ProcessTime)TotalTime, CriteriaIDs = String_Agg(CR.CriteriaID,',')
                     FROM A CP
-                    INNER JOIN BDSCriteria_HK CR ON CR.CriteriaID = CP.CriteriaID
+                    INNER JOIN {TableNames.BDS_CRITERIA_HK} CR ON CR.CriteriaID = CP.CriteriaID
                     GROUP BY cp.BookingChildID, CR.CriteriaName
 
                     --Technical Name
                     SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text], ISNULL(ST.[Days], 0) [desc], Cast(SC.SubClassID as varchar) additionalValue
-                    FROM FabricTechnicalName T
-                    LEFT JOIN FabricTechnicalNameKMachineSubClass SC ON SC.TechnicalNameID = T.TechnicalNameId
-                    LEFT JOIN KnittingMachineStructureType_HK ST ON ST.StructureTypeID = SC.StructureTypeID
+                    FROM {TableNames.FabricTechnicalName} T
+                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS} SC ON SC.TechnicalNameID = T.TechnicalNameId
+                    LEFT JOIN {TableNames.KNITTING_MACHINE_STRUCTURE_TYPE_HK} ST ON ST.StructureTypeID = SC.StructureTypeID
                     Group By T.TechnicalNameId, T.TechnicalName, ST.Days, SC.SubClassID;
 
                     --M/c type
                     ;SELECT CAST(a.MachineSubClassID AS varchar) [id], b.SubClassName [text], b.TypeID [desc], c.TypeName additionalValue
-                    FROM KnittingMachine a
-                    INNER JOIN KnittingMachineSubClass b ON b.SubClassID = a.MachineSubClassID
-                    Inner Join KnittingMachineType c On c.TypeID = b.TypeID
+                    FROM {TableNames.KNITTING_MACHINE} a
+                    INNER JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} b ON b.SubClassID = a.MachineSubClassID
+                    Inner JOIN {TableNames.KNITTING_MACHINE_TYPE} c On c.TypeID = b.TypeID
                     --Where c.TypeName != 'Flat Bed'
                     GROUP BY a.MachineSubClassID, b.SubClassName, b.TypeID, c.TypeName;
 
                     --CriteriaNames
                         ;SELECT CriteriaName,CriteriaSeqNo,(CASE WHEN CriteriaName  IN('Batch Preparation','Quality Check') THEN '1'ELSE'0'END) AS TotalTime
-                    FROM BDSCriteria_HK --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
+                    FROM {TableNames.BDS_CRITERIA_HK} --WHERE CriteriaName NOT IN('Batch Preparation','Testing')
                     GROUP BY CriteriaSeqNo,CriteriaName order by CriteriaSeqNo,CriteriaName;
 
                     --FBAChildPlannings
-                    ;SELECT * FROM BDSCriteria_HK order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
+                    ;SELECT * FROM {TableNames.BDS_CRITERIA_HK} order by CriteriaSeqNo, OperationSeqNo, CriteriaName;
 
                     --FBookingAcknowledgeChildDetails (Fabric)
                     SELECT *
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID=B.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID=B.AcknowledgeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND B.SubGroupID IN (1);
 
                     --FBookingAcknowledgeChildDetails (Collar & Cuff)
                     SELECT *
-                    FROM FBookingAcknowledgeChildDetails A
-                    LEFT JOIN FBookingAcknowledgeChild B ON B.BookingChildID=A.BookingChildID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID=B.AcknowledgeID
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS} A
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} B ON B.BookingChildID=A.BookingChildID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID=B.AcknowledgeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND B.SubGroupID IN (11,12);
 
                     --Brand List
                     ;SELECT DISTINCT(KM.BrandID) [id], EV.ValueName [text]
-                    FROM KnittingMachine KM
-                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    FROM {TableNames.KNITTING_MACHINE} KM
+                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue EV ON ValueID = KM.BrandID
                     ORDER BY [text];
 
@@ -15139,9 +15139,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChild_New YBC
-                    INNER JOIN FBookingAcknowledgeChild FAB ON FAB.BookingChildID = YBC.BookingChildID
-                    INNER JOIN FBookingAcknowledge FA ON FA.FBAckID = FAB.AcknowledgeID
+                    FROM {TableNames.YarnBookingChild_New} YBC
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAB ON FAB.BookingChildID = YBC.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FA ON FA.FBAckID = FAB.AcknowledgeID
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBC.ItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -15161,10 +15161,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ,ISV1.SegmentValue AS Segment1ValueDesc, ISV2.SegmentValue AS Segment2ValueDesc, ISV3.SegmentValue AS Segment3ValueDesc
                     ,ISV4.SegmentValue AS Segment4ValueDesc, ISV5.SegmentValue AS Segment5ValueDesc, ISV6.SegmentValue AS Segment6ValueDesc
                     ,ISV7.SegmentValue AS Segment7ValueDesc, ISV8.SegmentValue AS Segment8ValueDesc
-                    FROM YarnBookingChildItem_New YBCI
-                    INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                    INNER JOIN FBookingAcknowledgeChild FAB ON FAB.BookingChildID = YBC.BookingChildID
-                    INNER JOIN FBookingAcknowledge FA ON FA.FBAckID = FAB.AcknowledgeID
+                    FROM {TableNames.YarnBookingChildItem_New} YBCI
+                    INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAB ON FAB.BookingChildID = YBC.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FA ON FA.FBAckID = FAB.AcknowledgeID
 					LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YBCI.SpinnerId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YBCI.YItemMasterID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -15178,7 +15178,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     WHERE FA.BookingNo = '{bookingNo}';
                   
                     --Shade book
-                    SELECT ShadeCode [id], ShadeCode [text] FROM YarnShadeBook;
+                    SELECT ShadeCode [id], ShadeCode [text] FROM {TableNames.YARN_SHADE_BOOK};
               
                     -- YarnBookingChildItemYarnSubBrand
                     Select ETV.ValueID id, ETV.ValueName [text]
@@ -15193,11 +15193,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                      --FBookingAckChildFinishingProcess
                     SELECT FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
                     FMC.FMProcessID ProcessID, FMC.ProcessName ProcessName, FMC.ProcessTypeID, ET.ValueName ProcessType,FMC.FMCMasterID, b.ProcessName MachineName
-                    FROM FBookingAckChildFinishingProcess FP
-                    INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                    Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                    Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                    FROM {TableNames.FBookingAckChildFinishingProcess} FP
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                    Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                    Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                     Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                     GROUP BY FP.FPChildID, FP.BookingChildID, FP.ProcessID, FP.ColorID, FP.SeqNo, FP.ProcessTypeID, FP.IsPreProcess, FP.Remarks,
@@ -15206,12 +15206,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     --FBookingAckChildFinishingProcessItem
                     SELECT FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
                     FMC.FMProcessID, FMC.ProcessName, FMC.ProcessTypeID, ET.ValueName,FMC.FMCMasterID, b.ProcessName
-                    FROM FBookingAckChildFinishingProcessItem FPI
-                    INNER JOIN FBookingAckChildFinishingProcess FP ON FP.FPChildID = FPI.FPChildID
-                    INNER JOIN FBookingAcknowledgeChild FAC ON FAC.BookingChildID = FP.BookingChildID
-                    INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FAC.AcknowledgeID
-                    Inner JOIN FinishingMachineProcess_HK FMC ON FMC.FMProcessID = FP.ProcessID
-                    Inner Join FinishingMachineConfigurationMaster b on b.FMCMasterID = FMC.FMCMasterID
+                    FROM {TableNames.FBookingAckChildFinishingProcessItem} FPI
+                    INNER JOIN {TableNames.FBookingAckChildFinishingProcess} FP ON FP.FPChildID = FPI.FPChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FAC ON FAC.BookingChildID = FP.BookingChildID
+                    INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FAC.AcknowledgeID
+                    Inner JOIN {TableNames.FinishingMachineProcess_HK} FMC ON FMC.FMProcessID = FP.ProcessID
+                    Inner JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} b on b.FMCMasterID = FMC.FMCMasterID
                     Inner join {DbNames.EPYSL}..EntityTypeValue ET on ET.ValueID = FMC.ProcessTypeID
                     WHERE FBA.BookingNo = '{bookingNo}' AND FMC.ProcessName != ''
                     GROUP BY FPI.FPChildItemID, FPI.FPChildID, FPI.BookingChildID, FPI.SegmentNo, FPI.ItemMasterID, FPI.Qty, FPI.IsPreProcess, FPI.ActualQty,
@@ -15222,14 +15222,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     --Gauge List
                     SELECT DISTINCT id = KM.GG, [text] = KM.GG
-                    from KnittingMachine KM
+                    FROM {TableNames.KNITTING_MACHINE} KM
                     WHERE KM.GG > 0
                     GROUP BY KM.GG
                     ORDER BY KM.GG;
 
                     --Dia List
                     SELECT id = KM.Dia, [text] = KM.Dia, additionalValue = KM.GG
-                    from KnittingMachine KM
+                    FROM {TableNames.KNITTING_MACHINE} KM
                     WHERE KM.GG > 0
                     GROUP BY KM.Dia, KM.GG
                     ORDER BY KM.GG
@@ -15383,7 +15383,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             //var query =
             //   $@";With A AS(
             //Select BookingID, BookingChildID, ItemMasterID, DeliveryDate
-            //From FBookingAcknowledgeChild
+            //FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD}
             //Where BookingID ={bookingId}
             //   )
             //   Select ISV.SegmentValue Color, Max(A.DeliveryDate) DeliveryDate
@@ -15395,7 +15395,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             var query =
               $@";With A AS(
                     Select BookingID, BookingChildID, ConsumptionID, ItemMasterID, DeliveryDate
-                    From FBookingAcknowledgeChild
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD}
                     Where BookingID = {bookingId}
                 ),
                 R AS
@@ -15404,8 +15404,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     Max(A.DeliveryDate) DeliveryDate
                     From A
                     --Inner Join FBookingAcknowledgeChildDetails B ON B.BookingChildID = A.BookingChildID
-                    LEFT JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = A.BookingChildID
-                    LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = A.BookingChildID
+                    LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
                     LEFT JOIN {DbNames.EPYSL}..BookingChildText BCT On BCT.BookingID = A.BookingID and BCT.BookingChildID = A.BookingChildID
                     LEFT JOIN {DbNames.EPYSL}..SampleBookingConsumptionText SBC On SBC.BookingID = A.BookingID and SBC.ConsumptionID = A.ConsumptionID
                     Left Join {DbNames.EPYSL}..SampleBookingConsumption SBCC On SBCC.BookingID = A.BookingID and SBCC.ConsumptionID = A.ConsumptionID
@@ -15433,8 +15433,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
         public async Task<List<FBookingAcknowledge>> GetItsSampleOrNot(string BookingNo)
         {
             string query = $@"SELECT FBA.IsSample, FBA.WithoutOB,FBA.BookingID
-                        FROM FBookingAcknowledge FBA
-                        LEFT JOIN FabricBookingAcknowledge FBA1 ON FBA1.BookingID = FBA.BookingID
+                        FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+                        LEFT JOIN {TableNames.FabricBookingAcknowledge} FBA1 ON FBA1.BookingID = FBA.BookingID
                         WHERE FBA.BookingNo ='{BookingNo}'
                         Group By FBA.IsSample, FBA.WithoutOB, FBA.BookingID";
             try
@@ -15460,7 +15460,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             string sql = $@"  
                 --Seq 1
-                 Select top 1 * From FBookingAcknowledge Where BookingNo = '{bookingNo}';
+                 Select top 1 * FROM {TableNames.FBBOOKING_ACKNOWLEDGE} Where BookingNo = '{bookingNo}';
 
                 --Seq 2
                 WITH 
@@ -15494,10 +15494,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                Instruction = CASE WHEN M.IsSample = 0 THEN A.Remarks ELSE SBCon.Remarks END,
 	                YarnProgram = CASE WHEN M.IsSample = 0 THEN ETV.ValueName ELSE ETV1.ValueName END
 
-	                From FBookingAcknowledgeChild SBC 
+	                FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} SBC 
                     LEFT Join {DbNames.EPYSL}..BookingChild A on A.ConsumptionID = SBC.ConsumptionID AND A.ItemMasterID = SBC.ItemMasterID
 	                LEFT Join {DbNames.EPYSL}..SampleBookingConsumption SBCon On SBCon.ConsumptionID = SBC.ConsumptionID
-	                INNER Join FBookingAcknowledge M On M.FBAckID = SBC.AcknowledgeID
+	                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} M On M.FBAckID = SBC.AcknowledgeID
 	                Left Join {DbNames.EPYSL}..Unit U On U.UnitID = SBC.BookingUnitID
 	                INNER Join {DbNames.EPYSL}..ItemGroup IG On IG.ItemGroupID = SBC.ItemGroupID
 	                INNER Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SBC.SubGroupID
@@ -15534,8 +15534,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 	                FBAC.BookingQty,
 	                RS.RefSourceID, RS.RefSourceNo, RS.SourceConsumptionID, SourceItemMasterID = RS.ItemMasterID, FBAC.FabricWidth, T.TechnicalName, KMS.SubClassName MachineType,FBAC.Instruction, FBAC.YarnProgram
                     FROM FBAC
-                    LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = FBAC.MachineTypeId
-                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FBAC.TechnicalNameID
+                    LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = FBAC.MachineTypeId
+                    LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = FBAC.TechnicalNameID
 	                LEFT JOIN {DbNames.EPYSL}..BookingChildReferenceSource RS ON RS.BookingID = FBAC.BookingID AND RS.ConsumptionID = FBAC.ConsumptionID
 	                Group By FBAC.BookingID, FBAC.BookingChildID, FBAC.ItemGroupID, FBAC.SubGroupID, FBAC.ItemMasterID, FBAC.SubGroupName,
 	                BookingUnitID,LengthYds,LengthInch,FUPartID,YarnBrandID,
@@ -15548,28 +15548,28 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 SELECT * FROM FinalList;
 
                 SELECT U.*, FBC.BookingChildID
-				FROM BulkBookingFinishFabricUtilization U
-				INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-				INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID
-				INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+				FROM {TableNames.BulkBookingFinishFabricUtilization} U
+				INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
 				WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
 				SELECT U.*, FBC.BookingChildID
-				FROM FBookingAcknowledgeChildGFUtilization U
-				INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-				INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = YBC.BookingChildID
-				INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+				FROM {TableNames.FBookingAcknowledgeChildGFUtilization} U
+				INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = YBC.BookingChildID
+				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
                 WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};
 
                 ----FBookingAcknowledgeChildReplacement
                 SELECT U.*
-                FROM FBookingAcknowledgeChildReplacement U
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = U.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                INNER JOIN FBookingAcknowledgeChild FBC ON FBC.BookingChildID = U.BookingChildID
-                INNER JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBC.AcknowledgeID
+                FROM {TableNames.FBookingAcknowledgeChildReplacement} U
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = U.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = U.BookingChildID
+                INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBC.AcknowledgeID
                 WHERE FBA.BookingNo = '{bookingNo}' {additionQuery};";
 
             try
@@ -19591,8 +19591,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
         public async Task<FreeConceptMaster> GetAllAsyncR(int id)
         {
             var sql = $@"
-            ;select item.BookingID from FreeConceptMaster FC
-			INNER JOIN FBookingAcknowledge FA ON FA.BookingID = item.BookingID
+            ;select item.BookingID from {TableNames.RND_FREE_CONCEPT_MASTER} FC
+			INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FA ON FA.BookingID = item.BookingID
         where item.BookingID= {id}";
 
             try
@@ -19756,7 +19756,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
         public async Task<BDSDependentTNACalander> GetAllAsyncBDSTNAEvent_HK()
         {
             var sql = $@"
-            ;Select * From BDSTNAEvent_HK";
+            ;Select * FROM {TableNames.BDS_TNA_EVENT_HK}";
 
             try
             {
@@ -19788,18 +19788,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         BT.IsHoliDay,BT.IsPass,IM.ItemName,SBC.Segment1Desc Construction,SBC.Segment2Desc Composition,
                         SBC.Segment3Desc Color,SBC.Segment4Desc GSM,SBC.Segment5Desc FabricWidth,T.TechnicalName,
                         KMS.SubClassName MachineType,BC.LengthYds,BC.LengthInch,SBC.Segment6Desc DyeingType,SBC.Remarks Instruction,Count(*) Over() TotalRows
-                        from BDSDependentTNACalander BT
-                        INNER JOIN BDSTNAEvent_HK BH ON BH.EventID=BT.EventID
-                        INNER JOIN FBookingAcknowledge FA ON FA.BookingID=BT.BookingID
-                        INNER JOIN FBookingAcknowledgeChild BC ON BC.BookingChildID=BT.BookingChildID
+                        FROM {TableNames.BDS_Dependent_TNA_Calander} BT
+                        INNER JOIN {TableNames.BDS_TNA_EVENT_HK} BH ON BH.EventID=BT.EventID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FA ON FA.BookingID=BT.BookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BC ON BC.BookingChildID=BT.BookingChildID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = BC.BookingID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingConsumption SBC ON SBC.BookingID = SBM.BookingID AND SBC.ConsumptionID = BC.ConsumptionID
                         INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BC.ItemMasterID
                         INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = BC.SubGroupID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = BC.A1ValueID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BC.YarnBrandID
-                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BC.TechnicalNameID
-                        LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BC.MachineTypeId
+                        LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BC.TechnicalNameID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BC.MachineTypeId
                         LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = FA.BuyerID
                         LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FA.BuyerTeamID
                     ) A ";
@@ -19817,7 +19817,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By EventID ASC" : paginationInfo.OrderBy;
 
             var sql = $@"--Master Information
-                        SELECT EventID, EventDescription  from BDSTNAEvent_HK ";
+                        SELECT EventID, EventDescription  FROM {TableNames.BDS_TNA_EVENT_HK} ";
 
             sql += $@"
                 {paginationInfo.FilterBy}
@@ -19834,7 +19834,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             var sql =
                 $@"--BookingList
                     ;Select * From (SELECT FA.BookingID,FA.BookingNo
-                    From FBookingAcknowledge FA
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FA
                     Group By FA.BookingID,FA.BookingNo
                 ) A ";
 
@@ -19858,18 +19858,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         BT.IsHoliDay,BT.IsPass,IM.ItemName,SBC.Segment1Desc Construction,SBC.Segment2Desc Composition,
                         SBC.Segment3Desc Color,SBC.Segment4Desc GSM,SBC.Segment5Desc FabricWidth,T.TechnicalName,
                         KMS.SubClassName MachineType,BC.LengthYds,BC.LengthInch,SBC.Segment6Desc DyeingType,SBC.Remarks Instruction,Count(*) Over() TotalRows
-                        from BDSDependentTNACalander BT
-                        INNER JOIN BDSTNAEvent_HK BH ON BH.EventID=BT.EventID
-                        INNER JOIN FBookingAcknowledge FA ON FA.BookingID=BT.BookingID
-                        INNER JOIN FBookingAcknowledgeChild BC ON BC.BookingChildID=BT.BookingChildID
+                        FROM {TableNames.BDS_Dependent_TNA_Calander} BT
+                        INNER JOIN {TableNames.BDS_TNA_EVENT_HK} BH ON BH.EventID=BT.EventID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FA ON FA.BookingID=BT.BookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BC ON BC.BookingChildID=BT.BookingChildID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = BC.BookingID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingConsumption SBC ON SBC.BookingID = SBM.BookingID AND SBC.ConsumptionID = BC.ConsumptionID
                         INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BC.ItemMasterID
                         INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = BC.SubGroupID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = BC.A1ValueID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BC.YarnBrandID
-                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BC.TechnicalNameID
-                        LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BC.MachineTypeId
+                        LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BC.TechnicalNameID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BC.MachineTypeId
                         LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = FA.BuyerID
                         LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FA.BuyerTeamID
                         WHERE BT.EventDate between '{FromDate.ToShortDateString()}' AND '{ToDate.ToShortDateString()}'
@@ -19910,18 +19910,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         BT.IsHoliDay,BT.IsPass,IM.ItemName,SBC.Segment1Desc Construction,SBC.Segment2Desc Composition,
                         SBC.Segment3Desc Color,SBC.Segment4Desc GSM,SBC.Segment5Desc FabricWidth,T.TechnicalName,
                         KMS.SubClassName MachineType,BC.LengthYds,BC.LengthInch,SBC.Segment6Desc DyeingType,SBC.Remarks Instruction,Count(*) Over() TotalRows
-                        from BDSDependentTNACalander BT
-                        INNER JOIN BDSTNAEvent_HK BH ON BH.EventID=BT.EventID
-                        INNER JOIN FBookingAcknowledge FA ON FA.BookingID=BT.BookingID
-                        INNER JOIN FBookingAcknowledgeChild BC ON BC.BookingChildID=BT.BookingChildID
+                        FROM {TableNames.BDS_Dependent_TNA_Calander} BT
+                        INNER JOIN {TableNames.BDS_TNA_EVENT_HK} BH ON BH.EventID=BT.EventID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FA ON FA.BookingID=BT.BookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BC ON BC.BookingChildID=BT.BookingChildID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = BC.BookingID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingConsumption SBC ON SBC.BookingID = SBM.BookingID AND SBC.ConsumptionID = BC.ConsumptionID
                         INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BC.ItemMasterID
                         INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = BC.SubGroupID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = BC.A1ValueID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BC.YarnBrandID
-                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BC.TechnicalNameID
-                        LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BC.MachineTypeId
+                        LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BC.TechnicalNameID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BC.MachineTypeId
                         LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = FA.BuyerID
                         LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FA.BuyerTeamID
                         WHERE BT.BookingID IN ({ListData})
@@ -19946,18 +19946,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         BT.IsHoliDay,BT.IsPass,IM.ItemName,SBC.Segment1Desc Construction,SBC.Segment2Desc Composition,
                         SBC.Segment3Desc Color,SBC.Segment4Desc GSM,SBC.Segment5Desc FabricWidth,T.TechnicalName,
                         KMS.SubClassName MachineType,BC.LengthYds,BC.LengthInch,SBC.Segment6Desc DyeingType,SBC.Remarks Instruction,Count(*) Over() TotalRows
-                        from BDSDependentTNACalander BT
-                        INNER JOIN BDSTNAEvent_HK BH ON BH.EventID=BT.EventID
-                        INNER JOIN FBookingAcknowledge FA ON FA.BookingID=BT.BookingID
-                        INNER JOIN FBookingAcknowledgeChild BC ON BC.BookingChildID=BT.BookingChildID
+                        FROM {TableNames.BDS_Dependent_TNA_Calander} BT
+                        INNER JOIN {TableNames.BDS_TNA_EVENT_HK} BH ON BH.EventID=BT.EventID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FA ON FA.BookingID=BT.BookingID
+                        INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BC ON BC.BookingChildID=BT.BookingChildID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingMaster SBM ON SBM.BookingID = BC.BookingID
                         INNER JOIN {DbNames.EPYSL}..SampleBookingConsumption SBC ON SBC.BookingID = SBM.BookingID AND SBC.ConsumptionID = BC.ConsumptionID
                         INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BC.ItemMasterID
                         INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = BC.SubGroupID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = BC.A1ValueID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ETV ON ETV.ValueID = BC.YarnBrandID
-                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = BC.TechnicalNameID
-                        LEFT JOIN KnittingMachineSubClass KMS ON KMS.SubClassID = BC.MachineTypeId
+                        LEFT JOIN {TableNames.FabricTechnicalName} T ON T.TechnicalNameId = BC.TechnicalNameID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_SUBCLASS} KMS ON KMS.SubClassID = BC.MachineTypeId
                         LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = FA.BuyerID
                         LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FA.BuyerTeamID
                         WHERE BT.EventID IN ({EventListData})
@@ -19976,8 +19976,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             var sql = $@"Select * From (
                 SELECT BDE.DepenEventID,BDH.EventDescription
-                FROM BDSDependentTNAEvent_HK BDE
-                INNER JOIN BDSTNAEvent_HK BDH ON BDH.EventID=BDE.DepenEventID
+                FROM {TableNames.BDS_DEPENDENT_TNA_EVENT_HK} BDE
+                INNER JOIN {TableNames.BDS_TNA_EVENT_HK} BDH ON BDH.EventID=BDE.DepenEventID
                 WHERE BDE.EventID='{eventID}'
             ) A ";
             sql += $@"
@@ -22165,23 +22165,23 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query =
                     $@"SELECT FCM.* 
-                    FROM FreeConceptMaster FCM
+                    FROM {TableNames.RND_FREE_CONCEPT_MASTER} FCM
                     WHERE FCM.GroupConceptNo = '{bookingNo}';
 
                     SELECT FCC.* 
-                    FROM FreeConceptChildColor FCC
-                    INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = FCC.ConceptID
+                    FROM {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC
+                    INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = FCC.ConceptID
                     WHERE FCM.GroupConceptNo = '{bookingNo}';
 
                     SELECT MR.* 
-                    FROM FreeConceptMRMaster MR
-                    INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = MR.ConceptID
+                    FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+                    INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = MR.ConceptID
                     WHERE FCM.GroupConceptNo = '{bookingNo}';
 
                     SELECT MRC.* 
-                    FROM FreeConceptMRChild MRC
-                    INNER JOIN FreeConceptMRMaster MR ON MR.FCMRMasterID = MRC.FCMRMasterID
-                    INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = MR.ConceptID
+                    FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} MRC
+                    INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR ON MR.FCMRMasterID = MRC.FCMRMasterID
+                    INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = MR.ConceptID
                     WHERE FCM.GroupConceptNo = '{bookingNo}'";
             try
             {
@@ -22216,7 +22216,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
         private async Task<int> GetMaxAdditionNoYB(string yarnBookingNo)
         {
             string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["TexConnection"].ConnectionString;
-            var queryString = $"SELECT MaxValue=COUNT(distinct(YBookingNo)) FROM YarnBookingMaster_New WHERE YBookingNo LIKE '{yarnBookingNo}%'";
+            var queryString = $"SELECT MaxValue=COUNT(distinct(YBookingNo)) FROM {TableNames.YarnBookingMaster_New} WHERE YBookingNo LIKE '{yarnBookingNo}%'";
 
             int maxNo = 0;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -22532,7 +22532,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 			                                    Select BookingID, RollID, ISF.ItemMasterID, RollNo, Shade, BatchNo, TagNo, GSM, LengthInInch, WidthInInch, CCID1, CCID4, RollQtyInKG = RollQtyInKG, 
 			                                    RollQtyInKGPcs = RollQtyInKGPcs, AOPRoll, ReceiveStatus, WeightSheetNo, IsReject, IsExcess, IsQtyDecrease, IsOrderCancel, IsReturn, IsOrderCCBreakDown,
 			                                    LocationID, RackID
-			                                    From EPYSLTEX..ItemFinishStockRoll ISF
+			                                    FROM {TableNames.ItemFinishStockRoll} ISF
 			                                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = ISF.ItemMasterID
                                                 --Inner Join {DbNames.EPYSL}..ItemSegmentValue ISV2 On ISV2.SegmentValueID = IM.Segment2ValueID
 			                                    Inner Join {DbNames.EPYSL}..ItemSegmentValue ISV4 On ISV4.SegmentValueID = IM.Segment4ValueID
@@ -22542,57 +22542,57 @@ namespace EPYSLTEXCore.Application.Services.Booking
                                     ),FR As (
 		                                    Select ISF.CCID1, ISF.BookingID, ISF.ItemMasterID, ISF.RollID,  FactoryID = PDR.ReceivingUnitID, RM = PDR.Remarks--,
 		                                    From ISF
-		                                    Inner Join EPYSLTEX..PDReceiveChild PRC On PRC.CCID1 = ISF.CCID1 and PRC.BookingID = ISF.BookingID and PRC.ItemMasterID = ISF.ItemMasterID
-		                                    Inner Join EPYSLTEX..PDReceive PDR On PDR.PDID = PRC.PDID  and PDR.WeightSheetNo = ISF.WeightSheetNo 
-		                                    Inner Join EPYSLTEX..PDReceiveChildRoll PRCC On PRCC.PDID = PRC.PDID and PRCC.PDChildID = PRC.PDChildID and PRCC.RollID = ISF.RollID
+		                                    Inner JOIN EPYSLTEX..{TableNames.PDReceiveChild} PRC On PRC.CCID1 = ISF.CCID1 and PRC.BookingID = ISF.BookingID and PRC.ItemMasterID = ISF.ItemMasterID
+		                                    Inner JOIN EPYSLTEX..{TableNames.PDReceive} PDR On PDR.PDID = PRC.PDID  and PDR.WeightSheetNo = ISF.WeightSheetNo 
+		                                    Inner JOIN EPYSLTEX..{TableNames.PDReceiveChildRoll} PRCC On PRCC.PDID = PRC.PDID and PRCC.PDChildID = PRC.PDChildID and PRCC.RollID = ISF.RollID
 		                                    Where ISF.IsOrderCancel = 0 and ISF.IsQtyDecrease = 0 and ISF.IsReturn = 0 and IsOrderCCBreakDown = 0 
 
                                     ),IPR As (
 		                                    Select ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID,  FactoryID = IPR.ReceivingUnitID, RM = ''--,
 		                                    From ISF
-		                                    Inner Join EPYSLTEX..IssueProcessReceiveChild IPRC On IPRC.CCID1 = ISF.CCID1 and IPRC.BookingID = ISF.BookingID and IPRC.ItemMasterID = ISF.ItemMasterID
-		                                    Inner Join EPYSLTEX..IssueProcessReceiveMaster IPR On IPR.IssueReceiveID = IPRC.IssueReceiveID and IPR.WeightSheetNo = ISF.WeightSheetNo
-		                                    Inner Join EPYSLTEX..IssueProcessReceiveChildRoll IPRCC On IPRCC.IssueReceiveID = IPRC.IssueReceiveID and IPRCC.IssueChildID = IPRC.IssueChildID and IPRCC.RollID = ISF.RollID
+		                                    Inner JOIN EPYSLTEX..{TableNames.IssueProcessReceiveChild} IPRC On IPRC.CCID1 = ISF.CCID1 and IPRC.BookingID = ISF.BookingID and IPRC.ItemMasterID = ISF.ItemMasterID
+		                                    Inner JOIN EPYSLTEX..{TableNames.IssueProcessReceiveMaster} IPR On IPR.IssueReceiveID = IPRC.IssueReceiveID and IPR.WeightSheetNo = ISF.WeightSheetNo
+		                                    Inner JOIN EPYSLTEX..{TableNames.IssueProcessReceiveChildRoll} IPRCC On IPRCC.IssueReceiveID = IPRC.IssueReceiveID and IPRCC.IssueChildID = IPRC.IssueChildID and IPRCC.RollID = ISF.RollID
 		                                    Where ISF.IsOrderCancel = 0 and ISF.IsQtyDecrease = 0 and ISF.IsReturn = 0 and IsOrderCCBreakDown = 0 
 
                                     ),BTM As (
 		                                    Select ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID,  FactoryID = BTM.DeliveryToID, RM = ''
 		                                    From ISF
-		                                    Inner Join EPYSLTEX..BookingTransferChild BTC On  BTC.ToBookingID = ISF.BookingID and BTC.ToItemMasterID = ISF.ItemMasterID 
-		                                    Inner Join EPYSLTEX..BookingTransferMaster BTM On BTM.TransferMasterID = BTC.TransferMasterID and BTM.ToExportOrderID = ISF.CCID1 and BTM.WeightSheetNo = ISF.WeightSheetNo
-		                                    Inner Join EPYSLTEX..BookingTransferChildRoll BTCR On BTCR.TransferMasterID = BTC.TransferMasterID and BTCR.TransferChildID = BTC.TransferChildID and BTCR.RollID = ISF.RollID
+		                                    Inner JOIN EPYSLTEX..{TableNames.BookingTransferChild} BTC On  BTC.ToBookingID = ISF.BookingID and BTC.ToItemMasterID = ISF.ItemMasterID 
+		                                    Inner Join EPYSLTEX..{TableNames.BookingTransferMaster} BTM On BTM.TransferMasterID = BTC.TransferMasterID and BTM.ToExportOrderID = ISF.CCID1 and BTM.WeightSheetNo = ISF.WeightSheetNo
+		                                    Inner Join EPYSLTEX..{TableNames.BookingTransferChildRoll} BTCR On BTCR.TransferMasterID = BTC.TransferMasterID and BTCR.TransferChildID = BTC.TransferChildID and BTCR.RollID = ISF.RollID
 		                                    Where ISF.IsOrderCancel = 0 and ISF.IsQtyDecrease = 0 and ISF.IsReturn = 0 and IsOrderCCBreakDown = 0
 
                                     ),RAJ As (
 		                                    Select ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID, FactoryID = RAM.ReceivingUnitID, RM = ''
 		                                    From ISF
-		                                    Inner Join EPYSLTEX..RollAdjustChild RAC On  RAC.BookingID = ISF.BookingID and RAC.ItemMasterID = ISF.ItemMasterID
-		                                    Inner Join EPYSLTEX..RollAdjustMaster RAM On RAM.AdjustMasterID = RAC.AdjustMasterID and RAM.ExportOrderID = ISF.CCID1 
-		                                    Inner Join EPYSLTEX..RollAdjustChildRoll RACR On RACR.AdjustMasterID = RAC.AdjustMasterID and RACR.AdjustChildID = RAC.AdjustChildID  and RACR.WeightSheetNo = ISF.WeightSheetNo --and RACR.BatchNo = ISF.BatchNo
-		                                    Inner Join EPYSLTEX..RollAdjustSplitRoll RASR On RASR.AdjustMasterID = RAC.AdjustMasterID and RASR.AdjustChildID = RAC.AdjustChildID and RASR.AdjustChildRollID = RACR.AdjustChildRollID 
+		                                    Inner Join EPYSLTEX..{TableNames.RollAdjustChild} RAC On  RAC.BookingID = ISF.BookingID and RAC.ItemMasterID = ISF.ItemMasterID
+		                                    Inner Join EPYSLTEX..{TableNames.RollAdjustMaster} RAM On RAM.AdjustMasterID = RAC.AdjustMasterID and RAM.ExportOrderID = ISF.CCID1 
+		                                    Inner Join EPYSLTEX..{TableNames.RollAdjustChildRoll} RACR On RACR.AdjustMasterID = RAC.AdjustMasterID and RACR.AdjustChildID = RAC.AdjustChildID  and RACR.WeightSheetNo = ISF.WeightSheetNo --and RACR.BatchNo = ISF.BatchNo
+		                                    Inner Join EPYSLTEX..{TableNames.RollAdjustSplitRoll} RASR On RASR.AdjustMasterID = RAC.AdjustMasterID and RASR.AdjustChildID = RAC.AdjustChildID and RASR.AdjustChildRollID = RACR.AdjustChildRollID 
 														                                        and RASR.AdjustSplitRollID = ISF.RollID
 		                                    Inner Join (Select ExportOrderID, WeightSheetNo, PDDate
-					                                    From EPYSLTEX..PDReceive
+					                                    FROM EPYSLTEX..{TableNames.PDReceive}
 					                                    Group By ExportOrderID, WeightSheetNo, PDDate
 					                                    Union
 					                                    Select ExportOrderID = ToExportOrderID, WeightSheetNo, PDDate = BTM.TransferDate
-					                                    From EPYSLTEX..BookingTransferMaster BTM
+					                                    From EPYSLTEX..{TableNames.BookingTransferMaster} BTM
 					                                    Group By ToExportOrderID, WeightSheetNo, BTM.TransferDate) PDR On PDR.ExportOrderID = ISF.CCID1 and PDR.WeightSheetNo = ISF.WeightSheetNo and PDR.WeightSheetNo = RACR.WeightSheetNo
 		                                    Where  ISF.IsOrderCancel = 0 and ISF.IsQtyDecrease = 0 and ISF.IsReturn = 0 and IsOrderCCBreakDown = 0
 
                                     ),FSW As (
 		                                    Select ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID,  FactoryID = FSM.DeliveryToID, RM = ''
 		                                    From ISF
-		                                    Inner Join EPYSLTEX..FinishFabricSWOChild FSC On  FSC.ToBookingID = ISF.BookingID and FSC.ToItemMasterID = ISF.ItemMasterID
-		                                    Inner Join EPYSLTEX..FinishFabricSWOMaster FSM On FSM.SWOMasterID = FSC.SWOMasterID and FSM.ToExportOrderID = ISF.CCID1 and FSM.WeightSheetNo = ISF.WeightSheetNo --and FSM.BatchNo = ISF.BatchNo
-		                                    Inner Join EPYSLTEX..FinishFabricSWORoll FFR On FFR.SWOMasterID = FSC.SWOMasterID and FFR.SWOChildID = FSC.SWOChildID and FFR.RollID = ISF.RollID 
+		                                    Inner Join EPYSLTEX..{TableNames.FinishFabricSWOChild} FSC On  FSC.ToBookingID = ISF.BookingID and FSC.ToItemMasterID = ISF.ItemMasterID
+		                                    Inner Join EPYSLTEX..{TableNames.FinishFabricSWOMaster} FSM On FSM.SWOMasterID = FSC.SWOMasterID and FSM.ToExportOrderID = ISF.CCID1 and FSM.WeightSheetNo = ISF.WeightSheetNo --and FSM.BatchNo = ISF.BatchNo
+		                                    Inner Join EPYSLTEX..{TableNames.FinishFabricSWORoll} FFR On FFR.SWOMasterID = FSC.SWOMasterID and FFR.SWOChildID = FSC.SWOChildID and FFR.RollID = ISF.RollID 
 		                                    Where ISF.IsOrderCancel = 0 and ISF.IsQtyDecrease = 0 and ISF.IsReturn = 0 and IsOrderCCBreakDown = 0
                                     ),SRM As (
 		                                    Select ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID,  FactoryID = SRM.ReceivingUnitID, RM = ''
 		                                    From ISF
-		                                    Inner Join EPYSLTEX..SalesReturnChild SRC On  SRC.BookingID = ISF.BookingID and SRC.ItemMasterID = ISF.ItemMasterID
-		                                    Inner Join EPYSLTEX..SalesReturnMaster SRM On SRM.ReturnMasterID = SRC.ReturnMasterID and SRM.ExportOrderID = ISF.CCID1 
-		                                    Inner Join EPYSLTEX..SalesReturnChildRoll SRCR On SRCR.ReturnMasterID = SRC.ReturnMasterID and SRCR.ReturnChildID = SRC.ReturnChildID  and SRCR.WeightSheetNo = ISF.WeightSheetNo and SRCR.RollID = ISF.RollID
+		                                    Inner Join EPYSLTEX..{TableNames.SalesReturnChild} SRC On  SRC.BookingID = ISF.BookingID and SRC.ItemMasterID = ISF.ItemMasterID
+		                                    Inner Join EPYSLTEX..{TableNames.SalesReturnMaster} SRM On SRM.ReturnMasterID = SRC.ReturnMasterID and SRM.ExportOrderID = ISF.CCID1 
+		                                    Inner Join EPYSLTEX..{TableNames.SalesReturnChildRoll} SRCR On SRCR.ReturnMasterID = SRC.ReturnMasterID and SRCR.ReturnChildID = SRC.ReturnChildID  and SRCR.WeightSheetNo = ISF.WeightSheetNo and SRCR.RollID = ISF.RollID
 		                                    Where  ISF.IsOrderCancel = 0 and ISF.IsQtyDecrease = 0 and ISF.IsReturn = 1 and ISF.IsReject = 0 and IsOrderCCBreakDown = 0
 
                                     ),CMBD As (
@@ -22600,31 +22600,31 @@ namespace EPYSLTEXCore.Application.Services.Booking
 			                                    From ISF
 			                                    Inner Join (
 				                                    Select ChangeID = Max(CM.ChangeID), CM.WeightSheetNo, ExportOrderID, CC.BookingID,  CC.ItemMasterID, CCR.RollID
-				                                    From EPYSLTEX..ChangeMaster CM
-				                                    Inner Join EPYSLTEX..ChangeChild CC On CC.ChangeID = CM.ChangeID
-				                                    Inner Join EPYSLTEX..ChangeChildRoll CCR On CCR.ChangeID = CM.ChangeID and CCR.ChildID = CC.ChildID 
+				                                    From EPYSLTEX..{TableNames.ChangeMaster} CM
+				                                    Inner Join EPYSLTEX..{TableNames.ChangeChild} CC On CC.ChangeID = CM.ChangeID
+				                                    Inner Join EPYSLTEX..{TableNames.ChangeChildRoll} CCR On CCR.ChangeID = CM.ChangeID and CCR.ChildID = CC.ChildID 
 				                                    Where CCR.ReceiveStatusReason in ('Booking qty decreased by Merchant')
 				                                    Group By  CM.WeightSheetNo, ExportOrderID, CC.BookingID, CC.ItemMasterID, CCR.RollID
 			                                    )MCM On MCM.ExportOrderID = ISF.CCID1 and MCM.BookingID = ISF.BookingID and 
 			                                    MCM.ItemMasterID = ISF.ItemMasterID and MCM.RollID = ISF.RollID 
-			                                    Inner Join EPYSLTEX..ChangeMaster CM On CM.ChangeID = MCM.ChangeID and CM.ExportOrderID = ISF.CCID1 and CM.WeightSheetNo = ISF.WeightSheetNo
+			                                    Inner Join EPYSLTEX..{TableNames.ChangeMaster} CM On CM.ChangeID = MCM.ChangeID and CM.ExportOrderID = ISF.CCID1 and CM.WeightSheetNo = ISF.WeightSheetNo
 			                                    Left Join (
 				                                    Select ExportOrderID, WeightSheetNo, PDDate = Min(PDDate)
 				                                    From 
 				                                    (Select ExportOrderID, WeightSheetNo, PDDate
-				                                    From EPYSLTEX..PDReceive
+				                                    FROM EPYSLTEX..{TableNames.PDReceive}
 				                                    Group By ExportOrderID, WeightSheetNo, PDDate
 				                                    Union
 				                                    Select ExportOrderID, WeightSheetNo, PDDate = IPR.ReceiveDate
-				                                    From EPYSLTEX..IssueProcessReceiveMaster IPR
+				                                    FROM EPYSLTEX..{TableNames.IssueProcessReceiveMaster} IPR
 				                                    Group By ExportOrderID, WeightSheetNo, IPR.ReceiveDate
 				                                    Union
 				                                    Select ExportOrderID = ToExportOrderID, WeightSheetNo, PDDate = BTM.TransferDate
-				                                    From EPYSLTEX..BookingTransferMaster BTM
+				                                    From EPYSLTEX..{TableNames.BookingTransferMaster} BTM
 				                                    Group By ToExportOrderID, WeightSheetNo, BTM.TransferDate
 				                                    Union
 				                                    Select ExportOrderID = ToExportOrderID, WeightSheetNo, PDDate = FSM.SWODate
-				                                    From EPYSLTEX..FinishFabricSWOMaster FSM
+				                                    From EPYSLTEX..{TableNames.FinishFabricSWOMaster} FSM
 				                                    Group By ToExportOrderID, WeightSheetNo, FSM.SWODate
 			                                    )A Group By ExportOrderID, WeightSheetNo)PR On PR.ExportOrderID = ISF.CCID1 and PR.WeightSheetNo = MCM.WeightSheetNo
 			                                    Where ISF.IsQtyDecrease = 1
@@ -22635,29 +22635,29 @@ namespace EPYSLTEXCore.Application.Services.Booking
 			                                    Select ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID,  CM.FactoryID, RM = ''
 			                                    From ISF
 			                                    Inner Join (Select ChangeID = Max(CM.ChangeID), CM.WeightSheetNo, ExportOrderID, CC.BookingID,  CC.ItemMasterID, CCR.RollID
-						                                    From EPYSLTEX..ChangeMaster CM
-						                                    Inner Join EPYSLTEX..ChangeChild CC On CC.ChangeID = CM.ChangeID
-						                                    Inner Join EPYSLTEX..ChangeChildRoll CCR On CCR.ChangeID = CM.ChangeID and CCR.ChildID = CC.ChildID 
+						                                    From EPYSLTEX..{TableNames.ChangeMaster} CM
+						                                    Inner Join EPYSLTEX..{TableNames.ChangeChild} CC On CC.ChangeID = CM.ChangeID
+						                                    Inner Join EPYSLTEX..{TableNames.ChangeChildRoll} CCR On CCR.ChangeID = CM.ChangeID and CCR.ChildID = CC.ChildID 
 						                                    Where CCR.ReceiveStatusReason in ('After production order cancelled by Merchant')
 						                                    Group By  CM.WeightSheetNo, ExportOrderID, CC.BookingID, CC.ItemMasterID, CCR.RollID)MCM On MCM.ExportOrderID = ISF.CCID1 and MCM.BookingID = ISF.BookingID and 
 						                                    MCM.ItemMasterID = ISF.ItemMasterID and MCM.RollID = ISF.RollID 
-			                                    Inner Join EPYSLTEX..ChangeMaster CM On CM.ChangeID = MCM.ChangeID and CM.ExportOrderID = ISF.CCID1 and CM.WeightSheetNo = ISF.WeightSheetNo
+			                                    Inner Join EPYSLTEX..{TableNames.ChangeMaster} CM On CM.ChangeID = MCM.ChangeID and CM.ExportOrderID = ISF.CCID1 and CM.WeightSheetNo = ISF.WeightSheetNo
 			                                    Left Join (Select ExportOrderID, WeightSheetNo, PDDate = Min(PDDate)
 						                                    From 
 						                                    (Select ExportOrderID, WeightSheetNo, PDDate
-						                                    From EPYSLTEX..PDReceive
+						                                    FROM EPYSLTEX..{TableNames.PDReceive}
 						                                    Group By ExportOrderID, WeightSheetNo, PDDate
 						                                    Union
 						                                    Select ExportOrderID, WeightSheetNo, PDDate = IPR.ReceiveDate
-						                                    From EPYSLTEX..IssueProcessReceiveMaster IPR
+						                                    FROM EPYSLTEX..{TableNames.IssueProcessReceiveMaster} IPR
 						                                    Group By ExportOrderID, WeightSheetNo, IPR.ReceiveDate
 						                                    Union
 						                                    Select ExportOrderID = ToExportOrderID, WeightSheetNo, PDDate = BTM.TransferDate
-						                                    From EPYSLTEX..BookingTransferMaster BTM
+						                                    From EPYSLTEX..{TableNames.BookingTransferMaster} BTM
 						                                    Group By ToExportOrderID, WeightSheetNo, BTM.TransferDate
 						                                    Union
 						                                    Select ExportOrderID = ToExportOrderID, WeightSheetNo, PDDate = FSM.SWODate
-						                                    From EPYSLTEX..FinishFabricSWOMaster FSM
+						                                    From EPYSLTEX..{TableNames.FinishFabricSWOMaster} FSM
 						                                    Group By ToExportOrderID, WeightSheetNo, FSM.SWODate
 						                                    )A Group By ExportOrderID, WeightSheetNo)PR On PR.ExportOrderID = ISF.CCID1 and PR.WeightSheetNo = MCM.WeightSheetNo
 			                                    Where ISF.IsOrderCancel = 1
@@ -22668,26 +22668,26 @@ namespace EPYSLTEXCore.Application.Services.Booking
 			                                    Select ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID,  CM.FactoryID, RM = ''
 			                                    From ISF
 			                                    Inner Join (Select ChangeID = Max(CM.ChangeID), CM.WeightSheetNo, ExportOrderID, CC.BookingID,  CC.ItemMasterID, CCR.RollID
-						                                    From EPYSLTEX..ChangeMaster CM
-						                                    Inner Join EPYSLTEX..ChangeChild CC On CC.ChangeID = CM.ChangeID
-						                                    Inner Join EPYSLTEX..ChangeChildRoll CCR On CCR.ChangeID = CM.ChangeID and CCR.ChildID = CC.ChildID 
+						                                    From EPYSLTEX..{TableNames.ChangeMaster} CM
+						                                    Inner Join EPYSLTEX..{TableNames.ChangeChild} CC On CC.ChangeID = CM.ChangeID
+						                                    Inner Join EPYSLTEX..{TableNames.ChangeChildRoll} CCR On CCR.ChangeID = CM.ChangeID and CCR.ChildID = CC.ChildID 
 						                                    Group By  CM.WeightSheetNo, ExportOrderID, CC.BookingID, CC.ItemMasterID, CCR.RollID)MCM On MCM.ExportOrderID = ISF.CCID1 and MCM.BookingID = ISF.BookingID and 
 						                                    MCM.ItemMasterID = ISF.ItemMasterID and MCM.RollID = ISF.RollID 
-			                                    Inner Join EPYSLTEX..ChangeMaster CM On CM.ChangeID = MCM.ChangeID and CM.ExportOrderID = ISF.CCID1 and CM.WeightSheetNo = ISF.WeightSheetNo
+			                                    Inner Join EPYSLTEX..{TableNames.ChangeMaster} CM On CM.ChangeID = MCM.ChangeID and CM.ExportOrderID = ISF.CCID1 and CM.WeightSheetNo = ISF.WeightSheetNo
 			                                    Left Join (Select ExportOrderID, WeightSheetNo, PDDate
-						                                    From EPYSLTEX..PDReceive
+						                                    FROM EPYSLTEX..{TableNames.PDReceive}
 						                                    Group By ExportOrderID, WeightSheetNo, PDDate
 						                                    Union
 						                                    Select ExportOrderID, WeightSheetNo, PDDate = IPR.ReceiveDate
-						                                    From EPYSLTEX..IssueProcessReceiveMaster IPR
+						                                    FROM EPYSLTEX..{TableNames.IssueProcessReceiveMaster} IPR
 						                                    Group By ExportOrderID, WeightSheetNo, IPR.ReceiveDate
 						                                    Union
 						                                    Select ExportOrderID = ToExportOrderID, WeightSheetNo, PDDate = BTM.TransferDate
-						                                    From EPYSLTEX..BookingTransferMaster BTM
+						                                    From EPYSLTEX..{TableNames.BookingTransferMaster} BTM
 						                                    Group By ToExportOrderID, WeightSheetNo, BTM.TransferDate
 						                                    Union
 						                                    Select ExportOrderID = ToExportOrderID, WeightSheetNo, PDDate = FSM.SWODate
-						                                    From EPYSLTEX..FinishFabricSWOMaster FSM
+						                                    From EPYSLTEX..{TableNames.FinishFabricSWOMaster} FSM
 						                                    Group By ToExportOrderID, WeightSheetNo, FSM.SWODate) PR On PR.ExportOrderID = ISF.CCID1 and PR.WeightSheetNo = MCM.WeightSheetNo
 			                                    Where ISF.IsOrderCCBreakDown = 1
 			                                    Group By ISF.CCID1,ISF.BookingID, ISF.ItemMasterID, ISF.RollID, Case When IsNull(PR.PDDate,'') = '' Then CM.ChangeDate Else PR.PDDate End, CM.FactoryID
@@ -22896,7 +22896,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query = "";
 
-            query = String.Format(@"Select * from BulkBookingFinishFabricUtilization where YBChildID = {0}", YBChildID);
+            query = String.Format(@"Select * FROM "+TableNames.BulkBookingFinishFabricUtilization+" where YBChildID = {0}", YBChildID);
 
             try
             {

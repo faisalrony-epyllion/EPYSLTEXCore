@@ -48,7 +48,7 @@
         public const string CANCEL = "Cancel";
         public const string STATUS = "Status";
         public const string ADD = "add";
-        public const string UPDATE = "update";
+        public const string UPDATE = "edit";
         public const string DELETE = "delete";
        
     }
@@ -591,5 +591,17 @@
         public const int BDS = 1;
         public const int Bulk = 2;
         public const int ProjectionBooking = 3;
+    }
+    public static class DateFormats
+    {
+        /// <summary>
+        /// Default date format
+        /// </summary>
+        public const string DEFAULT_DATE_FORMAT = "dd-MMM-yyyy"; //"MM/dd/yyyy";
+
+        /// <summary>
+        /// Example: 02-Mar-2020
+        /// </summary>
+        public const string DATE_FORMAT_1 = "dd-MMM-yyyy";
     }
 }

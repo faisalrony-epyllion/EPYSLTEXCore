@@ -1,28 +1,77 @@
 ﻿<script type="text/javascript">
-    localStorage.setItem("pageName", "@ViewBag.PageName");
-    localStorage.setItem("menuId", "@ViewBag.MenuId");
-    localStorage.setItem("YarnMRIRPage", "@ViewBag.YarnMRIRPage");
-     localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+	localStorage.setItem("pageName", "@ViewBag.PageName");
+	localStorage.setItem("menuId", "@ViewBag.MenuId");
+	localStorage.setItem("YarnMRIRPage", "@ViewBag.YarnMRIRPage");
+	 localStorage.setItem("menuParam", "@ViewBag.MenuParam");
 </script>
 
 @{
-    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
-    var divTblId = "divtbl" + pageId;
-    var toolbarId = "toolbar" + pageId;
-    var tblMasterId = "tbl" + pageId;
-    var tblChildId = "tblChild" + pageId;
-    var tblOtherItemId = "tblOtherItem" + pageId;
-    var formId = "form" + pageId;
-    var divDetailsId = "divDetails" + pageId;
-    var tblMachineParamId = "tblMachineParam" + pageId;
-    var tblRollId = "tblRoll" + pageId;
-    var divRollId = "divRoll" + pageId;
-    var tblKProductionId = "tblKProduction" + pageId;
+	var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+	var divTblId = "divtbl" + pageId;
+	var toolbarId = "toolbar" + pageId;
+	var tblMasterId = "tbl" + pageId;
+	var tblChildId = "tblChild" + pageId;
+	var tblOtherItemId = "tblOtherItem" + pageId;
+	var formId = "form" + pageId;
+	var divDetailsId = "divDetails" + pageId;
+	var tblMachineParamId = "tblMachineParam" + pageId;
+	var tblRollId = "tblRoll" + pageId;
+	var divRollId = "divRoll" + pageId;
+	var tblKProductionId = "tblKProduction" + pageId;
 }
 
 <div id="@pageId">
-    <div class="row" id="@divTblId">
-        <div class="col-sm-12">
+	<div class="row" id="@divTblId">
+		<div class="col-sm-12">
+			<div id="@toolbarId" class="master-toolbar">
+				<div>
+					<button id="btnPendingMRIRList" class="btn btn-secondary btn-sm" style="display:none">
+						<i class="fa fa-list-ul"></i>&nbsp;Pending MRIR List
+					</button>
+					<button id="btnPendingGRNList" class="btn btn-secondary btn-sm btnToolbar" style="display:none">
+						<i class="fa fa-list-ul"></i>&nbsp;Pending GRN List
+					</button>
+					<button id="btnPendingMRNList" class="btn btn-secondary btn-sm btnToolbar" style="display:none">
+						<i class="fa fa-list"></i>&nbsp;Pending MRN List
+					</button>
+					<button id="btnMRNList" class="btn btn-secondary btn-sm btnToolbar" style="display:none">
+						<i class="fa fa-list"></i>&nbsp;MRN List
+					</button>
+					<button id="btnRetestReqList" class="btn btn-secondary btn-sm btnToolbar" style="display:none">
+						<i class="fa fa-list"></i>&nbsp;Retest Request List
+					</button>
+					<button id="btnReturnReqList" class="btn btn-secondary btn-sm btnToolbar" style="display:none">
+						<i class="fa fa-list"></i>&nbsp;Return Request List
+					</button>
+					<button id="btnGRNList" class="btn btn-secondary btn-sm btnToolbar" style="display:none">
+						<i class="fa fa-list"></i>&nbsp;GRN List
+					</button>
+					<button id="btnMRIRList" class="btn btn-secondary btn-sm" style="display:none">
+						<i class="fa fa-list-ul"></i>&nbsp;MRIR List
+					</button>
+					<button id="btnAllList" class="btn btn-secondary btn-sm" style="display:none">
+						<i class="fa fa-list-ul"></i>&nbsp;All List
+					</button>
+					<button id="btnPendingGRNSignInList" class="btn btn-secondary btn-sm" style="display:none">
+						<i class="fa fa-list-ul"></i>&nbsp;Pending GRN SignIn List
+					</button>
+					<button id="btnGRNMRIRList" class="btn btn-secondary btn-sm" style="display:none">
+						<i class="fa fa-list-ul"></i>&nbsp;MRIR List
+					</button>
+				</div>
+			</div>
+			<div style="font-size:12px">
+				<table id="@tblMasterId" class="table table-bordered"></table>
+				<div class="modal-footer">
+					<div class="col-md-12">
+						<button type="button" class="btn btn-primary btn-sm" id="btnMRIRSave" style="display:none">
+							<i class="fa fa-save"></i>&nbsp;&nbsp;Save
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		@*  <div class="col-sm-12">
             <div id="@toolbarId" class="master-toolbar">
                 <div>
                     <button id="btnPendingMRIRList" class="btn btn-default btn-sm" style="display:none">
@@ -60,27 +109,146 @@
                     </button>
                 </div>
 
-                @*<div id="divAddDC" style="margin-top: 5px; margin-left: 10px;">
-                    <button id="btnAddDC" class="btn btn-default btn-sm">
-                        <i class="fa fa-plus"></i>&nbsp;New
-                    </button>
-                </div>*@
             </div>
             <div style="font-size:12px">
                 <table id="@tblMasterId"></table>
                 <div class="modal-footer">
                     <div class="col-md-12">
-                        @*<button id="btnCloseRollSplitted" type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
                         <button type="button" class="btn btn-primary m-w-120" id="btnMRIRSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                        @*<button type="button" class="btn btn-primary m-w-120" id="btnGRNSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send For Approval </button>*@
                     </div>
                 </div>
             </div>
 
-        </div>
-    </div>
-    <div class="row">
-        <form class="form-horizontal" id="@formId">
+        </div> *@
+	</div>
+	<div class="row">
+		<form class="form" id="@formId">
+			<input type="hidden" id="LFDMasterID" name="LFDMasterID" value="-1111" />
+			<input type="hidden" id="ConceptID" name="ConceptID" value="-1111" />
+			<input type="hidden" id="IsBDS" name="ConceptID" value="0" />
+			<div class="card-body" id="@divDetailsId" style="display:none">
+				<div class="col-sm-12">
+					<div class="card" style="border-color:transparent; border-style:none;">
+						<div class="card-header">
+							General Information
+						</div>
+						<div class="card-body">
+							<div class="form-row">
+								<div class="col-sm-4" id="divMRIRNo">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">MRIR No</label>
+										<div class="col-sm-8">
+											<input id="MRIRNo" name="MRIRNo" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4" id="divGRNNo">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">GRN No</label>
+										<div class="col-sm-8">
+											<input id="GRNNo" name="GRNNo" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4" id="divMRNNo">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">MRN No</label>
+										<div class="col-sm-8">
+											<input id="MRNNo" name="MRNNo" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">PO No</label>
+										<div class="col-sm-8">
+											<input id="PONo" name="PONo" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">Receive Qty</label>
+										<div class="col-sm-8">
+											<input id="ReceiveQty" name="ReceiveQty" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="col-sm-4">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">Challan No</label>
+										<div class="col-sm-8">
+											<input id="ChallanNo" name="ChallanNo" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">Supplier</label>
+										<div class="col-sm-8">
+											<input id="Supplier" name="Supplier" class="form-control" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">Vehical No</label>
+										<div class="col-sm-8">
+											<input id="VehicalNo" name="VehicalNo" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="col-sm-4">
+									<div class="form-group row">
+										<label class="col-sm-4 col-form-label small">POUnit</label>
+										<div class="col-sm-8">
+											<input id="POUnit" name="POUnit" class="form-control form-control-sm" readonly />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12" id="divFabricItem">
+					<div class="card" style="border-color:transparent; border-style:none;">
+						<div class="card-header">
+							Yarn Information
+						</div>
+						<div class="card-body">
+							<div class="form-row">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<table id="@tblChildId"></table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="col-md-12">
+								<button type="button" class="btn btn-primary btn-sm" id="btnGRNMRIRSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+								<button type="button" class="btn btn-primary btn-sm" id="btnReturnSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Purchase Return</button>
+								<button type="button" class="btn btn-primary btn-sm" id="btnRetestSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Request For Retest</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card-footer" id="divFormButtons">
+					<div class="col-md-12">
+						<div class="float-right">
+							<button type="button" class="btn btn-secondary btn-sm" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+							<button type="button" class="btn btn-primary btn-sm" id="btnSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		@* <form class="form-horizontal" id="@formId">
             <input type="hidden" id="LFDMasterID" name="LFDMasterID" value="-1111" />
             <input type="hidden" id="ConceptID" name="ConceptID" value="-1111" />
             <input type="hidden" id="IsBDS" name="ConceptID" value="0" />
@@ -192,67 +360,25 @@
                         </div>
                         <div class="modal-footer">
                             <div class="col-md-12">
-                                @*<button id="btnCloseRollSplitted" type="button" class="btn btn-default" data-dismiss="modal">Close</button>*@
                                 <button type="button" class="btn btn-primary m-w-120" id="btnGRNMRIRSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
                                 <button type="button" class="btn btn-primary m-w-120" id="btnReturnSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Purchase Return</button>
                                 <button type="button" class="btn btn-primary m-w-120" id="btnRetestSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Request For Retest</button>
-                                @*<button type="button" class="btn btn-primary m-w-120" id="btnGRNSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send For Approval </button>*@
                             </div>
                         </div>
                     </div>
                 </div>
-                @*<div class="col-sm-12" id="divOtherItem">
-                        <div class="panel panel-success" style="border-color:transparent; border-style:none">
-                            <div class="panel-heading">
-                                Others Information
-                                <button type="button" id="btnAddItemsOthers" class="btn btn-success btn-xs">
-                                    <i class="fa fa-search"></i>&nbsp;&nbsp;Add Item
-                                </button>
-                            </div>
-                            <div class="panel-body">
-                                <div class="form-horizontal">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <table id="@tblOtherItemId"></table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>*@
-                <!--<div class="col-sm-12" id="divFabricInfo" style="display: none">
-                <div class="panel panel-success" style="border-color:transparent; border-style: none;">
-                    <div class="panel-heading">
-                        <label id="lblTableTitle">Sample Booking Consumption</label>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-horizontal">
-                            <div class="col-sm-12">
-                                <div class="form-group">-->
-                @*<table id="tblFabric-@pageId"></table>*@
-                <!--<table id="@tblChildId"></table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
 
                 <div class="box-footer btn-e-float-margin" id="divFormButtons">
                     <div class="col-md-offset-2 col-md-10">
                         <div class="pull-right">
                             <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
                             <button type="button" class="btn btn-primary m-w-120" id="btnSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                            @*<button type="button" class="btn btn-primary m-w-120" id="btnSaveAndSendForApproval" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send For Approval </button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnApprove" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnReject" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Reject</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnAcknowledge" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>*@
                         </div>
                     </div>
                 </div>
 
             </div>
-        </form>
-    </div>
+        </form> *@
+	</div>
 
 </div>

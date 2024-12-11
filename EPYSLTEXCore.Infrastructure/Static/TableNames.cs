@@ -885,8 +885,9 @@
         public const string YarnMRIRChild = "T_YarnMRIRChild";
         public const string YarnMRIRMaster = "T_YarnMRIRMaster";
 
-
-
+        public const string BondEntitlementMaster = "BondEntitlementMaster";
+        public const string BondEntitlementChild = "BondEntitlementChild";
+        public const string BondEntitlementChildItem = "BondEntitlementChildItem";
     }
   
 }

@@ -1405,7 +1405,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
         {
             // Initialize the base query
-            string query = @"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature 
+            string query = @"SELECT TOP 1 * FROM Signature 
                      WHERE Field = @Field 
                      AND CompanyId = @CompanyId 
                      AND SiteId = @SiteId";
@@ -1552,18 +1552,18 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 {
                     {
                         var jObject = item as JsonObject;                         
-                        var objStstus = data["Status"];
+                        var objStstus = jObject[StatusConstants.STATUS_KEY];
                          if(objStstus != null)
                         {
-                           if( objStstus.ToString().ToLower()=="add")
+                            if (objStstus.ToString().Equals(StatusConstants.ADD, StringComparison.OrdinalIgnoreCase))
                             {
                                 await AddDynamicObjectAsync(tableName, jObject, connection, transaction);
                             }
-                            if (objStstus.ToString().ToLower() == "update")
+                            if (objStstus.ToString().Equals(StatusConstants.UPDATE, StringComparison.OrdinalIgnoreCase))
                             {
                                 await UpdateDynamicObjectAsync(tableName, jObject, new List<string>(), connection, transaction);
                             }
-                            if (objStstus.ToString().ToLower() == "delete")
+                            if (objStstus.ToString().Equals(StatusConstants.DELETE, StringComparison.OrdinalIgnoreCase))
                             {
                                 await DeleteDynamicObjectAsync(tableName, jObject, new List<string>(), connection, transaction);
                             }
@@ -1576,18 +1576,18 @@ namespace EPYSLTEXCore.Infrastructure.Data
             else
             {
                 JsonObject jObject = (JsonObject)dataObject;
-                var objStstus = data["Status"];
+                var objStstus = jObject[StatusConstants.STATUS_KEY];
                 if (objStstus != null)
                 {
-                    if (objStstus.ToString().ToLower() == "add")
+                    if (objStstus.ToString().Equals(StatusConstants.ADD, StringComparison.OrdinalIgnoreCase))
                     {
                         await AddDynamicObjectAsync(tableName, jObject, connection, transaction);
                     }
-                    if (objStstus.ToString().ToLower() == "update")
+                    if (objStstus.ToString().Equals(StatusConstants.UPDATE, StringComparison.OrdinalIgnoreCase))
                     {
                         await UpdateDynamicObjectAsync(tableName, jObject, new List<string>(), connection, transaction);
                     }
-                    if (objStstus.ToString().ToLower() == "delete")
+                    if (objStstus.ToString().Equals(StatusConstants.DELETE, StringComparison.OrdinalIgnoreCase))
                     {
                         await DeleteDynamicObjectAsync(tableName, jObject, new List<string>(), connection, transaction);
                     }

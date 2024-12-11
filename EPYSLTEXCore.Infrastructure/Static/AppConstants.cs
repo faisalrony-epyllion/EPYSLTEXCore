@@ -46,6 +46,11 @@
         public const string ACCEPT = "Accept";
         public const string REJECT = "Reject";
         public const string CANCEL = "Cancel";
+        public const string STATUS_KEY = "STATUS";
+        public const string ADD = "ADD";
+        public const string UPDATE = "UPDATE";
+        public const string DELETE = "DELETE";
+       
     }
 
     public static class UserRoles
@@ -462,13 +467,14 @@
         public const int CONTACT_CATEGORY_CONSIGNEE = 12;
         public const int CONTACT_CATEGORY_NOTIFY_PARTY = 5;
     }
-
+  
     public enum EnumRackBinOperationType
     {
         None = 0,
         Addition = 1,
         Deduction = 2
     }
+   
 
     public static class EntityTypeConstants
     {

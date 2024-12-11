@@ -163,7 +163,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             JsonObject jsonObject = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(entity));
             List<object> resultList = new List<object>();
             string parentsqlConnection = commonInterfaceMaster.ConName;
-           
+            
             // Get child grid details once to avoid multiple calls
             var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
             string childsqlConnection = childGrid.ConName;
@@ -185,7 +185,8 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                   parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
                 string conn = commonInterfaceMaster.ConName.Trim();
 
-                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable,1,1)).LastNumber;
+                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable,1,1)).LastNumber++;
+                jsonObject[StatusConstants.STATUS_KEY] = StatusConstants.ADD;
                 primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
                 tableNames.Add(parentTable);
                 sqlConnection.Add(parentsqlConnection);
@@ -207,7 +208,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                 {
 
                     item[childGridParentColumn] = (primaryKeyColumnValue);
-                    item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber;   
+                    item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber++;   
                 }
 
                 // Deserialize JsonArray into a List<object>

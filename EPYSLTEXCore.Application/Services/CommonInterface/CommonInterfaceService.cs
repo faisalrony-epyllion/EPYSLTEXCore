@@ -227,7 +227,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         int listCount = tableNames.Count;
                         if (listCount == objLst.Count && listCount == primaryKeyColumns.Count)
                         {
-                            for (int i = 0; i < listCount; i++)
+                            for (int i = 0; i < 1; i++)
                             {
                                 string tableName = tableNames[i];
                                 object obj = objLst[i];

@@ -160,9 +160,10 @@
                 },
                 
                 actionComplete: function (args) {
-                    debugger;
+                     
                   var keyName='';
-                  var keyValue='';
+                    var keyValue = '';
+                    
                     if (args.action == localStorageKeys.add) {
                          keyValue = args.data;
                          keyName=localStorageKeys.add;

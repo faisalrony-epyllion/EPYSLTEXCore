@@ -185,17 +185,22 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                 parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
                 string conn = commonInterfaceMaster.ConName.Trim();
 
-                if (jsonObject[StatusConstants.STATUS] != null && jsonObject[StatusConstants.STATUS].ToString() == StatusConstants.ADD)
+                if (jsonObject[commonInterfaceMaster.PrimaryKeyColumn] != null && jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString() == "-1111")
                 {
                     jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable, 1, 1)).LastNumber + 1;
                     jsonObject[StatusConstants.STATUS] = StatusConstants.ADD;
 
-                    tableNames.Add(parentTable);
-                    sqlConnection.Add(parentsqlConnection);
-                    primaryKeyColumns.Add(parentPrimaryKeyColumn);
-                    parentChildObject.Add(jsonObject);
+
                 }
-                  primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
+                else
+                {
+                    jsonObject[StatusConstants.STATUS] = StatusConstants.UPDATE;
+                }
+                tableNames.Add(parentTable);
+                sqlConnection.Add(parentsqlConnection);
+                primaryKeyColumns.Add(parentPrimaryKeyColumn);
+                parentChildObject.Add(jsonObject);
+                primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
 
             }
 

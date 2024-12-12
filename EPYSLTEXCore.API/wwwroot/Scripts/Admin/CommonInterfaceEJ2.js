@@ -688,7 +688,7 @@
             lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
-            
+              
                 finder.hideModal();
                 var data = res.rowData;                 
                 for (var p in data) {
@@ -696,9 +696,9 @@
                     $formEl.find("#" + p).is('select') ? $formEl.find("#" + p).val(data[p]).trigger("change") : $formEl.find("#" + p).val(data[p]);
                 }
                 //setFormData($formEl, data);
-                //$formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
-                //$formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
-                //$formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
+               $formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
+               // $formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
+              //  $formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
               removeLocalStorage(localStorageKeys.baseKey);
           
                 var finderElement = interfaceConfigs.Childs.filter(a => (a.FinderSql?.length > 0) || (a.FinderApiUrl?.length > 0));

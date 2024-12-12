@@ -13,7 +13,7 @@
       "wwwroot/App_Themes/lib/syncfusion/bootstrap4.css",
       "wwwroot/App_Themes/CustomCSS/style.css",
       "wwwroot/App_Themes/CustomCSS/report.css",
-
+      
       "wwwroot/App_Themes/lib/bootstrap-table/bootstrap-table.min.css",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.css",
@@ -41,7 +41,7 @@
       "wwwroot/App_Themes/adminlte/js/adminlte.js",
       "wwwroot/App_Themes/lib/moment/moment.min.js",
       "wwwroot/App_Themes/lib/bootbox.js/bootbox.min.js",
-
+      "wwwroot/App_Themes/lib/validatejs/validate.min.js",
 
       "wwwroot/App_Themes/lib/bootstrap-table/bootstrap-table-modified.js",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js",

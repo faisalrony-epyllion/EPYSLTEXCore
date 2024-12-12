@@ -112,7 +112,13 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [HttpPost]
         public async Task<IActionResult> Save(dynamic jsnString)//ProjectionYarnBookingMaster
         {
-            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            //ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(
+                Convert.ToString(jsnString),
+                new JsonSerializerSettings
+                {
+                    DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+                });
             List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();
             childRecords = model.ProjectionYarnBookingItemChilds;
             _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);

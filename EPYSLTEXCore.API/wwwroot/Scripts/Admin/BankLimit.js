@@ -4,34 +4,9 @@
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, tblMasterId, $tblChildEl, tblChildId, $formEl;
     var $pageEl;
     var pageId;
-    var filterBy = {};
-    var tableParams = {
-        offset: 0,
-        limit: 10,
-        sort: '',
-        order: '',
-        filter: ''
-    }
     var status;
-    var tblCreateItemId, $tblCreateItemEl;
-
-    var masterData, currentChildRowData;
-    var childData;
-    var _itemSegmentValues;
-    var _isNew = false;
-    var copiedRecord = null;
-    var _childID = 1000;
-    var _isBuyersChange = false;
-    var _selectedIndex = -1;
-    var _ignoreValidationPOIds = [];
-
-    var isCDAPage = false;
-    var isYarnRcv = false;
-    var isYarnRcvApp = false;
-    var _actionProps = {
-        IsSendForApprove: false,
-        IsApproved: false
-    };
+    var masterData;
+    var _bankLimitChildID = 9999;
 
     $(function () {
         if (!menuId)
@@ -77,14 +52,12 @@
 
     function loadNew() {
         _isNew = true;
-        axios.get(`/api/bond-entitlement/new/`)
+        axios.get(`/api/bank-limit/new/`)
             .then(function (response) {
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
 
                 masterData = response.data;
-                masterData.FromDate = formatDateToDefault(new Date());
-                masterData.ToDate = formatDateToDefault(new Date());
                 setFormData($formEl, masterData);
 
                 initChildTable(masterData.Childs);
@@ -94,16 +67,13 @@
             });
     }
     function getDetails(id) {
-        var url = `/api/bond-entitlement/${id}`;
+        var url = `/api/bank-limit/${id}`;
         axios.get(url)
             .then(function (response) {
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
 
                 masterData = response.data;
-
-                masterData.FromDate = formatDateToDefault(new Date());
-                masterData.ToDate = formatDateToDefault(new Date());
                 setFormData($formEl, masterData);
 
                 initChildTable(masterData.Childs);
@@ -139,19 +109,40 @@
                 field: 'CompanyName', headerText: 'Company'
             },
             {
-                field: 'BondLicenceNo', headerText: 'Bond Licence No'
+                field: 'BankName', headerText: 'Bank'
             },
             {
-                field: 'EBINNo', headerText: 'EBIN No'
+                field: 'BankFacilityTypeName', headerText: 'Bank Facility Type'
             },
             {
-                field: 'FromDate', headerText: 'From Date', textAlign: 'Center', type: 'date', format: _ch_date_format_1
-            },
-            {
-                field: 'ToDate', headerText: 'To Date', textAlign: 'Center', type: 'date', format: _ch_date_format_1
+                field: 'AccumulatedLimit', headerText: 'Accumulated Limit'
             },
             {
                 field: 'CurrencyName', headerText: 'Currency'
+            },
+            {
+                field: 'FormBankFacilityName', headerText: 'Form Bank Facility'
+            },
+            {
+                field: 'LiabilityTypeName', headerText: 'Liability Type'
+            },
+            {
+                field: 'FromTenureDay', headerText: 'From Tenure Day'
+            },
+            {
+                field: 'ToTenureDay', headerText: 'To Tenure Day'
+            },
+            {
+                field: 'MaxLimit', headerText: 'Max Limit'
+            },
+            {
+                field: 'LCOpened', headerText: 'LC Opened'
+            },
+            {
+                field: 'LCAcceptenceGiven', headerText: 'LC Acceptence Given'
+            },
+            {
+                field: 'PaymentOnMaturity', headerText: 'Payment On Maturity'
             }
         ];
 
@@ -159,7 +150,7 @@
         $tblMasterEl = new initEJ2Grid({
             tableId: tblMasterId,
             autofitColumns: true,
-            apiEndPoint: `/api/bond-entitlement/list?status=${status}`,
+            apiEndPoint: `/api/bank-limit/list?status=${status}`,
             columns: columns,
             commandClick: handleCommands
         });
@@ -167,75 +158,83 @@
 
     function handleCommands(args) {
         if (args.commandColumn.type == 'Edit') {
-            getDetails(args.rowData.BondEntitlementMasterID);
+            getDetails(args.rowData.BankLimitMasterID);
         }
     }
 
     async function initChildTable(data) {
-        if ($tblChildEl) $tblChildEl.destroy();
-
         var columns = [
-            { field: 'BondEntitlementChildID', isPrimaryKey: true, visible: false, width: 10 },
-            { field: 'SegmentName', headerText: 'RM Types', width: 120, textAlign: 'left', allowEditing: false },
-            { field: 'HSCode', headerText: 'HS Code', width: 120, textAlign: 'left' },
             {
-                field: 'UnitID',
-                headerText: 'Unit',
+                headerText: 'Action', width: 100, commands: [
+                    { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
+                    { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
+                    { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
+                    { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }
+                ]
+            },
+            { field: 'BankLimitChildID', isPrimaryKey: true, visible: false },
+            {
+                field: 'FormBankFacilityID',
+                headerText: 'Form Bank Facility',
                 valueAccessor: ej2GridDisplayFormatter,
-                dataSource: masterData.UnitList,
+                dataSource: masterData.FormBankFacilityList,
                 displayField: "text",
-                width: 130,
+                width: 300,
                 edit: ej2GridDropDownObj({
                 })
             },
-            { field: 'BankFacilityAmount', headerText: 'Bank Facility Amount', textAlign: 'left', width: 120 }
+            {
+                field: 'LiabilityTypeID',
+                headerText: 'Liability Type',
+                valueAccessor: ej2GridDisplayFormatter,
+                dataSource: masterData.LiabilityTypeList,
+                displayField: "text",
+                width: 300,
+                edit: ej2GridDropDownObj({
+                })
+            },
+            {
+                field: 'FromTenureDay', headerText: 'From Tenure Day', width: 150,
+                edit: { params: { showSpinButton: false, decimals: 0, format: "N2" } }
+            },
+            {
+                field: 'ToTenureDay', headerText: 'To Tenure Day', width: 150,
+                edit: { params: { showSpinButton: false, decimals: 0, format: "N2" } }
+            },
+            {
+                field: 'MaxLimit', headerText: 'Max Limit', width: 150,
+                edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
+            },
+            {
+                field: 'LCOpened', headerText: 'LC Opened', width: 150,
+                edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
+            },
+            {
+                field: 'LCAcceptenceGiven', headerText: 'LC Acceptence Given', width: 150,
+                edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
+            },
+            {
+                field: 'PaymentOnMaturity', headerText: 'Payment On Maturity', width: 150,
+                edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
+            }
         ];
 
-        var childColumns = [
-            { field: 'BondEntitlementChildItemID', isPrimaryKey: true, visible: false, width: 10 },
-            { field: 'BondEntitlementChildID', visible: false, width: 10 },
-            { field: 'SegmentValue', headerText: 'Item Name', width: 120, textAlign: 'left', allowEditing: false },
-            { field: 'HSCode', headerText: 'HS Code', width: 120, textAlign: 'left' },
-            { field: 'BankFacilityAmount', headerText: 'Bank Facility Amount', textAlign: 'left', width: 120 }
-        ];
-
-        var childItems = [];
-        data.map(x => {
-            childItems.push(...x.ChildItems);
-        });
-        // ej.grids.Grid({
-        // new initEJ2Grid({
-
+        if ($tblChildEl) $tblChildEl.destroy();
         $tblChildEl = new ej.grids.Grid({
             dataSource: data,
             allowResizing: true,
             showColumnChooser: true,
             showDefaultToolbar: false,
-            editSettings: { allowEditing: true, allowAdding: false, allowDeleting: false, mode: "Normal", showDeleteConfirmDialog: true },
+            toolbar: ['Add'],
+            editSettings: { allowEditing: true, allowAdding: true, allowDeleting: false, mode: "Normal", showDeleteConfirmDialog: true },
             actionBegin: function (args) {
 
             },
             columns: columns,
-            childGrid: {
-                queryString: 'BondEntitlementChildID',
-                allowResizing: true,
-                autofitColumns: false,
-                editSettings: { allowEditing: true, allowAdding: false, allowDeleting: false, mode: "Normal", showDeleteConfirmDialog: true },
-                columns: childColumns,
-                actionBegin: function (args) {
 
-                },
-                load: loadChildItems
-            },
         });
         $tblChildEl.refreshColumns;
         $tblChildEl.appendTo(tblChildId);
-    }
-    function loadChildItems() {
-        this.dataSource = this.parentDetails.parentRowData.ChildItems;
-    }
-    async function childCommandClick(e) {
-        childData = e.rowData;
     }
     function backToList() {
         $divDetailsEl.fadeOut();
@@ -248,34 +247,28 @@
         var data = formDataToJson($formEl.serializeArray());
 
         data.CompanyID = $formEl.find('#CompanyID').val();
-        data.CurrencyID = $formEl.find('#CompanyID').val();
+        data.CurrencyID = $formEl.find('#CurrencyID').val();
+        data.BankID = $formEl.find('#BankID').val();
+        data.BankFacilityTypeID = $formEl.find('#BankFacilityTypeID').val();
+
+        var accumulatedLimit = getDefaultValueWhenInvalidN_Float(data.AccumulatedLimit);
 
         data.Childs = DeepClone($tblChildEl.getCurrentViewRecords());
         var childs = DeepClone(data.Childs);
         for (var i = 0; i < childs.length; i++) {
+            var row = ` at row ${i + 1}`;
             var child = DeepClone(childs[i]);
-            var bankFacilityAmount = getDefaultValueWhenInvalidN_Float(child.BankFacilityAmount);
-            var bankFacilityAmount_CI = 0;
+            var maxLimit = getDefaultValueWhenInvalidN_Float(child.MaxLimit);
 
-            for (var iC = 0; iC < child.ChildItems.length; iC++) {
-                var childItem = DeepClone(child.ChildItems[iC]);
-                bankFacilityAmount_CI += getDefaultValueWhenInvalidN_Float(childItem.BankFacilityAmount);
-            }
-            if (bankFacilityAmount_CI != bankFacilityAmount) {
-                toastr.error(`For RM Type ${child.SegmentName} bank facility amount ${bankFacilityAmount} mismatched with items facility amount ${bankFacilityAmount_CI}`);
+            if (maxLimit > accumulatedLimit) {
+                toastr.error(`Max limit ${maxLimit} cannot be greater than bank accumulated limit ${accumulatedLimit} ${row}`);
                 hasError = true;
                 break;
             }
         }
-
-        data.Childs = data.Childs.filter(x => x.BankFacilityAmount > 0);
-        data.Childs.map(c => {
-            c.ChildItems = c.ChildItems.filter(x => x.BankFacilityAmount > 0);
-        });
-
         if (hasError) return false;
 
-        axios.post("/api/bond-entitlement/save", data)
+        axios.post("/api/bank-limit/save", data)
             .then(function () {
                 toastr.success("Saved successfully.");
                 backToList();

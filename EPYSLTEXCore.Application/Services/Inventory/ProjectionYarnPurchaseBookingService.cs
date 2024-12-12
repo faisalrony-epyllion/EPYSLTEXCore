@@ -2010,16 +2010,19 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     await _connection.ExecuteAsync(SPNames.sp_Validation_ProjectionYarnBookingItemChildDetails, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.PYBBookingChildDetailsID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 if (ex.Message.Contains('~')) throw new Exception(ex.Message.Split('~')[0]);
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 

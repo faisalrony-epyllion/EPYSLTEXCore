@@ -4,6 +4,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Text.Json.Nodes;
 
 namespace EPYSLTEXCore.Infrastructure.Data
 {
@@ -106,9 +107,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
         // Task SaveNestedEntityAsync(T entity, IDbTransaction transaction = null);
         // Task SaveNestedEntityAsync<T>(T entity, IDbTransaction transaction);
 
-        Task<int> AddDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null);
-        Task<int> DeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null);
-        Task<int> UpdateDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, IDbTransaction transaction = null);
+        Task<int> AddDynamicObjectAsync(string tableName, JsonObject dataObject, SqlConnection connection, IDbTransaction transaction = null);
+        Task<int> DeleteDynamicObjectAsync(string tableName, JsonObject dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null);
+        Task<int> UpdateDynamicObjectAsync(string tableName, JsonObject dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null);
         Task DeleteNestedEntityAsync(T entity, IDbTransaction transaction = null);
         #region signature Methods
         Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null);
@@ -123,6 +124,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<int> GetUniqueCodeWithoutSignatureAsync(IDbConnection connection, IDbTransaction transaction, string tableName, string fieldName, string preFix);
 
         Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
+        Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null); 
         Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null);
         #region Test Ashiq
         //Task<int> GetMaxIdAsync_Test(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);

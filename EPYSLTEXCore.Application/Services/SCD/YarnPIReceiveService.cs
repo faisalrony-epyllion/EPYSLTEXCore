@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
@@ -8,6 +7,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using EPYSLTEXCore.Interfaces.Services;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;

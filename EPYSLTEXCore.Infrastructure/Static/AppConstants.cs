@@ -46,6 +46,11 @@
         public const string ACCEPT = "Accept";
         public const string REJECT = "Reject";
         public const string CANCEL = "Cancel";
+        public const string STATUS = "Status";
+        public const string ADD = "add";
+        public const string UPDATE = "edit";
+        public const string DELETE = "delete";
+       
     }
 
     public static class UserRoles
@@ -462,13 +467,14 @@
         public const int CONTACT_CATEGORY_CONSIGNEE = 12;
         public const int CONTACT_CATEGORY_NOTIFY_PARTY = 5;
     }
-
+  
     public enum EnumRackBinOperationType
     {
         None = 0,
         Addition = 1,
         Deduction = 2
     }
+   
 
     public static class EntityTypeConstants
     {
@@ -585,6 +591,18 @@
         public const int BDS = 1;
         public const int Bulk = 2;
         public const int ProjectionBooking = 3;
+    }
+    public static class DateFormats
+    {
+        /// <summary>
+        /// Default date format
+        /// </summary>
+        public const string DEFAULT_DATE_FORMAT = "dd-MMM-yyyy"; //"MM/dd/yyyy";
+
+        /// <summary>
+        /// Example: 02-Mar-2020
+        /// </summary>
+        public const string DATE_FORMAT_1 = "dd-MMM-yyyy";
     }
     public static class EnumTransectionType
     {

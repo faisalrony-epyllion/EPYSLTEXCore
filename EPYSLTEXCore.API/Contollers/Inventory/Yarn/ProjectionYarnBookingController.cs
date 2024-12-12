@@ -9,8 +9,10 @@ using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NLog;
 using System.Data.Entity;
+using System.Reflection;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 {
@@ -108,8 +110,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(ProjectionYarnBookingMaster model)
+        public async Task<IActionResult> Save(dynamic jsnString)//ProjectionYarnBookingMaster
         {
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
             List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();
             childRecords = model.ProjectionYarnBookingItemChilds;
             _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
@@ -375,8 +378,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("approve")]
         [HttpPost]
-        public async Task<IActionResult> Approve(ProjectionYarnBookingMaster model)
+        public async Task<IActionResult> Approve(dynamic jsnString)
         {
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
             ProjectionYarnBookingMaster entity;
             try
             {
@@ -502,8 +506,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("acknowledge")]
         [HttpPost]
-        public async Task<IActionResult> Acknowledge(ProjectionYarnBookingMaster model)
+        public async Task<IActionResult> Acknowledge(dynamic jsnString)
         {
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
             ProjectionYarnBookingMaster entity;
             try
             {
@@ -647,8 +652,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("acknowledgemnm")]
         [HttpPost]
-        public async Task<IActionResult> AcknowledgeMnM(ProjectionYarnBookingMaster model)
+        public async Task<IActionResult> AcknowledgeMnM(dynamic jsnString)
         {
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
             try
             {
                 List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();

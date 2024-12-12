@@ -5,6 +5,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using EPYSLTEXCore.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

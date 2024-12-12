@@ -209,12 +209,10 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             return await _service.ExecuteAsync(query, param);
         }
-        public async Task Save(List<string> tableNames, List<object> objLst, List<string> conKey, List<string> primaryKeyColumns, string status = "")
+        public async Task Save(List<string> tableNames, List<object> objLst, List<string> conKey, List<string> primaryKeyColumns)
         {
             try
             {
-
-
                 SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey.FirstOrDefault()));
                 await conn.OpenAsync(); // Ensure connection is opened
 
@@ -232,10 +230,7 @@ namespace EPYSLTEX.Infrastructure.Services
                                 string tableName = tableNames[i];
                                 object obj = objLst[i];
                                 string primaryKey = primaryKeyColumns[i];
-
-                                
-
-                                    int wi = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, conn, transaction);
+                                int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string>() { primaryKey }, conn, transaction);
                                       
                             }
                         }

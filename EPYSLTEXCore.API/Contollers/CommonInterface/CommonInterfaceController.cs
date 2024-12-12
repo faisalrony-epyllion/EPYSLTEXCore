@@ -163,14 +163,14 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             JsonObject jsonObject = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(entity));
             List<object> resultList = new List<object>();
             string parentsqlConnection = commonInterfaceMaster.ConName;
-           
+
             // Get child grid details once to avoid multiple calls
             var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
             string childsqlConnection = childGrid.ConName;
             string parentTable = "";
             string childTable = "";
             string childGridprimaryKeyColumn = "";
-            string parentPrimaryKeyColumn =  "";
+            string parentPrimaryKeyColumn = "";
             List<string> tableNames = new List<string>();
             List<string> sqlConnection = new List<string>();
             List<string> primaryKeyColumns = new List<string>();
@@ -182,32 +182,45 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
                 parentTable = commonInterfaceMaster.TableName.Trim();
 
-                  parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
+                parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
                 string conn = commonInterfaceMaster.ConName.Trim();
 
-                jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable,1,1)).LastNumber;
-                primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
+                if (jsonObject[commonInterfaceMaster.PrimaryKeyColumn] != null && jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString() == "-1111")
+                {
+                    jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable, 1, 1)).LastNumber + 1;
+                    jsonObject[StatusConstants.STATUS] = StatusConstants.ADD;
+
+
+                }
+                else
+                {
+                    jsonObject[StatusConstants.STATUS] = StatusConstants.UPDATE;
+                }
                 tableNames.Add(parentTable);
                 sqlConnection.Add(parentsqlConnection);
                 primaryKeyColumns.Add(parentPrimaryKeyColumn);
                 parentChildObject.Add(jsonObject);
+                primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
 
             }
 
             if (childGrid != null)
-            { 
-                childTable = childGrid.TableName.Trim(); 
+            {
+                childTable = childGrid.TableName.Trim();
                 childGridprimaryKeyColumn = childGrid.PrimaryKeyColumn.Trim();
                 string childGridParentColumn = childGrid.ParentColumn.Trim();
-                 
+
                 // Extract the 'Childs' array
                 childsArray = jsonObject["Childs"].AsArray();
-                
+                int count = 0;
                 foreach (JsonNode item in childsArray)
                 {
-
+                    count = count + 1;
                     item[childGridParentColumn] = (primaryKeyColumnValue);
-                    item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber;   
+                    if (item[StatusConstants.STATUS] != null && item[StatusConstants.STATUS].ToString() == StatusConstants.ADD)
+                    {
+                        item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber + count;
+                    }
                 }
 
                 // Deserialize JsonArray into a List<object>
@@ -219,10 +232,10 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
                 parentChildObject.Add(jsonObject["Childs"]);
 
             }
-                
-                _service.Save(tableNames, parentChildObject, sqlConnection, primaryKeyColumns, "add");
 
-           
+            _service.Save(tableNames, parentChildObject, sqlConnection, primaryKeyColumns);
+
+
 
 
 

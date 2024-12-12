@@ -1,26 +1,18 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Services
 {

@@ -46,9 +46,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         public async Task<IEnumerable<CommonInterfaceMaster>> GetOrCreateCacheValue(string cacheKey, int applicationId)
         {
             // Check if the value is in cache
-            if (!_memoryCache.TryGetValue(InMemoryCacheKeys.CommonInterfaceConfig, out IEnumerable<CommonInterfaceMaster> commonInterfaceMasterlst))
-            {
-                commonInterfaceMasterlst = await _service.GetConfigurationAsyncByApplicationID(applicationId);
+            //if (!_memoryCache.TryGetValue(InMemoryCacheKeys.CommonInterfaceConfig, out IEnumerable<CommonInterfaceMaster> commonInterfaceMasterlst))
+            //{
+                IEnumerable<CommonInterfaceMaster>   commonInterfaceMasterlst = await _service.GetConfigurationAsyncByApplicationID(applicationId);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSize(1)  // Specify the size
@@ -59,7 +59,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
 
 
-            }
+           // }
 
             // Return the cached value
             return commonInterfaceMasterlst;

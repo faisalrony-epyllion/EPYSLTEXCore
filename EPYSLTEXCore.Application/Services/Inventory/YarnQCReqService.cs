@@ -319,7 +319,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                 orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By QCReqMasterID Desc" : paginationInfo.OrderBy;
             }
-            else if (status == Status.Approved)
+            else if (status == Status.Approved || status == Status.ProposedForAcknowledge)
             {
                 sql = $@";
                 ;With 
@@ -328,7 +328,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                SELECT RC.QCReqMasterID, ItemMasterID = MAX(RC.ItemMasterID)
 	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
                     INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
-	                WHERE RCM.IsApprove = 1
+	                WHERE RCM.IsApprove = 1 AND RCM.IsAcknowledge = 0
 	                GROUP BY RC.QCReqMasterID
                 ),
                 YQCReq As 
@@ -340,7 +340,63 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID=M.ReceiveID
 	                LEFT Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On M.QCForID = QCReqFor.ValueID
 	                LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode
-                    WHERE M.IsApprove = 1
+                    WHERE M.IsApprove = 1 AND M.IsAcknowledge = 0
+                ),RackBinDate As(
+					
+                        Select  RM.ReceiveID, RackBinDate = Max(RB.DateAdded)
+                        From {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB
+						Inner Join {TableNames.YARN_RECEIVE_CHILD} RMC On RMC.ChildID = RB.ChildID
+                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
+                        INNER JOIN YQCReq M  ON M.ReceiveID = RM.ReceiveID
+                        GROUP BY RM.ReceiveID
+
+				),
+                FinalList AS
+                (
+                    Select QCReqMasterID, QCReqNo,	QCReqByUser, QCReqDate,	QCReqFor, IsApprove,IsAcknowledge, YQCReq.ReceiveID,
+                    YQCReq.ItemMasterID,YQCReq.PhysicalCount,YQCReq.LotNo,YQCReq.ChallanNo, YQCReq.ChallanDate,YQCReq.ReceiveNo,YQCReq.ReceiveDate,
+                    ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc, 
+                    ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc,
+                    Status = CASE WHEN YQCReq.RetestForRequisitionQCReqMasterID > 0 THEN 'Retest for requisition' 
+								  WHEN YQCReq.RetestQCReqMasterID > 0 THEN 'Retest' 
+							      ELSE '' END,RBD.RackBinDate
+                    From YQCReq
+                    INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YQCReq.ItemMasterID 
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID = IM.Segment3ValueID
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV4 ON ISV4.SegmentValueID = IM.Segment4ValueID
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV5 ON ISV5.SegmentValueID = IM.Segment5ValueID
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 On ISV6.SegmentValueID = IM.Segment6ValueID
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
+                    Left Join RackBinDate RBD On RBD.ReceiveID = YQCReq.ReceiveID
+                )
+                 SELECT *,Count(*) Over() TotalRows FROM FinalList 
+                ";
+                orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By QCReqMasterID Desc" : paginationInfo.OrderBy;
+            }
+            else if (status == Status.Acknowledge)
+            {
+                sql = $@";
+                ;With 
+                Child AS
+                (
+	                SELECT RC.QCReqMasterID, ItemMasterID = MAX(RC.ItemMasterID)
+	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
+                    INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
+	                WHERE RCM.IsAcknowledge = 1
+	                GROUP BY RC.QCReqMasterID
+                ),
+                YQCReq As 
+                (
+	                Select M.QCReqMasterID, M.QCReqNo, U.Name QCReqByUser, M.QCReqDate, QCReqFor.ValueName QCReqFor, M.IsApprove, M.IsAcknowledge,
+	                M.ReceiveID, RC.ItemMasterID,M.PhysicalCount,M.LotNo,RM.ChallanNo, RM.ChallanDate,RM.ReceiveNo,RM.ReceiveDate, M.RetestQCReqMasterID, M.IsRetestForRequisition, M.RetestForRequisitionQCReqMasterID
+	                From {TableNames.YARN_QC_REQ_MASTER} M
+	                INNER JOIN Child RC ON RC.QCReqMasterID = M.QCReqMasterID --Max can have 1 Child
+	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID=M.ReceiveID
+	                LEFT Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On M.QCForID = QCReqFor.ValueID
+	                LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode
+                    WHERE M.IsAcknowledge = 1
                 ),RackBinDate As(
 					
                         Select  RM.ReceiveID, RackBinDate = Max(RB.DateAdded)
@@ -546,7 +602,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                SELECT RC.QCReqMasterID, RC.ChallanLot, ItemMasterID = MAX(RC.ItemMasterID)
 	                FROM {TableNames.YARN_QC_REQ_CHILD} RC
                     INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RCM ON RCM.QCReqMasterID = RC.QCReqMasterID
-	                WHERE RCM.IsSendForApproval = 0 AND RCM.IsApprove = 0
+	                WHERE RCM.IsSendForApproval = 0 AND RCM.IsApprove = 0 AND RCM.IsAcknowledge = 0
 	                GROUP BY RC.QCReqMasterID, RC.ChallanLot
                 ),
                 YQCReq As 
@@ -558,7 +614,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID=M.ReceiveID
 	                LEFT Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On M.QCForID = QCReqFor.ValueID
 	                LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode
-                    WHERE M.IsSendForApproval = 0 AND M.IsApprove = 0
+                    WHERE M.IsSendForApproval = 0 AND M.IsApprove = 0 AND M.IsAcknowledge = 0
                 ),RackBinDate As(
 					
                         Select  RM.ReceiveID, RackBinDate = Max(RB.DateAdded)

@@ -6,8 +6,7 @@
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, tblMasterId, $formEl, $tblChildEl, tblChildId;
     var status = statusConstants.PENDING;
     var isAcknowledge = false;
-    var isQCR = false,
-        isQCRApproval = false;
+    var isQCR = false, isQCRApproval = false, isYQCMRSAck = false;
     var tableParams = {
         offset: 0,
         limit: 10,
@@ -39,6 +38,7 @@
         var menuParam = $("#" + pageId).find("#txtMenuParam").val();
         if (menuParam == "YQCR") isQCR = true;
         else if (menuParam == "YQCRApproval") isQCRApproval = true;
+        else if (menuParam == "YQCMRSAck") isYQCMRSAck = true;
 
         $toolbarEl.find(".btnTootBar").hide();
         $formEl.find(".btnAction").hide();
@@ -52,6 +52,8 @@
             $toolbarEl.find("#btnApprovedList").show();
             $toolbarEl.find("#btnAllList").show();
             $toolbarEl.find("#btnRejectList").show();
+            $toolbarEl.find("#btnPendingForAcknowledgeList").show();
+            $toolbarEl.find("#btnAcknowledgeList").show();
 
             $formEl.find("#btnSave").show();
             $formEl.find("#btnSaveAndSend").show();
@@ -61,10 +63,16 @@
             $toolbarEl.find("#btnApprovedList").show();
             $toolbarEl.find("#btnAllList").show();
             $toolbarEl.find("#btnRejectList").show();
+            $toolbarEl.find("#btnPendingForAcknowledgeList").show();
+            $toolbarEl.find("#btnAcknowledgeList").show();
 
             $formEl.find("#btnApprove").show();
             $formEl.find("#btnReject").show();
 
+        }
+        else if (isYQCMRSAck) {
+            $toolbarEl.find("#btnPendingForAcknowledgeList").show();
+            $toolbarEl.find("#btnAcknowledgeList").show();
         }
         if (isAcknowledge) {
             $formEl.find("#btnSave").hide();
@@ -90,15 +98,19 @@
 
         $formEl.find("#btnSave").click(function (e) {
             e.preventDefault();
-            save(false, false, false, false);
+            save(false, false, false, false, false);
         });
         $formEl.find("#btnSaveAndSend").click(function (e) {
             e.preventDefault();
-            save(true, false, false, false);
+            save(true, false, false, false, false);
         });
         $formEl.find("#btnApprove").click(function (e) {
             e.preventDefault();
-            save(false, true, false, false);
+            save(false, true, false, false, false);
+        });
+        $formEl.find("#btnAcknowledge").click(function (e) {
+            e.preventDefault();
+            save(false, false, false, false, true);
         });
         $formEl.find("#btnReject").click(function (e) {
             e.preventDefault();
@@ -113,7 +125,7 @@
         });
         $formEl.find("#btnRevise").click(function (e) {
             e.preventDefault();
-            save(false, false, false, true);
+            save(false, false, false, true, false);
         });
 
         $toolbarEl.find(".divCreate").hide();
@@ -196,7 +208,33 @@
             resetTableParams();
             initMasterTable();
         });
-
+        $toolbarEl.find("#btnPendingForAcknowledgeList").on("click", function (e) {
+            status = statusConstants.PROPOSED_FOR_ACKNOWLEDGE;
+            $toolbarEl.find(".divCreate").hide();
+            $formEl.find("#btnSave").hide();
+            $formEl.find("#btnSaveAndSend").hide();
+            $formEl.find("#btnApprove").hide();
+            $formEl.find("#btnReject").hide();
+            $formEl.find("#btnRevise").hide();
+            if (isQCR) {
+                $toolbarEl.find(".divCreate").show();
+            }
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            resetTableParams();
+            initMasterTable();
+        });
+        $toolbarEl.find("#btnAcknowledgeList").on("click", function (e) {
+            status = statusConstants.ACKNOWLEDGE;
+            $toolbarEl.find(".divCreate").hide();
+            if (isQCR) {
+                $toolbarEl.find(".divCreate").show();
+            }
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            resetTableParams();
+            initMasterTable();
+        });
         $toolbarEl.find("#btnRejectList").on("click", function (e) {
             status = statusConstants.REJECT;
             if (isQCR && status == statusConstants.REJECT) {
@@ -236,6 +274,8 @@
             $toolbarEl.find("#pandingList").click();
         } else if (isQCRApproval) {
             $toolbarEl.find("#btnPendingForApproval").click();
+        } else if (isYQCMRSAck) {
+            $toolbarEl.find("#btnPendingForAcknowledgeList").click();
         }
 
         pageIdWithHash = "#" + pageId;
@@ -501,7 +541,7 @@
         });
     }
     function handleCommands(args) {
-
+        debugger;
         _isRetest = false;
         selectedargs = args;
         if (args.commandColumn.type == "NoTest") {
@@ -537,8 +577,19 @@
             } else {
                 getDetails(args.rowData.ReceiveID, args.rowData.ItemMasterID);
             }
-            if (isQCR && status != statusConstants.PROPOSED_FOR_APPROVAL && status != statusConstants.APPROVED && status != statusConstants.ALL) {
+            if (isQCR && status != statusConstants.PROPOSED_FOR_APPROVAL && status != statusConstants.APPROVED && status != statusConstants.ALL && status != statusConstants.PROPOSED_FOR_ACKNOWLEDGE && status != statusConstants.ACKNOWLEDGE) {
                 $formEl.find("#btnSave,#btnSaveAndSend").show();
+            }
+            if (isYQCMRSAck) {
+                if (status == statusConstants.PROPOSED_FOR_ACKNOWLEDGE) {
+                    $formEl.find("#btnAcknowledge").show();
+                }
+                else {
+                    $formEl.find("#btnSave,#btnSaveAndSend,#btnAcknowledge").hide();
+                }
+            }
+            else {
+                $formEl.find("#btnAcknowledge").hide();
             }
         }
     }
@@ -1143,7 +1194,7 @@
             .catch(showResponseError);
     }
 
-    function save(isSendForApproval, isApprove, isReject, isRevise) {
+    function save(isSendForApproval, isApprove, isReject, isRevise, isAcknowledge) {
         var data = formDataToJson($formEl.serializeArray());
         data.SupplierID = yarnQCReq.SupplierID;
         data.YarnQCReqChilds = yarnQCReq.YarnQCReqChilds; // $tblChildEl.getCurrentViewRecords();
@@ -1209,6 +1260,7 @@
         data.IsApprove = isApprove;
         data.IsReject = isReject;
         data.IsRevise = isRevise;
+        data.IsAcknowledge = isAcknowledge;
 
         if (isReject) {
             data.RejectReason = $.trim($formEl.find("#RejectReason").val());

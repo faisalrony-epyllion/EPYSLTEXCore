@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Application.Interfaces.Inventory;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;

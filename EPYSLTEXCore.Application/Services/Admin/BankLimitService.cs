@@ -42,31 +42,48 @@ namespace EPYSLTEXCore.Application.Services.Admin
 
         public async Task<List<BankLimitMaster>> GetPagedAsync(Status status, PaginationInfo paginationInfo)
         {
-            string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? " ORDER BY CompanyName, BankLimitMasterID DESC " : paginationInfo.OrderBy;
+            string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? " ORDER BY BankLimitMasterID DESC, BankLimitChildID  " : paginationInfo.OrderBy;
             string sql = "";
 
             if (status == Status.All)
             {
-                sql = $@"WITH FinalList AS
+                sql = $@"
+                WITH FinalList AS
                 (
-	                SELECT BEM.BankLimitMasterID
-	                ,C.CompanyID
-	                ,C.CompanyName
-	                ,BondLicenceNo = ISNULL(BEM.BondLicenceNo,'')
-	                ,EBINNo = ISNULL(BEM.EBINNo,'')
-	                ,BEM.FromDate
-	                ,BEM.ToDate
-	                ,CurrencyID = ISNULL(BEM.CurrencyID,0)
+                    SELECT M.BankLimitMasterID
+                    ,M.CompanyID
+                    ,M.CurrencyID
+	                ,M.BankID
+	                ,M.BankFacilityTypeID
+	                ,M.AccumulatedLimit
+
+	                ,CompanyName = ISNULL(CE.ShortName,'')
 	                ,CurrencyName = ISNULL(CU.CurrencyCode,'')
-	                FROM BankLimitMaster BEM
-	                INNER JOIN EPYSL..CompanyEntity C ON C.CompanyID = BEM.CompanyID 
-	                LEFT JOIN EPYSL..Currency CU ON CU.CurrencyID = BEM.CurrencyID
-	                WHERE C.CompanyID IN(8,6)
+	                ,BankName = ISNULL(B.BankMasterName,'')
+	                ,BankFacilityTypeName = ISNULL(BFT.Name, '')
+
+	                ,FormBankFacilityName = ISNULL(BF.Name, '')
+	                ,LiabilityTypeName = ISNULL(LT.Name, '')
+
+	                ,C.BankLimitChildID
+	                ,C.FromTenureDay
+	                ,C.ToTenureDay
+	                ,C.MaxLimit
+	                ,C.LCOpened
+	                ,C.LCAcceptenceGiven
+	                ,C.PaymentOnMaturity
+
+                    FROM BankLimitMaster M
+	                INNER JOIN BankLimitChild C ON C.BankLimitMasterID = M.BankLimitMasterID
+                    INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = M.CompanyID 
+                    LEFT JOIN {DbNames.EPYSL}..Currency CU ON CU.CurrencyID = M.CurrencyID
+	                LEFT JOIN {DbNames.EPYSL}..BankMaster B ON B.BankMasterID = M.BankID
+	                LEFT JOIN BankFacilityType BFT ON BFT.BankFacilityTypeID = M.BankFacilityTypeID
+	                LEFT JOIN FormBankFacility BF ON BF.FormBankFacilityID = C.FormBankFacilityID
+	                LEFT JOIN LiabilityType LT ON LT.LiabilityTypeID = C.LiabilityTypeID
                 )
                 SELECT *, Count(*) Over() TotalRows FROM FinalList";
             }
-
-
 
             sql += $@"
                 {paginationInfo.FilterBy}
@@ -82,23 +99,26 @@ namespace EPYSLTEXCore.Application.Services.Admin
                 $@"
                 {CommonQueries.GetCompany()};
 
-                SELECT id = ISNULL(ISN.SegmentNameID,0)
-                ,text = ISN.SegmentName 
-                FROM {DbNames.EPYSL}..ItemSegmentName ISN
-                WHERE ISN.SegmentNameID IN (270,273);
-
-                SELECT id = ISV.SegmentValueID
-                ,text = ISV.SegmentValue 
-                ,additionalValue = ISNULL(ISN.SegmentNameID,0)
-                FROM {DbNames.EPYSL}..ItemSegmentValue ISV
-                INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                WHERE ISN.SegmentNameID IN (270,273);
-
                 --Currency
                 SELECT id = CurrencyID, text = CurrencyCode FROM {DbNames.EPYSL}..Currency;
                 
-                --Unit
-                SELECT id = UnitID, text = DisplayUnitDesc FROM {DbNames.EPYSL}..Unit;
+                --Bank
+                 {CommonQueries.GetBanks()};
+
+                --BankFacility
+                 SELECT id = BankFacilityTypeID, text = [Name]
+                 FROM BankFacilityType
+                 ORDER BY [Name];
+
+                --FormBankFacility
+                 SELECT id = FormBankFacilityID, text = [Name]
+                 FROM FormBankFacility
+                 ORDER BY [Name];
+                
+                --LiabilityType
+                 SELECT id = LiabilityTypeID, text = [Name]
+                 FROM LiabilityType
+                 ORDER BY [Name];
 
               ";
 
@@ -109,10 +129,11 @@ namespace EPYSLTEXCore.Application.Services.Admin
 
                 BankLimitMaster data = new BankLimitMaster();
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
-                var itemSegmentNames = await records.ReadAsync<Select2OptionModel>();
-                var itemSegmentValues = await records.ReadAsync<Select2OptionModel>();
                 data.CurrencyList = await records.ReadAsync<Select2OptionModel>();
-                data.UnitList = await records.ReadAsync<Select2OptionModel>();
+                data.BankList = await records.ReadAsync<Select2OptionModel>();
+                data.BankFacilityTypeList = await records.ReadAsync<Select2OptionModel>();
+                data.FormBankFacilityList = await records.ReadAsync<Select2OptionModel>();
+                data.LiabilityTypeList = await records.ReadAsync<Select2OptionModel>();
 
                 return data;
             }
@@ -138,31 +159,28 @@ namespace EPYSLTEXCore.Application.Services.Admin
             INNER JOIN BankLimitChild C ON C.BankLimitMasterID = M.BankLimitMasterID
             Where M.BankLimitMasterID = {id};
 
-            Select CI.* 
-            From BankLimitMaster M
-            INNER JOIN BankLimitChild C ON C.BankLimitMasterID = M.BankLimitMasterID
-            INNER JOIN BankLimitChildItem CI ON CI.BankLimitChildID = C.BankLimitChildID
-            Where M.BankLimitMasterID = {id};
-
             {CommonQueries.GetCompany()};
-
-            SELECT id = ISNULL(ISN.SegmentNameID,0)
-            ,text = ISN.SegmentName 
-            FROM {DbNames.EPYSL}..ItemSegmentName ISN
-            WHERE ISN.SegmentNameID IN (270,273);
-
-            SELECT id = ISV.SegmentValueID
-            ,text = ISV.SegmentValue 
-            ,additionalValue = ISNULL(ISN.SegmentNameID,0)
-            FROM {DbNames.EPYSL}..ItemSegmentValue ISV
-            INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-            WHERE ISN.SegmentNameID IN (270,273);
 
             --Currency
             SELECT id = CurrencyID, text = CurrencyCode FROM {DbNames.EPYSL}..Currency;
                 
-            --Unit
-            SELECT id = UnitID, text = DisplayUnitDesc FROM {DbNames.EPYSL}..Unit;
+            --Bank
+            {CommonQueries.GetBanks()};
+
+            --BankFacility
+            SELECT id = BankFacilityTypeID, text = [Name]
+            FROM BankFacilityType
+            ORDER BY [Name];
+
+            --FormBankFacility
+            SELECT id = FormBankFacilityID, text = [Name]
+            FROM FormBankFacility
+            ORDER BY [Name];
+                
+            --LiabilityType
+            SELECT id = LiabilityTypeID, text = [Name]
+            FROM LiabilityType
+            ORDER BY [Name];
 
             ";
 
@@ -171,11 +189,14 @@ namespace EPYSLTEXCore.Application.Services.Admin
                 await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 BankLimitMaster data = records.Read<BankLimitMaster>().FirstOrDefault();
-                var childs = records.Read<BankLimitChild>().ToList();
-
+                data.Childs = records.Read<BankLimitChild>().ToList();
+                
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
                 data.CurrencyList = await records.ReadAsync<Select2OptionModel>();
-                data.UnitList = await records.ReadAsync<Select2OptionModel>();
+                data.BankList = await records.ReadAsync<Select2OptionModel>();
+                data.BankFacilityTypeList = await records.ReadAsync<Select2OptionModel>();
+                data.FormBankFacilityList = await records.ReadAsync<Select2OptionModel>();
+                data.LiabilityTypeList = await records.ReadAsync<Select2OptionModel>();
 
                 return data;
             }

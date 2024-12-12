@@ -28,12 +28,10 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Admin
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || this.BankLimitChildID > 0;
-        //[Write(false)]
-        //public List<BondEntitlementChildItem> ChildItems { get; set; } = new List<BondEntitlementChildItem>();
         [Write(false)]
-        public string FormBankFacility { get; set; } = "";
+        public string FormBankFacilityName { get; set; } = "";
         [Write(false)]
-        public string LiabilityType { get; set; } = "";
+        public string LiabilityTypeName { get; set; } = "";
 
         #endregion Additional Property
     }

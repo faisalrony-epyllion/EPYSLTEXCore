@@ -20,5 +20,14 @@
         public const string sp_Validation_YarnAllocationChildItem = "T_sp_Validation_YarnAllocationChildItem";
         public const string sp_Validation_YarnAllocationChildPipelineItem = "T_sp_Validation_YarnAllocationChildPipelineItem";
         public const string spUpdateAllocationChilditemPreProcessRevisionNo = "T_spUpdateAllocationChilditemPreProcessRevisionNo";
+
+
+
+
+
+        #region Purchase Order PO
+        public const string sp_Validation_YarnPOChild = "T_sp_Validation_YarnPOChild";
+        public const string sp_Validation_YarnPOChildOrder = "T_sp_Validation_YarnPOChildOrder";
+        #endregion
     }
 }

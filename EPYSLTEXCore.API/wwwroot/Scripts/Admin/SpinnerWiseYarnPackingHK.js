@@ -18,37 +18,12 @@
         $formEl.find("#btnSave").click(save);
 
     });
-    /*
-    function initMasterTable() {
-        $tblMasterEl.bootstrapTable('destroy');
-        $tblMasterEl.bootstrapTable({
-            uniqueId: 'SetupID',
-            pagination: true,
-            sidePagination: "client",
-            pageList: "[10, 25, 50, 100, 500]",
-            cache: false,
-            editable: true,
-            data: spinnerList.SegmentFilterMappingList,
-            columns: [
-                {
-                    field: "Fiber",
-                    title: "Fiber"
-                },
-                {
-                    field: "SubProgram",
-                    title: "Sub Program"
-                },
-                {
-                    field: "Certifications",
-                    title: "Certifications"
-                }
-            ]
-        });
-    }*/
     function initMasterTable() {
         var commands = [
-            { type: 'Edit', title: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-edit' } },
-            { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
+            { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
+            { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
+            { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
+            { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }
         ];
 
         columns = [
@@ -91,20 +66,7 @@
 
             actionBegin: function (args) {
                 if (args.requestType === "save") {
-                    /*var data = {
-                        SubClassID:args.data.SubClassID,
-                        SubClassName:args.data.SubClassName,
-                        TypeID:args.data.TypeID,
-                        ShortCode:args.data.ShortCode,
-                        isModified:true
-                    }
-
-                    axios.post("/api/kmachine-subclass/save", data)
-                        .then(function () {
-                            toastr.success("Saved successfully!");
-                            getInitData();
-                        })
-                        .catch(showResponseError);*/
+                   
                 }
             },
             actionComplete: function (args) {

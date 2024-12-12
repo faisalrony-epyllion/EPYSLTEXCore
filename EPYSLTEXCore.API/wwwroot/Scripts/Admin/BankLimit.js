@@ -16,7 +16,7 @@
         if (!menuParam)
             menuParam = localStorage.getItem("menuParam");
 
-
+   
         pageId = pageName + "-" + menuId;
         $pageEl = $(`#${pageId}`);
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -82,24 +82,9 @@
     }
 
     function initMasterTable() {
-        var commands = [];
-        if (status === statusConstants.PendingReceiveCI || status === statusConstants.PendingReceivePO || status === statusConstants.PendingReceiveSF) {
-            commands = [
-                { type: 'New', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-plus' } }
-            ]
-        } else if (status === statusConstants.DRAFT) {
-            commands = [
-                { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-delete e-icons' } },
-                { type: 'Yarn Control Sheet', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-            ]
-        }
-        else {
-            commands = [
-                { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'Yarn Control Sheet', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-            ]
-        }
+        var commands = [
+            { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
+        ]
 
         var columns = [
             {
@@ -226,7 +211,7 @@
             showColumnChooser: true,
             showDefaultToolbar: false,
             toolbar: ['Add'],
-            editSettings: { allowEditing: true, allowAdding: true, allowDeleting: false, mode: "Normal", showDeleteConfirmDialog: true },
+            editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true },
             actionBegin: function (args) {
 
             },

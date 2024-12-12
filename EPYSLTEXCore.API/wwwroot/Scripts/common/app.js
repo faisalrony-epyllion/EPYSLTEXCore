@@ -623,12 +623,6 @@ function GetMenus(applicationId) {
 function generateMenu(menuList) {
 
     $.each(menuList, function (i, item) {
-
-        var aaa = item.Childs.filter(x => x.MenuParam.length > 0);
-        if (aaa.length > 0) {
-            
-        }
-
         if (!item.Childs.length) {
             if (!item.NavigateUrl) return true;
             var navProperties = item.NavigateUrl.split('/');

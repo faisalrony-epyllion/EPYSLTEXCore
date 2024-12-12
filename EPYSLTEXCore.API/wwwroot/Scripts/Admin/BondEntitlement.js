@@ -47,6 +47,20 @@
         $formEl.find("#btnBackToList").click(function () {
             backToList();
         });
+
+        $('.ej2-datepicker').each(function (i, el) {
+            $(el).datepicker({
+                todayHighlight: true,
+                format: _ch_date_format_3,
+                autoclose: true,
+                todayBtn: "linked"
+            }).on("show", function (date) {
+                if (this.value && !date.date) {
+                    console.log(this.value);
+                    $(this).datepicker('update', this.value);
+                }
+            });
+        });
     });
 
     function loadNew() {
@@ -76,8 +90,8 @@
 
                 masterData = response.data;
 
-                masterData.FromDate = formatDateToDefault(new Date());
-                masterData.ToDate = formatDateToDefault(new Date());
+                masterData.FromDate = formatDateToDefault(masterData.FromDate);
+                masterData.ToDate = formatDateToDefault(masterData.ToDate);
                 setFormData($formEl, masterData);
 
                 initChildTable(masterData.Childs);
@@ -86,24 +100,9 @@
     }
 
     function initMasterTable() {
-        var commands = [];
-        if (status === statusConstants.PendingReceiveCI || status === statusConstants.PendingReceivePO || status === statusConstants.PendingReceiveSF) {
-            commands = [
-                { type: 'New', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-plus' } }
-            ]
-        } else if (status === statusConstants.DRAFT) {
-            commands = [
-                { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-delete e-icons' } },
-                { type: 'Yarn Control Sheet', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-            ]
-        }
-        else {
-            commands = [
-                { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'Yarn Control Sheet', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-            ]
-        }
+        var commands = [
+            { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
+        ]
 
         var columns = [
             {

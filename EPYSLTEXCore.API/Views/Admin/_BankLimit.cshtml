@@ -13,6 +13,11 @@
     var formId = "form" + pageId;
     var divDetailsId = "divDetails" + pageId;
 }
+<style type="text/css">
+    .cbo {
+        font-size: 16px !important;
+    }
+</style>
 <div id="@pageId">
     <div class="row" id="@divTblId">
         <div class="col-sm-12">
@@ -46,32 +51,31 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-
                                 <div class="col-md-3">
-                                    <div class="form-group">
+                                    <div class="form-group cbo">
                                         <label>Company</label>
-                                        <select id="CompanyID" name="CompanyID" class="form-control form-control-sm" style="width:100%"></select>
+                                        <select id="CompanyID" name="CompanyID" class="form-control form-control-sm" style="width:100%;"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
+                                    <div class="form-group cbo">
                                         <label>Bank</label>
                                         <select id="BankID" name="BankID" class="form-control form-control-sm" style="width:100%"></select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 cbo">
                                     <div class="form-group">
                                         <label>Bank Facility</label>
                                         <select id="BankFacilityTypeID" name="BankFacilityTypeID" class="form-control form-control-sm" style="width:100%"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
+                                    <div class="form-group cbo">
                                         <label>Accumulated Limit</label>
                                         <input id="AccumulatedLimit" name="AccumulatedLimit" class="form-control form-control-sm" />
                                     </div>
                                 </div>
-                                <div class="col-md-3 PO">
+                                <div class="col-md-3 cbo">
                                     <div class="form-group">
                                         <label>Currency</label>
                                         <select id="CurrencyID" name="CurrencyID" class="form-control form-control-sm" style="width:100%"></select>

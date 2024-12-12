@@ -829,10 +829,10 @@
         public const string YARN_ADJUSTMENT_NO = "YarnAdjustmentNo";
 
         #region Import Invoice Payment
-        //public const string Import_Invoice_Payment_Master = "ImportInvoicePaymentMaster_tex";
-        //public const string Import_Invoice_Payment_IIPMasterNo = "ImportInvoicePaymentIIPMasterNo_tex";
-        //public const string Import_Invoice_Payment_Child = "ImportInvoicePaymentChild_tex";
-        //public const string Import_Invoice_Payment_Details = "ImportInvoicePaymentDetails_tex";
+        public const string Import_Invoice_Payment_Master = "ImportInvoicePaymentMaster_tex";
+        public const string Import_Invoice_Payment_IIPMasterNo = "ImportInvoicePaymentIIPMasterNo_tex";
+        public const string Import_Invoice_Payment_Child = "ImportInvoicePaymentChild_tex";
+        public const string Import_Invoice_Payment_Details = "ImportInvoicePaymentDetails_tex";
         #endregion
 
         #region ImportDocumentAcceptanceChargeDetails

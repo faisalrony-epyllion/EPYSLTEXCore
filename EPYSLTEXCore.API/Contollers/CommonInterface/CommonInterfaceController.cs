@@ -46,9 +46,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         public async Task<IEnumerable<CommonInterfaceMaster>> GetOrCreateCacheValue(string cacheKey, int applicationId)
         {
             // Check if the value is in cache
-            if (!_memoryCache.TryGetValue(InMemoryCacheKeys.CommonInterfaceConfig, out IEnumerable<CommonInterfaceMaster> commonInterfaceMasterlst))
-            {
-                commonInterfaceMasterlst = await _service.GetConfigurationAsyncByApplicationID(applicationId);
+            //if (!_memoryCache.TryGetValue(InMemoryCacheKeys.CommonInterfaceConfig, out IEnumerable<CommonInterfaceMaster> commonInterfaceMasterlst))
+            //{
+                IEnumerable<CommonInterfaceMaster>   commonInterfaceMasterlst = await _service.GetConfigurationAsyncByApplicationID(applicationId);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSize(1)  // Specify the size
@@ -59,7 +59,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
 
 
-            }
+           // }
 
             // Return the cached value
             return commonInterfaceMasterlst;
@@ -165,9 +165,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             string parentsqlConnection = commonInterfaceMaster.ConName;
 
             // Get child grid details once to avoid multiple calls
-            var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
-            string childsqlConnection = childGrid.ConName;
-            string childGridParentColumn = childGrid.ParentColumn;
+           
+            string childsqlConnection = "";
+            string childGridParentColumn =  "";
             string parentTable = "";
             string childTable = "";
             string childGridprimaryKeyColumn = "";
@@ -193,6 +193,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             if (commonInterfaceMaster.ChildGrids.Count != 0)
             {
+                var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
+                childsqlConnection = childGrid.ConName.Trim();
+
                 childTable = childGrid.TableName.Trim();
                 childGridprimaryKeyColumn = childGrid.PrimaryKeyColumn.Trim();
                 childGridParentColumn = childGrid.ParentColumn.Trim();

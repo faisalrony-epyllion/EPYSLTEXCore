@@ -586,4 +586,16 @@
         public const int Bulk = 2;
         public const int ProjectionBooking = 3;
     }
+    public static class EnumTransectionType
+    {
+        public const int None = 0;
+        public const int Receive = 1;
+        public const int Issue = 2;
+        public const int Return = 3;
+        public const int Block = 4;
+        public const int Request = 5;
+        public const int CancelOrUnBlock = 6;
+        public const int StockTransfer = 7;
+        public const int LocationTransfer = 8;
+    }
 }

@@ -14,6 +14,7 @@ using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Data;
+using Newtonsoft.Json;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 {
@@ -21,18 +22,18 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
     public class YarnMRIRController : ApiBaseController
     {
         private readonly IYarnMRIRService _yarnMRIRService;
-        //private readonly IYarnAllocationService _yarnAllocationService;
+        private readonly IYarnAllocationService _yarnAllocationService;
         private readonly ICommonHelpers _commonHelpers;
         private readonly IDapperCRUDService<YarnMRIRMaster> _service;
         public YarnMRIRController(IUserService userService, IYarnMRIRService YarnMRIRService
            , ICommonHelpers commonHelpers, IDapperCRUDService<YarnMRIRMaster> service
-            //, IYarnAllocationService yarnAllocationService
+            , IYarnAllocationService yarnAllocationService
             ) : base(userService)
         {
             _yarnMRIRService = YarnMRIRService;
             _commonHelpers = commonHelpers;
             _service = service;
-            //_yarnAllocationService = yarnAllocationService;
+            _yarnAllocationService = yarnAllocationService;
         }
         [Route("list")]
         public async Task<IActionResult> GetList(Status status)
@@ -102,11 +103,13 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SaveYarnMRIR(List<YarnMRIRChild> modelList)
+        //public async Task<IActionResult> SaveYarnMRIR(List<YarnMRIRChild> modelList)
+        public async Task<IActionResult> SaveYarnMRIR(dynamic jsonString)
         {
             //string pageName = modelDynamic.PageName;
             //string grpConceptNo = model.GroupConceptNo;
             //string statusText = model.ConceptStatus;
+            List<YarnMRIRChild> modelList = JsonConvert.DeserializeObject<List<YarnMRIRChild>>(Convert.ToString(jsonString));
             string ret = "";
             YarnMRIRMaster entity = null;
             entity = new YarnMRIRMaster();
@@ -158,9 +161,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("SaveGRNMRIR")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SaveGRNMRIR(YarnMRIRMaster model)
+        //public async Task<IActionResult> SaveGRNMRIR(YarnMRIRMaster model)
+        public async Task<IActionResult> SaveGRNMRIR(dynamic jsonString)
         {
-
+            YarnMRIRMaster model = JsonConvert.DeserializeObject<YarnMRIRMaster>(Convert.ToString(jsonString));
             string ret = "";
             YarnMRIRMaster entity = await _yarnMRIRService.GetAsync(model.MRIRMasterId); ;
 
@@ -180,9 +184,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("retest")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Retest(YarnMRIRMaster model)
+        //public async Task<IActionResult> Retest(YarnMRIRMaster model)
+        public async Task<IActionResult> Retest(dynamic jsonString)
         {
-
+            YarnMRIRMaster model = JsonConvert.DeserializeObject<YarnMRIRMaster>(Convert.ToString(jsonString));
             string ret = "";
             YarnMRIRMaster entity = await _yarnMRIRService.GetAsync(model.MRIRMasterId); ;
 
@@ -200,9 +205,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("return")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Return(YarnMRIRMaster model)
+        //public async Task<IActionResult> Return(YarnMRIRMaster model)
+        public async Task<IActionResult> Return(dynamic jsonString)
         {
-
+            YarnMRIRMaster model = JsonConvert.DeserializeObject<YarnMRIRMaster>(Convert.ToString(jsonString));
             string ret = "";
             YarnMRIRMaster entity = await _yarnMRIRService.GetAsync(model.MRIRMasterId); ;
 
@@ -227,8 +233,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             if (allcationChildIds.IsNotNullOrEmpty() && receiveChildIDs.IsNotNullOrEmpty())
             {
                 List<YarnReceiveChild> yarnReceiveChilds = await _yarnMRIRService.GetByYarnReceiveChildByChildIds(receiveChildIDs);
-                //List<YarnAllocationMaster> YarnAllocations = await _yarnAllocationService.GetByAllocationChildIds(allcationChildIds);
-                List<YarnAllocationMaster> YarnAllocations = new List<YarnAllocationMaster>();
+                List<YarnAllocationMaster> YarnAllocations = await _yarnAllocationService.GetByAllocationChildIds(allcationChildIds);
 
                 foreach (var mrc in mrChilds.Where(x => x.AllocationChildID > 0).ToList())
                 {

@@ -1,6 +1,6 @@
 ﻿namespace EPYSLTEX.Core.Statics
 {
-    public static class TableNames 
+    public static class TableNames
     {
         //public const string LOGIN_HISTORY = "LoginHistoryTextile";
         public const string GREY_FABRIC_PRODUCTION_NO = "GreyFabricProductionNo";
@@ -13,15 +13,15 @@
         public const string YARN_CONTROL_NO_ESL = "ESLYarnControlNo";
         public const string YARN_DC_NO = "DCNo";
         public const string YARN_GATE_PASS_NO = "GPNo";
-        public const string YARN_ALLOCATION_NO = "AllocationNo"; 
+        public const string YARN_ALLOCATION_NO = "AllocationNo";
         public const string YARN_ALLOCATION_PROPOSAL_NO = "ProposalNo";
         public const string YD_PRODUCTION_NO = "YDProductionNo";
         public const string YD_QC_NO = "YDQCNo";
         public const string YA_YARN_CATEGORY_SETUP = "T_YAYarnCategorySetup";
         public const string YA_YARN_CATEGORY_SETUP_CHILD = "T_YAYarnCategorySetupChild";
-        public const string YA_COLLAR_CUFF_SETUP = "T_YACollarCuffSetup"; 
+        public const string YA_COLLAR_CUFF_SETUP = "T_YACollarCuffSetup";
         public const string YA_COLLAR_CUFF_SETUP_CHILD = "T_YACollarCuffSetupChild";
-        public const string YA_YARN_PROGRAM_SETUP = "T_YAYarnProgramSetup"; 
+        public const string YA_YARN_PROGRAM_SETUP = "T_YAYarnProgramSetup";
         public const string YA_YARN_PROGRAM_SETUP_CHILD = "T_YAYarnProgramSetupChild";
         public const string YA_FABRIC_GSM_SETUP = "T_YAFabricGSMSetup";
         public const string YA_FABRIC_GSM_SETUP_CHILD = "T_YAFabricGSMSetupChild";
@@ -177,9 +177,9 @@
         public const string YarnRequisitionMaster = "T_YarnRequisitionMaster";
         public const string YARN_PURCHASE_MASTER = "T_YarnPurchaseReturnMaster";
         public const string YARN_PURCHASE_CHILD = "T_YarnPurchaseReturnChild";
-        public const string YARN_PURCHASE_RETURN_CHILD_RACK_BIN_MAPPING = "T_YarnPurchaseReturnChildRackBinMapping";      
+        public const string YARN_PURCHASE_RETURN_CHILD_RACK_BIN_MAPPING = "T_YarnPurchaseReturnChildRackBinMapping";
         public const string YarnBookingChild_New = "T_YarnBookingChild_New";
-        public const string YarnBookingChildGarmentPart_New = "T_YarnBookingChildGarmentPart_New";       
+        public const string YarnBookingChildGarmentPart_New = "T_YarnBookingChildGarmentPart_New";
         public const string YarnBookingChildItem_New = "T_YarnBookingChildItem_New";
         public const string YarnBookingChildItem_New_Revision = "T_YarnBookingChildItem_New_Revision";
         public const string YarnBookingChildItemYarnSubBrand_New = "T_YarnBookingChildItemYarnSubBrand_New";
@@ -265,7 +265,7 @@
         //public const string YarnPOForOrder = "YarnPOForOrder";
         //public const string YarnPOForBuyer = "YarnPOForBuyer";
         public const string YarnPOMaster = "T_YarnPOMaster";
-        
+
         //public const string YarnPOReturnChild = "YarnPOReturnChild";
         //public const string YarnPOReturnMaster = "YarnPOReturnMaster";
         public const string YarnPriceSetup = "T_YarnPriceSetup";
@@ -282,7 +282,7 @@
         public const string SampleBooking = "T_SampleBooking";
         public const string SampleBookingChild = "T_SampleBookingChild";
         public const string WashServiceWOMaster = "T_WashServiceWOMaster";
-        public const string WashServiceWOEWOChild = "T_WashServiceWOEWOChild"; 
+        public const string WashServiceWOEWOChild = "T_WashServiceWOEWOChild";
         public const string WashServiceWOProcessRate = "T_WashServiceWOProcessRate";
         public const string WashServiceWOSubProcessChild = "T_WashServiceWOSubProcessChild";
         public const string FBBOOKING_ACKNOWLEDGE = "T_FBookingAcknowledge";
@@ -384,17 +384,17 @@
         public const string CDA_FLOOR_LEFT_OVER_RETURN_RECEIVE_CHILD = "T_CDAFloorLeftOverReturnReceiveChild";
         public const string CDA_LOAN_RECEIVE_MASTER = "T_CDALoanReceiveMaster";
         public const string CDA_LOAN_RECEIVE_CHILD = "T_CDALoanReceiveChild";
-        public const string CDA_LOAN_RECEIVE_NO = "LReceiveNo"; 
+        public const string CDA_LOAN_RECEIVE_NO = "LReceiveNo";
         public const string CDA_LOAN_RETURN_MASTER = "T_CDALoanReturnMaster";
         public const string CDA_LOAN_RETURN_CHILD = "T_CDALoanReturnChild";
         public const string CDA_LOAN_RETURN_CHILD_ADJUTMENT = "T_CDALoanReturnChildAdjutment";
         public const string CDA_LOAN_RETURN_NO = "LReturnNo";
         public const string CDA_LOAN_RETURN_CHALLAN_NO = "ChallanNo";
-        public const string CDA_LOAN_RETURN_GATE_PASS_NO = "GPNo"; 
-        public const string CDA_LOAN_ISSUE_MASTER = "T_CDALoanIssueMaster"; 
+        public const string CDA_LOAN_RETURN_GATE_PASS_NO = "GPNo";
+        public const string CDA_LOAN_ISSUE_MASTER = "T_CDALoanIssueMaster";
         public const string CDA_LOAN_ISSUE_CHILD = "T_CDALoanIssueChild";
         public const string CDA_LOAN_ISSUE_NO = "LIssueNo";
-        public const string CDA_LOAN_ISSUE_CHALLAN_NO = "ChallanNo"; 
+        public const string CDA_LOAN_ISSUE_CHALLAN_NO = "ChallanNo";
         public const string CDA_LOAN_ISSUE_GATE_PASS_NO = "GPNo";
 
         public const string CDA_LOAN_ISSUE_RR_MASTER = "T_CDALoanIssueReturnReceiveMaster";
@@ -461,7 +461,7 @@
         public const string RND_RECIPE_REQ_NO = "RecipeReqNo";
         public const string RND_RECIPE_DEFINITION_NO = "RecipeNo";
         public const string BATCH_MASTER = "T_BatchMaster";
-        public const string BATCH_ITEM_REQUIREMENT= "T_BatchItemRequirement";
+        public const string BATCH_ITEM_REQUIREMENT = "T_BatchItemRequirement";
         public const string BATCH_CHILD = "T_BatchChild";
         public const string BATCH_WISE_RECIPE_CHILD = "T_BatchWiseRecipeChild";
         public const string BATCH_NO = "BatchNo";
@@ -553,7 +553,7 @@
         public const string WashReqWashType = "WashReqWashType";
 
         public const string YARN_QC_REQ_CHILD = "T_YarnQCReqChild";
-        public const string YARN_QC_REQ_MASTER = "T_YarnQCReqMaster"; 
+        public const string YARN_QC_REQ_MASTER = "T_YarnQCReqMaster";
         public const string YARN_QC_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING = "T_YarnQCIssueChildRackBinMapping";
         public const string YARN_QC_ISSUE_CHILD = "T_YarnQCIssueChild";
         public const string YARN_QC_ISSUE_MASTER = "T_YarnQCIssueMaster";
@@ -611,7 +611,7 @@
         public const string YD_Left_Over_Return_CHILD = "T_YDLeftOverReturnChild";
         public const string YD_Left_Over_Return_NO = "YDLeftOverReturnNo";
         public const string YD_Left_Over_Return_Receive_MASTER = "T_YDLeftOverReturnReceiveMaster";
-        public const string YD_Left_Over_Return_Receive_CHILD = "T_YDLeftOverReturnReceiveChild"; 
+        public const string YD_Left_Over_Return_Receive_CHILD = "T_YDLeftOverReturnReceiveChild";
         public const string YD_Left_Over_Return_Receive_CHILD_RACK_BIN_MAPPING = "T_YDLeftOverReturnReceiveChildRackBinMapping";
         public const string KY_Req_Master = "T_KYReqMaster";
         public const string KY_Req_Child = "T_KYReqChild";
@@ -783,7 +783,7 @@
         public const string PROJECTION_YARN_BOOKING_BUYER_AND_BUYERTEAM = "T_PYBookingBuyerAndBuyerTeam";
         public const string YARN_YD_REQ_MASTER = "T_YarnYDReqMaster";
         public const string YARN_YD_REQ_CHILD = "T_YarnYDReqChild";
-        public const string YARN_SHADE_BOOK = "T_YarnShadeBook"; 
+        public const string YARN_SHADE_BOOK = "T_YarnShadeBook";
         public const string SEGMENT_FILTER_SETUP = "SegmentValueYarnTypeMappingSetup";
         public const string FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP = "T_FabricComponentMappingSetup";
 
@@ -853,7 +853,7 @@
         public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
         public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
         public const string CONCEPT_PENDING_STATUS_HK = "T_ConceptPendingStatus_HK";
-        
+
         public const string CONCEPT_TYPE = "T_ConceptType";
         public const string KNITTING_MACHINE_TYPE = "T_KnittingMachineType";
         public const string KNITTING_MACHINE_SUB_CLASS_TECHNICAL_NAME = "T_KnittingMachineSubClassTechnicalName";
@@ -884,9 +884,10 @@
         public const string YarnPRChild = "T_YarnPRChild";
         public const string YarnMRIRChild = "T_YarnMRIRChild";
         public const string YarnMRIRMaster = "T_YarnMRIRMaster";
+        public const string YarnBookingChildItem_New_Bk = "T_YarnBookingChildItem_New_Bk";
 
 
 
     }
-  
+
 }

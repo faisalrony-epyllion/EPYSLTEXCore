@@ -524,7 +524,7 @@
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" readonly />                                        
-                                          ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID)}                  
+                                          ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}                  
                                        
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
@@ -633,9 +633,9 @@
         return colName;
     }
 
-    function adNew(IsAllowAddNew, menuId, childID) {
+    function adNew(IsAllowAddNew, menuId, childID, interfaceConfigs, ColumnName) {
        
-        if (IsAllowAddNew) {
+        if (IsAllowAddNew && interfaceConfigs.PrimaryKeyColumn == ColumnName) {
             return `<span class="input-group-btn">
                         <button type="button" class="btn btn-success ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     </span>`;
@@ -672,13 +672,13 @@
         });
     }
     function openSingleSelectFinder() {
-      
+        debugger;
         var finder = new commonFinder({
             title: "Select " + selectedChild.Label,
             pageId: "divCommonInterface-" + menuId,
             height: 220,
             modalSize: "modal-lg",
-            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder : selectedChild.FinderApiUrl,
+            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder + '/'+selectedChild.ChildID : selectedChild.FinderApiUrl,
             fields: selectedChild.FinderHeaderColumns,
             widths: selectedChild.FinderColumnWidths,
             headerTexts: selectedChild.FinderDisplayColumns,

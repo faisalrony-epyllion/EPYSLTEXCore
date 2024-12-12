@@ -441,7 +441,7 @@ function resetTabIndex() {
     });
 }
 
-function GetViewMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName) {
+function GetViewMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName) {z
     $($mainTab[0]).children().removeClass('active');
     $($mainTab[0]).children().removeClass('bg-info');
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName + "&menuParam=" + menuParam;
@@ -623,12 +623,6 @@ function GetMenus(applicationId) {
 function generateMenu(menuList) {
 
     $.each(menuList, function (i, item) {
-
-        var aaa = item.Childs.filter(x => x.MenuParam.length > 0);
-        if (aaa.length > 0) {
-            
-        }
-
         if (!item.Childs.length) {
             if (!item.NavigateUrl) return true;
             var navProperties = item.NavigateUrl.split('/');

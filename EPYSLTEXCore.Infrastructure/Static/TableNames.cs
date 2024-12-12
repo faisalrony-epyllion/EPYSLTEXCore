@@ -903,6 +903,8 @@
 
         public const string BankLimitMaster = "BankLimitMaster";
         public const string BankLimitChild = "BankLimitChild";
+
+        public const string SpinnerWiseYarnPackingHK = "T_SpinnerWiseYarnPacking_HK";
     }
 
 }

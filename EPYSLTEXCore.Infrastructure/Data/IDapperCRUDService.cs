@@ -125,7 +125,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
         Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null); 
-        Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, SqlConnection connection, IDbTransaction transaction = null);
         #region Test Ashiq
         //Task<int> GetMaxIdAsync_Test(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
         #endregion

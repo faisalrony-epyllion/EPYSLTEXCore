@@ -441,7 +441,7 @@ function resetTabIndex() {
     });
 }
 
-function GetViewMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName) {z
+function GetViewMarkup(controllerName, actionName, menuId, pageName, menuParam, tabCaption, navUrlName) {
     $($mainTab[0]).children().removeClass('active');
     $($mainTab[0]).children().removeClass('bg-info');
     var url = "/" + controllerName + "/" + actionName + "?menuId=" + menuId + "&pageName=" + pageName + "&navUrlName=" + navUrlName + "&menuParam=" + menuParam;

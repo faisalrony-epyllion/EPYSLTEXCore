@@ -259,7 +259,7 @@
         });
 
         $formEl.find("#DepartmentID").change(function () {
-            debugger;
+            
             var selectedDep = $formEl.find("#DepartmentID option:selected").text();
             var isMer = selectedDep.toUpperCase().includes("MERCHANDISING");
             if (isMer) {
@@ -623,7 +623,7 @@
     }
 
     function copyButtonHideShow() {
-        debugger;
+        
         $formEl.find(".divCopyFromExistingBooking").hide();
 
         var selectedDep = $formEl.find("#DepartmentID option:selected").text();
@@ -1012,7 +1012,7 @@
     }
 
     async function initChildTable(data) {
-        debugger;
+        
         if ($tblChildEl) $tblChildEl.destroy();
 
         var columns = [];
@@ -1106,6 +1106,7 @@
                 },
                 columns: childDetailscolumns,
                 actionBegin: function (args) {
+                    
                     if (args.requestType === "add") {
                         var totalDis = 0, remainDis = 0, maxDate;
 
@@ -1218,7 +1219,7 @@
                 status = statusConstants.NEW;
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
-                debugger;
+                
                 masterData = response.data;
                 $formEl.find(".divReject").hide();
                 masterData.PYBookingDate = formatDateToDefault(masterData.PYBookingDate);
@@ -1414,7 +1415,7 @@
         $formEl.find("#BuyerTeamIDsList").val($formEl.find("#BuyerTeamIDs").val().map(function (el) {
             return el
         }).toString());
-        var data = formDataToJson($formEl, $formEl.serializeArray());
+        var data = formDataToJson($formEl.serializeArray());
 
         //if (data.DepartmentID == null || typeof data.DepartmentID == 'undefined') {
         //    data.DepartmentID = masterData.DepartmentID;
@@ -1505,7 +1506,7 @@
 
             var totalQty = 0;
             for (var i = 0; i < pYBookingChild[j].PYBItemChildDetails.length; i++) {
-                debugger;
+                
                 const bookingDate = pYBookingChild[j].PYBItemChildDetails[i].BookingDate;
                 pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(bookingDate).toISOString().split('Z')[0];
                 totalQty += parseInt(pYBookingChild[j].PYBItemChildDetails[i].DetailsQTY);
@@ -1524,7 +1525,7 @@
             }
 
             if (hasError) break;
-            debugger;
+            
             if (totalQty != pYBookingChild[j].QTY) {
                 hasError = true;
                 toastr.error(`Sum of booking date qty (${totalQty}) must be ${pYBookingChild[j].QTY} (row ${currentRow})`);
@@ -1538,7 +1539,7 @@
         } else {
             data.isMarketingFlag = isMarketingFlag;
         }
-        debugger;
+        
         data.ProjectionYarnBookingItemChilds = pYBookingChild;
         data.BookingByID = $formEl.find("#BookingByID").val();
         data.DepartmentID = $formEl.find("#DepartmentID").val();

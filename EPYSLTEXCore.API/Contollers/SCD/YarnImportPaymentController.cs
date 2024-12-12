@@ -1,6 +1,12 @@
 ﻿using AutoMapper;
+using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
+using EPYSLTEXCore.Infrastructure.Statics;
+using EPYSLTEXCore.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 
 namespace EPYSLTEX.Web.Controllers.Apis
@@ -10,7 +16,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
     public class YarnImportPaymentController : ApiBaseController
     {
         private readonly IYarnImportPaymentService _service;
-        public YarnImportPaymentController(IYarnImportPaymentService service)
+        public YarnImportPaymentController(IUserService userService, IYarnImportPaymentService service):base(userService)
         {
             _service = service;
         }
@@ -33,7 +39,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [Route("save")]
         [HttpPost]
-        [ValidateModel]
+
         public async Task<IActionResult> Save(ImportInvoicePaymentMaster models)
         {
             bool isModified = models.Modify;
@@ -55,7 +61,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                 if (entityTemp == null)
                 {
                     entityTemp = new ImportInvoicePaymentMaster();
-                    models.AddedBy = UserId;
+                    models.AddedBy = AppUser.UserCode;
                     models.DateAdded = DateTime.Now;
                     models.IsCDA = IsCDA;
                     entityTemp.EntityState = EntityState.Added;
@@ -76,7 +82,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                 else
                 {
                     entityTemp.IsCDA = IsCDA;
-                    entityTemp.UpdatedBy = UserId;
+                    entityTemp.UpdatedBy = AppUser.UserCode;
                     entityTemp.DateUpdated = DateTime.Now;
                     entityTemp.EntityState = EntityState.Modified;
                     entityTemp.PaymentDate = models.PaymentDate;
@@ -159,7 +165,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             else
             {
                 entity = new ImportInvoicePaymentMaster();
-                models.AddedBy = UserId;
+                models.AddedBy = AppUser.UserCode;
                 models.DateAdded = DateTime.Now;
                 models.IsCDA = IsCDA;
                 models.BeneficiaryID = models.SupplierID;

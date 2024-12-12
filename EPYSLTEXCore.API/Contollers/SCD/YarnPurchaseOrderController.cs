@@ -6,12 +6,14 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NLog;
 using System.Data.Entity;
 
@@ -224,8 +226,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(YarnPOMaster model)
+        public async Task<IActionResult> Save(dynamic jsnString)
         {
+            YarnPOMaster model = JsonConvert.DeserializeObject<YarnPOMaster>(Convert.ToString(jsnString));
             string conceptNo = string.Join(",", model.YarnPOChilds.Select(x => x.ConceptNo).Distinct());
             List<YarnPOChild> childRecords = model.YarnPOChilds;
             _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);

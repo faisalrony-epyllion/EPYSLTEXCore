@@ -1,6 +1,6 @@
 ﻿
 (function () {
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var pageId, pageIdWithHash;
     var isBlended = false;
     var toolbarId, _oRow, _index, _modalFrom, _oRowCollar, _indexCollar, _oRowCuff, _indexCuff;
@@ -117,6 +117,8 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
+        if (!menuParam)
+            menuParam = localStorage.getItem("menuParam");
 
         pageId = pageName + "-" + menuId;
         $pageEl = $(`#${pageId}`);
@@ -160,8 +162,10 @@
         tblFBAckYarnNetYarnReqQtyInfoId = `#tblFBAckYarnNetYarnReqQtyInfo${pageId}`;
         $modalFBAckYarnNetYarnReqQtyInfoEL = $("#modalFBAckYarnNetYarnReqQtyInfo" + pageId);
 
-        menuType = localStorage.getItem("bulkBookingAckPage");
-        menuType = parseInt(menuType);
+        //menuType = localStorage.getItem("bulkBookingAckPage");
+        //menuType = parseInt(menuType);
+        debugger;
+        menuType = setBulkBookingAckPage(menuParam);
 
         $formEl.find(".divForBBFA").hide();
         $formEl.find(".divForWeight").hide();
@@ -2186,7 +2190,73 @@
             getYarnSegmentsMapping();
         }
     });
+    function setBulkBookingAckPage(menuParam) {
+        menuType = 0;
 
+        if (menuParam) {
+            switch (menuParam) {
+                case "BulkBookingAck":
+                    menuType = 1;
+                    break;
+                case "Projection":
+                    menuType = 2;
+                    break;
+                case "BulkBookingCheck":
+                    menuType = 3;
+                    break;
+                case "BulkBookingApprove":
+                    menuType = 4;
+                    break;
+                case "BulkBookingFinalApprove":
+                    menuType = 5;
+                    break;
+                case "BulkBookingYarnAllowance":
+                    menuType = 6;
+                    break;
+                case "LabdipBookingAcknowledge":
+                    menuType = 7;
+                    break;
+                case "LabdipBookingAcknowledgeRnD":
+                    menuType = 8;
+                    break;
+                case "AdditionalYarnBooking":
+                    menuType = 9;
+                    break;
+                case "AYBQtyFinalizationPMC":
+                    menuType = 10;
+                    break;
+                case "AYBProdHeadApproval":
+                    menuType = 11;
+                    break;
+                case "AYBTextileHeadApproval":
+                    menuType = 12;
+                    break;
+                case "AYBKnittingUtilization":
+                    menuType = 13;
+                    break;
+                case "AYBKnittingHeadApproval":
+                    menuType = 14;
+                    break;
+                case "AYBOperationHeadApproval":
+                    menuType = 15;
+                    break;
+                case "BulkBookingUtilizationProposal":
+                    menuType = 16;
+                    break;
+                case "BulkBookingUtilizationConfirmation":
+                    menuType = 17;
+                    break;
+                case "YarnBookingAcknowledge":
+                    menuType = 18;
+                    break;
+                default:
+                    menuType = 0;
+                    break;
+            }
+        }
+
+        return menuType;
+    }
     async function getYarnSegments() {
         var response = await axios.get(getYarnItemsApiUrl([]));
         _yarnSegments = response.data;

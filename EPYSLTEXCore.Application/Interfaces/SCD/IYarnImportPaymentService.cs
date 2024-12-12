@@ -1,4 +1,5 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
 

@@ -386,7 +386,13 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [HttpPost]
         public async Task<IActionResult> Approve(dynamic jsnString)
         {
-            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            //ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(
+                Convert.ToString(jsnString),
+                new JsonSerializerSettings
+                {
+                    DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+                });
             ProjectionYarnBookingMaster entity;
             try
             {
@@ -514,7 +520,13 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [HttpPost]
         public async Task<IActionResult> Acknowledge(dynamic jsnString)
         {
-            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            //ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(
+                Convert.ToString(jsnString),
+                new JsonSerializerSettings
+                {
+                    DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+                });
             ProjectionYarnBookingMaster entity;
             try
             {
@@ -660,7 +672,13 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [HttpPost]
         public async Task<IActionResult> AcknowledgeMnM(dynamic jsnString)
         {
-            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            //ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(Convert.ToString(jsnString));
+            ProjectionYarnBookingMaster model = JsonConvert.DeserializeObject<ProjectionYarnBookingMaster>(
+                Convert.ToString(jsnString),
+                new JsonSerializerSettings
+                {
+                    DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+                });
             try
             {
                 List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();

@@ -494,10 +494,11 @@
 #mainTabContent .tab-pane {
     padding: 12px;
 }
+
 form, .box-body {
     width: 100% !important;
 }
-.btnToolBar{
-    color:#000 !important;
-}
 
+.btnToolBar {
+    color: #000 !important;
+}

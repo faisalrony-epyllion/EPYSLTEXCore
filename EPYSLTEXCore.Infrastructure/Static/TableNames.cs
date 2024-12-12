@@ -664,6 +664,8 @@
         public const string KY_Receive_No = "KYReceiveNo";
         public const string KYLO_Return_No = "KYLOReturnNo";
         public const string KYLO_Return_Receive_No = "KYLOReturnReceiveNo";
+        public const string DyeingProcessPart_HK = "T_DyeingProcessPart_HK";
+        public const string YarnTestParamResultSet_HK = "T_YarnTestParamResultSet_HK";
 
         public const string KNITTING_JOB_CARD_No = "KJobCardNo";
 
@@ -775,6 +777,7 @@
         public const string YARN_PROCESS_SETUP_MASTER = "T_YarnProcessSetupMaster";
         public const string YARN_PROCESS_SETUP_CHILD_YARN_COUNT = "T_YarnProcessSetupChildYarnCount";
         public const string YARN_PROCESS_SETUP_CHILD_FIBER_TYPE = "T_YarnProcessSetupChildFiberType";
+        public const string YarnAssessmentStatus = "T_YarnAssessmentStatus";
         public const string FABRIC_TECHNICAL_NAME_KMACHINE_SUB_CLASS = "T_FabricTechnicalNameKMachineSubClass";
         public const string FABRIC_COLOR_BOOK_SETUP = "FabricColorBookSetup";
         public const string PROJECTION_YARN_BOOKING_MASTER = "T_ProjectionYarnBookingMaster";
@@ -871,6 +874,8 @@
 
         public const string YD_BOOKING_MASTER = "T_YDBookingMaster";
         public const string BDS_DEPENDENT_TNA_EVENT_HK = "T_BDSDependentTNAEvent_HK";
+
+
         public const string YarnReceiveChild = "T_YarnReceiveChild";
         public const string YarnReceiveMaster = "T_YarnReceiveMaster";
         public const string YarnQCReqChild = "T_YarnQCReqChild";

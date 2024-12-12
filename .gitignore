@@ -160,3 +160,4 @@
 /EPYSLTEXCore.API/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.EPYSLTEXCore.API.props
 /EPYSLTEXCore.API/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.EPYSLTEXCore.API.props
 *.json
+/.vs/EPYSLTEXCore/v16/.suo

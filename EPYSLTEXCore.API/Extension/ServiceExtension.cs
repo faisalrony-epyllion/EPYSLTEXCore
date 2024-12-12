@@ -19,19 +19,6 @@ namespace EPYSLTEXCore.API.Extension
             service.AddTransient<IDeSerializeJwtToken, DeSerializeJwtToken>();
             service.AddTransient<ICommonHelpers, CommonHelpers>();
 
-            string a = "IDapperCRUDService,IItemMasterService,IChildItemMasterService";
-            string[] scopedServices = a.Split(',');
-            foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
-            {
-                if (type.Name.EndsWith("Service") && type.IsClass && !type.IsAbstract)
-                {
-                    // Get all interfaces implemented by the type
-                    var interfaces = type.GetInterfaces();
-                    foreach (var @interface in interfaces)
-                    {
-                        // Register the service with its interface
-                        if (scopedServices.Contains(type.Name))
-                        {
 
 
             string ListOfService = "IDapperCRUDService,IItemMasterService,IChildItemMasterService";

@@ -1,0 +1,168 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.menuParam");
+</script>
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblYarnPIItemsId = "tblYarnPIItems" + pageId;
+    var tblPaymentDetailsId = "tblPaymentDetailsId" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+@*Main*@
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12" style="font-size:12px">
+            <div id="@toolbarId" class="master-toolbar">
+                <button id="btnList" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Available List
+                </button>
+                <button id="btnDraftList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Draft List
+                </button>
+            </div>
+
+
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="IIPMasterID" name="IIPMasterID" value="-1111" />
+            <input type="hidden" name="CompanyID" id="CompanyID" />
+            <input type="hidden" name="SupplierID" id="SupplierID" />
+            <input type="hidden" name="BankBranchID" id="BankBranchID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading"> General/Commercial Information</div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Import Payment No</label>
+                                        <div class="col-sm-7">
+                                            <input id="IIPMasterNo" name="IIPMasterNo" class="form-control input-sm" placeholder="Import Payment No" value="**<< NEW >>**" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Import Payment Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="PaymentDate" name="PaymentDate" placeholder="Import Payment Date" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Bank Ref No</label>
+                                        <div class="col-sm-7">
+                                            <input id="BankRefNumber" name="BankRefNumber" class="form-control input-sm" placeholder="Bank Ref Number" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Open Bank</label>
+                                        <div class="col-sm-7">
+                                            <input id="PaymentBank" name="PaymentBank" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Bank Accept Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="BankAcceptDate" name="BankAcceptDate" placeholder="Bank Accept Date" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Customer</label>
+                                        <div class="col-sm-7">
+                                            <input id="CustomerName" name="CustomerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Supplier</label>
+                                        <div class="col-sm-7">
+                                            <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Maturity Date</label>
+                                        <div class="col-sm-7">
+                                            <input id="MaturityDate" name="MaturityDate" placeholder="Maturity Date" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Total Accepted Value ($)</label>
+                                        <div class="col-sm-7">
+                                            <input id="TotalAcceptedValue" name="TotalAcceptedValue" placeholder="Total Accepted Value" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Total Paid Value($)</label>
+                                        <div class="col-sm-7">
+                                            <input id="TotalPaidValue" name="TotalPaidValue" placeholder="Total Paid Value" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Total Paymented Value($)</label>
+                                        <div class="col-sm-7">
+                                            <input id="TotalPaymentedValue" name="TotalPaymentedValue" placeholder="Total Paymented Value" class="form-control input-sm" required"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">Attached PI Information</div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblYarnPIItemsId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">Payment Details</div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblPaymentDetailsId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>

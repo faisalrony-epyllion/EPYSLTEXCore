@@ -23,6 +23,7 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             _service = service;
             _connection = service.Connection;
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
         }
 
         public async Task<List<YarnPIReceiveMaster>> GetAsync(Status status, PaginationInfo paginationInfo)

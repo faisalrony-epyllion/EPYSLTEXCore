@@ -8,8 +8,11 @@ using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
+using System.Data.Common;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace EPYSLTEXCore.Infrastructure.Services
 {
@@ -1261,9 +1264,9 @@ namespace EPYSLTEXCore.Infrastructure.Services
 	                        GROUP BY PRM.YarnPRMasterID, PRM.YarnPRDate, PRM.YarnPRNo, PRM.YarnPRRequiredDate, PRM.YarnPRBy, 
                             PRM.CompanyID, CE.ShortName, L.Name, PRC.YarnPRChildID, PRM.ConceptNo, PRC.ShadeCode, PRC.ReqQty, 
                             ISV1.SegmentValue, ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue, ISV5.SegmentValue, 
-                            ISV6.SegmentValue, ISV7.SegmentValue, ISV8.SegmentValue,PRB.BuyerName, CASE WHEN ISNULL(PRC.DayValidDurationId,0) > 0 THEN ET.EntityTypeName ELSE '' END,
-	                        PRC.BaseTypeId,BT.ValueName, CASE WHEN DVD.DayValidDurationId > 0 AND DVD.DayDuration > 1 THEN CONCAT(ET.EntityTypeName,' (',CAST(DVD.DayDuration AS VARCHAR),' days)')
-                                                        WHEN DVD.DayValidDurationId > 0 AND DVD.DayDuration = 1 THEN CONCAT(ET.EntityTypeName,' (',CAST(DVD.DayDuration AS VARCHAR),' day)')
+                            ISV6.SegmentValue, ISV7.SegmentValue, ISV8.SegmentValue,PRB.BuyerName, CASE WHEN ISNULL(PRC.DayValidDurationId,0) > 0 THEN ET.ValueName ELSE '' END,
+	                        PRC.BaseTypeId,BT.ValueName, CASE WHEN DVD.DayValidDurationId > 0 AND DVD.DayDuration > 1 THEN CONCAT(ET.ValueName,' (',CAST(DVD.DayDuration AS VARCHAR),' days)')
+                                                        WHEN DVD.DayValidDurationId > 0 AND DVD.DayDuration = 1 THEN CONCAT(ET.ValueName,' (',CAST(DVD.DayDuration AS VARCHAR),' day)')
                                                         ELSE ''
                                                         END, PRC.ConceptID,PRC.BaseTypeId, PRC.DayValidDurationId
                         )
@@ -2295,11 +2298,16 @@ namespace EPYSLTEXCore.Infrastructure.Services
 
         public async Task SaveAsync(YarnPOMaster entity, List<YarnPOChild> yarnPoChilds, int userId)
         {
-            SqlTransaction transaction = null;
+            SqlTransaction transaction = null;            
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 if (entity.IsRevision)
                 {
                     //only for revision after reject
@@ -2309,11 +2317,11 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity, yarnPoChilds);
+                        entity = await AddAsync(entity, yarnPoChilds, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity, yarnPoChilds);
+                        entity = await UpdateAsync(entity, yarnPoChilds, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:
@@ -2364,7 +2372,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 await _service.SaveAsync(entity.YarnPOChilds, transaction);
                 foreach (YarnPOChild item in entity.YarnPOChilds)
                 {
-                    await _service.ExecuteAsync("sp_Validation_YarnPOChild", new
+                     _service.ExecuteWithTransactionAsync("sp_Validation_YarnPOChild", ref transaction,new
                     {
                         EntityState = item.EntityState,
                         UserId = userId,
@@ -2377,7 +2385,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 await _service.SaveAsync(orderList, transaction);
                 foreach (YarnPOChildOrder item in orderList)
                 {
-                    await _service.ExecuteAsync("sp_Validation_YarnPOChildOrder", new
+                     _service.ExecuteWithTransactionAsync("sp_Validation_YarnPOChildOrder", ref transaction,new
                     {
                         EntityState = item.EntityState,
                         UserId = userId,
@@ -2388,36 +2396,44 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 }
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 
         public async Task SaveAsyncRevision(YarnPOMaster entity, List<YarnPOChild> yarnPoChilds, string PONo, int userId)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 //only for revision after reject
                 await _connection.ExecuteAsync("spBackupYarnPOMaster_Full", new { PONo = PONo, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
                 //end only for revision after reject
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity, yarnPoChilds);
+                        entity = await AddAsync(entity, yarnPoChilds, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity, yarnPoChilds);
+                        entity = await UpdateAsync(entity, yarnPoChilds, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:
@@ -2487,20 +2503,22 @@ namespace EPYSLTEXCore.Infrastructure.Services
         }
 
         #region Helpers
-        private async Task<YarnPOMaster> AddAsync(YarnPOMaster entity, List<YarnPOChild> yarnPoChilds)
+        private async Task<YarnPOMaster> AddAsync(YarnPOMaster entity, List<YarnPOChild> yarnPoChilds,SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            entity.YPOMasterID = _service.GetMaxId(TableNames.YarnPOMaster,0);
-            entity.PoNo = await _service.GetMaxNoAsync(TableNames.YPONo, entity.CompanyId, RepeatAfterEnum.EveryYear);
-            var maxYarnPOChildId = _service.GetMaxId(TableNames.YarnPOChild, yarnPoChilds.Count);
+            
+
+            entity.YPOMasterID = await _service.GetMaxIdAsync(TableNames.YarnPOMaster, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            entity.PoNo = await _service.GetMaxNoAsync(TableNames.YPONo, entity.CompanyId, RepeatAfterEnum.EveryYear,"00000", transactionGmt, _gmtConnection);
+            int maxYarnPOChildId =await  _service.GetMaxIdAsync(TableNames.YarnPOChild, yarnPoChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             yarnPoChilds.ForEach(x => x.YarnChildPoBuyerIdArray = Array.ConvertAll(x.YarnChildPoBuyerIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), int.Parse));
             yarnPoChilds.ForEach(x => x.YarnChildPoBuyerIdArray.ToList().RemoveAll(y => y == 0));
             var yarnPoChildPoForBuyerCount = yarnPoChilds.Sum(x => x.YarnChildPoBuyerIdArray.Count());
-            var maxYarnPOChildPOForBuyerId = _service.GetMaxId(TableNames.YarnPOChildBuyer, yarnPoChildPoForBuyerCount);
+            var maxYarnPOChildPOForBuyerId = await _service.GetMaxIdAsync(TableNames.YarnPOChildBuyer, yarnPoChildPoForBuyerCount, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             yarnPoChilds.ForEach(x => x.YarnChildPoExportIdArray = Array.ConvertAll(x.YarnChildPoExportIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), int.Parse));
             var yarnPoChildPoForExportOrderCount = yarnPoChilds.Sum(x => x.YarnChildPoExportIdArray.Count());
-            var maxYarnPOChildPOForExportOrderId = _service.GetMaxId(TableNames.YarnPOChildOrder, yarnPoChildPoForExportOrderCount);
+            var maxYarnPOChildPOForExportOrderId = await _service.GetMaxIdAsync(TableNames.YarnPOChildOrder, yarnPoChildPoForExportOrderCount, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
             entity.YarnPOChilds = new List<YarnPOChild>();
 
             foreach (var item in yarnPoChilds)
@@ -2585,26 +2603,26 @@ namespace EPYSLTEXCore.Infrastructure.Services
 
     
 
-        private async Task<YarnPOMaster> UpdateAsync(YarnPOMaster entity, List<YarnPOChild> yarnPoChilds)
+        private async Task<YarnPOMaster> UpdateAsync(YarnPOMaster entity, List<YarnPOChild> yarnPoChilds, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
             #region Add/Update/Delete YarnPOchild and YarnPOChildSubProgram
 
             // Get Max YarnPOChildId
             var newYarnPOChilds = yarnPoChilds.FindAll(x => x.YPOMasterID == 0 && x.EntityState == EntityState.Added);
-            var maxYarnPOChildId = await _service.GetMaxIdAsync(TableNames.YarnPOChild, newYarnPOChilds.Count());
+            var maxYarnPOChildId = await _service.GetMaxIdAsync(TableNames.YarnPOChild, newYarnPOChilds.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             // Get Max YarnPOChild
             yarnPoChilds.ForEach(x => x.YarnChildPoBuyerIdArray = Array.ConvertAll(x.YarnChildPoBuyerIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), int.Parse));
             yarnPoChilds.ForEach(x => x.YarnChildPoBuyerIdArray.ToList().RemoveAll(y => y == 0));
             var yarnPoChildBuyerCount = yarnPoChilds.Sum(x => x.YarnChildPoBuyerIdArray.Count());
             yarnPoChildBuyerCount += entity.YarnPOChilds.Sum(x => x.YarnPOChildBuyers.Where(y => y.EntityState == EntityState.Added).Count());
-            var maxYarnPOChildBuyerId = await _service.GetMaxIdAsync(TableNames.YarnPOChildBuyer, yarnPoChildBuyerCount);
+            var maxYarnPOChildBuyerId = await _service.GetMaxIdAsync(TableNames.YarnPOChildBuyer, yarnPoChildBuyerCount, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             // Get Max YarnPOChildPOForExportOrderId
             yarnPoChilds.ForEach(x => x.YarnChildPoExportIdArray = Array.ConvertAll(x.YarnChildPoExportIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries), int.Parse));
             var yarnPoChildOrderCount = yarnPoChilds.Sum(x => x.YarnChildPoExportIdArray.Count());
             yarnPoChildOrderCount += entity.YarnPOChilds.Sum(x => x.YarnPOChildOrders.Where(y => y.EntityState == EntityState.Added).Count());
-            var maxYarnPOChildOrderId = await _service.GetMaxIdAsync(TableNames.YarnPOChildOrder, yarnPoChildOrderCount);
+            var maxYarnPOChildOrderId = await _service.GetMaxIdAsync(TableNames.YarnPOChildOrder, yarnPoChildOrderCount, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             #region Add new YarnPOChilds
 

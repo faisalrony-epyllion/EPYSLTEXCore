@@ -42,7 +42,7 @@
       "wwwroot/App_Themes/lib/moment/moment.min.js",
       "wwwroot/App_Themes/lib/bootbox.js/bootbox.min.js",
       "wwwroot/App_Themes/lib/validatejs/validate.min.js",
-
+      "wwwroot/App_Themes/lib/drag/Drag.js",
       "wwwroot/App_Themes/lib/bootstrap-table/bootstrap-table-modified.js",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/auto-refresh/bootstrap-table-auto-refresh.min.js",

@@ -1,4 +1,5 @@
 using EPYSLTEX.Infrastructure.Services;
+using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Services;
@@ -16,8 +17,9 @@ namespace EPYSLTEXCore.API.Extension
             service.AddScoped(typeof(IChildItemMasterService<>), typeof(ChildItemMasterService<>));
             service.AddTransient<ITokenBuilder, TokenBuilder>();
             service.AddTransient<IDeSerializeJwtToken, DeSerializeJwtToken>();
+            service.AddTransient<ICommonHelpers, CommonHelpers>();
 
-            
+
 
             string ListOfService = "IDapperCRUDService,IItemMasterService,IChildItemMasterService";
             string[] scopedServices = ListOfService.Split(',');
@@ -41,6 +43,7 @@ namespace EPYSLTEXCore.API.Extension
                     }
                 }
             }
+
             #region manual added services
             //foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
             //{

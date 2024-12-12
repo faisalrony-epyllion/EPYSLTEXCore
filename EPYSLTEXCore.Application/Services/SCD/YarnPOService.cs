@@ -112,7 +112,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 				    --        ELSE 0
 			        --    End
 		            --)
-	                AND CH.YarnPRChildID Not In (Select YarnPRChildID From YPO) --(Select PRChildID From YarnPOChild)
+	                AND CH.YarnPRChildID Not In (Select YarnPRChildID From YPO) --(Select PRChildID From T_YarnPOChild)
                 ),
                 M AS 
                 (
@@ -157,7 +157,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 		                CAINFO.SFToPLDays, CAINFO.PLToPDDays, CAINFO.PDToCFDays PCFDays,
 		                (CAINFO.SFToPLDays + CAINFO.PLToPDDays + CAINFO.PDToCFDays) AS InHouseDays, LU.UserName, YPM.ConceptNo, AddedByName = LU.Name
 	                FROM YarnPOMaster YPM
-	                INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
+	                INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
 	                Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
 	                LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo CAINFO ON CAINFO.ContactID = YPM.SupplierID
 	                LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YPF ON YPF.ValueID = YPM.POForID
@@ -184,7 +184,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 (
 	                SELECT YPL.YPOMasterID, BuyerName = STRING_AGG(B.ShortName,',')
 	                FROM YPL
-	                INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
+	                INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
 	                INNER JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = YPC.BuyerID AND YPC.BuyerID > 0
 	                GROUP BY YPL.YPOMasterID
                 ),
@@ -214,7 +214,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 						CAINFO.SFToPLDays, CAINFO.PLToPDDays, CAINFO.PDToCFDays PCFDays,
 						(CAINFO.SFToPLDays + CAINFO.PLToPDDays + CAINFO.PDToCFDays) AS InHouseDays, LU.UserName, YPM.ConceptNo, AddedByName = LU.Name
                     FROM YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
-					INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
+					INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
 					Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
                     LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo CAINFO ON CAINFO.ContactID = YPM.SupplierID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YPF ON YPF.ValueID = YPM.POForID
@@ -228,7 +228,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     ),
 				    CNM AS(
 				        Select YPL.YPOMasterID, YPC.BookingNo
-				        FROM YarnPOChild YPC 
+				        FROM T_YarnPOChild YPC 
 				        INNER JOIN YPL ON YPL.YPOMasterID = YPC.YPOMasterID
 				        GROUP BY YPL.YPOMasterID, YPC.BookingNo
 				    ),
@@ -241,7 +241,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     (
 	                    SELECT YPL.YPOMasterID, BuyerName = STRING_AGG(B.ShortName,',')
 	                    FROM YPL
-	                    INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
+	                    INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = YPC.BuyerID AND YPC.BuyerID > 0
 	                    GROUP BY YPL.YPOMasterID
                     ),
@@ -275,7 +275,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 		                    (CAINFO.SFToPLDays + CAINFO.PLToPDDays + CAINFO.PDToCFDays) AS InHouseDays, LU.UserName, YPM.ConceptNo,
 		                    YPM.RevisionNo, YPM.RevisionDate, AddedByName = LU.Name
 		                    FROM YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
-		                    INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
+		                    INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
 		                    Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
 		                    LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo CAINFO ON CAINFO.ContactID = YPM.SupplierID
 		                    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YPF ON YPF.ValueID = YPM.POForID
@@ -290,7 +290,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                         ),
 				        CNM AS(
 				            Select YPL.YPOMasterID, YPC.BookingNo
-				            FROM YarnPOChild YPC 
+				            FROM T_YarnPOChild YPC 
 				            INNER JOIN YPL ON YPL.YPOMasterID = YPC.YPOMasterID
 				            GROUP BY YPL.YPOMasterID, YPC.BookingNo
 				        ),
@@ -303,7 +303,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 	                    (
 		                    SELECT YPL.YPOMasterID, BuyerName = STRING_AGG(B.ShortName,',')
 		                    FROM YPL
-		                    INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
+		                    INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
 		                    INNER JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = YPC.BuyerID AND YPC.BuyerID > 0
 		                    GROUP BY YPL.YPOMasterID
 	                    ),
@@ -365,7 +365,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                         CAINFO.SFToPLDays, CAINFO.PLToPDDays, CAINFO.PDToCFDays PCFDays,
                         (CAINFO.SFToPLDays + CAINFO.PLToPDDays + CAINFO.PDToCFDays) AS InHouseDays, LU.UserName, YPM.ConceptNo, AddedByName = LU.Name
                         FROM YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
-                        INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
+                        INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
                         Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo CAINFO ON CAINFO.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YPF ON YPF.ValueID = YPM.POForID
@@ -379,7 +379,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     ),
 				    CNM AS(
 				        Select YPL.YPOMasterID, YPC.BookingNo
-				        FROM YarnPOChild YPC 
+				        FROM T_YarnPOChild YPC 
 				        INNER JOIN YPL ON YPL.YPOMasterID = YPC.YPOMasterID
 				        GROUP BY YPL.YPOMasterID, YPC.BookingNo
 				    ),
@@ -392,7 +392,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     (
 	                    SELECT YPL.YPOMasterID, BuyerName = STRING_AGG(B.ShortName,',')
 	                    FROM YPL
-	                    INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
+	                    INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = YPC.BuyerID AND YPC.BuyerID > 0
 	                    GROUP BY YPL.YPOMasterID
                     ),
@@ -424,7 +424,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                         CAINFO.SFToPLDays, CAINFO.PLToPDDays, CAINFO.PDToCFDays PCFDays,
                         (CAINFO.SFToPLDays + CAINFO.PLToPDDays + CAINFO.PDToCFDays) AS InHouseDays, LU.UserName, YPM.ConceptNo, AddedByName = LU.Name
                         FROM YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
-                        INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
+                        INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
                         Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo CAINFO ON CAINFO.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YPF ON YPF.ValueID = YPM.POForID
@@ -438,7 +438,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     ),
 				    CNM AS(
 				        Select YPL.YPOMasterID, YPC.BookingNo
-				        FROM YarnPOChild YPC 
+				        FROM T_YarnPOChild YPC 
 				        INNER JOIN YPL ON YPL.YPOMasterID = YPC.YPOMasterID
 				        GROUP BY YPL.YPOMasterID, YPC.BookingNo
 				    ),
@@ -451,7 +451,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     (
 	                    SELECT YPL.YPOMasterID, BuyerName = STRING_AGG(B.ShortName,',')
 	                    FROM YPL
-	                    INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
+	                    INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = YPC.BuyerID AND YPC.BuyerID > 0
 	                    GROUP BY YPL.YPOMasterID
                     ),
@@ -483,8 +483,8 @@ namespace EPYSLTEXCore.Infrastructure.Services
                         CAINFO.SFToPLDays, CAINFO.PLToPDDays, CAINFO.PDToCFDays PCFDays,
                         (CAINFO.SFToPLDays + CAINFO.PLToPDDays + CAINFO.PDToCFDays) AS InHouseDays, LU.UserName, YPM.ConceptNo, AddedByName = LU.Name
                         ,YPM.IsRevision
-                        FROM YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
-                        INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
+                        FROM T_YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
+                        INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
                         Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo CAINFO ON CAINFO.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YPF ON YPF.ValueID = YPM.POForID
@@ -498,7 +498,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     ),
 				    CNM AS(
 				        Select YPL.YPOMasterID, YPC.BookingNo
-				        FROM YarnPOChild YPC 
+				        FROM T_YarnPOChild YPC 
 				        INNER JOIN YPL ON YPL.YPOMasterID = YPC.YPOMasterID
 				        GROUP BY YPL.YPOMasterID, YPC.BookingNo
 				    ),
@@ -511,7 +511,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     (
 	                    SELECT YPL.YPOMasterID, BuyerName = STRING_AGG(B.ShortName,',')
 	                    FROM YPL
-	                    INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
+	                    INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = YPC.BuyerID AND YPC.BuyerID > 0
 	                    GROUP BY YPL.YPOMasterID
                     ),
@@ -541,8 +541,8 @@ namespace EPYSLTEXCore.Infrastructure.Services
                         Proposed, UnApprove, Approved, SUM(YPC.POQty) TotalQty, SUM(YPC.PIValue) TotalValue,
                         CAINFO.SFToPLDays, CAINFO.PLToPDDays, CAINFO.PDToCFDays PCFDays,
                         (CAINFO.SFToPLDays + CAINFO.PLToPDDays + CAINFO.PDToCFDays) AS InHouseDays, LU.UserName, YPM.ConceptNo, AddedByName = LU.Name
-                        FROM YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
-                        INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
+                        FROM T_YarnPOMaster YPM --ON YPM.SupplierID = Contacts.ContactID
+                        INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPM.YPOMasterID
                         Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..ContactAdditionalInfo CAINFO ON CAINFO.ContactID = YPM.SupplierID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YPF ON YPF.ValueID = YPM.POForID
@@ -556,7 +556,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     ),
 				    CNM AS(
 				        Select YPL.YPOMasterID, YPC.BookingNo
-				        FROM YarnPOChild YPC 
+				        FROM T_YarnPOChild YPC 
 				        INNER JOIN YPL ON YPL.YPOMasterID = YPC.YPOMasterID
 				        GROUP BY YPL.YPOMasterID, YPC.BookingNo
 				    ),
@@ -569,7 +569,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     (
 	                    SELECT YPL.YPOMasterID, BuyerName = STRING_AGG(B.ShortName,',')
 	                    FROM YPL
-	                    INNER JOIN YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
+	                    INNER JOIN T_YarnPOChild YPC ON YPC.YPOMasterID = YPL.YPOMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = YPC.BuyerID AND YPC.BuyerID > 0
 	                    GROUP BY YPL.YPOMasterID
                     ),
@@ -919,7 +919,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 					Select 
 					CH.YarnPRChildID
 					From YarnPOChild POC
-                    INNER JOIN YarnPOMaster POM ON POM.YPOMasterID = POC.YPOMasterID
+                    INNER JOIN T_YarnPOMaster POM ON POM.YPOMasterID = POC.YPOMasterID
 					INNER JOIN YarnPRChild CH ON CH.YarnPRChildID = POC.PRChildID
 					Where CH.YarnPRMasterID IN({purchaseReqId})  And ISNULL(POM.IsCancel,0) != 1 And ISNULL(POC.POQty,0) >= ISNULL(CH.ReqQty,0)
 				),
@@ -965,7 +965,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 					Select 
 					YarnPRChildID = POC.PRChildID,POQty = SUM(ISNULL(POC.POQty,0))
 					From YarnPOChild POC
-					INNER JOIN YarnPOMaster POM ON POM.YPOMasterID = POC.YPOMasterID
+					INNER JOIN T_YarnPOMaster POM ON POM.YPOMasterID = POC.YPOMasterID
 					Inner Join YRC On YRC.YarnPRChildID = POC.PRChildID
 					Where ISNULL(POM.IsCancel,0) = 0
 					Group By POC.PRChildID
@@ -1142,8 +1142,8 @@ namespace EPYSLTEXCore.Infrastructure.Services
             string sql = $@";WITH PO As(
 	                        Select 
 	                        YarnPRChildID = POC.PRChildID,POQty = SUM(ISNULL(POC.POQty,0))
-	                        From YarnPOChild POC
-	                        INNER JOIN YarnPOMaster POM ON POM.YPOMasterID = POC.YPOMasterID
+	                        From T_YarnPOChild POC
+	                        INNER JOIN T_YarnPOMaster POM ON POM.YPOMasterID = POC.YPOMasterID
 	                        Where ISNULL(POM.IsCancel,0) = 0 AND POM.CompanyID = {companyId}
 	                        Group By POC.PRChildID
                         ), 
@@ -1159,8 +1159,8 @@ namespace EPYSLTEXCore.Infrastructure.Services
                             SELECT CH.YarnPRChildID, BalanceQTY = SUM(ISNULL(CH.ReqQty,0)) - SUM(ISNULL(YPO.POQty,0)),POQty = SUM(ISNULL(YPO.POQty,0)),
                             BuyerName = STRING_AGG(B.ShortName,',')
                             FROM YarnPRMaster M
-                            INNER JOIN YarnPRChild CH ON CH.YarnPRMasterID = M.YarnPRMasterID
-                            LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = CH.ConceptID
+                            INNER JOIN T_YarnPRChild CH ON CH.YarnPRMasterID = M.YarnPRMasterID
+                            LEFT JOIN T_FreeConceptMaster FCM on FCM.ConceptID = CH.ConceptID
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = FCM.BuyerID AND FCM.BuyerID > 0
                             Left JOIN PO YPO ON YPO.YarnPRChildID = CH.YarnPRChildID
                             WHERE M.IsCPR = 1 AND M.Reject = 0 AND M.CompanyID = {companyId}
@@ -1176,8 +1176,8 @@ namespace EPYSLTEXCore.Infrastructure.Services
                                                         ELSE ''
                                                         END,
                             CH.BaseTypeId, CH.ConceptID,CH.DayValidDurationId
-                            FROM YarnPRMaster M
-                            INNER JOIN YarnPRChild CH ON CH.YarnPRMasterID = M.YarnPRMasterID
+                            FROM T_YarnPRMaster M
+                            INNER JOIN T_YarnPRChild CH ON CH.YarnPRMasterID = M.YarnPRMasterID
                             INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = M.SubGroupID
                             LEFT JOIN DayValidDuration DVD ON DVD.DayValidDurationId = CH.DayValidDurationId
                             LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = DVD.LocalOrImportId
@@ -1241,7 +1241,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                                                         END, 
 	                        PoForId = PRC.BaseTypeId, PoFor = BT.ValueName, PRC.ConceptID,
                             PRC.BaseTypeId, PRC.DayValidDurationId
-	                        From YarnPRChild PRC
+	                        From T_YarnPRChild PRC
 	                        INNER JOIN YarnPRMaster PRM ON PRM.YarnPRMasterID = PRC.YarnPRMasterID
 	                        INNER JOIN {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = PRC.ItemMasterID
 	                        LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -2372,7 +2372,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 await _service.SaveAsync(entity.YarnPOChilds, transaction);
                 foreach (YarnPOChild item in entity.YarnPOChilds)
                 {
-                     _service.ExecuteWithTransactionAsync("sp_Validation_YarnPOChild", ref transaction,new
+                     _service.ExecuteWithTransactionAsync(SPNames.sp_Validation_YarnPOChild, ref transaction,new
                     {
                         EntityState = item.EntityState,
                         UserId = userId,
@@ -2385,7 +2385,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 await _service.SaveAsync(orderList, transaction);
                 foreach (YarnPOChildOrder item in orderList)
                 {
-                     _service.ExecuteWithTransactionAsync("sp_Validation_YarnPOChildOrder", ref transaction,new
+                     _service.ExecuteWithTransactionAsync(SPNames.sp_Validation_YarnPOChildOrder, ref transaction,new
                     {
                         EntityState = item.EntityState,
                         UserId = userId,
@@ -2551,6 +2551,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     POCone = item.POCone,
                     Segment5ValueDesc = item.Segment5ValueDesc,
                     Segment5ValueId = item.Segment5ValueId,
+
                     DayValidDurationId = item.DayValidDurationId,
                     EntityState = EntityState.Added
                 };

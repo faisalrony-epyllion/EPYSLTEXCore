@@ -1,22 +1,8 @@
-using EPYSLTEX.Core.Interfaces;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Infrastructure.Services;
-using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEX.Web.Services;
 using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.Admin;
-using EPYSLTEXCore.Application.Interfaces.Booking;
-using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
-using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Application.Services;
-using EPYSLTEXCore.Application.Services.Admin;
-using EPYSLTEXCore.Application.Services.Booking;
-using EPYSLTEXCore.Application.Services.General;
-using EPYSLTEXCore.Application.Services.Inventory;
-using EPYSLTEXCore.Application.Services.RND;
-using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
-using EPYSLTEXCore.Infrastructure.Services;
 namespace EPYSLTEXCore.API.Extension
 {
     public static class ServiceExtensions
@@ -30,31 +16,11 @@ namespace EPYSLTEXCore.API.Extension
             service.AddScoped(typeof(IChildItemMasterService<>), typeof(ChildItemMasterService<>));
             service.AddTransient<ITokenBuilder, TokenBuilder>();
             service.AddTransient<IDeSerializeJwtToken, DeSerializeJwtToken>();
-            service.AddTransient<ICommonInterfaceService, CommonInterfaceService>();
-            service.AddTransient<ISelect2Service, Select2Service>();
-            service.AddTransient<ICommonHelpers, CommonHelpers>();
-            service.AddTransient<ICommonHelperService, CommonHelperService>();
-            service.AddTransient<IFreeConceptService, FreeConceptService>();
-            service.AddTransient<IYarnProductSetupService, YarnProductSetupService>();
-            service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
-            service.AddTransient<IFreeConceptMRService, FreeConceptMRService>();
-            service.AddTransient<IConceptStatusService, ConceptStatusService>();
-            service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
-            service.AddTransient<IYarnPRService, YarnPRService>();
-            service.AddTransient<IYarnReceiveService, YarnReceiveService>();
-            service.AddTransient<IYarnRackBinAllocationService, YarnRackBinAllocationService>();
-            service.AddScoped(typeof(IItemMasterService<>), typeof(ItemMasterService<>));
-            service.AddScoped(typeof(IChildItemMasterService<>), typeof(ChildItemMasterService<>));
-            service.AddTransient<IItemSetupService, ItemSetupService>();
-            service.AddTransient<IProjectionYarnBookingService, ProjectionYarnPurchaseBookingService>();
-            //service.AddTransient<IYarnPOService, YarnPOService>();
-            service.AddTransient<IBondEntitlementService, BondEntitlementService>();
-            service.AddTransient<IBankLimitService, BankLimitService>();
-            //service.AddTransient<IYarnPOService, YarnPOService>();
-            service.AddTransient<IYarnPIReceiveService, YarnPIReceiveService>();
 
-            string a = "IDapperCRUDService,IItemMasterService,IChildItemMasterService";
-            string[] scopedServices = a.Split(',');
+            
+
+            string ListOfService = "IDapperCRUDService,IItemMasterService,IChildItemMasterService";
+            string[] scopedServices = ListOfService.Split(',');
             foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
             {
                 if (type.Name.EndsWith("Service") && type.IsClass && !type.IsAbstract)
@@ -75,7 +41,7 @@ namespace EPYSLTEXCore.API.Extension
                     }
                 }
             }
-
+            #region manual added services
             //foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
             //{
             //    if (type.Name.EndsWith("Service") && type.IsClass && !type.IsAbstract)
@@ -90,14 +56,34 @@ namespace EPYSLTEXCore.API.Extension
             //    }
             //}
 
-            service.AddTransient<IFreeConceptService, FreeConceptService>();
-            service.AddTransient<ICommonHelperService, CommonHelperService>();
-            service.AddTransient<IFabricColorBookSetupService, FabricColorBookSetupService>();
-            service.AddTransient<IYarnQCReqService, YarnQCReqService>();
-            service.AddTransient<IYarnQCRemarksService, YarnQCRemarksService>();
-            service.AddTransient<IYarnQCIssueService, YarnQCIssueService>();
-            service.AddTransient<IYarnMRIRService, YarnMRIRService>();
 
+            //service.AddTransient<ICommonInterfaceService, CommonInterfaceService>();
+            //service.AddTransient<ISelect2Service, Select2Service>();
+            //service.AddTransient<ICommonHelpers, CommonHelpers>();
+            //service.AddTransient<ICommonHelperService, CommonHelperService>();
+            //service.AddTransient<IFreeConceptService, FreeConceptService>();
+            //service.AddTransient<IYarnProductSetupService, YarnProductSetupService>();
+            //service.AddTransient<IReportAPISetupService, ReportAPISetupService>();
+            //service.AddTransient<IFreeConceptMRService, FreeConceptMRService>();
+            //service.AddTransient<IConceptStatusService, ConceptStatusService>();
+            //service.AddTransient<IFBookingAcknowledgeService, FBookingAcknowledgeService>();
+            //service.AddTransient<IYarnPRService, YarnPRService>();
+            //service.AddTransient<IYarnReceiveService, YarnReceiveService>();
+            //service.AddTransient<IYarnRackBinAllocationService, YarnRackBinAllocationService>();
+            //service.AddTransient<IItemSetupService, ItemSetupService>();
+            //service.AddTransient<IProjectionYarnBookingService, ProjectionYarnPurchaseBookingService>();    
+            //service.AddTransient<IBondEntitlementService, BondEntitlementService>();
+            //service.AddTransient<IBankLimitService, BankLimitService>();
+            ////service.AddTransient<IYarnPOService, YarnPOService>();
+            //service.AddTransient<IYarnPIReceiveService, YarnPIReceiveService>();
+            //service.AddTransient<IFreeConceptService, FreeConceptService>();
+            //service.AddTransient<ICommonHelperService, CommonHelperService>();
+            //service.AddTransient<IFabricColorBookSetupService, FabricColorBookSetupService>();
+            //service.AddTransient<IYarnQCReqService, YarnQCReqService>();
+            //service.AddTransient<IYarnQCRemarksService, YarnQCRemarksService>();
+            //service.AddTransient<IYarnQCIssueService, YarnQCIssueService>();
+            //service.AddTransient<IYarnMRIRService, YarnMRIRService>();
+            #endregion
 
         }
     }

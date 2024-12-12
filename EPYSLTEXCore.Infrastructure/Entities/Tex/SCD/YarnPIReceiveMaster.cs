@@ -4,7 +4,7 @@ using EPYSLTEXCore.Infrastructure.DTOs;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("YarnPIReceiveMaster")]
+    [Table("T_YarnPIReceiveMaster")]
     public class YarnPIReceiveMaster : DapperBaseEntity
     {
         public YarnPIReceiveMaster()

@@ -501,8 +501,8 @@ namespace EPYSLTEX.Infrastructure.Services
                     (
 	                    Select CDAPM.CDAPOMasterID, CDAPM.CompanyID, CDAPM.PONo, CDAPM.PODate, CDAPM.SupplierID, 
                         CDAPM.QuotationRefNo, CDAPM.DeliveryStartDate, CDAPM.DeliveryEndDate
-	                    From CDAPOMaster CDAPM
-	                    Left Join YarnPIReceivePO YPIPO ON CDAPM.CDAPOMasterID = YPIPO.YPOMasterID
+	                    From T_CDAPOMaster CDAPM
+	                    Left Join T_YarnPIReceivePO YPIPO ON CDAPM.CDAPOMasterID = YPIPO.YPOMasterID
 	                    Where CDAPM.Approved = 1 AND YPIPO.YPOMasterID IS NULL
                     ),
                     YPI AS
@@ -511,7 +511,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                    YPM.SupplierID, C.Name AS SupplierName, YPM.QuotationRefNo, CONVERT(varchar, YPM.DeliveryStartDate, 101) DeliveryStartDate,  
 	                    CONVERT(varchar, YPM.DeliveryEndDate, 101) DeliveryEndDate, SUM(YPC.POQty) POQty, SUM(YPC.POValue) AS PIValue 
 	                    FROM YPM 
-	                    INNER JOIN CDAPOChild YPC ON YPC.CDAPOMasterID = YPM.CDAPOMasterID 
+	                    INNER JOIN T_CDAPOChild YPC ON YPC.CDAPOMasterID = YPM.CDAPOMasterID 
 	                    Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YPM.SupplierID
 	                    INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = YPM.CompanyID
 	                    --INNER JOIN {DbNames.EPYSL}..ContactCategoryChild CCC ON C.ContactID = CCC.ContactID 
@@ -531,7 +531,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 sql = $@"
                     ;With M As 
                     (
-                        Select * From YarnPIReceiveMaster Where Reject = 1
+                        Select * From T_YarnPIReceiveMaster Where Reject = 1
                     )
                     ,YPI AS
                     (
@@ -539,10 +539,10 @@ namespace EPYSLTEX.Infrastructure.Services
                         CC.Name AS SupplierName, M.PIFilePath, M.AttachmentPreviewTemplate, M.CompanyID, CE.ShortName As CompanyName, 
                         M.SupplierID, SUM(C.POQty) AS POQty, SUM(C.PIQty) PIQty, SUM(C.PIValue) AS PIValue
 	                    FROM M
-	                    INNER JOIN YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
+	                    INNER JOIN T_YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                         Inner Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = M.CompanyID
-	                    INNER JOIN YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+	                    INNER JOIN T_YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
                         WHERE M.IsCDA = 1
 	                    GROUP BY M.YPIReceiveMasterID, M.YPINo, M.PIDate, M.PONo, CC.Name, M.PIFilePath, 
                         M.AttachmentPreviewTemplate, M.CompanyID,  CE.ShortName, M.SupplierID
@@ -562,11 +562,11 @@ namespace EPYSLTEX.Infrastructure.Services
                         YPRM.PONo, CC.Name AS SupplierName, PIFilePath, YPRM.AttachmentPreviewTemplate, YPRM.CompanyID, 
                         CE.ShortName As CompanyName, YPRM.SupplierID, SUM(YPRC.POQty) AS POQty, SUM(YPRC.PIQty) PIQty, 
 	                    SUM(YPRC.PIValue) AS PIValue
-	                    FROM YarnPIReceiveMaster YPRM
-	                    INNER JOIN YarnPIReceiveChild YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
+	                    FROM T_YarnPIReceiveMaster YPRM
+	                    INNER JOIN T_YarnPIReceiveChild YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = YPRM.SupplierID
                         Inner Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = YPRM.CompanyID
-	                    INNER JOIN YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+	                    INNER JOIN T_YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
 	                    WHERE YPRM.IsCDA = 1 AND Acknowledge = 0
 	                    GROUP BY YPRM.YPIReceiveMasterID, YPRM.YPINo, YPRM.PIDate, YPRM.PONo, CC.Name, PIFilePath, 
                         AttachmentPreviewTemplate, YPRM.CompanyID, CE.ShortName, YPRM.SupplierID
@@ -586,11 +586,11 @@ namespace EPYSLTEX.Infrastructure.Services
                         CC.Name AS SupplierName, PIFilePath, YPRM.AttachmentPreviewTemplate, YPRM.CompanyID,
                         CE.ShortName As CompanyName, YPRM.SupplierID, SUM(YPRC.POQty) AS POQty, SUM(YPRC.PIQty) PIQty, 
 	                    SUM(YPRC.PIValue) AS PIValue
-	                    FROM YarnPIReceiveMaster YPRM
-	                    INNER JOIN YarnPIReceiveChild YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
+	                    FROM T_YarnPIReceiveMaster YPRM
+	                    INNER JOIN T_YarnPIReceiveChild YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = YPRM.SupplierID
                         Inner Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = YPRM.CompanyID
-	                    INNER JOIN YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+	                    INNER JOIN T_YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
 	                    WHERE YPRM.IsCDA = 1 AND Acknowledge = 0
 	                    GROUP BY YPRM.YPIReceiveMasterID, YPRM.YPINo, YPRM.PONo, YPRM.PIDate, CC.Name, 
                         PIFilePath, AttachmentPreviewTemplate, YPRM.CompanyID, CE.ShortName, YPRM.SupplierID
@@ -610,11 +610,11 @@ namespace EPYSLTEX.Infrastructure.Services
                         CC.Name AS SupplierName, PIFilePath, YPRM.AttachmentPreviewTemplate, YPRM.CompanyID, 
                         CE.ShortName As CompanyName, YPRM.SupplierID, SUM(YPRC.POQty) AS POQty, SUM(YPRC.PIQty) PIQty, 
 	                    SUM(YPRC.PIValue) AS PIValue
-	                    FROM YarnPIReceiveMaster YPRM
-	                    INNER JOIN YarnPIReceiveChild YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
+	                    FROM T_YarnPIReceiveMaster YPRM
+	                    INNER JOIN T_YarnPIReceiveChild YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = YPRM.SupplierID
                         Inner Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = YPRM.CompanyID
-	                    INNER JOIN YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+	                    INNER JOIN T_YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
 	                    WHERE YPRM.IsCDA = 1 AND Acknowledge = 1 And Accept = 0
 	                    GROUP BY YPRM.YPIReceiveMasterID, YPRM.YPINo, YPRM.PONo, YPRM.PIDate, CC.Name, PIFilePath, 
                         AttachmentPreviewTemplate, YPRM.CompanyID, CE.ShortName, YPRM.SupplierID

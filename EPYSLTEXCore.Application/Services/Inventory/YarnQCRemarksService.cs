@@ -51,7 +51,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     sql = $@"
                     With 
                     C As (
-	                    Select * From YarnQCRemarksChild
+	                    Select * From {TableNames.YARN_QC_REMARKS_CHILD}
                     ), 
                     YQCRemarks As 
                     (
@@ -78,23 +78,23 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END
 
 	                    From C
-	                    Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                    Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
-		                INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
-	                    Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                    Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = M.QCReqMasterID
-	                    INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = M.ReceiveID
+	                    Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                    Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
+	                    Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                    Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = M.QCReqMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = M.ReceiveID
 	                    Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                    Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 					    Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
 	                    Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 					    Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -126,10 +126,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     With 
                     C As (
 	                    Select C.* 
-                        From YarnQCRemarksChild C
-                        INNER JOIN YarnQCRemarksMaster M ON M.QCRemarksMasterID = C.QCRemarksMasterID
-						LEFT JOIN YarnMRIRChild YMC ON YMC.QCRemarksChildID=C.QCRemarksChildID 
-						LEFT JOIN YarnMRIRMaster YMM ON YMM.MRIRMasterId=YMC.MRIRMasterID
+                        From {TableNames.YARN_QC_REMARKS_CHILD} C
+                        INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} M ON M.QCRemarksMasterID = C.QCRemarksMasterID
+						LEFT JOIN {TableNames.YARN_MRIR_CHILD} YMC ON YMC.QCRemarksChildID=C.QCRemarksChildID 
+						LEFT JOIN {TableNames.YARN_MRIR_MASTER} YMM ON YMM.MRIRMasterId=YMC.MRIRMasterID
 	                    Where (C.Diagnostic = 0 AND C.ReTest = 1 And C.Approve = 0 And C.Reject = 0) OR M.IsRetest = 1 OR YMM.ReTest=1
                     ), 
                     YQCRemarks As 
@@ -158,17 +158,17 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 						ERS.EmployeeName RetestReqBy,YMM.RetestReason   ,M.ApprovedDate
 
 	                    From C
-	                    Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                    Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
-		                INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
-	                    Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                    Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = M.QCReqMasterID
-	                    INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC2.ReceiveID
-						LEFT JOIN YarnMRIRChild YMC ON YMC.QCRemarksChildID=C.QCRemarksChildID 
-						LEFT JOIN YarnMRIRMaster YMM ON YMM.MRIRMasterId=YMC.MRIRMasterID
+	                    Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                    Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
+	                    Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                    Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = M.QCReqMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = YRC2.ReceiveID
+						LEFT JOIN {TableNames.YARN_MRIR_CHILD} YMC ON YMC.QCRemarksChildID=C.QCRemarksChildID 
+						LEFT JOIN {TableNames.YARN_MRIR_MASTER} YMM ON YMM.MRIRMasterId=YMC.MRIRMasterID
 	                    Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                    Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 					    Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
@@ -176,9 +176,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					    LEFT JOIN {DbNames.EPYSL}..Employee ERS On ERS.EmployeeCode = RUS.EmployeeCode
 	                    Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 					    Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -209,7 +209,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     sql = $@"
                     With 
                     C As (
-	                    Select * From YarnQCRemarksChild
+	                    Select * From {TableNames.YARN_QC_REMARKS_CHILD}
 	                    Where Diagnostic = 1
                     ), 
                     YQCRemarks As 
@@ -237,23 +237,24 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END   ,M.ApprovedDate
 
 	                    From C
-	                    Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                    Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
-		                INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
-	                    Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                    Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = M.QCReqMasterID
-	                    INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = M.ReceiveID
+
+                        Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                    Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
+	                    Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                    Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = M.QCReqMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = M.ReceiveID
 	                    Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                     Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 					    Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
 	                    Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 					    Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -284,7 +285,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     sql = $@"
                     With 
                     C As (
-	                    Select * From YarnQCRemarksChild
+	                    Select * From {TableNames.YARN_QC_REMARKS_CHILD}
 	                    Where Approve = 1 And Reject = 0
                     ), 
                     YQCRemarks As 
@@ -312,23 +313,24 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END
                         ,M.ApprovedDate
 	                    From C
-	                    Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                    Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
-		                INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
-	                    Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                    Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = M.QCReqMasterID
-	                    INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = M.ReceiveID
+
+                        Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                    Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
+	                    Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                    Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = M.QCReqMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = M.ReceiveID
 	                    Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                    Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 					    Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
 	                    Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 					    Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -383,24 +385,24 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    TechnicalName = T.TechnicalName,
 	                    BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END
 
-	                    From YarnQCRemarksChild C
-	                    Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                    Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
-		                INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
-	                    Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                    Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = M.QCReqMasterID
-	                    INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = M.ReceiveID
+	                    From {TableNames.YARN_QC_REMARKS_CHILD} C
+	                    Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                    Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
+	                    Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                    Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = M.QCReqMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = M.ReceiveID
 	                    Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                    Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 		                Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
 	                    Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 		                Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -432,7 +434,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     sql = $@"
                     With 
                     C As (
-	                    Select * From YarnQCRemarksChild
+	                    Select * From {TableNames.YARN_QC_REMARKS_CHILD}
 	                
                     ), 
                     YQCRemarks As 
@@ -460,23 +462,24 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END
                         ,M.ApprovedDate
 	                    From C
-	                    Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                    Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = QCRC.QCReceiveMasterID
-		                INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
-	                    Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                    Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = RMC1.QCReqMasterID
-	                    INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC2.ReceiveID
+
+                        Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                    Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
+	                    Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                    Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = RMC1.QCReqMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = YRC2.ReceiveID		             
 	                    Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                    Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 					    Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
 	                    Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 					    Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -508,7 +511,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     sql = $@"
                     With 
                     C As (
-	                    Select * From YarnQCRemarksChild
+	                    Select * From {TableNames.YARN_QC_REMARKS_CHILD}
 	                    Where CommerciallyApprove = 1
                     ), 
                     YQCRemarks As 
@@ -536,23 +539,24 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END
                         ,M.ApprovedDate
 	                    From C
-	                    Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                    Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
-		                INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
-	                    Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                    Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = M.QCReqMasterID
-	                    INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = M.ReceiveID
+
+                        Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                    Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = M.QCReceiveMasterID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = M.QCIssueMasterID
+	                    Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                    Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = M.QCReqMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = M.ReceiveID	
 	                    Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                     Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 					    Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
 	                    Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 					    Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                    Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -605,26 +609,26 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    WHEN ISNULL(RM.QCReqMasterID,0) > 0 THEN 'Waiting for Requisition Approval'
 	                    ELSE 'Waiting for Requisition' END   ,M.ApprovedDate
 
-	                    From YarnQCReqChild RC
-		                INNER JOIN YarnQCReqMaster RM On RM.QCReqMasterID = RC.QCReqMasterID
+	                    From {TableNames.YARN_QC_REQ_CHILD} RC
+		                INNER JOIN {TableNames.YARN_QC_RECEIVE_MASTER} RM On RM.QCReqMasterID = RC.QCReqMasterID
 
-		                LEFT JOIN YarnQCIssueChild QCIC ON QCIC.QCReqChildID = RC.QCReqChildID
-		                LEFT JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
+		                LEFT JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCReqChildID = RC.QCReqChildID
+		                LEFT JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
 
-		                LEFT JOIN YarnQCReceiveChild QCRC ON QCRC.QCIssueChildID = QCIC.QCIssueChildID
-		                LEFT JOIN YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = QCRC.QCReceiveMasterID
+		                LEFT JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCIssueChildID = QCIC.QCIssueChildID
+		                LEFT JOIN {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = QCRC.QCReceiveMasterID
 
-		                LEFT JOIN YarnQCRemarksChild C ON C.QCReceiveChildID = QCRC.QCReceiveChildID
-		                LEFT JOIN YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                LEFT JOIN {TableNames.YARN_QC_REMARKS_CHILD} C ON C.QCReceiveChildID = QCRC.QCReceiveChildID
+		                LEFT JOIN {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
 
-		                LEFT JOIN YarnReceiveChild YRC ON YRC.ChildID = RC.ReceiveChildID
-		                LEFT JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC.ReceiveID
+		                LEFT JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC.ReceiveChildID
+		                LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = YRC.ReceiveID
 	
-	                    LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RC.TechnicalNameId
+	                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RC.TechnicalNameId
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RC.BuyerID
-	                    LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                    LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 
-                        INNER JOIN YarnReceiveChildRackBin RB ON RB.ChildID = YRC.ChildID
+                        INNER JOIN {TableNames.YARN_RECEIVE_CHILD_RACK_BIN} RB ON RB.ChildID = YRC.ChildID
                     ),
                     FinalList AS
                     (
@@ -641,7 +645,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     sql = $@"
                         With 
                         C As (
-	                        Select * From YarnQCRemarksChild
+	                        Select * From {TableNames.YARN_QC_REMARKS_CHILD}
 	                        Where Reject = 1
                         ), 
                         YQCRemarks As 
@@ -669,23 +673,23 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                        BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END
 
 	                        From C
-	                        Inner Join YarnQCRemarksMaster M On M.QCRemarksMasterID = C.QCRemarksMasterID
-		                    INNER JOIN YarnQCReceiveChild QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
-	                        Inner Join YarnQCReceiveMaster RCM On RCM.QCReceiveMasterID = QCRC.QCReceiveMasterID
-		                    INNER JOIN YarnQCIssueChild QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-		                    INNER JOIN YarnQCIssueMaster QCIM ON QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
-	                        Inner Join YarnQCReqChild RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
-	                        Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = RMC1.QCReqMasterID
-	                        INNER JOIN YarnReceiveChild YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
-	                        INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC2.ReceiveID
+                            Inner Join {TableNames.YARN_QC_REMARKS_MASTER} M On M.QCRemarksMasterID = C.QCRemarksMasterID
+		                    INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = C.QCReceiveChildID
+	                        Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RCM On RCM.QCReceiveMasterID = QCRC.QCReceiveMasterID
+		                    INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+		                    INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM ON QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
+	                        Inner Join {TableNames.YARN_QC_REQ_CHILD} RMC1 On RMC1.QCReqChildID = QCIC.QCReqChildID
+	                        Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = RMC1.QCReqMasterID
+	                        INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC2 ON YRC2.ChildID = RMC1.ReceiveChildID
+	                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = YRC2.ReceiveID
 	                        Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                        Inner Join {DbNames.EPYSL}..LoginUser RU On M.QCRemarksBy = RU.UserCode 
 					        Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode = RU.EmployeeCode
 	                        Inner Join {DbNames.EPYSL}..LoginUser RCU On RCM.QCReceivedBy = RCU.UserCode
 					        Inner Join {DbNames.EPYSL}..Employee ERCU On ERCU.EmployeeCode = RCU.EmployeeCode
-	                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                        LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                        LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
-	                        LEFT JOIN YarnAssessmentStatus Z ON Z.YarnStatusID = C.YarnStatusID
+	                        LEFT JOIN {TableNames.YarnAssessmentStatus} Z ON Z.YarnStatusID = C.YarnStatusID
 	                        Inner Join {DbNames.EPYSL}..ItemMaster IM On IM.ItemMasterID = C.ItemMasterID
 	                        LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
 	                        LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -730,18 +734,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                        TechnicalName = T.TechnicalName,
 	                        BuyerName = CASE WHEN RMC1.BuyerID > 0 THEN B.ShortName ELSE '' END
 
-	                        FROM YarnQCReceiveChild RC
-	                        INNER JOIN YarnQCReceiveMaster M ON M.QCReceiveMasterID = RC.QCReceiveMasterID
-	                        INNER JOIN YarnQCIssueChild QCIC On QCIC.QCIssueChildID = RC.QCIssueChildID
-	                        INNER JOIN YarnQCIssueMaster QCIM On QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
-	                        INNER JOIN YarnQCReqChild RMC1 ON RMC1.QCReqChildID = QCIC.QCReqChildID
-	                        INNER JOIN YarnQCReqMaster RM On RM.QCReqMasterID = RMC1.QCReqMasterID
-	                        LEFT JOIN YarnReceiveChild YRC On YRC.ChildID = RC.ReceiveChildID
-	                        LEFT JOIN YarnReceiveMaster YRM On YRM.ReceiveID = YRC.ReceiveID
+	                        FROM {TableNames.YARN_QC_RECEIVE_CHILD} RC
+	                        INNER JOIN {TableNames.YARN_QC_RECEIVE_MASTER} M ON M.QCReceiveMasterID = RC.QCReceiveMasterID
+	                        INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC On QCIC.QCIssueChildID = RC.QCIssueChildID
+	                        INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} QCIM On QCIM.QCIssueMasterID = QCIC.QCIssueMasterID
+	                        INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RMC1 ON RMC1.QCReqChildID = QCIC.QCReqChildID
+	                        INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = RMC1.QCReqMasterID
+	                        LEFT JOIN {TableNames.YARN_RECEIVE_CHILD} YRC On YRC.ChildID = RC.ReceiveChildID
+	                        LEFT JOIN {TableNames.YARN_RECEIVE_MASTER} YRM On YRM.ReceiveID = YRC.ReceiveID
 	                        LEFT JOIN {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
 	                        INNER JOIN {DbNames.EPYSL}..LoginUser RU On M.QCReceivedBy = RU.UserCode 
 	                        INNER JOIN {DbNames.EPYSL}..LoginUser IU On QCIM.QCIssueBy = IU.UserCode
-	                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC1.TechnicalNameId
+	                        LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC1.TechnicalNameId
 	                        LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC1.BuyerID
 
 	                        INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = RC.ItemMasterID
@@ -753,7 +757,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                        LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                        LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
 
-	                        LEFT JOIN YarnQCRemarksChild RMC ON RMC.QCReceiveChildID = RC.QCReceiveChildID
+	                        LEFT JOIN {TableNames.YARN_QC_REMARKS_CHILD} RMC ON RMC.QCReceiveChildID = RC.QCReceiveChildID
 	                        WHERE RMC.QCRemarksChildID IS NULL
                         ),
                         FinalList AS
@@ -784,27 +788,27 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 RC AS
                 (
 	                SELECT C.QCReceiveMasterID, C.QCReceiveChildID
-	                FROM YarnQCReceiveChild C
+	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} C
 	                WHERE C.QCReceiveChildID = {qcReceiveChildID}
                 ),
                 M As (
 	                Select M.* 
-	                From YarnQCReceiveMaster M
+	                From {TableNames.YARN_QC_RECEIVE_MASTER} M
 	                INNER JOIN RC ON RC.QCReceiveMasterID = M.QCReceiveMasterID 
                 )
                 Select M.QCReceiveMasterID, M.QCReceiveNo, M.QCReceiveDate, M.QCReqMasterID, M.QCIssueMasterID, M.LocationId, M.ReceiveID, M.CompanyId, M.RCompanyId, M.SupplierId, M.SpinnerId
                     , QCReqFor.ValueName QCReqFor, RM.QCReqDate, RM.QCReqNo
                 From M
-                Inner Join YarnQCReqMaster RM On M.QCReqMasterID = RM.QCReqMasterID
+                Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On M.QCReqMasterID = RM.QCReqMasterID
                 Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID;
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text]
-                FROM FabricTechnicalName T;
+                FROM {TableNames.FABRIC_TECHNICAL_NAME} T;
 
                 --Dyeing Process List
                 SELECT Cast(D.DPID as varchar) id,D.DPName [text]
-                FROM DyeingProcessPart_HK D;
+                FROM {TableNames.DyeingProcessPart_HK} D;
 
                 -- Child Data
                 With
@@ -821,18 +825,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     
 	                BuyerName = CASE WHEN RMC2.BuyerID > 0 THEN B.ShortName ELSE '' END,RMC.Rate
 
-	                From YarnQCReceiveChild RCVC
-	                INNER JOIN YarnQCIssueChild RIC ON RIC.QCIssueChildID = RCVC.QCIssueChildID
-	                INNER JOIN YarnQCReqChild RMC2 ON RMC2.QCReqChildID = RIC.QCReqChildID
-	                INNER JOIN YarnQCReqMaster RMM2 ON RMM2.QCReqMasterID = RMC2.QCReqMasterID
-	                INNER JOIN YarnReceiveChild RMC ON RMC.ChildID = RMC2.ReceiveChildID
-	                INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
+	                From {TableNames.YARN_QC_RECEIVE_CHILD} RCVC
+	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} RIC ON RIC.QCIssueChildID = RCVC.QCIssueChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RMC2 ON RMC2.QCReqChildID = RIC.QCReqChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RMM2 ON RMM2.QCReqMasterID = RMC2.QCReqMasterID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} RMC ON RMC.ChildID = RMC2.ReceiveChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = RM.SupplierID
                     LEFT JOIN {DbNames.EPYSL}..Contacts CCS ON CCS.ContactID = RMC.SpinnerID
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CCSM ON CCSM.ContactID = RMM2.SpinnerID
 	                LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC2.BuyerID
-	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = RMC2.TechnicalNameId
-	                Left Join YarnQCRemarksChild RMKC ON RMKC.QCReceiveChildID = RCVC.QCReceiveChildID
+	                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = RMC2.TechnicalNameId
+	                Left Join {TableNames.YARN_QC_REMARKS_CHILD} RMKC ON RMKC.QCReceiveChildID = RCVC.QCReceiveChildID
 	                Where RCVC.QCReceiveChildID = {qcReceiveChildID}
                 )
                 Select C.QCRemarksChildID, C.QCReceiveChildID, C.ReceiveChildID, C.YarnProgramId, C.ChallanCount, C.POCount, C.PhysicalCount, C.YarnCategory, C.NoOfThread, C.UnitID, C.ItemMasterID
@@ -865,14 +869,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                 -- YarnAssessmentStatus List
                 Select Cast(ETV.YarnStatusID As varchar) [id], ETV.YarnStatus [text]
-                From YarnAssessmentStatus as ETV;
+                From {TableNames.YarnAssessmentStatus} as ETV;
 
                 -- YarnAssessmentStatus List
                 {CommonQueries.GetYarnAssessmentStatus()}
 
                 --TestParam
                 SELECT Cast(TP.ResultTypeID as varchar) id,TP.ResultType [text],TP.ResultSet additionalValue
-                FROM YarnTestParamResultSet_HK TP;
+                FROM {TableNames.YarnTestParamResultSet_HK} TP;
 
                 --Buyer List
                 {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)};
@@ -929,14 +933,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 -- Master Data
                 With 
                 M As (
-	                Select * From YarnQCReceiveMaster
+	                Select * From {TableNames.YARN_QC_RECEIVE_MASTER}
 	                Where QCReceiveMasterID = {qcReceiveMasterId}
                 )
 
                 Select M.QCReceiveMasterID, M.QCReceiveNo, M.QCReceiveDate, M.QCReqMasterID, M.QCIssueMasterID, M.LocationId, M.ReceiveID, M.CompanyId, M.RCompanyId, M.SupplierId, M.SpinnerId
                  , QCReqFor.ValueName QCReqFor, RM.QCReqDate, RM.QCReqNo
                 From M
-                Inner Join YarnQCReqMaster RM On M.QCReqMasterID = RM.QCReqMasterID
+                Inner Join {TableNames.YARN_QC_REQ_MASTER} RM On M.QCReqMasterID = RM.QCReqMasterID
                 Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID;
 
 
@@ -947,8 +951,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 C As (
 	                Select RCVC.QCReceiveChildID,RCVC.YarnProgramId,  RCVC.ChallanCount, RCVC.POCount, RCVC.PhysicalCount, RCVC.YarnCategory, RCVC.NoOfThread, RCVC.UnitID,
 					RCVC.ItemMasterID, RCVC.ReceiveQty, RCVC.ReceiveQtyCone, RCVC.ReceiveQtyCarton, RCVC.ShadeCode,RCVC.LotNo,RCVC.ChallanLot,
-	                From YarnQCReceiveChild RCVC
-					Left Join YarnQCRemarksChild RMKC ON RMKC.QCReceiveChildID = RCVC.QCReceiveChildID
+	                From {TableNames.YARN_QC_RECEIVE_CHILD} RCVC
+					Left Join {TableNames.YARN_QC_REMARKS_CHILD} RMKC ON RMKC.QCReceiveChildID = RCVC.QCReceiveChildID
 	                Where RMKC.QCReceiveChildID IS NULL AND QCReceiveMasterID = {qcReceiveMasterId}
                 )
 
@@ -972,7 +976,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                 -- YarnAssessmentStatus List
                 Select Cast(ETV.YarnStatusID As varchar) [id], ETV.YarnStatus [text]
-                From {DbNames.EPYSLTEX}..YarnAssessmentStatus as ETV;
+                From {TableNames.YarnAssessmentStatus} as ETV;
 
                 -- YarnAssessmentStatus List
                  {CommonQueries.GetYarnAssessmentStatus()}";
@@ -1004,36 +1008,36 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 RC AS
                 (
 	                SELECT C.QCRemarksMasterID, C.QCRemarksChildID
-	                FROM YarnQCRemarksChild C
+	                FROM {TableNames.YARN_QC_REMARKS_CHILD} C
 	                WHERE C.QCRemarksChildID = {qcRemarksChildID}
                 ),
                 M AS (
 	                Select M.* 
-	                From YarnQCRemarksMaster M
+	                From {TableNames.YARN_QC_REMARKS_MASTER} M
 	                INNER JOIN RC ON RC.QCRemarksMasterID = M.QCRemarksMasterID
                 )
                 Select M.QCRemarksMasterID, M.QCReqMasterID, M.QCIssueMasterID, M.QCReceiveMasterID, M.QCRemarksNo, M.QCRemarksBy, M.QCRemarksDate
 	                , RM.QCReceiveNo, RM.QCReceiveDate, RQM.QCReqNo, RQM.QCReqDate
 	                , M.LocationId, M.ReceiveID, M.CompanyId, M.RCompanyId, M.SupplierId, M.SpinnerId, Supplier.ShortName [Suupplier], Spinner.ShortName [Spinner]
                 From  M
-                Inner Join YarnQCReceiveMaster RM On M.QCReceiveMasterID = RM.QCReceiveMasterID
-                Inner Join YarnQCReqMaster RQM On M.QCReqMasterID = RQM.QCReqMasterID
+                Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RM On M.QCReceiveMasterID = RM.QCReceiveMasterID
+                Inner Join {TableNames.YARN_QC_REQ_MASTER} RQM On M.QCReqMasterID = RQM.QCReqMasterID
                 Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 Inner Join {DbNames.EPYSL}..Contacts Spinner On M.SpinnerId = Spinner.ContactID;
 
                 --Technical Name
                 SELECT Cast(T.TechnicalNameId As varchar) id, T.TechnicalName [text]
-                FROM FabricTechnicalName T;
+                FROM {TableNames.FABRIC_TECHNICAL_NAME} T;
 
                 --Dyeing Process List
                 SELECT Cast(D.DPID as varchar) id,D.DPName [text]
-                FROM DyeingProcessPart_HK D;
+                FROM {TableNames.DyeingProcessPart_HK} D;
 
                 -- Childs
                 With 
                 YRC AS (
 	                Select * 
-                    From YarnQCRemarksChild
+                    From {TableNames.YARN_QC_REMARKS_CHILD}
 	                Where QCRemarksChildID = {qcRemarksChildID}
                 )
 
@@ -1052,17 +1056,17 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 BuyerName = CASE WHEN RMC2.BuyerID > 0 THEN B.ShortName ELSE '' END,
                 RMC.NoOfCartoon,RMC.NoOfCone,ReceiveQtyYS = RMC.ReceiveQty
                 From YRC
-                INNER JOIN YarnQCReceiveChild RC1 ON RC1.QCReceiveChildID = YRC.QCReceiveChildID
-                INNER JOIN YarnQCIssueChild RIC ON RIC.QCIssueChildID = RC1.QCIssueChildID
-                INNER JOIN YarnQCReqChild RMC2 ON RMC2.QCReqChildID = RIC.QCReqChildID
-                INNER JOIN YarnQCReqMaster RMM2 ON RMM2.QCReqMasterID = RMC2.QCReqMasterID
-                INNER JOIN YarnReceiveChild RMC ON RMC.ChildID = RMC2.ReceiveChildID
-                INNER JOIN YarnReceiveMaster RM ON RM.ReceiveID = RMC.ReceiveID
+                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC1 ON RC1.QCReceiveChildID = YRC.QCReceiveChildID
+                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} RIC ON RIC.QCIssueChildID = RC1.QCIssueChildID
+                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RMC2 ON RMC2.QCReqChildID = RIC.QCReqChildID
+                INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RMM2 ON RMM2.QCReqMasterID = RMC2.QCReqMasterID
+                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} RMC ON RMC.ChildID = RMC2.ReceiveChildID
+                INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = RMC.ReceiveID
                 LEFT JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = RM.SupplierID
                 LEFT JOIN {DbNames.EPYSL}..Contacts CCS ON CCS.ContactID = RMC.SpinnerID
                 LEFT JOIN {DbNames.EPYSL}..Contacts CCSM ON CCSM.ContactID = RMM2.SpinnerID
                 LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = RMC2.BuyerID
-                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = YRC.TechnicalNameId
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} T ON T.TechnicalNameId = YRC.TechnicalNameId
                 LEFT Join {DbNames.EPYSL}..Unit U On YRC.UnitID = U.UnitID
                 Inner Join {DbNames.EPYSL}..ItemMaster IM On YRC.ItemMasterID = IM.ItemMasterID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -1075,27 +1079,27 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 
                 --ChildResult
                 Select YCR.*, ColorName =  ISV.SegmentValue, TechnicalName=FTN.TechnicalName
-                From YarnQCRemarksChildResult YCR
+                From {TableNames.YARN_QC_REMARKS_CHILDRESULT} YCR
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV On ISV.SegmentValueID = YCR.FabricColorID
-                LEFT JOIN FabricTechnicalName FTN On FTN.TechnicalNameId=YCR.TechnicalNameID
+                LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} FTN On FTN.TechnicalNameId=YCR.TechnicalNameID
                 Where YCR.QCRemarksChildID= {qcRemarksChildID};
 
                 --ChildFiber
                 Select YQRF.*,id=EV.ValueID,text=EV.ValueName
-				From YarnQCRemarksChildFiber YQRF
+				From {TableNames.YARN_QC_REMARKS_CHILDFIBER} YQRF
 				Left Join {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID=YQRF.ComponentID
                 Where YQRF.QCRemarksChildID= {qcRemarksChildID};
 
                 -- YarnAssessmentZone List
                 Select Cast(YarnStatusID As varchar) [id],YarnStatus [text]
-                From YarnAssessmentStatus;
+                From {TableNames.YarnAssessmentStatus};
 
                 --YarnAssessmentStatus List
                 {CommonQueries.GetYarnAssessmentStatus()}
 
                 --TestParam
                 SELECT Cast(TP.ResultTypeID as varchar) id,TP.ResultType [text],TP.ResultSet additionalValue
-                FROM YarnTestParamResultSet_HK TP;
+                FROM {TableNames.YarnTestParamResultSet_HK} TP;
 
                 --Buyer List
                 {CommonQueries.GetContactsByCategoryId(ContactCategoryConstants.CONTACT_CATEGORY_BUYER)};
@@ -1160,9 +1164,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Select M.*,
 	                RM.QCReceiveNo, RM.QCReceiveDate, RQM.QCReqNo, RQM.QCReqDate,
 	                Supplier.ShortName [Suupplier], Spinner.ShortName [Spinner]
-                From YarnQCRemarksMaster M
-                Inner Join YarnQCReceiveMaster RM On M.QCReceiveMasterID = RM.QCReceiveMasterID
-                Inner Join YarnQCReqMaster RQM On M.QCReqMasterID = RQM.QCReqMasterID
+                From {TableNames.YARN_QC_REMARKS_MASTER} M
+                Inner Join {TableNames.YARN_QC_RECEIVE_MASTER} RM On M.QCReceiveMasterID = RM.QCReceiveMasterID
+                Inner Join {TableNames.YARN_QC_REQ_MASTER} RQM On M.QCReqMasterID = RQM.QCReqMasterID
                 Inner Join {DbNames.EPYSL}..Contacts Supplier On M.SupplierID = Supplier.ContactID
                 Inner Join {DbNames.EPYSL}..Contacts Spinner On M.SpinnerId = Spinner.ContactID
                  Where QCRemarksMasterID = {id};
@@ -1170,7 +1174,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 -- Childs
                 With 
                 YRC AS (
-	                Select * From YarnQCRemarksChild
+	                Select * From {TableNames.YARN_QC_REMARKS_CHILD}
 	                Where QCRemarksMasterID = {id} 
                 )
 
@@ -1194,7 +1198,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 
                 -- YarnAssessmentZone List
                 Select Cast(YarnStatusID As varchar) [id],YarnStatus [text]
-                From {DbNames.EPYSLTEX}..YarnAssessmentStatus;
+                From {TableNames.YarnAssessmentStatus};
 
                -- YarnAssessmentStatus List
                 {CommonQueries.GetYarnAssessmentStatus()}
@@ -1232,19 +1236,19 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         public async Task<YarnQCRemarksMaster> GetAllAsync(int id)
         {
             var sql = $@"
-            ;Select * From YarnQCRemarksMaster Where QCRemarksMasterID = {id}
+            ;Select * From {TableNames.YARN_QC_REMARKS_MASTER} Where QCRemarksMasterID = {id}
 
-            ;Select * From YarnQCRemarksChild Where QCRemarksMasterID = {id}
+            ;Select * From {TableNames.YARN_QC_REMARKS_CHILD} Where QCRemarksMasterID = {id}
 
             ;Select YRCR.* 
-            From YarnQCRemarksChildResult YRCR 
-            Inner Join YarnQCRemarksChild YRC 
+            From {TableNames.YARN_QC_REMARKS_CHILDRESULT} YRCR 
+            Inner Join {TableNames.YARN_QC_REMARKS_CHILD} YRC 
             ON YRC.QCRemarksChildID = YRCR.QCRemarksChildID 
             Where YRC.QCRemarksMasterID = {id}
             
             ;Select YRCF.*
-			From YarnQCRemarksChildFiber YRCF
-			Inner Join YarnQCRemarksChild YRC 
+			From {TableNames.YARN_QC_REMARKS_CHILDFIBER} YRCF
+			Inner Join {TableNames.YARN_QC_REMARKS_CHILD} YRC 
             ON YRC.QCRemarksChildID = YRCF.QCRemarksChildID 
 			Where YRC.QCRemarksMasterID = {id}";
 

@@ -59,8 +59,8 @@ namespace EPYSLTEXCore.Application.Services.Admin
 	                ,CurrencyID = ISNULL(BEM.CurrencyID,0)
 	                ,CurrencyName = ISNULL(CU.CurrencyCode,'')
 	                FROM BondEntitlementMaster BEM
-	                INNER JOIN EPYSL..CompanyEntity C ON C.CompanyID = BEM.CompanyID 
-	                LEFT JOIN EPYSL..Currency CU ON CU.CurrencyID = BEM.CurrencyID
+	                INNER JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = BEM.CompanyID 
+	                LEFT JOIN {DbNames.EPYSL}..Currency CU ON CU.CurrencyID = BEM.CurrencyID
 	                WHERE C.CompanyID IN(8,6)
                 )
                 SELECT *, Count(*) Over() TotalRows FROM FinalList";

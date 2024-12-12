@@ -981,6 +981,12 @@ namespace EPYSLTEXCore.Infrastructure.Static
 			WHERE CompanyID IN(8,6)
 			ORDER BY CompanyName";
         }
+        public static string GetBanks()
+        {
+            return $@"SELECT id = BankMasterID, text = BankMasterName 
+                 FROM {DbNames.EPYSL}..BankMaster 
+                 ORDER BY BankShortName;";
+        }
 
         public static string GetKnittingUnit()
         {

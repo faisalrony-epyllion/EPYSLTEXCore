@@ -45,8 +45,9 @@
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
         tblCreateCompositionId = `#tblCreateComposition-${pageId}`;
 
-        isYQCRemarks = convertToBoolean($(`#${pageId}`).find("#YQCRemarks").val());
-        isYQCRemarksApproval = convertToBoolean($(`#${pageId}`).find("#YQCRemarksApproval").val());
+        var menuParam = $("#" + pageId).find("#txtMenuParam").val();
+        if (menuParam == "YQCRemarks") isYQCRemarks = true;
+        else if (menuParam == "YQCRemarksApproval") isYQCRemarksApproval = true;
 
         $toolbarEl.find("#btnPending").on("click", function (e) {
             e.preventDefault();
@@ -189,7 +190,7 @@
         else if (status != statusConstants.ALL) {
             commandList = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
             ];
             commandsWidth = 80;
         }

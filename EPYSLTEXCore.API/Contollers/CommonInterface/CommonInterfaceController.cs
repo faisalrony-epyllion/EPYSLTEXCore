@@ -25,16 +25,16 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         private readonly IUserService _userService;
         private readonly ICommonInterfaceService _service;
         private readonly IConfiguration _configuration;
-        private readonly IDapperCRUDService<Signatures> _signatures;
+        //private readonly IDapperCRUDService<Signatures> _signatures;
         private readonly IMemoryCache _memoryCache;
-        public CommonInterfaceController(IUserService userService, ICommonInterfaceService service, IMemoryCache memoryCache, IDapperCRUDService<Signatures> signatures
+        public CommonInterfaceController(IUserService userService, ICommonInterfaceService service, IMemoryCache memoryCache
         ) : base(userService)
         {
 
             _service = service;
             _userService = userService;
             _memoryCache = memoryCache;
-            _signatures = signatures;
+            //  _signatures = signatures;
             // _sqlQueryRepository = sqlQueryRepository;
         }
         JsonSerializerOptions options = new JsonSerializerOptions
@@ -89,8 +89,8 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
 
 
-        [Route("finderdata/{menuId}")]
-        public async Task<IActionResult> GetFinderData(int menuId)
+        [Route("finderdata/{menuId}/{ChildID}")]
+        public async Task<IActionResult> GetFinderData(int menuId, int ChildID)
         {
 
             var paginationInfo = Request.GetPaginationInfo();
@@ -98,11 +98,11 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             CommonInterfaceMaster commonInterfaceMaster = commonInterfaceMasterlst.FirstOrDefault(p => p.MenuId == menuId);
 
             string connKey = commonInterfaceMaster.ConName;
-            CommonInterfaceChild commonInterfaceChild = commonInterfaceMaster.Childs.Where(p => p.FinderSql != null).FirstOrDefault();
+            CommonInterfaceChild commonInterfaceChild = commonInterfaceMaster.Childs.Where(p => p.ChildID == ChildID).FirstOrDefault();
             if (commonInterfaceChild != null && !string.IsNullOrWhiteSpace(connKey))
             {
                 string finderSql = commonInterfaceChild.FinderSql;
-                var records = await _service.GetFinderData(finderSql, connKey, commonInterfaceMaster.PrimaryKeyColumn, paginationInfo);
+                var records = await _service.GetFinderData(finderSql, connKey, commonInterfaceChild.ColumnName, paginationInfo);
                 return Ok(new TableResponseModel(records, paginationInfo.GridType));
             }
 
@@ -167,6 +167,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             // Get child grid details once to avoid multiple calls
             var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
             string childsqlConnection = childGrid.ConName;
+            string childGridParentColumn = childGrid.ParentColumn;
             string parentTable = "";
             string childTable = "";
             string childGridprimaryKeyColumn = "";
@@ -176,52 +177,29 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             List<string> primaryKeyColumns = new List<string>();
             List<object> parentChildObject = new List<object>();
 
-            if (commonInterfaceMaster.IsAllowAddNew)
-            {
-                // Trimmed string values
 
-                parentTable = commonInterfaceMaster.TableName.Trim();
+            parentTable = commonInterfaceMaster.TableName.Trim();
 
-                parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
-                string conn = commonInterfaceMaster.ConName.Trim();
-
-                if (jsonObject[commonInterfaceMaster.PrimaryKeyColumn] != null && jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString() == "-1111")
-                {
-                    jsonObject[commonInterfaceMaster.PrimaryKeyColumn] = (await _signatures.GetSignatureAsync(parentTable, 1, 1)).LastNumber + 1;
-                    jsonObject[StatusConstants.STATUS] = StatusConstants.ADD;
+            parentPrimaryKeyColumn = commonInterfaceMaster.PrimaryKeyColumn.Trim();
+            string conn = commonInterfaceMaster.ConName.Trim();
 
 
-                }
-                else
-                {
-                    jsonObject[StatusConstants.STATUS] = StatusConstants.UPDATE;
-                }
-                tableNames.Add(parentTable);
-                sqlConnection.Add(parentsqlConnection);
-                primaryKeyColumns.Add(parentPrimaryKeyColumn);
-                parentChildObject.Add(jsonObject);
-                primaryKeyColumnValue = jsonObject[commonInterfaceMaster.PrimaryKeyColumn].ToString();
+            tableNames.Add(parentTable);
+            sqlConnection.Add(parentsqlConnection);
+            primaryKeyColumns.Add(parentPrimaryKeyColumn);
+            parentChildObject.Add(jsonObject);
+       
 
-            }
 
-            if (childGrid != null)
+            if (commonInterfaceMaster.ChildGrids.Count != 0)
             {
                 childTable = childGrid.TableName.Trim();
                 childGridprimaryKeyColumn = childGrid.PrimaryKeyColumn.Trim();
-                string childGridParentColumn = childGrid.ParentColumn.Trim();
+                childGridParentColumn = childGrid.ParentColumn.Trim();
 
                 // Extract the 'Childs' array
                 childsArray = jsonObject["Childs"].AsArray();
-                int count = 0;
-                foreach (JsonNode item in childsArray)
-                {
-                    count = count + 1;
-                    item[childGridParentColumn] = (primaryKeyColumnValue);
-                    if (item[StatusConstants.STATUS] != null && item[StatusConstants.STATUS].ToString() == StatusConstants.ADD)
-                    {
-                        item[childGridprimaryKeyColumn] = (await _signatures.GetSignatureAsync(childTable, 1, 1)).LastNumber + count;
-                    }
-                }
+
 
                 // Deserialize JsonArray into a List<object>
                 resultList = JsonSerializer.Deserialize<List<object>>(childsArray.ToString());
@@ -233,9 +211,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             }
 
-            _service.Save(tableNames, parentChildObject, sqlConnection, primaryKeyColumns);
+            primaryKeyColumnValue = await _service.Save(tableNames, childGridParentColumn, parentChildObject, sqlConnection, primaryKeyColumns);
 
-
+ 
 
 
 

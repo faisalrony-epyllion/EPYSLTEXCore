@@ -1608,7 +1608,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 {
                     throw new ArgumentException("The object does not contain any matching columns for the specified table.");
                 }
-
+                 
                 // Add default columns if they exist in the table
                 if (columns.Contains("AddedBy"))
                 {

@@ -165,9 +165,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             string parentsqlConnection = commonInterfaceMaster.ConName;
 
             // Get child grid details once to avoid multiple calls
-            var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
-            string childsqlConnection = childGrid.ConName;
-            string childGridParentColumn = childGrid.ParentColumn;
+           
+            string childsqlConnection = "";
+            string childGridParentColumn =  "";
             string parentTable = "";
             string childTable = "";
             string childGridprimaryKeyColumn = "";
@@ -193,6 +193,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             if (commonInterfaceMaster.ChildGrids.Count != 0)
             {
+                var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
+                childsqlConnection = childGrid.ConName.Trim();
+
                 childTable = childGrid.TableName.Trim();
                 childGridprimaryKeyColumn = childGrid.PrimaryKeyColumn.Trim();
                 childGridParentColumn = childGrid.ParentColumn.Trim();

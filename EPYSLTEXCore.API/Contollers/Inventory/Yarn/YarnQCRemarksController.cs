@@ -17,11 +17,11 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
     public class YarnQCRemarksController : ApiBaseController
     {
         private readonly IYarnQCRemarksService _service;
-        private readonly IMapper _mapper;
-        public YarnQCRemarksController(IUserService userService, IYarnQCRemarksService service, IMapper mapper) : base(userService)
+        //private readonly IMapper _mapper;
+        public YarnQCRemarksController(IUserService userService, IYarnQCRemarksService service) : base(userService) //, IMapper mapper
         {
             _service = service;
-            _mapper = mapper;
+            //_mapper = mapper;
         }
 
         [Route("list")]

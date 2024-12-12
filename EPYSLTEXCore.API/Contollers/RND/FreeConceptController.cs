@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using System.Security.Cryptography.Xml;
 namespace EPYSLTEXCore.API.Contollers.RND
 {
 
@@ -29,9 +31,11 @@ namespace EPYSLTEXCore.API.Contollers.RND
         private readonly IMapper _mapper;
         private readonly ICommonHelperService _commonService;
         private readonly IDapperCRUDService<FreeConceptMaster> _signatureRepository;
+        //private readonly IDapperCRUDService<FreeConceptMaster> _signature;
         private bool isModified;
         //IUserService _userService;
         private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configurationGmt;
 
         public FreeConceptController(IUserService userService
             //,IGmtEfRepository<ItemSegmentName> itemSegmentNameRepository
@@ -39,7 +43,9 @@ namespace EPYSLTEXCore.API.Contollers.RND
             , IFreeConceptService freeConceptService
             , ICommonHelperService commonService
             , IDapperCRUDService<FreeConceptMaster> signatureRepository
-            ,IConfiguration configuration
+            //, IDapperCRUDService<FreeConceptMaster> signature
+            , IConfiguration configuration
+            //,IConfiguration configurationGmt
             //, IMapper mapper
             ) : base(userService)
         {
@@ -50,6 +56,11 @@ namespace EPYSLTEXCore.API.Contollers.RND
             _commonService = commonService;
             _signatureRepository = signatureRepository;
             _configuration = configuration;
+            //_configurationGmt = configurationGmt;
+            //_signature = signature;
+
+            //_signatureRepository.Connection = new SqlConnection(this._configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+            //_signature.Connection = new SqlConnection(this._configurationGmt.GetConnectionString(AppConstants.GMT_CONNECTION));
         }
 
         [Route("list")]
@@ -149,6 +160,8 @@ namespace EPYSLTEXCore.API.Contollers.RND
         //public async Task<IActionResult> Save(List<FreeConceptMaster> models)
         public async Task<IActionResult> Save(List<FreeConceptMaster> models)
         {
+            //var id = await _signature.GetMaxIdAsync_Test(TableNames.MRIR_No, RepeatAfterEnum.EveryYear);
+            //var id2 = await _signatureRepository.GetMaxIdAsync_Test(TableNames.MRIR_No, RepeatAfterEnum.EveryYear);
             //List<FreeConceptMaster> models = new List<FreeConceptMaster>();
             string grpConceptNo = models.First().GroupConceptNo;
             int conceptID = 0;

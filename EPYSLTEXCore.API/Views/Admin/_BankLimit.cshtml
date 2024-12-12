@@ -31,13 +31,13 @@
     </div>
     <div class="row">
         <form class="form-horizontal" id="@formId">
-            <input type="hidden" id="BondEntitlementMasterID" name="BondEntitlementMasterID" value="-1111" />
+            <input type="hidden" id="BankLimitMasterID" name="BankLimitMasterID" value="-1111" />
 
             <div class="card card-default" id="@divDetailsId" style="display:none">
                 <div class="card-body">
                     <div class="card" style="border-color:transparent; border-style:none;">
                         <div class="card-header">
-                            <h3 class="card-title"> General/Commercial Information</h3>
+                            <h3 class="card-title"> General Information</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
@@ -55,26 +55,20 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Bond Licence No</label>
-                                        <input id="BondLicenceNo" name="BondLicenceNo" class="form-control form-control-sm" />
+                                        <label>Bank</label>
+                                        <select id="BankID" name="BankID" class="form-control form-control-sm" style="width:100%"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>EBIN No</label>
-                                        <input id="EBINNo" name="EBINNo" class="form-control form-control-sm" />
+                                        <label>Bank Facility</label>
+                                        <select id="BankFacilityTypeID" name="BankFacilityTypeID" class="form-control form-control-sm" style="width:100%"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>From Date</label>
-                                        <input id="FromDate" name="FromDate" class="form-control form-control-sm ej2-datepicker" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>To Date</label>
-                                        <input id="ToDate" name="ToDate" class="form-control form-control-sm ej2-datepicker" />
+                                        <label>Accumulated Limit</label>
+                                        <input id="AccumulatedLimit" name="AccumulatedLimit" class="form-control form-control-sm" />
                                     </div>
                                 </div>
                                 <div class="col-md-3 PO">

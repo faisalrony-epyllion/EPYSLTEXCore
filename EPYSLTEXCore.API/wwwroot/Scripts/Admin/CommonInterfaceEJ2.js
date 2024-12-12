@@ -688,7 +688,7 @@
             lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
-      
+            
                 finder.hideModal();
                 var data = res.rowData;                 
                 for (var p in data) {
@@ -701,10 +701,14 @@
                 //$formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
               removeLocalStorage(localStorageKeys.baseKey);
           
-                var finderElement = interfaceConfigs.Childs.filter(a =>   (a.FinderSql?.length > 0) || (a.FinderApiUrl?.length > 0) );
-                var selectApiUrl = finderElement.length > 0 ? finderElement[0].SelectApiUrl : "";
-                var primaryKeyValue = data[interfaceConfigs.PrimaryKeyColumn]
-                selectApiUrl = selectApiUrl + primaryKeyValue;
+                var finderElement = interfaceConfigs.Childs.filter(a => (a.FinderSql?.length > 0) || (a.FinderApiUrl?.length > 0));
+                var currentFinderElement = finderElement.length > 0 ? finderElement.find(p => p.ChildID == selectedChild.ChildID) : null;
+                var selectApiUrl = currentFinderElement != null ? currentFinderElement.SelectApiUrl : "";
+                
+                var primaryKeyValue = data[currentFinderElement.ColumnName];
+      
+                
+                selectApiUrl = `${selectApiUrl}${selectedChild.ChildID}/${primaryKeyValue}`;
                 axios.get(selectApiUrl)
                     .then(function (response) {
                         

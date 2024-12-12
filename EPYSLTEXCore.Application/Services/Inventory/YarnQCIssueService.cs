@@ -345,10 +345,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 {
                     case EntityState.Added:
                         entity.QCIssueMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
-                        entity.QCIssueNo = await _service.GetMaxNoAsync(TableNames.YARN_QC_ISSUE_NO);
+                        entity.QCIssueNo = await _service.GetMaxNoAsync(TableNames.YARN_QC_ISSUE_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _connectionGmt);
 
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD, entity.YarnQCIssueChilds.Count);
-                        maxYQCICRBId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING, maxYQCICRBId);
+                        //maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD, entity.YarnQCIssueChilds.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD, entity.YarnQCIssueChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        //maxYQCICRBId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING, maxYQCICRBId);
+                        maxYQCICRBId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING, maxYQCICRBId, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                         foreach (YarnQCIssueChild item in entity.YarnQCIssueChilds)
                         {
@@ -367,7 +369,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                     case EntityState.Modified:
                         maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD, entity.YarnQCIssueChilds.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
-                        maxYQCICRBId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING, maxYQCICRBId);
+                        maxYQCICRBId = await _service.GetMaxIdAsync(TableNames.YARN_QC_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING, maxYQCICRBId, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                         entity.YarnQCIssueChilds.ForEach(c =>
                         {
@@ -411,11 +413,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 await _service.SaveAsync(rackBins, transaction);
 
                 #region Stock Operation
-                if (entity.Approve)
-                {
-                    int userId = entity.EntityState == EntityState.Added ? entity.AddedBy : (int)entity.UpdatedBy;
-                    await _connection.ExecuteAsync("spYarnStockOperation", new { MasterID = entity.QCIssueMasterID, FromMenuType = EnumFromMenuType.YarnQCIssue, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
-                }
+                //if (entity.Approve)
+                //{
+                //    int userId = entity.EntityState == EntityState.Added ? entity.AddedBy : (int)entity.UpdatedBy;
+                //    await _connection.ExecuteAsync("spYarnStockOperation", new { MasterID = entity.QCIssueMasterID, FromMenuType = EnumFromMenuType.YarnQCIssue, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
+                //}
                 #endregion Stock Operation
 
                 transaction.Commit();

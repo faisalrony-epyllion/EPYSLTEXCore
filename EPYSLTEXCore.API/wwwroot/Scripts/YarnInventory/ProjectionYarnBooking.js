@@ -1162,9 +1162,9 @@
                         }
                         var isDateValidObj = ch_IsDateValid_DayValidDuration(args.data.BookingDate, dayValidDurationId, masterData.DayValidDurations);
                         if (!isDateValidObj.IsValid) {
-                            /*Code OFF FOR CORE Datepicker Issue
+
                             toastr.error(`Minimum date for this sourcing mode is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
-                            */
+
                             args.data.BookingDate = isDateValidObj.MinDate;
                             args.rowData.BookingDate = isDateValidObj.MinDate;
                         }
@@ -1507,8 +1507,8 @@
             var totalQty = 0;
             for (var i = 0; i < pYBookingChild[j].PYBItemChildDetails.length; i++) {
                 
-                const bookingDate = pYBookingChild[j].PYBItemChildDetails[i].BookingDate;
-                pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(bookingDate).toISOString().split('Z')[0];
+                //const bookingDate = pYBookingChild[j].PYBItemChildDetails[i].BookingDate;
+                //pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(bookingDate).toISOString().split('Z')[0];
                 totalQty += parseInt(pYBookingChild[j].PYBItemChildDetails[i].DetailsQTY);
                 //pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(pYBookingChild[j].PYBItemChildDetails[i].BookingDate).toDateString();
 
@@ -1516,11 +1516,11 @@
                 var dayValidDurationId = getDefaultValueWhenInvalidN(pYBookingChild[j].DayValidDurationId);
                 var isDateValidObj = ch_IsDateValid_DayValidDuration(pYBookingChild[j].PYBItemChildDetails[i].BookingDate, dayValidDurationId, masterData.DayValidDurations);
                 if (!isDateValidObj.IsValid && masterData.IsCheckDVD) {
-                    /*Code OFF FOR CORE Datepicker Issue
+
                     toastr.error(`Minimum date for this sourcing mode (Yarn Row at ${j + 1}, Booking Date Row at ${i + 1}) is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
                     hasError = true;
                     break;
-                    */
+
                 }
             }
 
@@ -1563,13 +1563,13 @@
         if (hasError) return false;
 
         //Validation
-
+        debugger;
         if (isPendingMnMPage) {
             initializeValidation($formEl, validationConstraints);
             if (!isValidForm($formEl, validationConstraints)) return toastr.error("Please correct all validation errors!");
             else hideValidationErrors($formEl);
         }
-
+   
         if (isValidChildForm(data)) return;
 
         axios.post("/api/projection-yarn-booking/save", data)
@@ -1681,11 +1681,9 @@
                 var dayValidDurationId = getDefaultValueWhenInvalidN(pYBookingChild[j].DayValidDurationId);
                 var isDateValidObj = ch_IsDateValid_DayValidDuration(pYBookingChild[j].PYBItemChildDetails[i].BookingDate, dayValidDurationId, masterData.DayValidDurations);
                 if (!isDateValidObj.IsValid && masterData.IsCheckDVD) {
-                    /*Code OFF FOR CORE Datepicker Issue
                     toastr.error(`Minimum date for this sourcing mode (Yarn Row at ${j + 1}, Booking Date Row at ${i + 1}) is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
                     hasError = true;
                     break;
-                    */
                 }
             }
 
@@ -1799,11 +1797,9 @@
                 var dayValidDurationId = getDefaultValueWhenInvalidN(pYBookingChild[j].DayValidDurationId);
                 var isDateValidObj = ch_IsDateValid_DayValidDuration(pYBookingChild[j].PYBItemChildDetails[i].BookingDate, dayValidDurationId, masterData.DayValidDurations);
                 if (!isDateValidObj.IsValid && masterData.IsCheckDVD) {
-                    /*Code OFF FOR CORE Datepicker Issue
                     toastr.error(`Minimum date for this sourcing mode (Yarn Row at ${j + 1}, Booking Date Row at ${i + 1}) is ${ch_customDateFormat(isDateValidObj.MinDate)}`);
                     hasError = true;
                     break;
-                    */
                 }
             }
         }

@@ -22,17 +22,17 @@ namespace EPYSLTEXCore.Application.Services.Inventory
     public class YarnMRIRService : IYarnMRIRService
     {
         private readonly IDapperCRUDService<YarnMRIRMaster> _service;
-        //private readonly IYarnAllocationService _yarnAllocationService;
+        private readonly IYarnAllocationService _yarnAllocationService;
         private readonly SqlConnection _connection;
         private readonly SqlConnection _connectionGmt;
         
         public YarnMRIRService(IDapperCRUDService<YarnMRIRMaster> service
-            //, IYarnAllocationService yarnAllocationService
+            , IYarnAllocationService yarnAllocationService
 			)
         {
             _service = service;
             //_connection = service.Connection;
-            //_yarnAllocationService = yarnAllocationService;
+            _yarnAllocationService = yarnAllocationService;
             _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
             _connectionGmt = service.Connection;
 
@@ -1411,8 +1411,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         {
                             item.YarnAllocation.MRIRChildID = item.MRIRChildID;
                             item.YarnAllocation.YarnAllocationID = countAllocationMaster++;
-                            //item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await _yarnAllocationService.GetMaxYarnAllocationNoAsync());
-                            item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await GetMaxYarnAllocationNoAsync(transactionGmt));
+                            item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await _yarnAllocationService.GetMaxYarnAllocationNoAsync());
                             item.YarnAllocation.Childs.ForEach(c =>
                             {
                                 c.AllocationID = item.YarnAllocation.YarnAllocationID;

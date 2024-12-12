@@ -4,34 +4,8 @@
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, tblMasterId, $tblChildEl, tblChildId, $formEl;
     var $pageEl;
     var pageId;
-    var filterBy = {};
-    var tableParams = {
-        offset: 0,
-        limit: 10,
-        sort: '',
-        order: '',
-        filter: ''
-    }
     var status;
-    var tblCreateItemId, $tblCreateItemEl;
-
-    var masterData, currentChildRowData;
-    var childData;
-    var _itemSegmentValues;
-    var _isNew = false;
-    var copiedRecord = null;
-    var _childID = 1000;
-    var _isBuyersChange = false;
-    var _selectedIndex = -1;
-    var _ignoreValidationPOIds = [];
-
-    var isCDAPage = false;
-    var isYarnRcv = false;
-    var isYarnRcvApp = false;
-    var _actionProps = {
-        IsSendForApprove: false,
-        IsApproved: false
-    };
+    var masterData;
 
     $(function () {
         if (!menuId)
@@ -248,7 +222,7 @@
         var data = formDataToJson($formEl.serializeArray());
 
         data.CompanyID = $formEl.find('#CompanyID').val();
-        data.CurrencyID = $formEl.find('#CompanyID').val();
+        data.CurrencyID = $formEl.find('#CurrencyID').val();
 
         data.Childs = DeepClone($tblChildEl.getCurrentViewRecords());
         var childs = DeepClone(data.Childs);

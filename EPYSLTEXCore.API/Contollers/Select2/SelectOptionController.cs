@@ -48,7 +48,13 @@ namespace EPYSLTEX.Web.Controllers.Apis
             var data = await _select2Service.GetEntityTypesAsync(entityTypeName);
             return Ok( data);
         }
-        
+
+        [Route("rack-no-by-locationid-rack-for/{id}/{rackFor}")]
+        public async Task<IActionResult> GetRackNoByLocatoinIDYarn(int id, string rackFor)
+        {
+            var records = await _select2Service.GetRackNoByLocationAsync(id, rackFor);
+            return Ok(records);
+        }
 
 
     }

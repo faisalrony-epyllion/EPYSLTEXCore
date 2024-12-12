@@ -21,9 +21,11 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data;
 using System.Data.Entity;
 
@@ -335,8 +337,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory
 
         [Route("update-Tag")]
         [HttpPost]
-        public async Task<IActionResult> UpdateTag(YarnReceiveChild model)
+        //public async Task<IActionResult> UpdateTag(YarnReceiveChild model)
+        public async Task<IActionResult> UpdateTag(dynamic jsonString)
         {
+            YarnReceiveChild model = JsonConvert.DeserializeObject<YarnReceiveChild>(Convert.ToString(jsonString));
             YarnReceiveChild entityChild = new YarnReceiveChild();
             if (model.ChildID > 0 && model.TagYarnReceiveChildID > 0)
             {

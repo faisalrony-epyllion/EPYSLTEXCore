@@ -12,6 +12,7 @@ using System.Data.Entity;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EnumRackBinOperationType = EPYSLTEXCore.Infrastructure.Static.EnumRackBinOperationType;
+using Newtonsoft.Json;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 {
@@ -56,8 +57,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Save(YarnQCIssueMaster model)
+        //public async Task<IActionResult> Save(YarnQCIssueMaster model)
+        public async Task<IActionResult> Save(dynamic jsonString)
         {
+            YarnQCIssueMaster model = JsonConvert.DeserializeObject<YarnQCIssueMaster>(Convert.ToString(jsonString));
             YarnQCIssueMaster entity;
 
             List<YarnReceiveChildRackBin> rackBins = new List<YarnReceiveChildRackBin>();

@@ -1,0 +1,385 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="CDAPage" value="@ViewBag.CDAPage" />
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;Pending
+                </button>
+                <button id="btnAcceptList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Accepted List
+                </button>
+                <button id="btnRejectList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Rejected List
+                </button>
+                @*<button id="btnRevisionList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Revision List
+                </button>*@
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YPIReceiveMasterID" name="YPIReceiveMasterID" value="-1111" />
+            <input type="hidden" id="IsCDA" name="IsCDA" />
+
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">PI No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YPINo" name="YPINo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">PI Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="PIDate" name="PIDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Supplier</label>
+                                        <div class="col-sm-8">
+                                            <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn PO (for PI)</label>
+                                        <div class="col-sm-8">
+                                            <input id="PONo" name="PONo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-success" style="border-color:transparent; border-style:none">
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            <div class="col-sm-4">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        Summary PI Values
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Total PI Qty</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="PIQty" name="PIQty" class="form-control" value="0" style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Total PI Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="PIValue" name="PIValue" class="form-control" value="0" style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Additional Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="TotalAddValue" name="TotalAddValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Deduction Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="TotalDeductionValue" name="TotalDeductionValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Net PI Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="NetPIValue" name="NetPIValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">LC Type</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <input id="TypeOfLc" name="TypeOfLc" class="form-control" value="0" readonly style="text-align:left" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="divCreditDays" class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Credit Days</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <input id="CreditDays" name="CreditDays" class="form-control" value="0" readonly style="text-align:left" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Tolerance (%)</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <input id="ShippingTolerance" name="ShippingTolerance" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        Summary PO Values
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Total PO Qty</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="TotalQty" name="TotalQty" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Total PO Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="TotalValue" name="TotalValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" style="visibility:hidden">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Additional Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="TotalAddValuePO" name="TotalAddValuePO" class="form-control" value="0" style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" style="visibility:hidden">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Deduction Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="TotalDeductionValuePO" name="TotalDeductionValuePO" class="form-control" value="0" style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" style="visibility:hidden">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Net PO Value</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">$</div>
+                                                        <input id="NetPOValue" name="NetPOValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">LC Type</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <input id="TypeOfLcPO" name="TypeOfLcPO" class="form-control" value="0" readonly style="text-align:left" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="divCreditDaysPO" class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Credit Days</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <input id="CreditDaysPO" name="CreditDaysPO" class="form-control" value="0" readonly style="text-align:left" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small">Tolerance (%)</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        <input id="ShippingTolerancePO" name="ShippingTolerancePO" class="form-control" value="0" readonly style="text-align:right" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*<div class="col-sm-4">
+                                <div class="panel panel-success">
+                                    <div class="panel-body" style="padding-top:17px;">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label id="lblQty" class="control-label col-sm-5 small" style="padding-top:25px;"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label id="lblValue" class="control-label col-sm-5 small" style="padding-top:25px;"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" style="visibility:hidden">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small" style="padding-top:30px;"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" style="visibility:hidden">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small" style="padding-top:30px;"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" style="visibility:hidden">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-5 small" style="padding-top:35px;"></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label id="lblLcType" class="control-label col-sm-5 small" style="padding-top:25px;"></label>
+                                            </div>
+                                        </div>
+
+                                        <div id="divCreditDaysMsg" class="col-sm-12">
+                                            <div class="form-group">
+                                                <label id="lblCreditDays" class="control-label col-sm-5 small" style="padding-top:25px;"></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label id="lblTolerance" class="control-label col-sm-5 small" style="padding-top:25px;"></label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        </div>
+
+                        <div id="divReject" class="form-horizontal">
+                            <div class="col-sm-8">
+                                <div class="panel panel-success">
+                                    <div class="panel-body">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-2 small">Reject Reason</label>
+                                                <div class="col-sm-10">
+                                                    <textarea id="RejectReason" name="RejectReason" class="form-control" cols="2"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="box-footer btn-e-float-margin">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnAccept"><i class="fa fa-check"></i>&nbsp;&nbsp;Accept</button>
+                            <button type="button" class="btn btn-danger m-w-120" id="btnReject"><i class="fa fa-ban"></i>&nbsp;&nbsp;Reject</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

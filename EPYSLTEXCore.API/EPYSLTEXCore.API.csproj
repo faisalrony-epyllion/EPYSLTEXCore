@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Remove="Contollers\APIBaseController\ApiBaseController.cs" />
     <Compile Remove="Contollers\HomeController.cs" />
+    <Compile Remove="Contollers\SCD\YarnImportPaymentController.cs" />
   </ItemGroup>
 
   <ItemGroup>

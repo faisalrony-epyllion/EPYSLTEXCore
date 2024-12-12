@@ -16,7 +16,7 @@ using EPYSLTEXCore.Application.Services.Inventory;
 using EPYSLTEXCore.Application.Services.RND;
 using EPYSLTEXCore.Application.Services.Select;
 using EPYSLTEXCore.Infrastructure.Data;
-
+using EPYSLTEXCore.Infrastructure.Services;
 namespace EPYSLTEXCore.API.Extension
 {
     public static class ServiceExtensions
@@ -26,8 +26,8 @@ namespace EPYSLTEXCore.API.Extension
 
 
             service.AddScoped(typeof(IDapperCRUDService<>), typeof(DapperCRUDService<>));
-            service.AddTransient<IMenuService, MenuService>();
-            service.AddTransient<IUserService, UserService>();
+            service.AddScoped(typeof(IItemMasterService<>), typeof(ItemMasterService<>));
+            service.AddScoped(typeof(IChildItemMasterService<>), typeof(ChildItemMasterService<>));
             service.AddTransient<ITokenBuilder, TokenBuilder>();
             service.AddTransient<IDeSerializeJwtToken, DeSerializeJwtToken>();
             service.AddTransient<ICommonInterfaceService, CommonInterfaceService>();
@@ -53,7 +53,28 @@ namespace EPYSLTEXCore.API.Extension
             //service.AddTransient<IYarnPOService, YarnPOService>();
             service.AddTransient<IYarnPIReceiveService, YarnPIReceiveService>();
 
+            string a = "IDapperCRUDService,IItemMasterService,IChildItemMasterService";
+            string[] scopedServices = a.Split(',');
+            foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
+            {
+                if (type.Name.EndsWith("Service") && type.IsClass && !type.IsAbstract)
+                {
+                    // Get all interfaces implemented by the type
+                    var interfaces = type.GetInterfaces();
+                    foreach (var @interface in interfaces)
+                    {
+                        // Register the service with its interface
+                        if (Array.Exists(scopedServices, element => element == type.Name))
+                        {
 
+                        }
+                        else
+                        {
+                            service.AddTransient(@interface, type);
+                        }
+                    }
+                }
+            }
 
             //foreach (var type in typeof(CommonHelperService).Assembly.GetTypes())
             //{

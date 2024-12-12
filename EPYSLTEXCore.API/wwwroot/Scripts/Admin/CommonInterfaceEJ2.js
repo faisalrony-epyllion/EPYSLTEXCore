@@ -16,7 +16,7 @@
     var selectedChild = null;
     const localStorageKeys = {
         baseKey: "localstorageKey-",
-        edit: "update",
+        edit: "edit",
         delete: "delete",
         add: "add"
     };
@@ -97,7 +97,7 @@
                 if (interfaceConfigs.HasGrid) {
                    
                     if (interfaceConfigs.ChildGrids.length == 0) {
-                        toastr.error("No child grid found.");
+                        //toastr.error("No child grid found.");
                         return;
                     }
                     $("#title-child-grid-" + menuId).text(interfaceConfigs.ChildGrids[0].ChildGridName);
@@ -160,9 +160,10 @@
                 },
                 
                 actionComplete: function (args) {
-                   
+                     
                   var keyName='';
-                  var keyValue='';
+                    var keyValue = '';
+                    
                     if (args.action == localStorageKeys.add) {
                          keyValue = args.data;
                          keyName=localStorageKeys.add;
@@ -512,7 +513,7 @@
         $.each(interfaceConfigs.Childs, function (i, value) {
             var cssHidden = value.IsHidden ? "display:none;" : "",
                 cssEnable = !value.IsEnable ? "disabled" : "";
-             
+        
             rowCount++;
             switch (value.EntryType) {
                 case "text":
@@ -523,7 +524,7 @@
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" readonly />                                        
-                                          ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID)}                  
+                                          ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}                  
                                        
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
@@ -540,7 +541,7 @@
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />
-                                          
+                                           ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}        
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
                                 </div>
@@ -586,7 +587,7 @@
                             <div class="col-sm-10">
                                 <div class="input-group input-group-sm" style='width: 100%;'>
                                     <input type="number" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />
-                                      
+                                       ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}   
                                     ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                 </div>
                             </div>
@@ -632,9 +633,9 @@
         return colName;
     }
 
-    function adNew(IsAllowAddNew, menuId, childID) {
+    function adNew(IsAllowAddNew, menuId, childID, interfaceConfigs, ColumnName) {
        
-        if (IsAllowAddNew) {
+        if (IsAllowAddNew && interfaceConfigs.PrimaryKeyColumn == ColumnName) {
             return `<span class="input-group-btn">
                         <button type="button" class="btn btn-success ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     </span>`;
@@ -671,13 +672,13 @@
         });
     }
     function openSingleSelectFinder() {
-      
+       
         var finder = new commonFinder({
             title: "Select " + selectedChild.Label,
             pageId: "divCommonInterface-" + menuId,
             height: 220,
             modalSize: "modal-lg",
-            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder : selectedChild.FinderApiUrl,
+            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder + '/'+selectedChild.ChildID : selectedChild.FinderApiUrl,
             fields: selectedChild.FinderHeaderColumns,
             widths: selectedChild.FinderColumnWidths,
             headerTexts: selectedChild.FinderDisplayColumns,
@@ -989,10 +990,10 @@
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
-      
-        // var data =   formDataToJson($formEl.serializeArray()) ;
-        /*i f IsAllowAddNew=false bind only child not parent */
-        var data = interfaceConfigs.IsAllowAddNew ? formDataToJson($formEl.serializeArray()) : {};
+        var sysColName = getSysColumn();
+       var sysColValue =  $formEl.find("#" + sysColName + "").val();
+        var data = formDataToJson($formEl.serializeArray());
+        data.Status = sysColValue == "-1111" ? localStorageKeys.add : localStorageKeys.edit;
          if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
        // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
      

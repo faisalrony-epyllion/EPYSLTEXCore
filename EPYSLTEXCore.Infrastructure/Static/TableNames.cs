@@ -899,6 +899,9 @@
         public const string ChangeMaster = "T_ChangeMaster";
         public const string ChangeChild = "T_ChangeChild";
         public const string ChangeChildRoll = "T_ChangeChildRoll";
+
+        public const string BankLimitMaster = "BankLimitMaster";
+        public const string BankLimitChild = "BankLimitChild";
     }
   
 }

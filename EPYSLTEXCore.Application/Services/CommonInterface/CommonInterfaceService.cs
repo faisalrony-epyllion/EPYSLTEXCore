@@ -230,7 +230,7 @@ namespace EPYSLTEX.Infrastructure.Services
                                 string tableName = tableNames[i];
                                 object obj = objLst[i];
                                 string primaryKey = primaryKeyColumns[i];
-                                int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, primaryKeyColumns, conn, transaction);
+                                int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string>() { primaryKey }, conn, transaction);
                                       
                             }
                         }

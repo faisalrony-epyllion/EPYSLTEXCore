@@ -55,7 +55,7 @@ function findDuplicateValues(paramArray) {
 
 function initCommonControls($formEl) {
     $(function () { // document ready
-        console.log("i am initCommonControls");
+
         $formEl.find('.ej2-datepicker').each(function (i, el) {
             $(el).datepicker({
                 todayHighlight: true,
@@ -73,7 +73,6 @@ function initCommonControls($formEl) {
 }
 function ch_initAllDatePicker() {
     $('.ej2-datepicker').each(function (i, el) {
-        console.log("i am ch_initAllDatePicker");
         $(el).datepicker({
             todayHighlight: true,
             format: _ch_date_format_3,

@@ -128,8 +128,8 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             return Ok();
 
         }
-        [Route("selectfinderdata/{menuId}/{id}")]
-        public async Task<IActionResult> SelectFinderData(int menuId, int id)
+        [Route("selectfinderdata/{menuId}/{ChildID}/{id}")]
+        public async Task<IActionResult> SelectFinderData(int menuId, int ChildID, int id)
         {
 
             var commonInterfaceMasterlst = await GetOrCreateCacheValue(InMemoryCacheKeys.CommonInterfaceConfig, AppConstants.APPLICATION_ID);
@@ -138,7 +138,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             string connKey = commonInterfaceMaster.ConName;
 
-            var commonInterfaceChild = commonInterfaceMaster.Childs.Where(p => p.FinderSql != null).FirstOrDefault();
+            var commonInterfaceChild = commonInterfaceMaster.Childs.Where(p => p.ChildID== ChildID).FirstOrDefault();
             if (commonInterfaceChild != null && !string.IsNullOrWhiteSpace(connKey))
             {
                 string selectSql = commonInterfaceChild.SelectSql;

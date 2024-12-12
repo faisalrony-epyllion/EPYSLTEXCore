@@ -12,6 +12,8 @@ using System.Data.Entity;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
+using Newtonsoft.Json;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 {
@@ -86,8 +88,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Save(YarnQCReqMaster model)
+        //public async Task<IActionResult> Save(YarnQCReqMaster model)
+        public async Task<IActionResult> Save(dynamic jsonString)
         {
+            YarnQCReqMaster model = JsonConvert.DeserializeObject<YarnQCReqMaster>(Convert.ToString(jsonString));
             YarnQCReqMaster entity = new YarnQCReqMaster();
             YarnQCRemarksMaster entityQCRemark = new YarnQCRemarksMaster();
 

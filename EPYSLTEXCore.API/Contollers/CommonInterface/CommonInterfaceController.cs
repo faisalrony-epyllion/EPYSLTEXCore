@@ -46,9 +46,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         public async Task<IEnumerable<CommonInterfaceMaster>> GetOrCreateCacheValue(string cacheKey, int applicationId)
         {
             // Check if the value is in cache
-            if (!_memoryCache.TryGetValue(InMemoryCacheKeys.CommonInterfaceConfig, out IEnumerable<CommonInterfaceMaster> commonInterfaceMasterlst))
-            {
-                commonInterfaceMasterlst = await _service.GetConfigurationAsyncByApplicationID(applicationId);
+            //if (!_memoryCache.TryGetValue(InMemoryCacheKeys.CommonInterfaceConfig, out IEnumerable<CommonInterfaceMaster> commonInterfaceMasterlst))
+            //{
+                IEnumerable<CommonInterfaceMaster>   commonInterfaceMasterlst = await _service.GetConfigurationAsyncByApplicationID(applicationId);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSize(1)  // Specify the size
@@ -59,7 +59,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
 
 
-            }
+           // }
 
             // Return the cached value
             return commonInterfaceMasterlst;
@@ -128,8 +128,8 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             return Ok();
 
         }
-        [Route("selectfinderdata/{menuId}/{id}")]
-        public async Task<IActionResult> SelectFinderData(int menuId, int id)
+        [Route("selectfinderdata/{menuId}/{ChildID}/{id}")]
+        public async Task<IActionResult> SelectFinderData(int menuId, int ChildID, int id)
         {
 
             var commonInterfaceMasterlst = await GetOrCreateCacheValue(InMemoryCacheKeys.CommonInterfaceConfig, AppConstants.APPLICATION_ID);
@@ -138,7 +138,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             string connKey = commonInterfaceMaster.ConName;
 
-            var commonInterfaceChild = commonInterfaceMaster.Childs.Where(p => p.FinderSql != null).FirstOrDefault();
+            var commonInterfaceChild = commonInterfaceMaster.Childs.Where(p => p.ChildID== ChildID).FirstOrDefault();
             if (commonInterfaceChild != null && !string.IsNullOrWhiteSpace(connKey))
             {
                 string selectSql = commonInterfaceChild.SelectSql;

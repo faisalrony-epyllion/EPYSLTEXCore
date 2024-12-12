@@ -373,12 +373,12 @@
                     title: "Location",
                     cellStyle: function () { return { classes: 'm-w-80' } },
                     editable: {
-                        type: 'select',
+                        type: 'select2',
                         title: 'Select a Location',
                         inputclass: 'input-sm',
                         showbuttons: false,
                         source: YarnReceive.LocationList,
-                        select: { width: 150, placeholder: 'Location' }
+                        select2: { width: 150, placeholder: 'Location' }
                     }
                 },
                 {
@@ -589,6 +589,7 @@
         var url = "/api/selectoption/rack-no-by-locationid-rack-for/" + id + "/" + rackFor;
         axios.get(url)
             .then(function (response) {
+                debugger
                 var dataList = response.data;
                 showBootboxSelect2Dialog("Select Rack No", "sb", "Select Rack No", dataList, function (result) {
                     if (!result)

@@ -469,9 +469,24 @@ namespace EPYSLTEXCore.Application.Services.Select
             throw new NotImplementedException();
         }
 
-        Task<IList<Select2OptionModel>> ISelect2Service.GetRackNoByLocationAsync(int locationId, string rackFor)
+        //Task<IList<Select2OptionModel>> ISelect2Service.GetRackNoByLocationAsync(int locationId, string rackFor)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public async Task<IList<Select2OptionModel>> GetRackNoByLocationAsync(int locationId, string rackFor)
         {
-            throw new NotImplementedException();
+            string sql = "";
+            if (rackFor.IsNotNullOrEmpty())
+            {
+                sql = $@" AND RackFor = '{rackFor}'";
+            }
+
+            var query = $@"SELECT cast([RackID] AS varchar) id,[RackNo] [text]
+                            FROM {DbNames.EPYSL}..Rack
+                            WHERE LocationID={locationId} {sql}
+                            ORDER BY Sequence";
+            return await _gmtService.GetDataAsync<Select2OptionModel>(query);
         }
 
         Task<IList<Select2OptionModel>> ISelect2Service.GetRawCDAItemByTypeAsync(int particularId)

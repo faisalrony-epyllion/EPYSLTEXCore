@@ -70,7 +70,7 @@
             {
                 headerText: 'Commands', width: 100, visible: status !== statusConstants.PENDING, commands: [
                     { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
             },
             {

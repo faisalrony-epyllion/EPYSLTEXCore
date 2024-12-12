@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
@@ -9,6 +10,8 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Xml;
+using System.Text.Json.Nodes;
 using System.Transactions;
 using static Dapper.SqlMapper;
 
@@ -20,12 +23,14 @@ namespace EPYSLTEX.Infrastructure.Services
 
         private readonly IConfiguration _configuration;
         private readonly SqlConnection _connection = null;
+        private readonly IDapperCRUDService<Signatures> _signatures;
 
-        public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service, IConfiguration configuration)
+        public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service, IConfiguration configuration, IDapperCRUDService<Signatures> signatures)
         {
             _configuration = configuration;
             _service = service;
-            _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION)); ;
+            _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+            _signatures = signatures;
         }
 
 
@@ -209,10 +214,12 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             return await _service.ExecuteAsync(query, param);
         }
-        public async Task Save(List<string> tableNames, List<object> objLst, List<string> conKey, List<string> primaryKeyColumns)
+        public async Task<string> Save(List<string> tableNames, string childGridParentColumn, List<object> objLst, List<string> conKey, List<string> primaryKeyColumns)
         {
             try
             {
+                JsonObject parentObjecct =null;
+                 
                 SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey.FirstOrDefault()));
                 await conn.OpenAsync(); // Ensure connection is opened
 
@@ -220,7 +227,6 @@ namespace EPYSLTEX.Infrastructure.Services
                 {
                     try
                     {
-
                         // Ensure the lists are of the same length
                         int listCount = tableNames.Count;
                         if (listCount == objLst.Count && listCount == primaryKeyColumns.Count)
@@ -230,17 +236,52 @@ namespace EPYSLTEX.Infrastructure.Services
                                 string tableName = tableNames[i];
                                 object obj = objLst[i];
                                 string primaryKey = primaryKeyColumns[i];
-                                int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string>() { primaryKey }, conn, transaction);
-                                      
+                                var jObject = obj as JsonObject;
+                                if (jObject != null)
+                                {
+                                    parentObjecct = jObject;
+                                    if (jObject[StatusConstants.STATUS] == null || jObject[StatusConstants.STATUS].ToString().ToLower() == StatusConstants.ADD)
+                                    {
+                                        jObject[primaryKey] = (await _signatures.GetMaxIdAsync(tableName, EPYSLTEXCore.Infrastructure.Statics.RepeatAfterEnum.NoRepeat, transaction, conn));
+                                        jObject[StatusConstants.STATUS] = StatusConstants.ADD;
+
+                                    }
+                                    int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string>() { primaryKey }, conn, transaction);
+                                }
+                                else
+                                {
+                                    if (obj is IEnumerable<object> dataList)
+                                    {
+                                        foreach (var item in dataList)
+                                        {
+                                            jObject = item as JsonObject;
+                                            if (jObject != null)
+                                            {
+                                                if (jObject[StatusConstants.STATUS] == null || jObject[StatusConstants.STATUS].ToString().ToLower() == StatusConstants.ADD)
+                                                {
+                                                    jObject[primaryKey] = (await _signatures.GetMaxIdAsync(tableName, EPYSLTEXCore.Infrastructure.Statics.RepeatAfterEnum.NoRepeat, transaction, conn));
+                                                    jObject[childGridParentColumn] = parentObjecct[childGridParentColumn].ToString();
+                                                }
+                                            }
+                                           
+                                        }
+                                        int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string>() { primaryKey }, conn, transaction);
+                                    }
+                                }
+
+
                             }
+                          
                         }
+
+
 
 
 
 
                         // Commit transaction if all operations succeeded
                         await transaction.CommitAsync();
-
+                        return parentObjecct?[childGridParentColumn]?.ToString();
                     }
                     catch (Exception ex)
                     {
@@ -252,7 +293,7 @@ namespace EPYSLTEX.Infrastructure.Services
             }
             catch (Exception ex)
             {
-
+                return "Erroe";
             }
         }
 

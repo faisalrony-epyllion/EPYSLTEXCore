@@ -151,7 +151,7 @@
             {
                 headerText: '',
                 textAlign: 'Center',
-                width: 50,
+                width: 100,
                 visible: status == statusConstants.PENDING,
                 commands: [
                     {
@@ -165,7 +165,7 @@
             {
                 headerText: '',
                 textAlign: 'Center',
-                width: 90,
+                width: 100,
                 visible: status == statusConstants.PARTIALLY_COMPLETED,
                 commands: [
                     {
@@ -179,7 +179,7 @@
             {
                 headerText: '',
                 textAlign: 'Center',
-                width: 40,
+                width: 60,
                 visible: status != statusConstants.PENDING && status != statusConstants.PARTIALLY_COMPLETED,
                 commands: [
                     {
@@ -289,13 +289,13 @@
                 { field: 'SupplierName', headerText: 'Supplier', allowEditing: false, textAlign: 'left' },
                 { field: 'Spinner', headerText: 'Spinner', allowEditing: false, textAlign: 'left' },
 
-                { field: 'ReqBagPcs', headerText: 'Req Bag (Pcs)', width: 120, allowEditing: false },
+                { field: 'ReqBagPcs', headerText: 'Req Bag (Pcs)', width: 140, allowEditing: false },
                 { field: 'ReqQtyCone', headerText: 'Req Qty (Cone)', allowEditing: false },
                 { field: 'ReqQty', headerText: 'Req Qty (KG)', allowEditing: false },
 
-                { field: 'IssueQtyCarton', headerText: 'Issue Qty (Carton)', allowEditing: false, textAlign: 'center', width: 120, valueAccessor: diplayNumberButton },
-                { field: 'IssueQtyCone', headerText: 'Issue Qty (Cone)', allowEditing: false, textAlign: 'center', width: 120, valueAccessor: diplayNumberButton },
-                { field: 'IssueQty', headerText: 'Issue Qty (KG)', allowEditing: false, textAlign: 'center', width: 120, valueAccessor: diplayNumberButton },
+                { field: 'IssueQtyCarton', headerText: 'Issue Qty (Carton)', allowEditing: false, textAlign: 'center', valueAccessor: diplayNumberButton },
+                { field: 'IssueQtyCone', headerText: 'Issue Qty (Cone)', allowEditing: false, textAlign: 'center',  valueAccessor: diplayNumberButton },
+                { field: 'IssueQty', headerText: 'Issue Qty (KG)', allowEditing: false, textAlign: 'center', valueAccessor: diplayNumberButton },
 
                 { field: 'QCReqRemarks', headerText: 'Remarks', allowEditing: false, width: 100 }
 

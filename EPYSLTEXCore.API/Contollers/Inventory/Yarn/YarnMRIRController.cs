@@ -82,24 +82,24 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         //    return Ok();
         //}
-        private async Task<string> GetMaxMRIRNoAsync()
-        {
-            var id = await _service.GetMaxIdAsync(TableNames.MRIR_No, RepeatAfterEnum.EveryYear);
-            var datePart = DateTime.Now.ToString("yyMMdd");
-            return $@"MRIR{datePart}{id:00000}";
-        }
-        private async Task<string> GetMaxGRNNoAsync()
-        {
-            var id = await _service.GetMaxIdAsync(TableNames.GRN_No, RepeatAfterEnum.EveryYear);
-            var datePart = DateTime.Now.ToString("yyMMdd");
-            return $@"GRN{datePart}{id:00000}";
-        }
-        private async Task<string> GetMaxMRNNoAsync()
-        {
-            var id = await _service.GetMaxIdAsync(TableNames.MRN_No, RepeatAfterEnum.EveryYear);
-            var datePart = DateTime.Now.ToString("yyMMdd");
-            return $@"MRN{datePart}{id:00000}";
-        }
+        //private async Task<string> GetMaxMRIRNoAsync()
+        //{
+        //    var id = await _service.GetMaxIdAsync(TableNames.MRIR_No, RepeatAfterEnum.EveryYear);
+        //    var datePart = DateTime.Now.ToString("yyMMdd");
+        //    return $@"MRIR{datePart}{id:00000}";
+        //}
+        //private async Task<string> GetMaxGRNNoAsync()
+        //{
+        //    var id = await _service.GetMaxIdAsync(TableNames.GRN_No, RepeatAfterEnum.EveryYear);
+        //    var datePart = DateTime.Now.ToString("yyMMdd");
+        //    return $@"GRN{datePart}{id:00000}";
+        //}
+        //private async Task<string> GetMaxMRNNoAsync()
+        //{
+        //    var id = await _service.GetMaxIdAsync(TableNames.MRN_No, RepeatAfterEnum.EveryYear);
+        //    var datePart = DateTime.Now.ToString("yyMMdd");
+        //    return $@"MRN{datePart}{id:00000}";
+        //}
         [Route("save")]
         [HttpPost]
         [ValidateModel]

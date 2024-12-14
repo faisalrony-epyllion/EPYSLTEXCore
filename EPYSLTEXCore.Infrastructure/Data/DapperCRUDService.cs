@@ -1245,32 +1245,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
 
         #region signature Methods
-        #region Test Ashiq
-        //public async Task<int> GetMaxIdAsync_Test(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat)
-        //{
-        //    SqlTransaction transaction = Connection.BeginTransaction();
-
-        //    var signature = await GetSignatureAsync(field, 1, 1, repeatAfter, transaction, Connection);
-
-        //    if (signature == null)
-        //    {
-        //        signature = new Signatures
-        //        {
-        //            Field = field,
-        //            Dates = DateTime.Today,
-        //            LastNumber = 1
-        //        };
-        //        await Connection.InsertAsync(signature, transaction);
-        //    }
-        //    else
-        //    {
-        //        signature.LastNumber++;
-        //        await Connection.UpdateAsync(signature, transaction);
-        //    }
-        //    return (int)signature.LastNumber;
-        //}
-        #endregion
-
+        
         public async Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             var signature = await GetSignatureAsync(field, 1, 1, repeatAfter, transaction, connectionGmt);

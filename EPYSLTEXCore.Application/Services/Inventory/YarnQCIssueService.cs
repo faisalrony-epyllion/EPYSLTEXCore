@@ -421,11 +421,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 #endregion Stock Operation
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                transactionGmt.Rollback();
+                if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally

@@ -14,6 +14,6 @@ namespace EPYSLTEXCore.Application.Interfaces.Inventory.Yarn
         Task<YarnMRIRMaster> GetNewAsync(int qcReqMasterId);
         Task<YarnMRIRMaster> GetAsync(int id);
         Task<List<YarnReceiveChild>> GetByYarnReceiveChildByChildIds(string reciveChildIds);
-        Task SaveAsync(YarnMRIRMaster entity);
+        Task<string> SaveAsync(YarnMRIRMaster entity, ReceiveNoteType receiveNoteType);
     }
 }

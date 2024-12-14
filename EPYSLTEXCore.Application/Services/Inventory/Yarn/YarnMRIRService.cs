@@ -1357,7 +1357,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 _connection.Close();
             }
         }*/
-        public async Task SaveAsync(YarnMRIRMaster entity)
+        public async Task<string> SaveAsync(YarnMRIRMaster entity, ReceiveNoteType receiveNoteType)
         {
             SqlTransaction transaction = null;
             SqlTransaction transactionGmt = null;
@@ -1371,12 +1371,28 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 transaction = _connection.BeginTransaction();
                 await _connectionGmt.OpenAsync();
                 transactionGmt = _connectionGmt.BeginTransaction();
+				string returnString = "";
                 if (entity.EntityState == EntityState.Added)
                 {
                     int maxChildId = 0;
                     entity.MRIRMasterId = await _service.GetMaxIdAsync(TableNames.YARN_MRIR_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+					if (receiveNoteType == ReceiveNoteType.MRIR)
+					{
+                        entity.MRIRNo = await GetMaxMRIRNoAsync(transactionGmt);
+						returnString = entity.MRIRNo;
+                    }
+                    if (receiveNoteType == ReceiveNoteType.GRN)
+					{
+                        entity.GRNNo = await GetMaxGRNNoAsync(transactionGmt);
+						returnString = entity.GRNNo;
+                    }
+                    if (receiveNoteType == ReceiveNoteType.MRN)
+					{
+                        entity.MRNNo = await GetMaxMRNNoAsync(transactionGmt);
+						returnString = entity.MRNNo;
+                    }
                     //entity.MRIRNo = _signatureRepository.GetMaxNo(TableNames.YARN_MRIR_NO);
-                    maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_MRIR_CHILD, entity.YarnMRIRChilds.Count);
+                    maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_MRIR_CHILD, entity.YarnMRIRChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
 
                     int countAllocation = entity.YarnMRIRChilds.Count(x => x.AllocationChildID > 0);
@@ -1411,7 +1427,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         {
                             item.YarnAllocation.MRIRChildID = item.MRIRChildID;
                             item.YarnAllocation.YarnAllocationID = countAllocationMaster++;
-                            item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await _yarnAllocationService.GetMaxYarnAllocationNoAsync());
+                            //item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await _yarnAllocationService.GetMaxYarnAllocationNoAsync());
+                            item.YarnAllocation.YarnAllocationNo = CommonFunction.DeepClone(await GetMaxYarnAllocationNoAsync(transactionGmt));
                             item.YarnAllocation.Childs.ForEach(c =>
                             {
                                 c.AllocationID = item.YarnAllocation.YarnAllocationID;
@@ -1454,16 +1471,20 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				#endregion Stock Operation
 				*/
                 transaction.Commit();
+                transactionGmt.Commit();
+				return returnString;
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 if (ex.Message.Contains('~')) throw new Exception(ex.Message.Split('~')[0]);
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -1472,6 +1493,24 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             var id = await _service.GetMaxIdAsync(TableNames.YARN_ALLOCATION_NO, RepeatAfterEnum.EveryYear, transactionGmt, _connectionGmt);
             var datePart = DateTime.Now.ToString("yyMMdd");
             return $@"{datePart}{id:00000}";
+        }
+        private async Task<string> GetMaxMRIRNoAsync(SqlTransaction transaction)
+        {
+            var id = await _service.GetMaxIdAsync(TableNames.MRIR_No, RepeatAfterEnum.EveryYear, transaction, _connectionGmt);
+            var datePart = DateTime.Now.ToString("yyMMdd");
+            return $@"MRIR{datePart}{id:00000}";
+        }
+        private async Task<string> GetMaxGRNNoAsync(SqlTransaction transaction)
+        {
+            var id = await _service.GetMaxIdAsync(TableNames.GRN_No, RepeatAfterEnum.EveryYear, transaction, _connectionGmt);
+            var datePart = DateTime.Now.ToString("yyMMdd");
+            return $@"GRN{datePart}{id:00000}";
+        }
+        private async Task<string> GetMaxMRNNoAsync(SqlTransaction transaction)
+        {
+            var id = await _service.GetMaxIdAsync(TableNames.MRN_No, RepeatAfterEnum.EveryYear, transaction, _connectionGmt);
+            var datePart = DateTime.Now.ToString("yyMMdd");
+            return $@"MRN{datePart}{id:00000}";
         }
     }
 }

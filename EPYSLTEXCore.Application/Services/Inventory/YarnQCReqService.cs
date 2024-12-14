@@ -1393,8 +1393,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                transactionGmt.Commit();
+                if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
 
                 throw ex;
             }

@@ -262,8 +262,9 @@ namespace EPYSLTEX.Infrastructure.Services
                                 jObject[StatusConstants.STATUS] = StatusConstants.ADD;
                             }
                             newId = jObject[primaryKey].ToString();
-                            // Perform Add/Update/Delete on the first connection
-                              await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
+                            var connection = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? _connectionGmt : _connection;
+                            var trans = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? transactionGmt : transaction;
+                            await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, connection, trans);
                         }
                         else
                         {
@@ -292,8 +293,11 @@ namespace EPYSLTEX.Infrastructure.Services
                                     }
                                 }
 
-                                // Perform Add/Update/Delete on the first connection
-                                await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
+                                
+                                var connection = conKey.LastOrDefault() == AppConstants.GMT_CONNECTION ? _connectionGmt : _connection;
+                                var trans = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? transactionGmt : transaction;
+                                await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, connection, trans);
+                                
                             }
                         }
                     }

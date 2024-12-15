@@ -83,10 +83,11 @@
     // #region Genereting markup
     function getInterfaceChilds() {
         
+        
         var url = '/api/common-interface/configs?menuId=' + menuId;
         axios.get(url)
             .then(function (response) {
-   
+                
                 interfaceConfigs = response.data;
                 $("#title-form-ci-" + menuId).text(interfaceConfigs.InterfaceName);
                 $("#finderTitle-" + menuId).text(interfaceConfigs.InterfaceName + " List")
@@ -115,7 +116,7 @@
                 toastr.error("Api URL is missing.");
                 return;
             }
-          
+            
             var allSelectListObj = await executeSelectApis();
             if ($tblChildEl) $tblChildEl.destroy();
             var columns = [];
@@ -277,6 +278,7 @@
     }
 
     async function executeSelectApis() {
+  
         var objList = [],
             dependentColumnList = [],
             apiUrls = [];
@@ -284,10 +286,11 @@
         interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" ).map(x => {
             var dIndex = interfaceConfigs.ChildGridColumns.findIndex(d => d.DependentColumnName == x.ColumnName);
             if (!dependentColumnList.includes(x.ColumnName) || dIndex > -1) {
-
+                
                 var obj = {
                     ColumnName: x.ColumnName,
-                    ApiUrl: x.SelectSql ? commonAPiUrls.combo : x.ApiUrl,
+                    // ApiUrl: x.SelectSql ? commonAPiUrls.combo : x.ApiUrl,
+                    ApiUrl:  commonAPiUrls.combo,
                     ValueColumnName: x.ValueColumnName,
                     DisplayColumnName: x.DisplayColumnName,
                     Label: x.Label,
@@ -559,14 +562,16 @@
                         </div>`;
                     break;
                 case "select":
+                    
                     template +=
+                    
                         `<div class="form-group" style='${cssHidden}'>
                                 <label class="col-sm-2 control-label ci">${value.Label}</label>
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <select class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" style="width: 100%;" ${cssEnable}></select>
                                           
-                                        ${setFinder(value.HasFinder, menuId, value.ChildID)}
+                                       
                                     </div>
                                 </div>
                             </div>`;
@@ -574,7 +579,7 @@
                     var selectColumn = {};
                     selectColumn.id = value.ColumnName;
                     selectColumn.placeholder = value.Label;
-                    selectColumn.apiUrl = value.SelectApiUrl;
+                    selectColumn.apiUrl = value.SelectApiUrl + value.ChildID;
                     selectColumn.hasDependentColumn = value.HasDependentColumn;
                     selectColumn.dependentColumnName = value.DependentColumnName;
                     selectColumn.defaultValue = value.DefaultValue;
@@ -672,7 +677,7 @@
         });
     }
     function openSingleSelectFinder() {
-       
+ 
         var finder = new commonFinder({
             title: "Select " + selectedChild.Label,
             pageId: "divCommonInterface-" + menuId,
@@ -706,9 +711,8 @@
                 var selectApiUrl = currentFinderElement != null ? currentFinderElement.SelectApiUrl : "";
                 
                 var primaryKeyValue = data[currentFinderElement.ColumnName];
-      
-                
                 selectApiUrl = `${selectApiUrl}${selectedChild.ChildID}/${primaryKeyValue}`;
+               
                 axios.get(selectApiUrl)
                     .then(function (response) {
                         
@@ -716,12 +720,21 @@
                         if (masterData.length === 0) {
                             
                             //initChildGrid([]);
-                           // toastr.error("You must add an empty child item in your api.");
+                            // toastr.error("You must add an empty child item in your api.");
+                            for (var p in masterData) {
+
+                                $formEl.find("#" + p).is('select') ? $formEl.find("#" + p).val(data[p]).trigger("change") : $formEl.find("#" + p).val(data[p]);
+                            }
                             return;
                         }
-                        childObject = masterData;
-                        generateChildGrid();
-                        initChildGrid(childObject);
+                      
+                        if (interfaceConfigs.ChildGrids.length > 0) {
+                            childObject = masterData;
+                            
+                            generateChildGrid();
+                            initChildGrid(childObject);
+}
+                        
                     })
                     .catch(showResponseError);
                // initChildGrid(interfaceConfigs.Childs);

@@ -170,7 +170,7 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             var query = sqlQuery;
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By LEN({primaryKeyColumn}), {primaryKeyColumn} ASC" : paginationInfo.OrderBy;
-            var isSp = sqlQuery.ToLower().Contains("sp");
+            var isSp = sqlQuery.ToLower().Contains("sp_");
             query = isSp ? sqlQuery : $@"
                  {sqlQuery}
                 {paginationInfo.FilterBy}

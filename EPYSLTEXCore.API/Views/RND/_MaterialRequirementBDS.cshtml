@@ -1,0 +1,330 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblColorChildId = "tblColorChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblOtherItemId = "tblOtherItem" + pageId;
+    var tblCuffItemId = "tblCuffItem" + pageId;
+}
+
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <button id="btnList" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Available List
+                </button>
+                <button id="btnDraftList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Draft List
+                </button>
+                <button id="btnCompleteList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;<span>Complete List</span>
+                </button>
+                <button id="btnAckList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledge List
+                </button>
+                <button id="btnRevisionList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Revision List
+                </button>
+
+                @*<button id="btnRevisionAckList" class="btn btn-default text-grey btn-sm">
+                        <i class="fa fa-list"></i>&nbsp;Revision Acknowledge List
+                    </button>*@
+
+                <button id="btnRefreshList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-refresh"></i>&nbsp;
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="FCMRMasterID" name="FCMRMasterID" value="-1111" />
+            <input type="hidden" id="BookingID" name="BookingID" />
+            <input type="hidden" id="FabricID" name="FabricID" />
+            <input type="hidden" id="GroupConceptNo" name="GroupConceptNo" />
+            <input type="hidden" id="YBookingNo" name="YBookingNo" />
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking No</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    @*<div class="form-group">
+                                            <label class="control-label col-sm-4 small">BookingID</label>
+                                            <div class="col-sm-8">
+                                                <input id="BookingID" name="BookingID" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>*@
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Type</label>
+                                        <div class="col-sm-8">
+                                            <input type="checkbox" style="margin:5px;" id="onlyFabric" name="onlyFabric" disabled />
+                                            <label for="onlyFabric">Fabric Item</label>
+
+                                            <input type="checkbox" style="margin:5px;" id="fabricOtherItem" name="fabricOtherItem" disabled />
+                                            <label for="fabricOtherItem">Collar Item</label>
+
+                                            <input type="checkbox" style="margin:5px;" id="onlyOtherItem" name="onlyOtherItem" disabled />
+                                            <label for="onlyOtherItem">Cuff Item</label>
+                                        </div>
+                                    </div>
+                                    <div id="divRetrial" class="d-none">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Trial/Re-Trial No</label>
+                                            <div class="col-sm-8">
+                                                <input id="TrialNo" name="TrialNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Trial/Re-Trial Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="TrialDate" name="TrialDate" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <textarea id="Remarks" name="Remarks" rows="2" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="divFabricItem">
+                        <div class="col-sm-12">
+                            <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                                <div class="panel-heading">
+                                    Product Information
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-horizontal">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Technical Name</label>
+                                                <div class="col-sm-8">
+                                                    <input id="TechnicalName" name="TechnicalName" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Knitting Machine Type</label>
+                                                <div class="col-sm-8">
+                                                    <input id="KnittingType" name="KnittingType" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Composition</label>
+                                                <div class="col-sm-8">
+                                                    <input id="Composition" name="Composition" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">GSM</label>
+                                                <div class="col-sm-8">
+                                                    <input id="GSM" name="GSM" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-sm-4 small">Quantity(Kg/Pcs)</label>
+                                                <div class="col-sm-8">
+                                                    <input id="Qty" name="Qty" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="panel panel-success" style="border-color:transparent; border-style:none;" id="colorInfoDiv">
+                                                <div class="panel-heading">
+                                                    Color Information
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="form-horizontal">
+                                                        <div class="col-sm-12">
+                                                            <div class="form-group">
+                                                                <table id="@tblColorChildId"></table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                <div class="col-sm-12" id="divFabricInfo">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Yarn Information
+                            <button type="button" id="addYarnComposition" class="btn btn-success btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Composition
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12" id="divOtherItem">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div style="float: left; margin: 10px;">
+                                    <label>Collar Information</label>
+                                    @*<button type="button" id="btntblChildCollar" class="btn btn-success btn-xs btnHideShowPlus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" id="btnAddCollarItem" class="btn btn-primary btn-xs forAYB" title="Take Items" style="display:none;">
+                                        <i class="fa fa-search-plus"></i>
+                                    </button>*@
+                                </div>
+                                <div class="divForWeight" style="float: right; margin: 10px 10px 0 0; display: none;">
+                                    <label style="font-size: 12px;">Size : </label>
+                                    <select id="CollarSizeID" name="CollarSizeID" class="form-control SizeWithConsumption" style="margin-right: 5px; height: 24px; max-width:100px;"></select>
+                                    <label style="font-size: 12px;">Consumption(gm) : </label>
+                                    <input type="number" id="CollarWeightInGm" name="CollarWeightInGm" class="SizeWithConsumption" placeholder="Consumption(gm)" style="width: 70px; height: 24px;" />
+                                    <button type="button" id="btnCollarApplyKG" class="btn btn-success btn-xs SizeWithConsumption">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblOtherItemId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12" id="divCuffItem">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div style="float: left; margin: 10px;">
+                                    <label>Cuff Information</label>
+                                    @*<button type="button" id="btntblChildCuff" class="btn btn-success btn-xs btnHideShowPlus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" id="btnAddCuffItem" class="btn btn-primary btn-xs forAYB" title="Take Items" style="display:none;">
+                                        <i class="fa fa-search-plus"></i>
+                                    </button>*@
+                                </div>
+                                <div class="divForWeight" style="float:right;margin:10px 10px 0 0;display:none;">
+                                    <label style="font-size: 12px;">Size : </label>
+                                    <select id="CuffSizeID" name="CuffSizeID" class="form-control SizeWithConsumption" style="margin-right: 5px; height: 24px; max-width: 100px;"></select>
+                                    <label style="font-size: 12px;">Consumption(gm) : </label>
+                                    <input type="number" id="CuffWeightInGm" name="CuffWeightInGm" class="SizeWithConsumption" placeholder="Consumption(gm)" style="width: 70px; height: 24px;" />
+                                    <button type="button" id="btnCuffApplyKG" class="btn btn-success btn-xs SizeWithConsumption">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblCuffItemId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Create New Composition</h4>
+                            </div>
+                            <div class="modal-body" style="padding: 0 15px">
+                                <div class="icheck-primary icheck-inline">
+                                    <input type="radio" id="non-blended" name="Blended" value="0" checked />
+                                    <label for="non-blended">Non Blended</label>
+                                </div>
+                                <div class="icheck-primary icheck-inline">
+                                    <input type="radio" id="blended" name="Blended" value="1" />
+                                    <label for="blended">Blended</label>
+                                </div>
+                                <table id="tblCreateComposition-@pageId"></table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSaveComplete"><i class="fa fa-save"></i>&nbsp;&nbsp;Save&Complete</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnAcknowledgeAutoPR"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge for Auto PR</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

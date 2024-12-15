@@ -21,8 +21,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
         [Write(false)]
         public virtual bool IsNew => EntityState == EntityState.Added;
         [Write(false)]
-        public string Status { get; set; } = "";
-
+        //public string Status { get; set; } = "";//OFF FOR CORE//
+        public string EntityStatus { get; set; } = "";
         /// <summary>
         /// Ctor
         /// </summary>

@@ -20,5 +20,8 @@
         public const string sp_Validation_YarnAllocationChildItem = "T_sp_Validation_YarnAllocationChildItem";
         public const string sp_Validation_YarnAllocationChildPipelineItem = "T_sp_Validation_YarnAllocationChildPipelineItem";
         public const string spUpdateAllocationChilditemPreProcessRevisionNo = "T_spUpdateAllocationChilditemPreProcessRevisionNo";
+        public const string sp_Validation_FBookingAcknowledge = "T_sp_Validation_FBookingAcknowledge";
+        public const string sp_Validation_FreeConceptMaster = "T_sp_Validation_FreeConceptMaster";
+        public const string sp_Validation_FreeConceptMRChild = "T_sp_Validation_FreeConceptMRChild";
     }
 }

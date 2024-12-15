@@ -222,7 +222,7 @@ namespace EPYSLTEX.Infrastructure.Services
             SqlTransaction transaction = null;
             SqlTransaction transactionGmt = null;
             JsonObject parentObjecct = null;
-            int newId =  0;
+            string newId ="";
 
             try
             {
@@ -261,9 +261,9 @@ namespace EPYSLTEX.Infrastructure.Services
                                 // Set the status
                                 jObject[StatusConstants.STATUS] = StatusConstants.ADD;
                             }
-
+                            newId = jObject[primaryKey].ToString();
                             // Perform Add/Update/Delete on the first connection
-                            newId= await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
+                              await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
                         }
                         else
                         {
@@ -302,7 +302,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     await transaction.CommitAsync();
                     await transactionGmt.CommitAsync();
 
-                    return  newId.ToString();
+                    return  newId;
                 }
                 else
                 {

@@ -1,26 +1,22 @@
-﻿using EPYSLTEXCore.API.Contollers.APIBaseController;
+﻿using EPYSLTEX.Core.Interfaces;
+using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Booking;
 using EPYSLTEXCore.Application.Interfaces.RND;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
-using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
-using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Exceptions;
-using EPYSLTEXCore.Infrastructure.Static;
-using NLog;
+using Newtonsoft.Json;
 using System.Data.Entity;
-using EPYSLTEX.Infrastructure.Services;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
-using EPYSLTEX.Core.Interfaces;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 
 
 namespace EPYSLTEXCore.API.Contollers.Booking
@@ -205,8 +201,15 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("save")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> Save(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> Save(dynamic jsnString)
         {
+            FBookingAcknowledge modelDynamic = JsonConvert.DeserializeObject<FBookingAcknowledge>(
+              Convert.ToString(jsnString),
+              new JsonSerializerSettings
+              {
+                  DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+              });
+
             DateTime currentDate = DateTime.Now;
 
             //Return error from service if any child has missing any criteria then check

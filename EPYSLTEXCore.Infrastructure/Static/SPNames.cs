@@ -29,5 +29,8 @@
         public const string sp_Validation_YarnPOChild = "T_sp_Validation_YarnPOChild";
         public const string sp_Validation_YarnPOChildOrder = "T_sp_Validation_YarnPOChildOrder";
         #endregion
+        public const string sp_Validation_FBookingAcknowledge = "T_sp_Validation_FBookingAcknowledge";
+        public const string sp_Validation_FreeConceptMaster = "T_sp_Validation_FreeConceptMaster";
+        public const string sp_Validation_FreeConceptMRChild = "T_sp_Validation_FreeConceptMRChild";
     }
 }

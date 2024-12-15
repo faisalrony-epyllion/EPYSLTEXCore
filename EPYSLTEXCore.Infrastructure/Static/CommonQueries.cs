@@ -109,7 +109,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text], 'Fiber Type'[desc]
                 From {DbNames.EPYSL}..EntityTypeValue EV
                 Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-                LEFT JOIN FiberBasicSetup FBS ON FBS.ValueID = EV.ValueID
+                LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
                 Where ET.EntityTypeName = 'Fabric Type' AND ISNULL(FBS.IsInactive,0) = 0
                 Group By EV.ValueID,EV.ValueName
                 UNION 
@@ -117,7 +117,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 FROM {DbNames.EPYSL}..ItemSegmentName ISN
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
+                LEFT JOIN {TableNames.SubProgramBasicSetup} SBS ON SBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName In ('Yarn Sub Program New') And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
                 AND ISNULL(SBS.IsInactive,0) = 0
                 UNION
@@ -125,7 +125,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 FROM {DbNames.EPYSL}..ItemSegmentName ISN
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-                LEFT JOIN CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
+                LEFT JOIN {TableNames.CertificationsBasicSetup} CBS ON CBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName In ('Yarn Certifications') And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
                 AND ISNULL(CBS.IsInactive,0) = 0
                 )FL 
@@ -212,13 +212,13 @@ namespace EPYSLTEXCore.Infrastructure.Static
                  Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text]
                 From {DbNames.EPYSL}..EntityTypeValue EV
                 Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-		        LEFT JOIN FiberBasicSetup FBS ON FBS.ValueID = EV.ValueID
+		        LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
                 Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
                 Group By EV.ValueID,EV.ValueName";
         }
         public static string GetYarnShadeBooks()
         {
-            return $@"SELECT ShadeCode [id], ShadeCode [text], ContactID [additionalValue] FROM YarnShadeBook";
+            return $@"SELECT ShadeCode [id], ShadeCode [text], ContactID [additionalValue] FROM {TableNames.YARN_SHADE_BOOK}";
         }
 
         public static string GetNewYarnSuppliersForProductSetup(int categoryId)
@@ -547,7 +547,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     IsInactive = ISNULL(YCBS.IsInactive,0)
                     From {DbNames.EPYSL}..EntityTypeValue EV
                     Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-                    LEFT JOIN FiberBasicSetup YCBS ON YCBS.ValueId = EV.ValueID
+                    LEFT JOIN {TableNames.FiberBasicSetup} YCBS ON YCBS.ValueId = EV.ValueID
                     Where ET.EntityTypeName = '{ItemSegmentNameConstants.FABRIC_TYPE}' --AND ISNULL(EV.ValueName,'') <> ''";
             return sql;
         }
@@ -559,7 +559,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     ,IsInactive = ISNULL(YCBS.IsInactive,0)
                     from {DbNames.EPYSL}..ItemSegmentValue ISV
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                    LEFT JOIN SubProgramBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
+                    LEFT JOIN {TableNames.SubProgramBasicSetup} YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
                     WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}') --AND ISNULL(ISV.SegmentValue,'') <> ''
                     ORDER BY ISV.SegmentValue";
             return sql;
@@ -572,7 +572,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     ,IsInactive = ISNULL(YCBS.IsInactive,0)
                     from {DbNames.EPYSL}..ItemSegmentValue ISV
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                    LEFT JOIN CertificationsBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
+                    LEFT JOIN {TableNames.CertificationsBasicSetup} YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
                     WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_CERTIFICATIONS}') --AND ISNULL(ISV.SegmentValue,'') <> ''
                     ORDER BY ISV.SegmentValue";
             return sql;
@@ -669,7 +669,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
                 LEFT JOIN {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} FCMS on FCMS.CertificationsID=ISV.SegmentValueID
-		        LEFT JOIN CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
+		        LEFT JOIN {TableNames.CertificationsBasicSetup} CBS ON CBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 		        	AND ISNULL(CBS.IsInactive,0) = 0
                 ORDER BY ISV.SegmentValue";
@@ -682,7 +682,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
                 Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
                 LEFT JOIN {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP} FCMS on FCMS.SubProgramID=ISV.SegmentValueID
-		        LEFT JOIN SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
+		        LEFT JOIN {TableNames.SubProgramBasicSetup} SBS ON SBS.SegmentValueID = ISV.SegmentValueID
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 			        AND ISNULL(SBS.IsInactive,0) = 0 
                 ORDER BY ISV.SegmentValue";
@@ -1468,7 +1468,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                               END
                     ,additionalValue = CAST(DVD.DayDuration AS VARCHAR)
                     ,[desc] = CAST(DVD.IsActive AS VARCHAR)
-                    FROM DayValidDuration DVD
+                    FROM {TableNames.DayValidDuration} DVD
                     INNER JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = DVD.LocalOrImportId
                     WHERE 1 = 1 {activeQuery} {usedQuery}";
             if (bookingNos.IsNotNullOrEmpty())
@@ -1537,7 +1537,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                               END
                     ,additionalValue = CAST(DVD.DayDuration AS VARCHAR)
                     ,[desc] = CAST(DVD.IsActive AS VARCHAR)
-                    FROM DayValidDuration DVD
+                    FROM {TableNames.DayValidDuration} DVD
                     INNER JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = DVD.LocalOrImportId
                     WHERE 1 = 1 {activeQuery} {usedQuery}";
         }

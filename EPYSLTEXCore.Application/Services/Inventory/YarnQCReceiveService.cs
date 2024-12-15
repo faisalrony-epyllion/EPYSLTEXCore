@@ -379,7 +379,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity.QCReceiveMasterID = await _service.GetMaxIdAsync(TableNames.YARN_QC_RECEIVE_MASTER);
+                        entity.QCReceiveMasterID = await _service.GetMaxIdAsync(TableNames.YARN_QC_RECEIVE_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         entity.QCReceiveNo = await _service.GetMaxNoAsync(TableNames.YARN_QC_RECEIVE_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _connectionGmt);
 
                         maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_QC_RECEIVE_CHILD, entity.YarnQCReceiveChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);

@@ -599,7 +599,7 @@
         //public const string YARN_PR_CHILD_PROGRAM = "YarnPRChildSubProgram";
         public const string YARN_PRNO = "Yarn PRNo";
         public const string YARN_PR_COMPANY = "T_YarnPRCompany";
-        //public const string YARN_CPR_COMPANY = "YarnCPRCompany";
+        public const string YARN_CPR_COMPANY = "T_YarnCPRCompany";
 
         public const string YARN_RND_ISSUE_MASTER = "T_YarnRnDIssueMaster";
         public const string YARN_RND_ISSUE_CHILD = "T_YarnRnDIssueChild";

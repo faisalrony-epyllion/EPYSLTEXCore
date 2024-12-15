@@ -1914,7 +1914,7 @@ namespace EPYSLTEX.Infrastructure.Services
 
                 if (yarnPRMaster.Status == Status.Revise)
                 {
-                    await _connection.ExecuteAsync("spBackupYarnPR", new { YarnPRMasterID = yarnPRMaster.YarnPRMasterID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spBackupYarnPR, new { YarnPRMasterID = yarnPRMaster.YarnPRMasterID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 await _service.SaveSingleAsync(yarnPRMaster, transaction);

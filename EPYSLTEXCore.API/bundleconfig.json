@@ -13,12 +13,14 @@
       "wwwroot/App_Themes/lib/syncfusion/bootstrap4.css",
       "wwwroot/App_Themes/CustomCSS/style.css",
       "wwwroot/App_Themes/CustomCSS/report.css",
-      
+
       "wwwroot/App_Themes/lib/bootstrap-table/bootstrap-table.min.css",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.css",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.min.css",
-      "wwwroot/App_Themes/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css"
+      "wwwroot/App_Themes/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css",
+
+      "wwwroot/App_Themes/lib/bootstrap-fileinput/css/fileinput.min.css"
 
     ],
     "minify": {
@@ -50,8 +52,8 @@
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.min.js",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js",
-      "wwwroot/App_Themes/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"
-
+      "wwwroot/App_Themes/lib/bootstrap-datepicker/js/bootstrap-datepicker.js",
+      "wwwroot/App_Themes/lib/bootstrap-fileinput/js/fileinput.min.js"
     ],
     "minify": {
       "enabled": true,

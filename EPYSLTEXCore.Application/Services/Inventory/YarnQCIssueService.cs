@@ -53,7 +53,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                        INNER JOIN {TableNames.YARN_QC_REQ_CHILD} QCRC ON QCRC.QCReqMasterID = M.QCReqMasterID
 	                        INNER JOIN {TableNames.YARN_RECEIVE_MASTER} RM ON RM.ReceiveID = M.ReceiveID
 	                        LEFT JOIN {TableNames.YARN_QC_ISSUE_CHILD} IC ON IC.QCReqChildID = QCRC.QCReqChildID
-	                        WHERE M.IsApprove = 1 AND RM.ApprovedDate >= '{CommonConstent.StockMigrationDate}'
+	                        WHERE M.IsApprove = 1 AND M.IsAcknowledge = 1 AND RM.ApprovedDate >= '{CommonConstent.StockMigrationDate}'
 
 	                        GROUP BY M.QCReqMasterID
                         ),
@@ -71,7 +71,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                        LEFT Join {DbNames.EPYSL}..LoginUser U On M.QCReqBy = U.UserCode 
 	                        LEFT JOIN {TableNames.YARN_QC_ISSUE_MASTER} IM ON IM.QCReqMasterID = M.QCReqMasterID
 	                        INNER JOIN YQCReqPending P ON P.QCReqMasterID = M.QCReqMasterID
-	                        WHERE M.IsApprove = 1 AND P.IsPending = 1--AND IM.QCReqMasterID IS NULL  
+	                        WHERE M.IsApprove = 1 AND M.IsAcknowledge = 1 AND P.IsPending = 1--AND IM.QCReqMasterID IS NULL  
 	                        AND RM.ApprovedDate >= '{CommonConstent.StockMigrationDate}'
 	                        GROUP BY M.QCReqMasterID, M.QCReqNo, U.Name, M.QCReqDate, QCReqFor.ValueName, 
 	                        M.IsApprove, M.IsAcknowledge, M.ReceiveID, RM.ReceiveNo, P.IsPending
@@ -421,11 +421,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 #endregion Stock Operation
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
-                transactionGmt.Rollback();
+                if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally

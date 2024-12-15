@@ -82,24 +82,24 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         //    return Ok();
         //}
-        private async Task<string> GetMaxMRIRNoAsync()
-        {
-            var id = await _service.GetMaxIdAsync(TableNames.MRIR_No, RepeatAfterEnum.EveryYear);
-            var datePart = DateTime.Now.ToString("yyMMdd");
-            return $@"MRIR{datePart}{id:00000}";
-        }
-        private async Task<string> GetMaxGRNNoAsync()
-        {
-            var id = await _service.GetMaxIdAsync(TableNames.GRN_No, RepeatAfterEnum.EveryYear);
-            var datePart = DateTime.Now.ToString("yyMMdd");
-            return $@"GRN{datePart}{id:00000}";
-        }
-        private async Task<string> GetMaxMRNNoAsync()
-        {
-            var id = await _service.GetMaxIdAsync(TableNames.MRN_No, RepeatAfterEnum.EveryYear);
-            var datePart = DateTime.Now.ToString("yyMMdd");
-            return $@"MRN{datePart}{id:00000}";
-        }
+        //private async Task<string> GetMaxMRIRNoAsync()
+        //{
+        //    var id = await _service.GetMaxIdAsync(TableNames.MRIR_No, RepeatAfterEnum.EveryYear);
+        //    var datePart = DateTime.Now.ToString("yyMMdd");
+        //    return $@"MRIR{datePart}{id:00000}";
+        //}
+        //private async Task<string> GetMaxGRNNoAsync()
+        //{
+        //    var id = await _service.GetMaxIdAsync(TableNames.GRN_No, RepeatAfterEnum.EveryYear);
+        //    var datePart = DateTime.Now.ToString("yyMMdd");
+        //    return $@"GRN{datePart}{id:00000}";
+        //}
+        //private async Task<string> GetMaxMRNNoAsync()
+        //{
+        //    var id = await _service.GetMaxIdAsync(TableNames.MRN_No, RepeatAfterEnum.EveryYear);
+        //    var datePart = DateTime.Now.ToString("yyMMdd");
+        //    return $@"MRN{datePart}{id:00000}";
+        //}
         [Route("save")]
         [HttpPost]
         [ValidateModel]
@@ -113,29 +113,29 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             string ret = "";
             YarnMRIRMaster entity = null;
             entity = new YarnMRIRMaster();
-
-            if ((ReceiveNoteType)modelList[0].ReceiveNoteType == ReceiveNoteType.MRIR)
+            ReceiveNoteType receiveNoteType = (ReceiveNoteType)modelList[0].ReceiveNoteType;
+            if (receiveNoteType == ReceiveNoteType.MRIR)
             {
-                entity.MRIRNo = await GetMaxMRIRNoAsync();
+                //entity.MRIRNo = await GetMaxMRIRNoAsync();
                 entity.MRIRBy = AppUser.UserCode;
                 entity.MRIRDate = DateTime.Now;
-                ret = entity.MRIRNo;
+                //ret = entity.MRIRNo;
 
                 modelList = await this.GenerateYarnAllocation(modelList);
             }
-            if ((ReceiveNoteType)modelList[0].ReceiveNoteType == ReceiveNoteType.GRN)
+            if (receiveNoteType == ReceiveNoteType.GRN)
             {
-                entity.GRNNo = await GetMaxGRNNoAsync();
+                //entity.GRNNo = await GetMaxGRNNoAsync();
                 entity.GRNBy = AppUser.EmployeeCode;
                 entity.GRNDate = DateTime.Now;
-                ret = entity.GRNNo;
+                //ret = entity.GRNNo;
             }
-            if ((ReceiveNoteType)modelList[0].ReceiveNoteType == ReceiveNoteType.MRN)
+            if (receiveNoteType == ReceiveNoteType.MRN)
             {
-                entity.MRNNo = await GetMaxMRNNoAsync();
+                //entity.MRNNo = await GetMaxMRNNoAsync();
                 entity.MRNBy = AppUser.EmployeeCode;
                 entity.MRNDate = DateTime.Now;
-                ret = entity.MRNNo;
+                //ret = entity.MRNNo;
             }
 
             entity.ReceiveNo = modelList[0].ReceiveNo;
@@ -155,7 +155,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 Child.EntityState = EntityState.Added;
                 entity.YarnMRIRChilds.Add(Child);
             }
-            await _yarnMRIRService.SaveAsync(entity);
+            ret = await _yarnMRIRService.SaveAsync(entity, receiveNoteType);
             return Ok(ret);
         }
         [Route("SaveGRNMRIR")]
@@ -168,8 +168,8 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             string ret = "";
             YarnMRIRMaster entity = await _yarnMRIRService.GetAsync(model.MRIRMasterId); ;
 
-            entity.MRIRNo = await GetMaxMRIRNoAsync();
-            ret = entity.MRIRNo;
+            //entity.MRIRNo = await GetMaxMRIRNoAsync();
+            //ret = entity.MRIRNo;
             entity.MRIRBy = AppUser.EmployeeCode;
             entity.MRIRDate = DateTime.Now;
             entity.ReceiveNoteType = (int)ReceiveNoteType.MRIR;
@@ -178,7 +178,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
             entity.EntityState = EntityState.Modified;
 
-            await _yarnMRIRService.SaveAsync(entity);
+            ret = await _yarnMRIRService.SaveAsync(entity, ReceiveNoteType.MRIR);
             return Ok(ret);
         }
         [Route("retest")]
@@ -199,7 +199,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
             entity.EntityState = EntityState.Modified;
 
-            await _yarnMRIRService.SaveAsync(entity);
+            var retData = await _yarnMRIRService.SaveAsync(entity, ReceiveNoteType.MRN);
             return Ok(ret);
         }
         [Route("return")]
@@ -219,7 +219,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
             entity.EntityState = EntityState.Modified;
 
-            await _yarnMRIRService.SaveAsync(entity);
+            var retData = await _yarnMRIRService.SaveAsync(entity, ReceiveNoteType.MRN);
             return Ok(ret);
         }
 

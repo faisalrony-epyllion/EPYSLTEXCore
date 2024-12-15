@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
 {
-    [Table("YarnQCRemarksChild")]
+    [Table(TableNames.YARN_QC_REMARKS_CHILD)]
     public class YarnQCRemarksChild : DapperBaseEntity
     {
         [ExplicitKey]

@@ -7,6 +7,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using EPYSLTEXCore.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEX.Web.Controllers.Apis
@@ -50,17 +51,12 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(YarnPIReceiveMaster model)
+        public async Task<IActionResult> Save(dynamic jsnString)
         {
+            YarnPIReceiveMaster model = JsonConvert.DeserializeObject<YarnPIReceiveMaster>(Convert.ToString(jsnString));
             YarnPIReceiveMaster entity = await _service.GetDetailsAsync(model.YPIReceiveMasterID);
 
-            //if (entity.Childs.Count() > 0)
-            //{
-            //    entity.Childs[0].PIQty = model.PIQty;
-            //    entity.Childs[0].PIValue = model.PIValue;
-            //    entity.Childs[0].EntityState = EntityState.Modified;
-            //}
-
+       
 
             if (model.Accept)
             {

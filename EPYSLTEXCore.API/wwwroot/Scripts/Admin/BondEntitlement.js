@@ -47,6 +47,20 @@
         $formEl.find("#btnBackToList").click(function () {
             backToList();
         });
+
+        $('.ej2-datepicker').each(function (i, el) {
+            $(el).datepicker({
+                todayHighlight: true,
+                format: _ch_date_format_3,
+                autoclose: true,
+                todayBtn: "linked"
+            }).on("show", function (date) {
+                if (this.value && !date.date) {
+                    console.log(this.value);
+                    $(this).datepicker('update', this.value);
+                }
+            });
+        });
     });
 
     function loadNew() {
@@ -76,8 +90,8 @@
 
                 masterData = response.data;
 
-                masterData.FromDate = formatDateToDefault(new Date());
-                masterData.ToDate = formatDateToDefault(new Date());
+                masterData.FromDate = formatDateToDefault(masterData.FromDate);
+                masterData.ToDate = formatDateToDefault(masterData.ToDate);
                 setFormData($formEl, masterData);
 
                 initChildTable(masterData.Childs);

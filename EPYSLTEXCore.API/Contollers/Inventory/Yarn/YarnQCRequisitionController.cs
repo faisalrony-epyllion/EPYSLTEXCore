@@ -123,6 +123,12 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                     entity.RejectBy = 0;
                     entity.RejectReason = "";
                 }
+                else if (model.IsAcknowledge)
+                {
+                    entity.IsAcknowledge = true;
+                    entity.AcknowledgeDate = DateTime.Now;
+                    entity.AcknowledgeBy = AppUser.UserCode;
+                }
                 else if (model.IsReject)
                 {
                     entity.IsReject = true;

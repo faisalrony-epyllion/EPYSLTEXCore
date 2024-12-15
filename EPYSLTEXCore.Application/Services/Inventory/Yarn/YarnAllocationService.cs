@@ -1995,7 +1995,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 		                    Select SUM(YSC.Qty)StockQty, CompanyId = MAX(YSC.CompanyId), YarnCategory = MAX(YSS.YarnCategory) 
 		                    from YarnStockChild YSC
 		                    INNER JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = YSC.YarnStockSetId
-		                    INNER JOIN StockType ST ON ST.StockTypeId=YSC.StockTypeId
+		                    INNER JOIN {TableNames.StockType} ST ON ST.StockTypeId=YSC.StockTypeId
 		                    WHERE YSS.ItemMasterID = YBCI.YItemMasterID 
 		                    AND ST.StockTypeId in(3,5,6,7) -- ST.Name='Advance Stock' OR ST.Name='Sample Stock' OR ST.Name='Leftover Stock' OR ST.Name='Liabilities Stock'
 	                    )AS Stock
@@ -2143,13 +2143,13 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     YTD AS(
 	                    Select MAX(YRM.QCRemarksMasterID) QCRemarksMasterID,YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,
 	                    Rate = ISNULL(POC.Rate,0) 
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
-	                    INNER JOIN YarnQCReceiveChild RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
-	                    INNER JOIN YarnQCIssueChild IC ON IC.QCIssueChildID = RC.QCIssueChildID
-	                    INNER JOIN YarnQCReqChild RC1 ON RC1.QCReqChildID = IC.QCReqChildID
-	                    INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = RC1.ReceiveChildID
-	                    LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                    INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
+	                    INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} IC ON IC.QCIssueChildID = RC.QCIssueChildID
+	                    INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RC1 ON RC1.QCReqChildID = IC.QCReqChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC1.ReceiveChildID
+	                    LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
 	                    GROUP BY YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,ISNULL(POC.Rate,0)
                     ),
                     YT AS(
@@ -2161,14 +2161,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				                    ELSE '' END Status,
 	                    YRMC.Remarks,YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,
 	                    Rate = YTD.Rate
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	                    INNER JOIN YTD ON YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID 
-	                    INNER JOIN YarnQCReceiveChild RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
-	                    INNER JOIN YarnQCIssueChild IC ON IC.QCIssueChildID = RC.QCIssueChildID
-	                    INNER JOIN YarnQCReqChild RC1 ON RC1.QCReqChildID = IC.QCReqChildID
-	                    INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = RC1.ReceiveChildID
-	                    LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
+	                    INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
+	                    INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} IC ON IC.QCIssueChildID = RC.QCIssueChildID
+	                    INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RC1 ON RC1.QCReqChildID = IC.QCReqChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC1.ReceiveChildID
+	                    LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
                     ),
                 
                     StockInfo AS
@@ -2291,8 +2291,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					LEFT JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
 					LEFT JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
 					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
-					LEFT JOIN FreeConceptMRChild FCMRC ON FCMRC.YBChildItemID = YBCI.YBChildItemID
-					LEFT JOIN FreeConceptMRMaster FCMRM ON FCMRM.FCMRMasterID = FCMRC.FCMRMasterID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCMRC ON FCMRC.YBChildItemID = YBCI.YBChildItemID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} FCMRM ON FCMRM.FCMRMasterID = FCMRC.FCMRMasterID
                     WHERE YAC.AllocationID = {allocationId};
 
                     --ChildItems
@@ -2312,19 +2312,19 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                     --YarnPRMaster
                     SELECT YPRM.*
-                    FROM YarnPRMaster YPRM
+                    FROM {TableNames.YARN_PR_MASTER} YPRM
                     WHERE YPRM.YarnPRFromMasterId = {allocationId};
 
                     --YarnPRChild
                     SELECT YPRC.*
-                    FROM YarnPRChild YPRC
-                    INNER JOIN YarnPRMaster YPRM ON YPRM.YarnPRMasterID = YPRC.YarnPRMasterID
+                    FROM {TableNames.YARN_PR_CHILD} YPRC
+                    INNER JOIN {TableNames.YARN_PR_MASTER} YPRM ON YPRM.YarnPRMasterID = YPRC.YarnPRMasterID
                     WHERE YPRM.YarnPRFromMasterId = {allocationId};
 
                     --YarnPRMaster
                     SELECT POM.*
-                    FROM YarnPOMaster POM
-                    INNER JOIN YarnPRMaster PRM ON PRM.YarnPRMasterID = POM.PRMasterID
+                    FROM {TableNames.YarnPOMaster} POM
+                    INNER JOIN {TableNames.YARN_PR_MASTER} PRM ON PRM.YarnPRMasterID = POM.PRMasterID
                     WHERE PRM.YarnPRFromMasterId = {allocationId} AND POM.UnApprove = 1;";
             try
             {
@@ -2532,13 +2532,13 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             if (isAddition)
             {
                 sql = $@"SELECT * 
-                    FROM YarnPRMaster 
+                    FROM {TableNames.YARN_PR_MASTER} 
                     WHERE YarnPRno LIKE '{bookingNo}%';";
             }
             else
             {
                 sql = $@"SELECT * 
-                    FROM YarnPRMaster 
+                    FROM {TableNames.YARN_PR_MASTER} 
                     WHERE YarnPRno LIKE '{bookingNo}%' AND YarnPRno NOT LIKE '%-Add-%';";
             }
             return await _service.GetDataAsync<YarnPRMaster>(sql);
@@ -2753,13 +2753,13 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 YTD AS(
 	                Select MAX(YRM.QCRemarksMasterID) QCRemarksMasterID,YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,
 	                Rate = ISNULL(POC.Rate,0) 
-	                from YarnQCRemarksChild YRMC
-	                INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
-	                INNER JOIN YarnQCReceiveChild RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
-	                INNER JOIN YarnQCIssueChild IC ON IC.QCIssueChildID = RC.QCIssueChildID
-	                INNER JOIN YarnQCReqChild RC1 ON RC1.QCReqChildID = IC.QCReqChildID
-	                INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = RC1.ReceiveChildID
-	                LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
+	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
+	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} IC ON IC.QCIssueChildID = RC.QCIssueChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RC1 ON RC1.QCReqChildID = IC.QCReqChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC1.ReceiveChildID
+	                LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
 	                GROUP BY YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,ISNULL(POC.Rate,0)
                 ),
                 YT AS(
@@ -2771,14 +2771,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				                ELSE '' END Status,
 	                YRMC.Remarks,YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,
 	                Rate = YTD.Rate
-	                from YarnQCRemarksChild YRMC
-	                INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	                INNER JOIN YTD ON YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID 
-	                INNER JOIN YarnQCReceiveChild RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
-	                INNER JOIN YarnQCIssueChild IC ON IC.QCIssueChildID = RC.QCIssueChildID
-	                INNER JOIN YarnQCReqChild RC1 ON RC1.QCReqChildID = IC.QCReqChildID
-	                INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = RC1.ReceiveChildID
-	                LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
+	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
+	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} IC ON IC.QCIssueChildID = RC.QCIssueChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RC1 ON RC1.QCReqChildID = IC.QCReqChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC1.ReceiveChildID
+	                LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
                 ),
                 YAC AS
 				(
@@ -2873,8 +2873,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ),
                 YTD AS(
 	                Select QCRemarksMasterID = MAX(YRM.QCRemarksMasterID),YRMC.LotNo 
-	                from YarnQCRemarksChild YRMC
-	                INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	                GROUP BY YRMC.LotNo
                 ),
                 YT AS(
@@ -2884,8 +2884,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				                WHEN YRMC.Diagnostic = 1 THEN 'Diagnostic'
 				                WHEN YRMC.CommerciallyApprove = 1 THEN 'CommerciallyApprove' 
 				                ELSE '' END Status,YRMC.Remarks,YRMC.LotNo
-	                from YarnQCRemarksChild YRMC
-	                INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	                INNER JOIN YTD ON YTD.LotNo=YRMC.LotNo AND YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID 
                 ),
                 WithoutPipeLineRecord AS
@@ -2986,13 +2986,13 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 YTD AS(
 	                Select MAX(YRM.QCRemarksMasterID) QCRemarksMasterID,YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,
 	                Rate = ISNULL(POC.Rate,0) 
-	                from YarnQCRemarksChild YRMC
-	                INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
-	                INNER JOIN YarnQCReceiveChild RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
-	                INNER JOIN YarnQCIssueChild IC ON IC.QCIssueChildID = RC.QCIssueChildID
-	                INNER JOIN YarnQCReqChild RC1 ON RC1.QCReqChildID = IC.QCReqChildID
-	                INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = RC1.ReceiveChildID
-	                LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
+	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
+	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} IC ON IC.QCIssueChildID = RC.QCIssueChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RC1 ON RC1.QCReqChildID = IC.QCReqChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC1.ReceiveChildID
+	                LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
 	                GROUP BY YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,ISNULL(POC.Rate,0)
                 ),
                 YT AS(
@@ -3004,14 +3004,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				                ELSE '' END Status,
 	                YRMC.Remarks,YRMC.LotNo,YRMC.ItemMasterId,YRM.SupplierId,YRM.SpinnerId,YRMC.ShadeCode,YRMC.PhysicalCount,
 	                Rate = YTD.Rate
-	                from YarnQCRemarksChild YRMC
-	                INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	                INNER JOIN YTD ON YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID 
-	                INNER JOIN YarnQCReceiveChild RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
-	                INNER JOIN YarnQCIssueChild IC ON IC.QCIssueChildID = RC.QCIssueChildID
-	                INNER JOIN YarnQCReqChild RC1 ON RC1.QCReqChildID = IC.QCReqChildID
-	                INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = RC1.ReceiveChildID
-	                LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
+	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RC ON RC.QCReceiveChildID = YRMC.QCReceiveChildID
+	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} IC ON IC.QCIssueChildID = RC.QCIssueChildID
+	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} RC1 ON RC1.QCReqChildID = IC.QCReqChildID
+	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = RC1.ReceiveChildID
+	                LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
                 ),
                 YAC AS
                 (
@@ -3040,7 +3040,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 			                LeftoverStockQty = SUM(YSM.LeftoverStockQty) + ISNULL(YAC.LeftoverAllocationQty,0),
 			                LiabilitiesStockQty = SUM(YSM.LiabilitiesStockQty) + ISNULL(YAC.LiabilitiesAllocationQty,0),
 			                YarnCount = ISV6.SegmentValue
-	                FROM YarnStockMaster_New YSM 
+	                FROM {TableNames.YarnStockMaster_New} YSM 
 	                LEFT JOIN YAC ON YAC.ItemMasterID = YSM.ItemMasterID
 									AND YAC.SupplierId = YSM.SupplierId
 									AND YAC.SpinnerID = YSM.SpinnerID
@@ -3099,8 +3099,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             WITH
             YTD AS(
 	            Select QCRemarksMasterID = MAX(YRM.QCRemarksMasterID),YRMC.LotNo 
-	            from YarnQCRemarksChild YRMC
-	            INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	            FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	            INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	            GROUP BY YRMC.LotNo
             ),
             YT AS(
@@ -3110,8 +3110,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				            WHEN YRMC.Diagnostic = 1 THEN 'Diagnostic'
 				            WHEN YRMC.CommerciallyApprove = 1 THEN 'CommerciallyApprove' 
 				            ELSE '' END Status,YRMC.Remarks,YRMC.LotNo
-	            from YarnQCRemarksChild YRMC
-	            INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	            FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	            INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	            INNER JOIN YTD ON YTD.LotNo=YRMC.LotNo AND YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID 
             ),
             WithoutPipeLineRecord AS
@@ -3120,7 +3120,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	            TotalCurrentStockQty = ISNULL(SUM(YSM.TotalCurrentStockQty),0),
 	            TotalCurrentPipelineStockQty = ISNULL(SUM(YSM.TotalCurrentPipelineStockQty),0),
 	            YarnAge = ISNULL(DATEDIFF(DD, YSS.YarnApprovedDate, GETDATE()),0)
-	            FROM YarnStockSet YSS
+	            FROM {TableNames.YarnStockSet} YSS
 	            INNER JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
 	            WHERE YSS.SpinnerId > 0
 	            GROUP BY YSS.ItemMasterId, YSS.SupplierId, YSS.ShadeCode,DATEDIFF(DD, YSS.YarnApprovedDate, GETDATE())
@@ -3130,7 +3130,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	            SELECT YSS.YarnStockSetId, YSS.ItemMasterId, YSS.SupplierId, YSS.ShadeCode, YSS.YarnCategory,
 	            PipelineStockQty = ISNULL(SUM(YSM.TotalCurrentPipelineStockQty),0) - ISNULL(SUM(WPL.TotalCurrentStockQty),0),
 	            WPL.YarnAge
-	            FROM YarnStockSet YSS
+	            FROM {TableNames.YarnStockSet} YSS
 	            INNER JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId	
 	            LEFT JOIN WithoutPipeLineRecord WPL ON WPL.ItemMasterId = YSS.ItemMasterId
 									                AND WPL.SupplierId = YSS.SupplierId
@@ -3149,8 +3149,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				Suppliers = STRING_AGG(S.ShortName,','),
 				POPrices = STRING_AGG(POC.Rate,',')
 				FROM PipeLineRecord PL
-				INNER JOIN YarnPOChild POC ON POC.YarnStockSetId = PL.YarnStockSetId
-				INNER JOIN YarnPOMaster POM ON POM.YPOMasterID = POC.YPOMasterID
+				INNER JOIN {TableNames.YarnPOChild} POC ON POC.YarnStockSetId = PL.YarnStockSetId
+				INNER JOIN {TableNames.YarnPOMaster} POM ON POM.YPOMasterID = POC.YPOMasterID
 				INNER JOIN {DbNames.EPYSL}..Contacts S ON S.ContactID = POM.SupplierID
 				LEFT JOIN {DbNames.EPYSL}..EntityTypeValue BT ON BT.ValueID = POC.POForID
 				LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = POM.CompanyID
@@ -3444,8 +3444,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             WITH
             YTD AS(
 	            Select QCRemarksMasterID = MAX(YRM.QCRemarksMasterID),YRMC.LotNo 
-	            from YarnQCRemarksChild YRMC
-	            INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	            FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	            INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	            GROUP BY YRMC.LotNo
             ),
             YT AS(
@@ -3455,8 +3455,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				            WHEN YRMC.Diagnostic = 1 THEN 'Diagnostic'
 				            WHEN YRMC.CommerciallyApprove = 1 THEN 'CommerciallyApprove' 
 				            ELSE '' END Status,YRMC.Remarks,YRMC.LotNo
-	            from YarnQCRemarksChild YRMC
-	            INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	            FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	            INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	            INNER JOIN YTD ON YTD.LotNo=YRMC.LotNo AND YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID 
             ),
             WithoutPipeLineRecord AS
@@ -3564,8 +3564,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     YTD AS
                     (
 	                    Select MAX(YRM.QCRemarksMasterID) QCRemarksMasterID,LotNo 
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
 	                    GROUP BY LotNo
                     ),
                     YT AS
@@ -3576,8 +3576,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 			                    WHEN Diagnostic = 1 THEN 'Diagnostic'
 			                    WHEN CommerciallyApprove = 1 THEN 'CommerciallyApprove' 
 			                    ELSE '' END Status,YRMC.Remarks,YRMC.LotNo
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
 	                    INNER JOIN YTD ON YTD.LotNo=YRMC.LotNo AND YTD.QCRemarksMasterID=YRMC.QCRemarksMasterID 
                     ),
                     StockInfo AS
@@ -3603,7 +3603,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = YAC.YBChildItemID
 	                    INNER JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId=YACI.YarnStockSetId
                         INNER JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
-	                    LEFT JOIN YarnStockChild YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = {EnumStockFromTable.YarnAllocationChildItem} AND YSC.TransectionTypeId = {EnumTransectionType.Block} AND YSC.StockFromPKId = YACI.AllocationChildItemID
+	                    LEFT JOIN {TableNames.YarnStockChild} YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = {EnumStockFromTable.YarnAllocationChildItem} AND YSC.TransectionTypeId = {EnumTransectionType.Block} AND YSC.StockFromPKId = YACI.AllocationChildItemID
 	                    INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CCS ON CCS.ContactID = YSS.SpinnerID
@@ -3658,8 +3658,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     YTD AS
                     (
 	                    Select MAX(YRM.QCRemarksMasterID) QCRemarksMasterID,LotNo 
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
 	                    GROUP BY LotNo
                     ),
                     YT AS
@@ -3670,8 +3670,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 			                    WHEN Diagnostic = 1 THEN 'Diagnostic'
 			                    WHEN CommerciallyApprove = 1 THEN 'CommerciallyApprove' 
 			                    ELSE '' END Status,YRMC.Remarks,YRMC.LotNo
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID=YRMC.QCRemarksMasterID
 	                    INNER JOIN YTD ON YTD.LotNo=YRMC.LotNo AND YTD.QCRemarksMasterID=YRMC.QCRemarksMasterID 
                     ),
                     StockInfo AS
@@ -3694,7 +3694,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         INNER JOIN {TableNames.YARN_ALLOCATION_CHILD} YAC ON YAC.AllocationChildID= YACI.AllocationChildID
 	                    INNER JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId=YACI.YarnStockSetId
                         INNER JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
-	                    LEFT JOIN YarnStockChild YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = {EnumStockFromTable.YarnAllocationChildItem} AND YSC.TransectionTypeId = {EnumTransectionType.Block} AND YSC.StockFromPKId = YACI.AllocationChildItemID
+	                    LEFT JOIN {TableNames.YarnStockChild} YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = {EnumStockFromTable.YarnAllocationChildItem} AND YSC.TransectionTypeId = {EnumTransectionType.Block} AND YSC.StockFromPKId = YACI.AllocationChildItemID
 	                    INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CCS ON CCS.ContactID = YSS.SpinnerID
@@ -3746,16 +3746,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     ),
                     YarnAge AS(
 	                    Select ISNULL(DATEDIFF(DD, MAX(YRM.ApprovedDate), GETDATE()),0) Age, YRC.LotNo 
-	                    from YarnReceiveChild YRC
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC.ReceiveID
+	                    from {TableNames.YarnReceiveChild} YRC
+	                    INNER JOIN {TableNames.YarnReceiveMaster} YRM ON YRM.ReceiveID = YRC.ReceiveID
 	                    INNER JOIN MainObj MO ON MO.ItemMasterID = YRC.ItemMasterID
 	                    GROUP BY YRC.LotNo
                     ),
                     YTD AS(
 	                    Select QCRemarksMasterID = MAX(YRM.QCRemarksMasterID), YRMC.LotNo 
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
-	                    INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = YRMC.QCReceiveChildID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = YRMC.QCReceiveChildID
 	                    INNER JOIN MainObj MO ON MO.ItemMasterID = YRC.ItemMasterID
 	                    GROUP BY YRMC.LotNo
                     ),
@@ -3766,10 +3766,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				                    WHEN YRMC.Diagnostic = 1 THEN 'Diagnostic'
 				                    WHEN YRMC.CommerciallyApprove = 1 THEN 'CommerciallyApprove' 
 				                    ELSE '' END Status, YRMC.Remarks,YRMC.LotNo
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	                    INNER JOIN YTD ON YTD.LotNo = YRMC.LotNo AND YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID
-	                    INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = YRMC.QCReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = YRMC.QCReceiveChildID
 	                    INNER JOIN MainObj MO ON MO.ItemMasterID = YRC.ItemMasterID
                     ),
                     StockInfo AS
@@ -3781,7 +3781,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    YACI.PipelineAllocationQty
 	                    FROM {TableNames.YARN_ALLOCATION_CHILD}PipelineItem YACI
 	                    INNER JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
-	                    LEFT JOIN YarnStockChild YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = 7 AND YSC.StockFromPKId = YACI.AllocationChildPLItemID
+	                    LEFT JOIN {TableNames.YarnStockChild} YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = 7 AND YSC.StockFromPKId = YACI.AllocationChildPLItemID
 	                    INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CCS ON CCS.ContactID = YSS.SpinnerID
@@ -3800,7 +3800,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 								                        AND YSSWPL.SupplierId = YSS.SupplierId
 								                        AND YSSWPL.ShadeCode = YSS.ShadeCode
 								                        AND YSSWPL.SpinnerId > 0
-	                    LEFT JOIN YarnStockChild YSC ON YSC.YarnStockSetId = YSSWPL.YarnStockSetId AND YSC.StockFromTableId = {EnumStockFromTable.YarnAllocationChildPipelineItem} AND YSC.StockFromPKId = YACI.AllocationChildPLItemID
+	                    LEFT JOIN {TableNames.YarnStockChild} YSC ON YSC.YarnStockSetId = YSSWPL.YarnStockSetId AND YSC.StockFromTableId = {EnumStockFromTable.YarnAllocationChildPipelineItem} AND YSC.StockFromPKId = YACI.AllocationChildPLItemID
 	                    INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CCS ON CCS.ContactID = YSSWPL.SpinnerID
@@ -3839,16 +3839,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     ),
                     YarnAge AS(
 	                    Select ISNULL(DATEDIFF(DD, MAX(YRM.ApprovedDate), GETDATE()),0) Age, YRC.LotNo 
-	                    from YarnReceiveChild YRC
-	                    INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = YRC.ReceiveID
+	                    from {TableNames.YarnReceiveChild} YRC
+	                    INNER JOIN {TableNames.YarnReceiveMaster} YRM ON YRM.ReceiveID = YRC.ReceiveID
 	                    INNER JOIN MainObj MO ON MO.ItemMasterID = YRC.ItemMasterID
 	                    GROUP BY YRC.LotNo
                     ),
                     YTD AS(
 	                    Select QCRemarksMasterID = MAX(YRM.QCRemarksMasterID), YRMC.LotNo 
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
-	                    INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = YRMC.QCReceiveChildID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = YRMC.QCReceiveChildID
 	                    INNER JOIN MainObj MO ON MO.ItemMasterID = YRC.ItemMasterID
 	                    GROUP BY YRMC.LotNo
                     ),
@@ -3859,10 +3859,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				                    WHEN YRMC.Diagnostic = 1 THEN 'Diagnostic'
 				                    WHEN YRMC.CommerciallyApprove = 1 THEN 'CommerciallyApprove' 
 				                    ELSE '' END Status, YRMC.Remarks,YRMC.LotNo
-	                    from YarnQCRemarksChild YRMC
-	                    INNER JOIN YarnQCRemarksMaster YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
+	                    FROM {TableNames.YARN_QC_RECEIVE_CHILD} YRMC
+	                    INNER JOIN {TableNames.YARN_QC_REMARKS_MASTER} YRM ON YRM.QCRemarksMasterID = YRMC.QCRemarksMasterID
 	                    INNER JOIN YTD ON YTD.LotNo = YRMC.LotNo AND YTD.QCRemarksMasterID = YRMC.QCRemarksMasterID
-	                    INNER JOIN YarnReceiveChild YRC ON YRC.ChildID = YRMC.QCReceiveChildID
+	                    INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = YRMC.QCReceiveChildID
 	                    INNER JOIN MainObj MO ON MO.ItemMasterID = YRC.ItemMasterID
                     ),
                     StockInfo AS
@@ -3875,7 +3875,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                    FROM {TableNames.YARN_ALLOCATION_CHILD}PipelineItem YACI
                         INNER JOIN {TableNames.YARN_ALLOCATION_CHILD} YAC ON YAC.AllocationChildID= YACI.AllocationChildID
 	                    INNER JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
-	                    LEFT JOIN YarnStockChild YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = 7 AND YSC.StockFromPKId = YACI.AllocationChildPLItemID
+	                    LEFT JOIN {TableNames.YarnStockChild} YSC ON YSC.YarnStockSetId = YSS.YarnStockSetId AND YSC.StockFromTableId = 7 AND YSC.StockFromPKId = YACI.AllocationChildPLItemID
 	                    INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterID
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CCS ON CCS.ContactID = YSS.SpinnerID
@@ -4236,11 +4236,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                 if (entity.IsRevise)
                 {
-                    entity.Childs.ForEach(async x =>
-                    {
-                        await _connection.ExecuteAsync(SPNames.spUpdateAllocationChilditemPreProcessRevisionNo, new { AllocationID = x.AllocationID, YBookingNo = x.YBookingNo }, transaction, 30, CommandType.StoredProcedure);
-                        //_connection.ExecuteAsync("spYarnBooking_BK", new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
-                    });
+                    //entity.Childs.ForEach(async x =>
+                    //{
+                    //    await _connection.ExecuteAsync(SPNames.spUpdateAllocationChilditemPreProcessRevisionNo, new { AllocationID = x.AllocationID, YBookingNo = x.YBookingNo }, transaction, 30, CommandType.StoredProcedure);
+                    //    //_connection.ExecuteAsync("spYarnBooking_BK", new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
+                    //});
                 }
 
                 if (entity.Reject)

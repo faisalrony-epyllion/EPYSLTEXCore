@@ -59,7 +59,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         End,
                         M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -78,7 +78,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster}
@@ -101,8 +101,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -137,7 +137,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         End,
                         M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -156,7 +156,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster}
@@ -179,8 +179,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -215,7 +215,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         End,
                         M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -233,7 +233,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster}
@@ -256,8 +256,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -299,7 +299,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         End,
                         M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -318,7 +318,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster}
@@ -341,8 +341,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -378,7 +378,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         PRStatus= (CASE WHEN M.IsCPR=0 THEN 'Commercial PR Pending' WHEN IsFPR=0 THEN 'Acknowledge Pending' WHEN IsFPR > 0 THEN 'Acknowledged' ELSE '-' END),
                         M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -396,7 +396,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster}
@@ -419,8 +419,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -455,7 +455,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         End,
                         M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -474,7 +474,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster}
@@ -497,8 +497,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -569,7 +569,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster} --ProjectionYarnBookingMaster
@@ -593,8 +593,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -633,7 +633,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         CreateBy = CC.Name,
 	                    M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -658,7 +658,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster} --ProjectionYarnBookingMaster
@@ -682,8 +682,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -721,7 +721,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         CreateBy = CC.Name,
 	                    M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -745,7 +745,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster} --ProjectionYarnBookingMaster
@@ -769,8 +769,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -799,14 +799,14 @@ namespace EPYSLTEX.Infrastructure.Services
                     $@"With
                     MRChild AS (
 	                    SELECT C.FCMRChildID, C.FCMRMasterID
-	                    FROM FreeConceptMRChild C WHERE C.IsPR = 1 AND C.Reject = 0 AND C.Acknowledge=0 AND C.FCMRChildID NOT IN (SELECT FCMRChildID FROM YarnPRChild)
+	                    FROM FreeConceptMRChild C WHERE C.IsPR = 1 AND C.Reject = 0 AND C.Acknowledge=0 AND C.FCMRChildID NOT IN (SELECT FCMRChildID FROM {TableNames.YarnPRChild})
                     )
                     ,F As (
                         Select MR.FCMRMasterID,M.ConceptId,ConceptNo,ConceptDate,M.TrialNo [Re-TrialNo],Qty,MR.Remarks
 	                    ,KnittingType.TypeName KnittingType,Composition.SegmentValue Composition,Construction.SegmentValue Construction,Technical.TechnicalName,Gsm.SegmentValue Gsm
 	                    ,F.ValueName ConceptForName,S.ValueName ConceptStatus, ISG.SubGroupName ItemSubGroup,M.AddedBy,L.Name
                         From FreeConceptMRMaster MR
-                        INNER JOIN FreeConceptMaster M ON M.ConceptID=MR.ConceptID
+                        INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=MR.ConceptID
                         LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=M.KnittingTypeID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID=M.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Construction ON Construction.SegmentValueID=M.ConstructionID
@@ -845,7 +845,7 @@ namespace EPYSLTEX.Infrastructure.Services
                             From FreeConceptMRMaster FCM Inner Join FreeConceptMRChild FCC On FCM.FCMRMasterID = FCC.FCMRMasterID
                             Left Join YarnPRChild YPC On YPC.ConceptID = FCM.ConceptID
                             Left Join YarnPRMaster YPM On YPM.YarnPRMasterID = YPC.YarnPRMasterID
-                            Where FCC.FCMRChildID NOT IN (SELECT FCMRChildID FROM YarnPRChild)
+                            Where FCC.FCMRChildID NOT IN (SELECT FCMRChildID FROM {TableNames.YarnPRChild})
                             AND FCC.IsPR = 1 AND FCC.Reject = 0 AND FCM.IsComplete=1 --AND FCC.Acknowledge = 1
                         )A Group By FCMRChildID, FCMRMasterID, RevisionStatus
                     ),
@@ -860,7 +860,7 @@ namespace EPYSLTEX.Infrastructure.Services
 		                  Else 'BDS' End) [Source]
                         --'Concept' [Source]
                         From FreeConceptMRMaster MR
-                        INNER JOIN FreeConceptMaster M ON M.ConceptID=MR.ConceptID
+                        INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=MR.ConceptID
                         LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=M.KnittingTypeID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID=M.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Construction ON Construction.SegmentValueID=M.ConstructionID
@@ -881,7 +881,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     (
                         SELECT PYBC.PYBBookingChildID, PYBC.PYBookingID, SUM(PYBC.Qty)Qty, '' As RevisionStatus
                         FROM ProjectionYarnBookingItemChild PYBC
-                        WHERE PYBC.PYBBookingChildID NOT IN (SELECT PYBBookingChildID FROM YarnPRChild)
+                        WHERE PYBC.PYBBookingChildID NOT IN (SELECT PYBBookingChildID FROM {TableNames.YarnPRChild})
                         Group By PYBC.PYBBookingChildID, PYBC.PYBookingID
                     ),
                     /*
@@ -892,7 +892,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         '' ConceptForName, --'' ConceptStatus,
                         '' ItemSubGroup, 0 AddedBy, E.EmployeeName [Name], M.PYBookingID BookingID, M.PYBookingNo BookingNo,
                         M.PYBookingDate BookingDate, C.[Name] Buyer, 'Projection Yarn Booking' [Source]
-                        From ProjectionYarnBookingMaster M
+                        From {TableNames.PROJECTION_YARN_BOOKING_MASTER} M
                         INNER JOIN PYBookingChild ON PYBookingChild.PYBookingID = M.PYBookingID
                         LEFT JOIN {DbNames.EPYSL}..Contacts  C ON C.ContactID = M.BuyerID
                         LEFT JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.BookingByID
@@ -902,7 +902,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     YMCI AS
                     (
 	                    Select * From YDMaterialRequirementChildItem Where IsPR = 1
-                        And YDMaterialRequirementChildItemID NOT IN (SELECT YDMaterialRequirementChildItemID FROM YarnPRChild)
+                        And YDMaterialRequirementChildItemID NOT IN (SELECT YDMaterialRequirementChildItemID FROM {TableNames.YarnPRChild})
                     ),
                     YRC as
                     (
@@ -947,7 +947,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         CreateBy = CC.Name,
                         M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -971,7 +971,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster} --ProjectionYarnBookingMaster
@@ -995,8 +995,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -1034,7 +1034,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         CreateBy = CC.Name,
 	                    M.YarnPRFromTableId,
 	                    M.YarnPRFromMasterId
-                        from YarnPRMaster M
+                        from {TableNames.YARN_PR_MASTER} M
                         Inner Join YarnPRFrom_HK YPFH On M.YarnPRFromID = YPFH.YarnPRFromID
                         Inner Join {DbNames.EPYSL}..EntityTypeValue EV On EV.ValueID = M.TriggerPointID
                         LEFT Join {DbNames.EPYSL}..LoginUser L On M.YarnPRBy = L.UserCode
@@ -1058,7 +1058,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				                     END
 			   
 	                    FROM M
-	                    INNER JOIN ProjectionYarnBookingMaster PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
+	                    INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYB ON PYB.PYBookingID = M.YarnPRFromMasterId
 	                    LEFT JOIN PYBookingBuyerAndBuyerTeam BBT ON BBT.PYBookingID = PYB.PYBookingID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = BBT.BuyerID AND B.ContactID > 0
 	                    WHERE M.YarnPRFromTableId = {YarnPRFromTable.ProjectionYarnBookingMaster} --ProjectionYarnBookingMaster
@@ -1082,8 +1082,8 @@ namespace EPYSLTEX.Infrastructure.Services
 			                    ELSE C.[Name]
 			                    END
 	                    FROM M
-	                    INNER JOIN YarnPRChild MC on MC.YarnPRMasterID = M.YarnPRMasterID
-                        LEFT JOIN FreeConceptMaster FCM on FCM.ConceptID = MC.ConceptID
+	                    INNER JOIN {TableNames.YarnPRChild} MC on MC.YarnPRMasterID = M.YarnPRMasterID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = MC.ConceptID
                         LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = FCM.BuyerID AND C.ContactID > 0
 	                    LEFT JOIN PB ON PB.YarnPRMasterID = M.YarnPRMasterID
 	                    GROUP BY M.YarnPRMasterID, YarnPRNo, YarnPRRequiredDate, M.YarnPRByUser,
@@ -1200,7 +1200,7 @@ namespace EPYSLTEX.Infrastructure.Services
                             AND PRM.YarnPRFromMasterId = {yarnPRFromMasterId}
 
                             ;SELECT PRC.*
-                            FROM YarnPRChild PRC
+                            FROM {TableNames.YarnPRChild} PRC
                             INNER JOIN YarnPRMaster PRM ON PRM.YarnPRMasterID = PRC.YarnPRMasterID
                             WHERE PRM.YarnPRFromTableId = {yarnPRFromTableId}
                             AND PRM.YarnPRFromMasterId = {yarnPRFromMasterId}";
@@ -1240,7 +1240,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				FBA.BaseTypeId, FCC.DayValidDurationId
                 From FreeConceptMRChild FCC
                 INNER JOIN FreeConceptMRMaster FCMR ON FCMR.FCMRMasterID = FCC.FCMRMasterID
-                INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = FCMR.ConceptID
+                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = FCMR.ConceptID
 				LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID AND FBAC.BookingID = FCM.BookingID
                 LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID AND FBAC.BookingID = FCM.BookingID
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FCC.ItemMasterID
@@ -1252,7 +1252,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 On ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 Left Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = FCM.CompanyID
-                Where FCM.GroupConceptNo IN ({iDs}) AND FCC.IsPR = 1 AND FCC.FCMRChildID NOT IN (SELECT FCMRChildID FROM YarnPRChild)
+                Where FCM.GroupConceptNo IN ({iDs}) AND FCC.IsPR = 1 AND FCC.FCMRChildID NOT IN (SELECT FCMRChildID FROM {TableNames.YarnPRChild})
 				GROUP BY FCC.ItemMasterID, FCC.ShadeCode, FCM.CompanyID, FCM.ConceptNo, FCM.GroupConceptNo, CE.ShortName, IM.Segment1ValueID, IM.Segment2ValueID, 
 				FCM.ConceptID,FCC.FCMRChildID,
                 IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, ISV1.SegmentValue, 
@@ -1271,7 +1271,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                , ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, PM.BaseTypeId,
                     '{source}' As [Source]
                 FROM C
-				INNER JOIN ProjectionYarnBookingMaster PM ON PM.PYBookingID = C.PYBookingID
+				INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PM ON PM.PYBookingID = C.PYBookingID
                 Left Join {DbNames.EPYSL}..ItemMaster IM On C.ItemMasterID = IM.ItemMasterID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV1 On IM.Segment1ValueID = ISV1.SegmentValueID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV2 On IM.Segment2ValueID = ISV2.SegmentValueID
@@ -1292,8 +1292,8 @@ namespace EPYSLTEX.Infrastructure.Services
                 -- Where MMM.YarnPRMasterID = iDs;
                 Where MMM.YarnPRMasterID In (Select Distinct YPC.YarnPRMasterID
                                             From FreeConceptMRMaster FCM 
-							                Inner Join FreeConceptMaster FC On FC.ConceptID = FCM.ConceptID
-							                Inner Join YarnPRChild YPC On FCM.ConceptID = YPC.ConceptID 
+							                Inner Join {TableNames.RND_FREE_CONCEPT_MASTER} FC On FC.ConceptID = FCM.ConceptID
+							                Inner Join {TableNames.YarnPRChild} YPC On FCM.ConceptID = YPC.ConceptID 
                                             Where FC.ConceptNo IN ({iDs})) ;
 
                 -- Child Data
@@ -1304,8 +1304,8 @@ namespace EPYSLTEX.Infrastructure.Services
 	                YPC.FPRCompanyID, YPC.PYBBookingChildID, BaseTypeId = ISNULL(YPC.BaseTypeId,0), FCC.DayValidDurationId
 	                From FreeConceptMRMaster FCM 
                     Inner Join FreeConceptMRChild FCC On FCM.FCMRMasterID = FCC.FCMRMasterID
-                    Inner Join FreeConceptMaster FC On FC.ConceptID = FCM.ConceptID  
-	                Left Join YarnPRChild YPC ON YPC.FCMRChildID = FCC.FCMRChildID And YPC.ConceptID = FCM.ConceptID
+                    Inner Join {TableNames.RND_FREE_CONCEPT_MASTER} FC On FC.ConceptID = FCM.ConceptID  
+	                Left Join {TableNames.YarnPRChild} YPC ON YPC.FCMRChildID = FCC.FCMRChildID And YPC.ConceptID = FCM.ConceptID
 	                Where FC.ConceptNo IN ({iDs}) AND FCC.IsPR = 1 --YarnPRMasterID = 45
                 )
                 Select YRC.YarnPRChildID, YRC.FCMRChildID, YRC.YarnPRMasterID, YRC.SetupChildID, YRC.ConceptID, YRC.ItemMasterID,
@@ -1326,9 +1326,9 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV6 On ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON YRC.FPRCompanyID = CE.CompanyID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YRC.ConceptID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YRC.ConceptID
                 LEFT JOIN ProjectionYarnBookingItemChild PYBC ON PYBC.PYBBookingChildID = YRC.PYBBookingChildID
-                LEFT JOIN ProjectionYarnBookingMaster PYBM ON PYBM.PYBookingID = PYBC.PYBookingID;  ";
+                LEFT JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYBM ON PYBM.PYBookingID = PYBC.PYBookingID;  ";
             }
             else if (source == PRFromName.BDS && revisionstatus == "Revision Pending")
             {
@@ -1339,8 +1339,8 @@ namespace EPYSLTEX.Infrastructure.Services
                 -- Where MMM.YarnPRMasterID = iDs;
                 Where MMM.YarnPRMasterID In (Select Distinct YPC.YarnPRMasterID
                                             From FreeConceptMRMaster FCM 
-							                Inner Join FreeConceptMaster FC On FC.ConceptID = FCM.ConceptID
-							                Inner Join YarnPRChild YPC On FCM.ConceptID = YPC.ConceptID 
+							                Inner Join {TableNames.RND_FREE_CONCEPT_MASTER} FC On FC.ConceptID = FCM.ConceptID
+							                Inner Join {TableNames.YarnPRChild} YPC On FCM.ConceptID = YPC.ConceptID 
                                             Where FC.ConceptNo IN ({iDs})) ;
 
                 -- Child Data
@@ -1351,8 +1351,8 @@ namespace EPYSLTEX.Infrastructure.Services
 	                YPC.FPRCompanyID, YPC.PYBBookingChildID, BaseTypeId = ISNULL(YPC.BaseTypeId,0), FCC.DayValidDurationId
 	                From FreeConceptMRMaster FCM 
 	                Inner Join FreeConceptMRChild FCC On FCM.FCMRMasterID = FCC.FCMRMasterID
-	                Inner Join FreeConceptMaster FC On FC.ConceptID = FCM.ConceptID  
-	                Left Join YarnPRChild YPC ON YPC.FCMRChildID = FCC.FCMRChildID And YPC.ConceptID = FCM.ConceptID  
+	                Inner Join {TableNames.RND_FREE_CONCEPT_MASTER} FC On FC.ConceptID = FCM.ConceptID  
+	                Left Join {TableNames.YarnPRChild} YPC ON YPC.FCMRChildID = FCC.FCMRChildID And YPC.ConceptID = FCM.ConceptID  
 	                Where FC.ConceptNo IN ({iDs}) AND FCC.IsPR = 1 --YarnPRMasterID = 45
                 )
                 Select YRC.YarnPRChildID, YRC.FCMRChildID, YRC.YarnPRMasterID, YRC.SetupChildID, YRC.ConceptID, YRC.ItemMasterID,
@@ -1373,9 +1373,9 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV6 On ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON YRC.FPRCompanyID = CE.CompanyID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YRC.ConceptID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YRC.ConceptID
                 LEFT JOIN ProjectionYarnBookingItemChild PYBC ON PYBC.PYBBookingChildID = YRC.PYBBookingChildID
-                LEFT JOIN ProjectionYarnBookingMaster PYBM ON PYBM.PYBookingID = PYBC.PYBookingID;  ";
+                LEFT JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYBM ON PYBM.PYBookingID = PYBC.PYBookingID;  ";
             }
             sql +=
                 $@"
@@ -1515,8 +1515,8 @@ namespace EPYSLTEX.Infrastructure.Services
                 From YarnPRMaster MMM
                 left Join {DbNames.EPYSL}..LoginUser L ON MMM.YarnPRBy=L.UserCode
                 left Join {DbNames.EPYSL}..Employee E on L.EmployeeCode=E.EmployeeCode
-				Inner Join YarnPRChild YC on MMM.YarnPRMasterID=YC.YarnPRMasterID
-				left Join FreeConceptMaster FCM on FCM.ConceptID=YC.ConceptID
+				Inner Join {TableNames.YarnPRChild} YC on MMM.YarnPRMasterID=YC.YarnPRMasterID
+				left Join {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID=YC.ConceptID
                 LEFT JOIN {DbNames.EPYSL}..Contacts  C ON C.ContactID = FCM.BuyerID
                 LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT  ON CCT.CategoryTeamID = FCM.BuyerTeamID
                 Where MMM.YarnPRMasterID = {id}
@@ -1525,7 +1525,7 @@ namespace EPYSLTEX.Infrastructure.Services
 
                 -- Child Data
                 ;WITH YRC As (
-	                Select * From YarnPRChild Where YarnPRMasterID = {id}
+	                Select * From {TableNames.YarnPRChild} Where YarnPRMasterID = {id}
                 )
                 Select YRC.YarnPRChildID,YRC.YarnCategory, YRC.YarnPRMasterID, YRC.ConceptID, YRC.ItemMasterID, YRC.UnitID, YRC.Remarks, SUM(YRC.ReqQty) ReqQty, MAX(YRC.ReqCone) ReqCone
                     , YRC.ShadeCode, YRC.FPRCompanyID, CE.ShortName FPRCompanyName, IM.Segment1ValueID, IM.Segment2ValueID
@@ -1549,9 +1549,9 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT Join {DbNames.EPYSL}..Contacts S On S.ContactID = YRC.RefSpinnerID
                 LEFT JOIN {DbNames.EPYSL}..Unit U ON U.UnitID = YRC.UnitID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON YRC.FPRCompanyID = CE.CompanyID
-				LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YRC.ConceptID
+				LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YRC.ConceptID
 				LEFT JOIN ProjectionYarnBookingItemChild PYBC ON PYBC.PYBBookingChildID = YRC.PYBBookingChildID
-				LEFT JOIN ProjectionYarnBookingMaster PYBM ON PYBM.PYBookingID = PYBC.PYBookingID
+				LEFT JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYBM ON PYBM.PYBookingID = PYBC.PYBookingID
                 LEFT JOIN YDMaterialRequirementChildItem YMRCI ON YMRCI.YDMaterialRequirementChildItemID = YRC.YDMaterialRequirementChildItemID
                 LEFT JOIN YDMaterialRequirementMaster YMRM ON YMRM.YDMaterialRequirementMasterID = YMRCI.YDMaterialRequirementMasterID
 				GROUP BY YRC.YarnPRChildID,YRC.YarnCategory, YRC.YarnPRMasterID, YRC.ConceptID, YRC.ItemMasterID, YRC.UnitID, YRC.Remarks, YRC.ShadeCode, YRC.FPRCompanyID
@@ -1584,7 +1584,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 Inner Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SIGS.SubGroupID
                 Inner Join {DbNames.EPYSL}..ContactAdditionalInfo CAI On CAI.ContactID = SIGS.ContactID
                 Inner Join {DbNames.EPYSL}..CompanyEntity CE On C.MappingCompanyID = CE.CompanyID
-                Where ISG.SubGroupName = 'Fabric' And Isnull(CAI.InHouse,0) = 1 ------And CompanyID In (Select CompanyID From Al Where AvailableLimit >=  (Select SUM(ReqQty) ReqQty From YarnPRChild Where YarnPRMasterID = {id}))
+                Where ISG.SubGroupName = 'Fabric' And Isnull(CAI.InHouse,0) = 1 ------And CompanyID In (Select CompanyID From Al Where AvailableLimit >=  (Select SUM(ReqQty) ReqQty From {TableNames.YarnPRChild} Where YarnPRMasterID = {id}))
                 Group by CE.CompanyID, CE.CompanyName, CE.ShortName;
 
                 --Requisition By
@@ -1671,7 +1671,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                SELECT FCMR.ConceptID
 	                FROM FreeConceptMRChild FCC
 	                INNER JOIN FreeConceptMRMaster FCMR ON FCMR.FCMRMasterID = FCC.FCMRMasterID
-	                INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = FCMR.ConceptID
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = FCMR.ConceptID
 	                WHERE FCM.GroupConceptNo IN ('{groupConceptNo}') AND FCC.IsPR = 1
 	                Group By FCMR.ConceptID
                 ),
@@ -1693,7 +1693,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                FC.UnitID, PC.FPRCompanyID, PC.YarnCategory, PC.PYBBookingChildID, PC.YDMaterialRequirementChildItemID,
 	                FC.ItemMasterID, FC.ReqQty, FC.ReqCone, PC.RefLotNo, PC.RefSpinnerID, FC.DayValidDurationId
 	                From FC
-	                Left JOIN YarnPRChild PC ON PC.FCMRChildID = FC.FCMRChildID AND PC.YarnPRMasterID = {id}
+	                Left JOIN {TableNames.YarnPRChild} PC ON PC.FCMRChildID = FC.FCMRChildID AND PC.YarnPRMasterID = {id}
                 )
 
                 Select YarnPRChildID = ISNULL(YRC.YarnPRChildID,0), YRC.YarnPRMasterID,YRC.YarnCategory, YRC.ConceptID, YRC.ItemMasterID, YRC.UnitID, YRC.Remarks, SUM(YRC.ReqQty) ReqQty, MAX(YRC.ReqCone) ReqCone
@@ -1714,9 +1714,9 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 LEFT JOIN {DbNames.EPYSL}..Unit U ON U.UnitID = YRC.UnitID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON YRC.FPRCompanyID = CE.CompanyID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YRC.ConceptID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YRC.ConceptID
                 LEFT JOIN ProjectionYarnBookingItemChild PYBC ON PYBC.PYBBookingChildID = YRC.PYBBookingChildID
-                LEFT JOIN ProjectionYarnBookingMaster PYBM ON PYBM.PYBookingID = PYBC.PYBookingID
+                LEFT JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PYBM ON PYBM.PYBookingID = PYBC.PYBookingID
                 LEFT JOIN YDMaterialRequirementChildItem YMRCI ON YMRCI.YDMaterialRequirementChildItemID = YRC.YDMaterialRequirementChildItemID
                 LEFT JOIN YDMaterialRequirementMaster YMRM ON YMRM.YDMaterialRequirementMasterID = YMRCI.YDMaterialRequirementMasterID
                 GROUP BY ISNULL(YRC.YarnPRChildID,0), YRC.YarnPRMasterID,YRC.YarnCategory, YRC.ConceptID, YRC.ItemMasterID, YRC.UnitID, YRC.Remarks, YRC.ShadeCode, YRC.FPRCompanyID
@@ -1749,7 +1749,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 Inner Join {DbNames.EPYSL}..ItemSubGroup ISG On ISG.SubGroupID = SIGS.SubGroupID
                 Inner Join {DbNames.EPYSL}..ContactAdditionalInfo CAI On CAI.ContactID = SIGS.ContactID
                 Inner Join {DbNames.EPYSL}..CompanyEntity CE On C.MappingCompanyID = CE.CompanyID
-                Where ISG.SubGroupName = 'Fabric' And Isnull(CAI.InHouse,0) = 1 ------And CompanyID In (Select CompanyID From Al Where AvailableLimit >=  (Select SUM(ReqQty) ReqQty From YarnPRChild Where YarnPRMasterID = {id}))
+                Where ISG.SubGroupName = 'Fabric' And Isnull(CAI.InHouse,0) = 1 ------And CompanyID In (Select CompanyID From Al Where AvailableLimit >=  (Select SUM(ReqQty) ReqQty From {TableNames.YarnPRChild} Where YarnPRMasterID = {id}))
                 Group by CE.CompanyID, CE.CompanyName, CE.ShortName;
 
                 --Requisition By
@@ -1812,7 +1812,7 @@ namespace EPYSLTEX.Infrastructure.Services
             string sql =
                 $@"SELECT CM.CompanyID, COM.ShortName FPRCompanyName
                 FROM YarnCPRCompany CM
-                INNER JOIN YarnPRChild C ON C.YarnPRChildID = CM.YarnPRChildID
+                INNER JOIN {TableNames.YarnPRChild} C ON C.YarnPRChildID = CM.YarnPRChildID
                 INNER JOIN {DbNames.EPYSL}..CompanyEntity COM ON COM.CompanyID = CM.CompanyID
                 WHERE C.YarnPRChildID={childPrId}";
 
@@ -1830,7 +1830,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
                 From FreeConceptMRChild FCC
                 INNER JOIN FreeConceptMRMaster FCMR ON FCMR.FCMRMasterID = FCC.FCMRMasterID
-                INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = FCMR.ConceptID
+                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = FCMR.ConceptID
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FCC.ItemMasterID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -1845,7 +1845,7 @@ namespace EPYSLTEX.Infrastructure.Services
 				C As (
 	                Select PC.PYBBookingChildID, PC.PYBookingID, PC.ItemMasterID, PC.QTY, PC.ShadeCode, PM.PYBookingNo, PM.CompanyID
 					From ProjectionYarnBookingItemChild PC
-					INNER JOIN ProjectionYarnBookingMaster PM ON PM.PYBookingID = PC.PYBookingID
+					INNER JOIN {TableNames.PROJECTION_YARN_BOOKING_MASTER} PM ON PM.PYBookingID = PC.PYBookingID
 					WHERE PM.PYBookingNo IN ({bookingNos}) AND PC.ItemMasterId IN ({itemIds})
                 ),
                 PY AS (
@@ -1870,11 +1870,11 @@ namespace EPYSLTEX.Infrastructure.Services
 				CHILD AS (
 				SELECT M.*, PC.YarnPRChildID, PC.YarnPRMasterID
 				FROM M
-				LEFT JOIN YarnPRChild PC ON PC.FCMRChildID = M.FCMRChildID
+				LEFT JOIN {TableNames.YarnPRChild} PC ON PC.FCMRChildID = M.FCMRChildID
 				UNION
 				SELECT PY.*, PC.YarnPRChildID, PC.YarnPRMasterID
 				FROM PY
-				LEFT JOIN YarnPRChild PC ON PC.PYBBookingChildID = PY.PYBBookingChildID
+				LEFT JOIN {TableNames.YarnPRChild} PC ON PC.PYBBookingChildID = PY.PYBBookingChildID
 				)
 				SELECT *
 				FROM CHILD";
@@ -2072,7 +2072,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 transaction = _connection.BeginTransaction();
 
                 await _connectionGmt.OpenAsync();
-                transactionGmt = _connection.BeginTransaction();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
                 int newCompnayCount = yarnPRMaster.Childs.Sum(x => x.YarnPRCompanies.Where(c => c.EntityState == EntityState.Added).Count());
                 int maxCompanyId = await _service.GetMaxIdAsync(TableNames.YARN_PR_COMPANY, newCompnayCount, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
@@ -2087,8 +2087,8 @@ namespace EPYSLTEX.Infrastructure.Services
                 await _service.SaveAsync(yarnPRMaster.Childs, transaction);
                 foreach (YarnPRChild item in yarnPRMaster.Childs)
                 {
-
-                    await _connection.ExecuteAsync("sp_Validation_YarnPRChild", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnPRChild, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
 
                 }
                 transaction.Commit();
@@ -2134,7 +2134,7 @@ namespace EPYSLTEX.Infrastructure.Services
             string sql = $@"
             ;Select * From YarnPRMaster Where YarnPRMasterID = {id}
 
-            ;Select * From YarnPRChild Where YarnPRMasterID = {id}
+            ;Select * From {TableNames.YarnPRChild} Where YarnPRMasterID = {id}
 
             ;SELECT * FROM YarnPOMaster WHERE PRMasterID = {id} AND UnApprove = 1
 

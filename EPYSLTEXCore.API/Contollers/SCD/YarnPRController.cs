@@ -274,8 +274,9 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
         }
         [HttpPost]
         [Route("save-cpr")]
-        public async Task<IActionResult> SaveCPR(YarnPRMaster model)
+        public async Task<IActionResult> SaveCPR(dynamic jsnString)
         {
+            YarnPRMaster model = JsonConvert.DeserializeObject<YarnPRMaster>(Convert.ToString(jsnString));
             YarnPRMaster entity = await _service.GetAllByIDAsync(model.YarnPRMasterID);
 
             entity.UpdatedBy = AppUser.UserCode;

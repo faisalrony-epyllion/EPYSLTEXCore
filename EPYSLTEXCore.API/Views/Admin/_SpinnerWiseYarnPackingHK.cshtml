@@ -11,52 +11,51 @@
     var formId = "form" + pageId;
     var divDetailsId = "divDetails" + pageId;
 }
+<style type="text/css">
+    .cbo {
+        font-size: 16px !important;
+    }
+</style>
 <div id="@pageId">
     <div class="row">
         <form class="form-horizontal" id="@formId">
             <input type="hidden" id="YarnPackingID" name="YarnPackingID" value="-1111" />
 
             <div class="box-body" id="@divDetailsId">
-                @* <div class="box-footer" id="divFormButtons">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="float-right">
-                            <button type="button" class="btn btn-primary btn-sm" id="btnSave">
-                                <i class="fa fa-save"></i>&nbsp;&nbsp;Save
-                            </button>
-                        </div>
-                    </div>
-                </div> *@
                 <div class="col-12">
                     <div class="card border-0">
-                        <div class="card-header bg-default">
-                            Spinner Wise Yarn Packing - HK
-                        </div>
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="col-sm-6">
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label small" for="SpinnerID">Spinner</label>
-                                        <div class="col-md-10">
+                        <div class="card" style="border-color:transparent; border-style:none;">
+                            <div class="card-header">
+                                <h3 class="card-title"> General Information</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group cbo">
+                                            <label>Spinner</label>
                                             <select id="SpinnerID" name="SpinnerID" class="form-control form-control-sm"></select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label small" for="PackNo">Pack No</label>
-                                        <div class="col-md-10">
+                                    <div class="col-md-3">
+                                        <div class="form-group cbo">
+                                            <label>Pack No</label>
                                             <input id="PackNo" name="PackNo" class="form-control form-control-sm" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label small" for="Cone">Cone</label>
-                                        <div class="col-md-10">
+                                    <div class="col-md-3 cbo">
+                                        <div class="form-group">
+                                            <label>Cone</label>
                                             <input type="number" id="Cone" name="Cone" class="form-control form-control-sm" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label small" for="NetWeight">Net Weight</label>
-                                        <div class="col-md-10">
+                                    <div class="col-md-3">
+                                        <div class="form-group cbo">
+                                            <label>Net Weight</label>
                                             <input type="number" id="NetWeight" name="NetWeight" class="form-control form-control-sm" />
                                         </div>
                                     </div>

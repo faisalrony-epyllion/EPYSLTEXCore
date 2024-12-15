@@ -1749,6 +1749,7 @@
 
     function addFromPRChild(e) {
         e.preventDefault();
+
         masterData.CompanyId = getDefaultValueWhenInvalidN(masterData.CompanyId);
         if (masterData.CompanyId == 0) {
             return toastr.error("Select Company !!!");
@@ -2110,6 +2111,7 @@
                 break;
             }
         }
+      
         if (hasError) return false;
         axios.post("/api/ypo/save", data)
             .then(function (response) {

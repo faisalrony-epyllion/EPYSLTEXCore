@@ -829,10 +829,10 @@
         public const string YARN_ADJUSTMENT_NO = "YarnAdjustmentNo";
 
         #region Import Invoice Payment
-        //public const string Import_Invoice_Payment_Master = "ImportInvoicePaymentMaster_tex";
-        //public const string Import_Invoice_Payment_IIPMasterNo = "ImportInvoicePaymentIIPMasterNo_tex";
-        //public const string Import_Invoice_Payment_Child = "ImportInvoicePaymentChild_tex";
-        //public const string Import_Invoice_Payment_Details = "ImportInvoicePaymentDetails_tex";
+        public const string Import_Invoice_Payment_Master = "ImportInvoicePaymentMaster_tex";
+        public const string Import_Invoice_Payment_IIPMasterNo = "ImportInvoicePaymentIIPMasterNo_tex";
+        public const string Import_Invoice_Payment_Child = "ImportInvoicePaymentChild_tex";
+        public const string Import_Invoice_Payment_Details = "ImportInvoicePaymentDetails_tex";
         #endregion
 
         #region ImportDocumentAcceptanceChargeDetails
@@ -910,6 +910,8 @@
         public const string BankLimitChild = "BankLimitChild";
 
         public const string SpinnerWiseYarnPackingHK = "T_SpinnerWiseYarnPacking_HK";
+        public const string StockType = "StockType";
+        public const string YarnStockMaster_New = "T_YarnStockMaster_New";
 
         public const string FabricConstructionSubClassTechnicalName = "T_FabricConstructionSubClassTechnicalName";
         public const string CertificationsBasicSetup = "T_CertificationsBasicSetup";

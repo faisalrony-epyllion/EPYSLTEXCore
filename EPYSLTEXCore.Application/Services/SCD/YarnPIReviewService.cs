@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
@@ -36,12 +37,12 @@ namespace EPYSLTEX.Infrastructure.Services
                         CC.Name AS SupplierName, YPRM.PIFilePath, YPRM.AttachmentPreviewTemplate, YPRM.CompanyID, 
                         CE.ShortName As CompanyName, YPRM.SupplierID, SUM(YPRC.POQty) AS POQty, SUM(YPRC.PIQty) PIQty, 
 	                    SUM(YPRC.PIValue) AS PIValue, YPRM.NeedsReview, YPRM.Accept, YPRM.Reject, YPRM.RejectReason, POAddedByName = LU.Name
-	                    FROM YarnPIReceiveMaster YPRM
-	                    INNER JOIN YarnPIReceiveChild YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
+	                    FROM {TableNames.YarnPIReceiveMaster} YPRM
+	                    INNER JOIN {TableNames.YarnPIReceiveChild} YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = YPRM.SupplierID
                         INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = YPRM.CompanyID 
                         INNER JOIN YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
-						INNER JOIN YarnPOMaster YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID 
+						INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID 
                         Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
 	                    WHERE ISNULL(Acknowledge,0) = 1 And ISNULL(Accept,0) = 0 And ISNULL(Reject,0) = 0 AND IsCDA = '{isCDAPage}'
                         --AND YPO.RevisionNo = YPRM.PreProcessRevNo
@@ -65,8 +66,8 @@ namespace EPYSLTEX.Infrastructure.Services
 	                    SELECT M.YPIReceiveMasterID, M.YPINo, CONVERT(varchar, M.PIDate, 101) PIDate, CC.Name AS SupplierName, M.PIFilePath, 
                         M.AttachmentPreviewTemplate, M.CompanyID, M.SupplierID, SUM(C.POQty) AS POQty, SUM(C.PIQty) PIQty, SUM(C.PIValue) AS PIValue, 
                         M.NeedsReview, M.Accept, M.Reject, M.RejectReason
-	                    FROM YarnPIReceiveMaster M
-	                    INNER JOIN YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
+	                    FROM {TableNames.YarnPIReceiveMaster} M
+	                    INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
 						WHERE Accept= 0 AND Acknowledge= 0 AND ISNULL(UnAcknowledge,0) = 0 AND IsCDA = '{isCDAPage}' 
 	                    GROUP BY M.YPIReceiveMasterID, M.YPINo, M.PIDate, CC.Name, M.PIFilePath, M.AttachmentPreviewTemplate, M.CompanyID, M.SupplierID,
@@ -86,7 +87,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 (
                 SELECT YPI.YPIReceivePOID, YPIReceiveMasterID
                 FROM YarnPIReceivePO YPI
-                INNER JOIN YarnPOMaster YPO ON YPO.YPOMasterID = YPI.YPOMasterID
+                INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPI.YPOMasterID
                 WHERE YPI.RevisionNo <> YPO.RevisionNo
                 ),  
                 YPI AS
@@ -94,12 +95,12 @@ namespace EPYSLTEX.Infrastructure.Services
 	                SELECT M.YPIReceiveMasterID, M.YPINo, M.PONo, CONVERT(varchar, M.PIDate, 101) PIDate, CC.Name AS SupplierName,
                     M.PIFilePath, M.AttachmentPreviewTemplate, M.CompanyID, CE.ShortName As CompanyName, M.SupplierID, SUM(C.POQty) AS POQty, 
                     SUM(C.PIQty) PIQty, SUM(C.PIValue) AS PIValue, M.NeedsReview, M.Accept, M.Reject, M.RejectReason,M.Acknowledge, POAddedByName = LU.Name
-	                FROM YarnPIReceiveMaster M
-	                INNER JOIN YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
+	                FROM {TableNames.YarnPIReceiveMaster} M
+	                INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                     INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = M.CompanyID
                     INNER JOIN YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
-                    INNER JOIN YarnPOMaster YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID
+                    INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID
                     LEFT JOIN RVSList RV ON RV.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
                     Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
 					WHERE AcceptDate IS Not Null AND ISNULL(UnAcknowledge,0) = 0 AND IsCDA = 'False'
@@ -124,8 +125,8 @@ namespace EPYSLTEX.Infrastructure.Services
 	                    SELECT M.YPIReceiveMasterID, M.YPINo, CONVERT(varchar, M.PIDate, 101) PIDate, CC.Name AS SupplierName, M.PIFilePath, 
                         M.AttachmentPreviewTemplate, M.CompanyID, M.SupplierID, SUM(C.POQty) AS POQty, SUM(C.PIQty) PIQty, SUM(C.PIValue) AS PIValue, 
                         M.NeedsReview, M.Accept, M.Reject, M.RejectReason
-	                    FROM YarnPIReceiveMaster M
-	                    INNER JOIN YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
+	                    FROM {TableNames.YarnPIReceiveMaster} M
+	                    INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
 						WHERE ISNULL(Acknowledge,0) = 1 AND IsCDA = '{isCDAPage}'
 	                    GROUP BY M.YPIReceiveMasterID, M.YPINo, M.PIDate, CC.Name, M.PIFilePath, M.AttachmentPreviewTemplate, M.CompanyID, M.SupplierID,
@@ -145,8 +146,8 @@ namespace EPYSLTEX.Infrastructure.Services
 	                    SELECT M.YPIReceiveMasterID, M.YPINo, CONVERT(varchar, M.PIDate, 101) PIDate, CC.Name AS SupplierName, M.PIFilePath, 
                         M.AttachmentPreviewTemplate, M.CompanyID, M.SupplierID, SUM(C.POQty) AS POQty, SUM(C.PIQty) PIQty, SUM(C.PIValue) AS PIValue, 
                         M.NeedsReview, M.Accept, M.Reject, M.RejectReason
-	                    FROM YarnPIReceiveMaster M
-	                    INNER JOIN YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
+	                    FROM {TableNames.YarnPIReceiveMaster} M
+	                    INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
 						WHERE ISNULL(UnAcknowledge,0) = 1 AND IsCDA = '{isCDAPage}'
 	                    GROUP BY M.YPIReceiveMasterID, M.YPINo, M.PIDate, CC.Name, M.PIFilePath, M.AttachmentPreviewTemplate, M.CompanyID, SupplierID,
@@ -166,11 +167,11 @@ namespace EPYSLTEX.Infrastructure.Services
 	                SELECT M.YPIReceiveMasterID, M.YPINo, CONVERT(varchar, M.PIDate, 101) PIDate, M.CompanyID, CE.ShortName As CompanyName, 
 	                M.SupplierID, M.PONo, CC.Name AS SupplierName, M.PIFilePath, M.AttachmentPreviewTemplate,   
 	                C.YPIReceiveChildID, C.POQty, C.Rate, C.PIQty, C.PIValue, POAddedByName = LU.Name
-	                FROM YarnPIReceiveMaster M
-	                INNER JOIN YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
+	                FROM {TableNames.YarnPIReceiveMaster} M
+	                INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
 	                INNER JOIN YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
-	                INNER JOIN YarnPOMaster YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID  
+	                INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID  
 	                INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = M.CompanyID  
                     Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
 	                WHERE M.IsCDA = 0 --AND M.UnAcknowledge = 0 --And M.YPINo = 'az-200422'
@@ -201,12 +202,12 @@ namespace EPYSLTEX.Infrastructure.Services
 	                SELECT M.YPIReceiveMasterID, M.YPINo, M.PONo, CONVERT(varchar, M.PIDate, 101) PIDate, CC.Name AS SupplierName, 
                     M.PIFilePath, M.AttachmentPreviewTemplate, M.CompanyID, CE.ShortName As CompanyName, M.SupplierID, 
                     SUM(C.POQty) AS POQty, SUM(C.PIQty) PIQty, SUM(C.PIValue) AS PIValue, M.NeedsReview, M.Accept, M.Reject, M.RejectReason, POAddedByName = LU.Name
-	                FROM YarnPIReceiveMaster M
-	                INNER JOIN YarnPIReceiveChild C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
+	                FROM {TableNames.YarnPIReceiveMaster} M
+	                INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                     INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = M.CompanyID 
                     INNER JOIN YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
-				    INNER JOIN YarnPOMaster YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID 
+				    INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID 
                     Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
 					WHERE ISNULL(M.NeedsReview,0) = 0 AND ISNULL(Reject,0) = 1 AND IsCDA = 'False'
                     --AND YPO.RevisionNo = YPRM.PreProcessRevNo
@@ -240,11 +241,11 @@ namespace EPYSLTEX.Infrastructure.Services
                 AS (
 	                SELECT YPIReceiveMasterID, TypeOfLCID, YPINo, PIDate, SupplierID, NetPIValue, ShippingTolerance, 
                     NeedsReview, Accept, Reject, RejectReason, CreditDays,Acknowledge,UnAcknowledge
-					FROM YarnPIReceiveMaster WHERE YPIReceiveMasterID = {id}
+					FROM {TableNames.YarnPIReceiveMaster} WHERE YPIReceiveMasterID = {id}
                 ),
                 C AS (
 	                SELECT YPIReceiveMasterID, SUM(POQty)POQty, CONVERT(decimal(18,2), SUM(POQty * Rate)) POValue, SUM(PIValue) PIValue, SUM(PIQty) PIQty 
-                    FROM YarnPIReceiveChild WHERE YPIReceiveMasterID = {id}
+                    FROM {TableNames.YarnPIReceiveChild} WHERE YPIReceiveMasterID = {id}
 	                GROUP BY YPIReceiveMasterID
                 ),
                 A AS (
@@ -354,11 +355,11 @@ namespace EPYSLTEX.Infrastructure.Services
                 AS (
 	                SELECT YPIReceiveMasterID, TypeOfLCID, YPINo, PIDate, SupplierID, NetPIValue, ShippingTolerance, 
                     NeedsReview, Accept, Reject, RejectReason, CreditDays,Acknowledge,UnAcknowledge
-					FROM YarnPIReceiveMaster WHERE YPIReceiveMasterID = {id}
+					FROM {TableNames.YarnPIReceiveMaster} WHERE YPIReceiveMasterID = {id}
                 ),
                 C AS (
 	                SELECT YPIReceiveMasterID, SUM(POQty)POQty, CONVERT(decimal(18,2), SUM(POQty * Rate)) POValue, SUM(PIValue) PIValue, SUM(PIQty) PIQty 
-                    FROM YarnPIReceiveChild WHERE YPIReceiveMasterID = {id}
+                    FROM {TableNames.YarnPIReceiveChild} WHERE YPIReceiveMasterID = {id}
 	                GROUP BY YPIReceiveMasterID
                 ),
                 A AS (
@@ -394,8 +395,8 @@ namespace EPYSLTEX.Infrastructure.Services
                 Cast(Round(SUM(POC.POQty * POC.Rate),2) as Decimal(10,2)) TotalValue
                 --Round(SUM(POC.POQty * POC.Rate),2) TotalValue
                 From PO
-                Inner Join YarnPOMaster POM On PO.YPOMasterID = POM.YPOMasterID
-                Inner Join YarnPOChild POC On PO.YPOMasterID = POC.YPOMasterID
+                Inner Join {TableNames.YarnPOMaster} POM On PO.YPOMasterID = POM.YPOMasterID
+                Inner Join {TableNames.YarnPOChild} POC On PO.YPOMasterID = POC.YPOMasterID
                 Inner Join {DbNames.EPYSL}..CompanyEntity CE On POM.CompanyID = CE.CompanyID
                 Group By PO.YPIReceivePOID, POM.PONo, PO.YPIReceiveMasterID, PO.YPOMasterID, POM.RevisionNo, 
                 POM.QuotationRefNo, CE.ShortName;
@@ -403,10 +404,10 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;WITH M
                 AS (
 	                SELECT YPOMasterID, TypeOfLCID, ShippingTolerance, CreditDays
-					FROM YarnPOMaster WHERE YPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
+					FROM {TableNames.YarnPOMaster} WHERE YPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
                 ),
                 C AS (
-	                SELECT YPOMasterID, SUM((POQty*Rate)) TotalValue, SUM(POQty) TotalQty FROM YarnPOChild
+	                SELECT YPOMasterID, SUM((POQty*Rate)) TotalValue, SUM(POQty) TotalQty FROM {TableNames.YarnPOChild}
 					WHERE YPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
 	                GROUP BY YPOMasterID
                 ),
@@ -472,8 +473,8 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<YarnPIReceiveMaster> GetDetailsAsync(int id)
         {
             string sql = $@"
-            ;Select * From YarnPIReceiveMaster Where YPIReceiveMasterID = {id};
-            SELECT * FROM YarnPIReceiveChild WHERE YPIReceiveMasterID={id}";
+            ;Select * From {TableNames.YarnPIReceiveMaster} Where YPIReceiveMasterID = {id};
+            SELECT * FROM {TableNames.YarnPIReceiveChild} WHERE YPIReceiveMasterID={id}";
 
             try
             {

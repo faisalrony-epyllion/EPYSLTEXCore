@@ -22,7 +22,9 @@ namespace EPYSLTEX.Infrastructure.Services
         private readonly IDapperCRUDService<CommonInterfaceMaster> _service;
 
         private readonly IConfiguration _configuration;
-        private readonly SqlConnection _connection = null;
+        private readonly SqlConnection _connection;
+        private readonly SqlConnection _connectionGmt;
+
         private readonly IDapperCRUDService<Signatures> _signatures;
 
         public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service, IConfiguration configuration, IDapperCRUDService<Signatures> signatures)
@@ -30,6 +32,7 @@ namespace EPYSLTEX.Infrastructure.Services
             _configuration = configuration;
             _service = service;
             _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+            _connectionGmt = new SqlConnection(_configuration.GetConnectionString(AppConstants.GMT_CONNECTION));
             _signatures = signatures;
         }
 
@@ -167,7 +170,7 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             var query = sqlQuery;
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By LEN({primaryKeyColumn}), {primaryKeyColumn} ASC" : paginationInfo.OrderBy;
-            var isSp = sqlQuery.ToLower().Contains("sp");
+            var isSp = sqlQuery.ToLower().Contains("sp_");
             query = isSp ? sqlQuery : $@"
                  {sqlQuery}
                 {paginationInfo.FilterBy}
@@ -216,84 +219,117 @@ namespace EPYSLTEX.Infrastructure.Services
         }
         public async Task<string> Save(List<string> tableNames, string childGridParentColumn, List<object> objLst, List<string> conKey, List<string> primaryKeyColumns)
         {
+            SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+            JsonObject parentObjecct = null;
+            int newId =  0;
+
             try
             {
-                JsonObject parentObjecct =null;
-                 
-                SqlConnection conn = new SqlConnection(_configuration.GetConnectionString(conKey.FirstOrDefault()));
-                await conn.OpenAsync(); // Ensure connection is opened
+                // Open connections
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
 
-                using (var transaction = conn.BeginTransaction()) // Begin a transaction
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
+                int listCount = tableNames.Count;
+                if (listCount == objLst.Count && listCount == primaryKeyColumns.Count)
                 {
-                    try
+                    for (int i = 0; i < listCount; i++)
                     {
-                        // Ensure the lists are of the same length
-                        int listCount = tableNames.Count;
-                        if (listCount == objLst.Count && listCount == primaryKeyColumns.Count)
+                        string tableName = tableNames[i];
+                        object obj = objLst[i];
+                        string primaryKey = primaryKeyColumns[i];
+                        var jObject = obj as JsonObject;
+
+                        if (jObject != null)
                         {
-                            for (int i = 0; i < listCount; i++)
+                            parentObjecct = jObject;
+
+                            // If object has "ADD" status or is null, we process it
+                            if (jObject[StatusConstants.STATUS] == null || jObject[StatusConstants.STATUS].ToString().ToLower() == StatusConstants.ADD)
                             {
-                                string tableName = tableNames[i];
-                                object obj = objLst[i];
-                                string primaryKey = primaryKeyColumns[i];
-                                var jObject = obj as JsonObject;
-                                if (jObject != null)
-                                {
-                                    parentObjecct = jObject;
-                                    if (jObject[StatusConstants.STATUS] == null || jObject[StatusConstants.STATUS].ToString().ToLower() == StatusConstants.ADD)
-                                    {
-                                        jObject[primaryKey] = (await _signatures.GetMaxIdAsync(tableName, EPYSLTEXCore.Infrastructure.Statics.RepeatAfterEnum.NoRepeat, transaction, conn));
-                                        jObject[StatusConstants.STATUS] = StatusConstants.ADD;
+                                // Get MaxId from the second connection
+                                jObject[primaryKey] = await _signatures.GetMaxIdAsync(
+                                    tableName,
+                                    EPYSLTEXCore.Infrastructure.Statics.RepeatAfterEnum.NoRepeat,
+                                    transactionGmt,
+                                    _connectionGmt
+                                );
 
-                                    }
-                                    int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string>() { primaryKey }, conn, transaction);
-                                }
-                                else
-                                {
-                                    if (obj is IEnumerable<object> dataList)
-                                    {
-                                        foreach (var item in dataList)
-                                        {
-                                            jObject = item as JsonObject;
-                                            if (jObject != null)
-                                            {
-                                                if (jObject[StatusConstants.STATUS] == null || jObject[StatusConstants.STATUS].ToString().ToLower() == StatusConstants.ADD)
-                                                {
-                                                    jObject[primaryKey] = (await _signatures.GetMaxIdAsync(tableName, EPYSLTEXCore.Infrastructure.Statics.RepeatAfterEnum.NoRepeat, transaction, conn));
-                                                    jObject[childGridParentColumn] = parentObjecct[childGridParentColumn].ToString();
-                                                }
-                                            }
-                                           
-                                        }
-                                        int number = await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string>() { primaryKey }, conn, transaction);
-                                    }
-                                }
-
-
+                                // Set the status
+                                jObject[StatusConstants.STATUS] = StatusConstants.ADD;
                             }
-                          
+
+                            // Perform Add/Update/Delete on the first connection
+                            newId= await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
                         }
+                        else
+                        {
+                            // Handle case when obj is a list
+                            if (obj is IEnumerable<object> dataList)
+                            {
+                                foreach (var item in dataList)
+                                {
+                                    jObject = item as JsonObject;
+                                    if (jObject != null)
+                                    {
+                                        // If object has "ADD" status or is null, we process it
+                                        if (jObject[StatusConstants.STATUS] == null || jObject[StatusConstants.STATUS].ToString().ToLower() == StatusConstants.ADD)
+                                        {
+                                            // Get MaxId from the second connection
+                                            jObject[primaryKey] = await _signatures.GetMaxIdAsync(
+                                                tableName,
+                                                EPYSLTEXCore.Infrastructure.Statics.RepeatAfterEnum.NoRepeat,
+                                                transactionGmt,
+                                                _connectionGmt
+                                            );
 
+                                            // Set the parent column value for child grid
+                                            jObject[childGridParentColumn] = parentObjecct[childGridParentColumn]?.ToString();
+                                        }
+                                    }
+                                }
 
-
-
-
-
-                        // Commit transaction if all operations succeeded
-                        await transaction.CommitAsync();
-                        return parentObjecct?[childGridParentColumn]?.ToString();
+                                // Perform Add/Update/Delete on the first connection
+                                await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
+                            }
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        await transaction.RollbackAsync();
-                        Console.WriteLine($"Error during transaction: {ex.Message}");
-                        throw; // Re-throw the exception to be handled by the caller
-                    }
+
+                    // Commit both transactions after all operations are done
+                    await transaction.CommitAsync();
+                    await transactionGmt.CommitAsync();
+
+                    return  newId.ToString();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Input lists have different lengths.");
                 }
             }
             catch (Exception ex)
             {
-                return "Erroe";
+                // Rollback both transactions in case of error
+                await transaction.RollbackAsync();
+                await transactionGmt.RollbackAsync();
+
+                Console.WriteLine($"Error during transaction: {ex.Message}");
+                return $"Error: {ex.Message}";  // Return the error message to caller
+            }
+            finally
+            {
+                // Ensure connections are closed
+                if (_connection.State == System.Data.ConnectionState.Open)
+                {
+                    await _connection.CloseAsync();
+                }
+
+                if (_connectionGmt.State == System.Data.ConnectionState.Open)
+                {
+                    await _connectionGmt.CloseAsync();
+                }
             }
         }
 

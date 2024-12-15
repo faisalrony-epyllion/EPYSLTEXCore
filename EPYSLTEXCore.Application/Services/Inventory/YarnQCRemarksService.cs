@@ -1386,15 +1386,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 await _service.SaveAsync(fibers, transaction);
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 

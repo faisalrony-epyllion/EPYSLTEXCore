@@ -109,21 +109,27 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             return Ok();
 
         }
-        [Route("combodata/{menuId}")]
-        public async Task<IActionResult> GetComboData(int menuId)
+        [Route("combodata/{menuId}/{ChildID}")]
+        public async Task<IActionResult> GetComboData(int menuId,int ChildID)
         {
 
             var commonInterfaceMasterlst = await GetOrCreateCacheValue(InMemoryCacheKeys.CommonInterfaceConfig, AppConstants.APPLICATION_ID);
             CommonInterfaceMaster commonInterfaceMaster = commonInterfaceMasterlst.FirstOrDefault(p => p.MenuId == menuId);
 
-            string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName;
-            var childGridColumns = commonInterfaceMaster.ChildGridColumns;
-            foreach (var childGridColumn in childGridColumns)
-            {
-                string selectSql = childGridColumn.SelectSql;
-                var records = await _service.GetDynamicDataAsync(selectSql, connKey);
-                return Ok(records);
-            }
+            //  string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName
+               string connKey = commonInterfaceMaster.ConName;
+            var childColumn = commonInterfaceMaster.Childs.Find(p=>p.ChildID==ChildID);
+            string selectSql = childColumn.SelectSql;
+            var records = await _service.GetDynamicDataAsync(selectSql, connKey);
+            return Ok(records);
+
+            //var childGridColumns = commonInterfaceMaster.ChildGridColumns;
+            //foreach (var childGridColumn in childGridColumns)
+            //{
+            //    string selectSql = childGridColumn.SelectSql;
+            //    var records = await _service.GetDynamicDataAsync(selectSql, connKey);
+            //    return Ok(records);
+            //}
 
             return Ok();
 
@@ -165,9 +171,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             string parentsqlConnection = commonInterfaceMaster.ConName;
 
             // Get child grid details once to avoid multiple calls
-            var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
-            string childsqlConnection = childGrid.ConName;
-            string childGridParentColumn = childGrid.ParentColumn;
+           
+            string childsqlConnection = "";
+            string childGridParentColumn =  "";
             string parentTable = "";
             string childTable = "";
             string childGridprimaryKeyColumn = "";
@@ -193,6 +199,9 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             if (commonInterfaceMaster.ChildGrids.Count != 0)
             {
+                var childGrid = commonInterfaceMaster.ChildGrids.FirstOrDefault();
+                childsqlConnection = childGrid.ConName.Trim();
+
                 childTable = childGrid.TableName.Trim();
                 childGridprimaryKeyColumn = childGrid.PrimaryKeyColumn.Trim();
                 childGridParentColumn = childGrid.ParentColumn.Trim();

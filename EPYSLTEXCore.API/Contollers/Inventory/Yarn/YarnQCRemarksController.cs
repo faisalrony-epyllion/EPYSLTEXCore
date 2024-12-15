@@ -9,6 +9,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
@@ -67,8 +68,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SaveYarnQCRemarks(YarnQCRemarksMaster model)
+        public async Task<IActionResult> SaveYarnQCRemarks(dynamic jsonString)
         {
+            YarnQCRemarksMaster model = JsonConvert.DeserializeObject<YarnQCRemarksMaster>(Convert.ToString(jsonString));
+
             YarnQCRemarksMaster entity = new YarnQCRemarksMaster();
 
             if (model.IsRetest)
@@ -449,8 +452,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("approve")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> ApproveYarnQCRemarks(YarnQCRemarksMaster model)
+        public async Task<IActionResult> ApproveYarnQCRemarks(dynamic jsonString)
         {
+           YarnQCRemarksMaster model = JsonConvert.DeserializeObject<YarnQCRemarksMaster>(Convert.ToString(jsonString));
+
             YarnQCRemarksMaster entity = await _service.GetAllAsync(model.QCRemarksMasterID);
             entity.IsApproved = true;
             entity.ApprovedBy = AppUser.UserCode;

@@ -7,10 +7,12 @@ using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data;
 using System.Data.Entity;
 
@@ -117,8 +119,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Save(YarnReceiveMaster model)
+        public async Task<IActionResult> Save(dynamic jsonString)
         {
+            YarnReceiveMaster model = JsonConvert.DeserializeObject<YarnReceiveMaster>(Convert.ToString(jsonString));
             YarnReceiveMaster entity = await _service.GetAllAsync(model.ReceiveID);
             entity.YarnReceiveChilds.ForEach(c =>
             {

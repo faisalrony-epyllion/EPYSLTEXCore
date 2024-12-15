@@ -25,12 +25,16 @@ namespace EPYSLTEX.Infrastructure.Services
   public  class YarnRackBinAllocationService : IYarnRackBinAllocationService
     {
         private readonly IDapperCRUDService<YarnReceiveMaster> _service;
-       
+
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _connectionGmt;
 
         public YarnRackBinAllocationService(IDapperCRUDService<YarnReceiveMaster> service)
         {
             _service = service;
+            _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
+            _connectionGmt = service.Connection;
+
             _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
         }
@@ -909,10 +913,15 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task SaveAsync(YarnReceiveMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
                 int maxRackBinId = 0;
                 switch (entity.EntityState)
@@ -926,7 +935,8 @@ namespace EPYSLTEX.Infrastructure.Services
                             count += c.YarnReceiveChildRackBins.Where(y => y.EntityState == EntityState.Added).Count();
                         });
 
-                        maxRackBinId = await _service.GetMaxIdAsync(TableNames.YARN_RECEIVE_CHILD_RACK_BIN, count);
+                        maxRackBinId = await _service.GetMaxIdAsync(TableNames.YARN_RECEIVE_CHILD_RACK_BIN, count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        //maxChildResultId = await _service.GetMaxIdAsync(TableNames.YARN_QC_REMARKS_CHILDRESULT, countChildResult, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt); // new 3/13/2023
 
                         List<YarnReceiveChildRackBin> yarnReceiveChildRackBins = new List<YarnReceiveChildRackBin>();
                         entity.YarnReceiveChilds.ForEach(item =>
@@ -994,15 +1004,18 @@ namespace EPYSLTEX.Infrastructure.Services
                 }
                 await _service.SaveAsync(YarnRackBinList, transaction);
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
     }

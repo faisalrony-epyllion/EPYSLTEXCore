@@ -347,9 +347,9 @@
 
     function initMasterTable() {
         var commandList = [],
-            widthValue = 30;
+            widthValue = 60;
         if (status == statusConstants.PENDING) {
-            widthValue = 40;
+            widthValue = 60;
             commandList = [{
                 type: 'NoTest', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-ban' }
             }];
@@ -363,7 +363,7 @@
         //    ];
         //}
         else if ((status == statusConstants.PROPOSED_FOR_APPROVAL || status == statusConstants.APPROVED || status == statusConstants.REVISE || status == statusConstants.REJECT) && isQCR) {
-            widthValue = 80;
+            widthValue = 100;
             commandList = [
                 {
                     type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' }
@@ -389,7 +389,7 @@
             ];
         }
         else if (isQCRApproval) {
-            widthValue = 80;
+            widthValue = 100;
             commandList = [
                 {
                     type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' }
@@ -400,7 +400,7 @@
             ];
         }
         else if (status == statusConstants.ReTest) {
-            widthValue = 40;
+            widthValue = 60;
             commandList = [
                 {
                     type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' }
@@ -611,7 +611,7 @@
             editSettings: { allowAdding: true, allowEditing: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true },
             columns: [
                 {
-                    headerText: 'Command', width: 100, textAlign: 'Center', commands: [
+                    headerText: 'Command', width: 120, textAlign: 'Center', commands: [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
                         { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
@@ -696,12 +696,12 @@
                     })
                 },
                 { field: 'ReceiveNo', headerText: 'Receive No', width: 120, allowEditing: false },
-                { field: 'ReceiveDate', headerText: 'Receive Date', width: 100, textAlign: 'Center', type: 'date', format: _ch_date_format_1, allowEditing: false },
+                { field: 'ReceiveDate', headerText: 'Receive Date', textAlign: 'Center', type: 'date', format: _ch_date_format_1, allowEditing: false },
                 {
-                    field: 'ImportCategory', headerText: 'Import Category', width: 100, allowEditing: false
+                    field: 'ImportCategory', headerText: 'Import Category', allowEditing: false
                 },
                 {
-                    field: 'POFor', headerText: 'Purchase For', width: 100, allowEditing: false
+                    field: 'POFor', headerText: 'Purchase For', allowEditing: false
                 },
                 {
                     field: 'ChallanLot', headerText: 'Challan Lot', allowEditing: false
@@ -710,7 +710,7 @@
                     field: 'LotNo', headerText: 'Physical Lot', allowEditing: false
                 },
                 {
-                    field: 'PhysicalCount', headerText: 'Physical Count', width: 100, allowEditing: false
+                    field: 'PhysicalCount', headerText: 'Physical Count', allowEditing: false
                 },
                 {
                     field: 'YarnDetail', headerText: 'PO Yarn details', allowEditing: false
@@ -728,17 +728,17 @@
                 { field: 'ShadeCode', headerText: 'Shade Code', width: 100, allowEditing: false },
                 */
                 { field: 'DisplayUnitDesc', headerText: 'Uom', allowEditing: false, width: 100, textAlign: 'Center' },
-                { field: 'NoOfCartoon', headerText: 'No Of Cartoon', allowEditing: false, width: 100 },
-                { field: 'NoOfCone', headerText: 'No Of Cone', allowEditing: false, width: 100 },
-                { field: 'ReceiveQty', headerText: 'Receive Qty(KG)', allowEditing: false, width: 100 },
-                { field: 'ReqBagPcs', headerText: 'Req Qty Bag/Carton(Pcs)', width: 120 },
-                { field: 'ReqCone', headerText: 'Req Qty Cone(Pcs)', width: 100 },
-                { field: 'ReqQty', headerText: 'Req Qty(KG)', width: 100 },
-                { field: 'HasPrevQCReq', headerText: 'Has Prev QC Req?', textAlign: 'Center', width: 100, allowEditing: false, displayAsCheckBox: true, textAlign: 'Center' },
+                { field: 'NoOfCartoon', headerText: 'No Of Cartoon', allowEditing: false },
+                { field: 'NoOfCone', headerText: 'No Of Cone', allowEditing: false, width: 120 },
+                { field: 'ReceiveQty', headerText: 'Receive Qty(KG)', allowEditing: false},
+                { field: 'ReqBagPcs', headerText: 'Req Qty Bag/Carton(Pcs)' },
+                { field: 'ReqCone', headerText: 'Req Qty Cone(Pcs)' },
+                { field: 'ReqQty', headerText: 'Req Qty(KG)', width: 130 },
+                { field: 'HasPrevQCReq', headerText: 'Has Prev QC Req?', textAlign: 'Center', allowEditing: false, displayAsCheckBox: true, textAlign: 'Center' },
                 {
-                    field: 'TagWithPrevReq', headerText: 'Tag With Prev Req', allowEditing: false, textAlign: 'center', width: 85, valueAccessor: diplayPlanningCriteria
+                    field: 'TagWithPrevReq', headerText: 'Tag With Prev Req', allowEditing: false, textAlign: 'center', valueAccessor: diplayPlanningCriteria
                 },
-                { field: 'QCReqRemarks', headerText: 'Remarks', width: 100 }
+                { field: 'QCReqRemarks', headerText: 'Remarks', width: 120 }
             ],
             actionBegin: function (args) {
 

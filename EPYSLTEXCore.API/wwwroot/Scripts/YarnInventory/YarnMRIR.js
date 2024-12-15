@@ -359,7 +359,7 @@
                 //    ]
                 //},
                 {
-                    headerText: 'Command', width: 100, textAlign: 'center', visible: (menuType == _paramType.YarnMRIR && (status == statusConstants.PENDING || status == statusConstants.PENDING2 || status == statusConstants.PENDING3)), commands: [
+                    headerText: 'Command', width: 120, textAlign: 'center', visible: (menuType == _paramType.YarnMRIR && (status == statusConstants.PENDING || status == statusConstants.PENDING2 || status == statusConstants.PENDING3)), commands: [
                         /*{ type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },*/
                         { type: 'Test Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
                         /* { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }*/
@@ -447,7 +447,7 @@
         else {
             columns = [
                 {
-                    headerText: 'Command', width: 140, textAlign: 'center', visible: (menuType == _paramType.GRNSignIn && status == statusConstants.PENDING_CONFIRMATION) || (menuType == _paramType.YarnMRIRSCD && (status == statusConstants.COMPLETED)), commands: [
+                    headerText: 'Command', textAlign: 'center', visible: (menuType == _paramType.GRNSignIn && status == statusConstants.PENDING_CONFIRMATION) || (menuType == _paramType.YarnMRIRSCD && (status == statusConstants.COMPLETED)), commands: [
                         { type: 'Edit', title: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
                         { type: 'GRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
                         { type: 'MRIR Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
@@ -456,7 +456,7 @@
                     ]
                 },
                 {
-                    headerText: 'Command', width: 140, textAlign: 'center', visible: (menuType == _paramType.YarnMRIR && (status == statusConstants.COMPLETED || status == statusConstants.COMPLETED2 || status == statusConstants.COMPLETED3 || status == statusConstants.ALL)) || (menuType == _paramType.GRNSignIn && status == statusConstants.YDP_COMPLETE) || (menuType == _paramType.YarnMRIRSCD && (status == statusConstants.COMPLETED2 || status == statusConstants.COMPLETED3 || status == statusConstants.ALL || status == statusConstants.RETURN || status == statusConstants.ReTest)), commands: [
+                    headerText: 'Command', textAlign: 'center', visible: (menuType == _paramType.YarnMRIR && (status == statusConstants.COMPLETED || status == statusConstants.COMPLETED2 || status == statusConstants.COMPLETED3 || status == statusConstants.ALL)) || (menuType == _paramType.GRNSignIn && status == statusConstants.YDP_COMPLETE) || (menuType == _paramType.YarnMRIRSCD && (status == statusConstants.COMPLETED2 || status == statusConstants.COMPLETED3 || status == statusConstants.ALL || status == statusConstants.RETURN || status == statusConstants.ReTest)), commands: [
                         { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                         { type: 'GRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
                         { type: 'MRIR Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
@@ -650,7 +650,7 @@
             commandClick: handleCommandsChild,
             columns: [
                 {
-                    headerText: 'Commands', width: 80, commands: [
+                    headerText: 'Commands', width: 120, textAlign: 'Center', commands: [
                         { type: 'Test Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
                         //{ type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
                         //{ type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },

@@ -1,0 +1,178 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var modalRackItemId = "modalRackItem" + pageId;
+    var tblRackLocationItem = "tblRackLocationItem" + pageId;
+}
+
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;Available For Receive
+                </button>
+                <button id="btnList" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Received Lists
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="Id" name="Id" value="-1111" />
+            <input type="hidden" name="QCReturnReceivedMasterID" id="QCReturnReceivedMasterID" />
+            <input type="hidden" name="QCRemarksMasterID" id="QCRemarksMasterID" />
+            <input type="hidden" name="QCReturnMasterID" id="QCReturnMasterID" />
+            <input type="hidden" name="QCReqMasterID" id="QCReqMasterID" />
+            <input type="hidden" name="QCReturnBy" id="QCReturnBy" />
+
+            <div class="card card-default" id="@divDetailsId" style="display:none">
+                <div class="card-body">
+                    <div class="card" style="border-color:transparent; border-style:none;">
+                        <div class="card-header">
+                            <h3 class="card-title"> General/Commercial Information </h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Row 1 -->
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Return No</label>
+                                        <input id="QCReturnNo" name="QCReturnNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Requisition No</label>
+                                        <input id="QCReqNo" name="QCReqNo" class="form-control input-sm" value="" readonly />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label>Return Date</label>
+                                         <input id="QCReturnDate" name="QCReturnDate" class="form-control input-sm ej2-datepicker" />
+                                     </div>
+                                 </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Requisition Date</label>
+                                        <input id="QCReqDate" name="QCReqDate" class="form-control input-sm ej2-datepicker" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Return Receive Date</label>
+                                        <input id="QCReturnReceivedDate" name="QCReturnReceivedDate" class="form-control input-sm ej2-datepicker" />
+                                    </div>
+                                </div>
+                                  
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>QC Received No</label>
+                                        <input id="QCReceiveNo" name="QCReceiveNo" class="form-control input-sm" value="" readonly />
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>QC Received Date</label>
+                                        <input id="QCReceiveDate" name="QCReceiveDate" class="form-control input-sm ej2-datepicker" />
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition For</label>
+                                        <input id="QCReqFor" name="QCReqFor" class="form-control input-sm" value="" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                            <div class="panel-heading">
+                                Item Information
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <table id="@tblChildId"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="@modalRackItemId">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <h4 class="modal-title m-0 mr-2">Location Wise Rack</h4>
+                            <button id="btnAddNewRack" class="btn btn-success btn-xs" style="width: auto;" title="Add New Rack">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="form-group" style="max-height:400px;overflow-x:scroll;">
+                                            <table id="@tblRackLocationItem"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

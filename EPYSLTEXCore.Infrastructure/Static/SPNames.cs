@@ -1,10 +1,11 @@
-﻿namespace EPYSLTEX.Core.Statics
+﻿
+namespace EPYSLTEX.Core.Statics
 {
     public static class SPNames
     {
-        
+
         #region Garments SPs
-        
+
         #endregion
 
         public const string spUpdateFreeConceptStatus = "T_spUpdateFreeConceptStatus";
@@ -20,6 +21,7 @@
         public const string sp_Validation_YarnAllocationChildItem = "T_sp_Validation_YarnAllocationChildItem";
         public const string sp_Validation_YarnAllocationChildPipelineItem = "T_sp_Validation_YarnAllocationChildPipelineItem";
         public const string spUpdateAllocationChilditemPreProcessRevisionNo = "T_spUpdateAllocationChilditemPreProcessRevisionNo";
+        public const string spBackupYarnPIReceiveMaster = "T_spBackupYarnPIReceiveMaster_Full";
 
 
 
@@ -32,5 +34,7 @@
         public const string sp_Validation_FBookingAcknowledge = "T_sp_Validation_FBookingAcknowledge";
         public const string sp_Validation_FreeConceptMaster = "T_sp_Validation_FreeConceptMaster";
         public const string sp_Validation_FreeConceptMRChild = "T_sp_Validation_FreeConceptMRChild";
+        public const string spBackupYarnPR = "T_spBackupYarnPR";
     }
 }
+

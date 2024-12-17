@@ -8,6 +8,7 @@ using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.API.Contollers.SCD
@@ -129,8 +130,9 @@ namespace EPYSLTEXCore.API.Contollers.SCD
         [Route("save")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> SaveYarnBBLCProposal(YarnBBLCProposalMaster model)
+        public async Task<IActionResult> SaveYarnBBLCProposal(dynamic JsonString)
         {
+            YarnBBLCProposalMaster model = JsonConvert.DeserializeObject<YarnBBLCProposalMaster>(Convert.ToString(JsonString));
             YarnBBLCProposalMaster entity;
             if (model.ProposalID > 0)
             {

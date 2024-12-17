@@ -1,10 +1,11 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("T_YarnPIReceiveMaster")]
+    [Table(TableNames.YarnPIReceiveMaster)]
     public class YarnPIReceiveMaster : DapperBaseEntity
     {
         public YarnPIReceiveMaster()
@@ -30,7 +31,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
             TypeOfLCID = 0;
             IsRevise = false;
             POIds = "";
-
+         
             RevisionBy = 0;
         }
 

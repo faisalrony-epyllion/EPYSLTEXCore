@@ -21,16 +21,18 @@ namespace EPYSLTEXCore.Application.Services.SCD
     public class YarnBBLCProposalService : IYarnBBLCProposalService
     {
         private readonly IDapperCRUDService<YarnBBLCProposalMaster> _service;
-        //private readonly ISignatureRepository _signatureRepository;
+    
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
 
         public YarnBBLCProposalService(IDapperCRUDService<YarnBBLCProposalMaster> service
             //, ISignatureRepository signatureRepository
             )
         {
             _service = service;
-            //_signatureRepository = signatureRepository;
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<YarnBBLCProposalMaster>> GetListAsync(Status status, bool isCDAPage, PaginationInfo paginationInfo)
@@ -677,10 +679,14 @@ namespace EPYSLTEXCore.Application.Services.SCD
         public async Task SaveAsync(YarnBBLCProposalMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
 
                 if (entity.isRevision)
                 {
@@ -689,10 +695,10 @@ namespace EPYSLTEXCore.Application.Services.SCD
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity = await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
                     default:
                         break;
@@ -708,23 +714,26 @@ namespace EPYSLTEXCore.Application.Services.SCD
                 }
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 
-        private async Task<YarnBBLCProposalMaster> AddAsync(YarnBBLCProposalMaster entity)
+        private async Task<YarnBBLCProposalMaster> AddAsync(YarnBBLCProposalMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            entity.ProposalID = await _service.GetMaxIdAsync(TableNames.YarnBBLCProposalMaster);
-            entity.ProposalNo = await _service.GetMaxNoAsync("YarnBBLCProposalNo");
-            var maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBBLCProposalChild, entity.Childs.Count);
+            entity.ProposalID = await _service.GetMaxIdAsync(TableNames.YarnBBLCProposalMaster, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            entity.ProposalNo = await _service.GetMaxNoAsync("YarnBBLCProposalNo", 1, RepeatAfterEnum.EveryYear, "00000", transactionGmt, _gmtConnection);
+            var maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBBLCProposalChild, entity.Childs.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             foreach (var item in entity.Childs)
             {
@@ -735,10 +744,10 @@ namespace EPYSLTEXCore.Application.Services.SCD
 
             return entity;
         }
-        private async Task<YarnBBLCProposalMaster> UpdateAsync(YarnBBLCProposalMaster entity)
+        private async Task<YarnBBLCProposalMaster> UpdateAsync(YarnBBLCProposalMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            int maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBBLCProposalChild, entity.Childs.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxYarnLCChildId = await _service.GetMaxIdAsync(TableNames.YarnLCChild, entity.YarnLCChilds.Where(x => x.EntityState == EntityState.Added).Count());
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBBLCProposalChild, entity.Childs.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxYarnLCChildId = await _service.GetMaxIdAsync(TableNames.YarnLCChild, entity.YarnLCChilds.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             foreach (YarnBBLCProposalChild item in entity.Childs.ToList())
             {

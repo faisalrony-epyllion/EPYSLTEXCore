@@ -538,8 +538,8 @@
         public const string FabricBookingAnalysisAdditionalReason = "T_FabricBookingAnalysisAdditionalReason";
 
         public const string YPINo = "YPINo";
-        public const string YarnPIReceiveMaster = "T_YarnPIReceiveMaster";
-        public const string YarnPIReceiveChild = "T_YarnPIReceiveChild";
+        public const string YarnPIReceiveMaster = "YarnPIReceiveMaster";
+        public const string YarnPIReceiveChild = "YarnPIReceiveChild";
         public const string YarnPIReceivePO = "T_YarnPIReceivePO";
         public const string YarnPIReceiveAdditionalValue = "T_YarnPIReceiveAdditionalValue";
         public const string YarnPIReceiveDeductionValue = "T_YarnPIReceiveDeductionValue";
@@ -599,7 +599,7 @@
         //public const string YARN_PR_CHILD_PROGRAM = "YarnPRChildSubProgram";
         public const string YARN_PRNO = "Yarn PRNo";
         public const string YARN_PR_COMPANY = "T_YarnPRCompany";
-        //public const string YARN_CPR_COMPANY = "YarnCPRCompany";
+        public const string YARN_CPR_COMPANY = "T_YarnCPRCompany";
 
         public const string YARN_RND_ISSUE_MASTER = "T_YarnRnDIssueMaster";
         public const string YARN_RND_ISSUE_CHILD = "T_YarnRnDIssueChild";

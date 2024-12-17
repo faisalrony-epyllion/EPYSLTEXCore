@@ -1,10 +1,11 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("YarnPIReceiveChild")]
+    [Table(TableNames.YarnPIReceiveChild)]
     public class YarnPIReceiveChild : YarnItemMaster, IDapperBaseEntity
     {
         public YarnPIReceiveChild()

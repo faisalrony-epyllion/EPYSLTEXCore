@@ -1,7 +1,7 @@
 ﻿(function () {
     'use strict'
     var currentChildRowData;
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId, pageId;
     var $pageEl, $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, tblMasterId, $formEl, $tblChildEl, tblChildId,
         TblAvailablePOforPIId, $TblAvailablePOforPIEl;
@@ -36,7 +36,7 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
-
+        if (!menuParam) menuParam = localStorage.getItem("menuParam");
         pageId = pageName + "-" + menuId;
         $pageEl = $(pageConstants.PAGE_ID_PREFIX + pageId);
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -47,12 +47,17 @@
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
         TblAvailablePOforPIId = "#tblAvailablePOforPI" + pageId;
-        // Page Load Event 
-        isYarnReceivePage = convertToBoolean($(`#${pageId}`).find("#YarnPIReceivePage").val());
-        isCDAReceivePage = convertToBoolean($(`#${pageId}`).find("#CDAPIReceivePage").val());
-        isYarnPIReceiveAckPage = convertToBoolean($(`#${pageId}`).find("#YarnPIReceiveAckPage").val());
-        isYarnPIReceivePage = convertToBoolean($(`#${pageId}`).find("#YarnPIReceivePage").val());
-        isCDAPIReceiveAckPage = convertToBoolean($(`#${pageId}`).find("#CDAPIReceiveAckPage").val());
+
+        // Page Load Event
+
+        if (pageName === 'YarnPIReceive') isYarnReceivePage = true;
+        if (pageName === 'YarnReceive') isYarnReceivePage = true;
+        if (pageName === 'CDAReceive') isCDAReceivePage = true;
+        if (pageName === 'YarnPIAcknowledge') {
+            isYarnPIReceiveAckPage = true; isYarnReceivePage = true;
+        }
+        if (pageName === 'CDAPIReceiveAck') isCDAPIReceiveAckPage = true;
+
 
         var today = new Date();
         var datetoday = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
@@ -443,6 +448,7 @@
         if ($tblMasterEl) $tblMasterEl.destroy();
 
         var url = "";
+      
         if (isYarnReceivePage) {
             url = "/api/ypi-receive/list?status=" + status;// + "&" + queryParams;
         }
@@ -460,7 +466,7 @@
     }
 
     function handleCommands(args) {
-        debugger;
+  
         $formEl.find("#btnSave,#btnAcknowledge").hide();
         if (args.commandColumn.type == 'Add') {
             if (status == statusConstants.PENDING) {
@@ -1087,6 +1093,7 @@
     }
 
     function initAttachment(path, type, $el) {
+
         if (!path) {
             initNewAttachment($el);
             return;
@@ -1418,7 +1425,7 @@
 
         const config = {
             headers: {
-                'content-type': 'multipart/form-data',
+                'Content-Type': 'application/json',
                 'Authorization': "Bearer " + localStorage.getItem("token")
             }
         }
@@ -1478,8 +1485,10 @@
     function SaveAcknowledge(ackno) {
 
         var data = formDataToJson($formEl.serializeArray());
+        
         data.Acknowledge = ackno;
-        axios.post("/api/ypi-receive/acknowledge", data)
+        data.TransShipmentAllow = $('#TransShipmentAllow').prop('checked');
+        axios.post("/api/ypi-receive/acknowledge-pi", data)
             .then(function () {
                 toastr.success("Acknowledge Process Successfully!");
                 backToList();

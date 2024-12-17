@@ -899,7 +899,7 @@
             //    hasError = true;
             //    break;
             //}
-            debugger
+
             if (!child.Remarks || child.Remarks.trim() === "") {
                 toastr.error("Give Remarks.");
                 hasError = true;

@@ -1012,11 +1012,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                WHERE C.QCRemarksChildID = {qcRemarksChildID}
                 ),
                 M AS (
-	                Select M.* 
+	                Select M.*,RC.QCRemarksChildID
 	                From {TableNames.YARN_QC_REMARKS_MASTER} M
 	                INNER JOIN RC ON RC.QCRemarksMasterID = M.QCRemarksMasterID
                 )
                 Select M.QCRemarksMasterID, M.QCReqMasterID, M.QCIssueMasterID, M.QCReceiveMasterID, M.QCRemarksNo, M.QCRemarksBy, M.QCRemarksDate
+                    , M.QCRemarksChildID
 	                , RM.QCReceiveNo, RM.QCReceiveDate, RQM.QCReqNo, RQM.QCReqDate
 	                , M.LocationId, M.ReceiveID, M.CompanyId, M.RCompanyId, M.SupplierId, M.SpinnerId, Supplier.ShortName [Suupplier], Spinner.ShortName [Spinner]
                 From  M

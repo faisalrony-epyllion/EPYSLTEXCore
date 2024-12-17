@@ -675,7 +675,6 @@
     }
 
     function save() {
-        debugger;
         var data = YarnReceive;
         var hasError = false;
         for (var i = 0; i < data.YarnReceiveChilds.length; i++) {

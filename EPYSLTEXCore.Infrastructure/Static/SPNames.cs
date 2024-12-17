@@ -20,6 +20,7 @@
         public const string sp_Validation_YarnAllocationChildItem = "T_sp_Validation_YarnAllocationChildItem";
         public const string sp_Validation_YarnAllocationChildPipelineItem = "T_sp_Validation_YarnAllocationChildPipelineItem";
         public const string spUpdateAllocationChilditemPreProcessRevisionNo = "T_spUpdateAllocationChilditemPreProcessRevisionNo";
+        public const string spBackupYarnPIReceiveMaster = "T_spBackupYarnPIReceiveMaster_Full";
 
 
 

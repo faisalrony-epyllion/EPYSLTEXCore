@@ -18,12 +18,15 @@ namespace EPYSLTEX.Infrastructure.Services
     {
         private readonly IDapperCRUDService<YarnPIReceiveMaster> _service;
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
 
         public YarnPIReceiveService(IDapperCRUDService<YarnPIReceiveMaster> service)
         {
             _service = service;
-            _connection = service.Connection;
+           
             _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+            _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<YarnPIReceiveMaster>> GetAsync(Status status, PaginationInfo paginationInfo)
@@ -1029,7 +1032,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 -- Child Items
                 ;With 
                 YPC As (
-	                Select * From YarnPIReceiveChild Where YPIReceiveMasterID = {id}
+	                Select * From {TableNames.YarnPIReceiveChild} Where YPIReceiveMasterID = {id}
                 )
                 SELECT YPC.YPIReceiveChildID,YPC.YPOChildID, YPC.ItemMasterID, YPC.YarnCategory, YPC.UnitID, YPC.Remarks, YPC.HSCode, 
                 YPC.YarnLotNo, U.DisplayUnitDesc, YarnProgram.ValueName AS YarnProgram, YPC.POQty, YPC.Rate, YPC.PIValue POValue, 
@@ -1124,7 +1127,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;With 
                 YPC As 
                 (
-	                Select * From YarnPIReceiveChild Where YPIReceiveMasterID = {id}
+	                Select * From  {TableNames.YarnPIReceiveChild} Where YPIReceiveMasterID = {id}
                 )
                 SELECT YPC.YPIReceiveChildID, YPC.ItemMasterID, YPC.YarnCategory, YPC.UnitID, YPC.Remarks, YPC.HSCode, YPC.YarnLotNo, 
                 U.DisplayUnitDesc, YarnProgram.ValueName AS YarnProgram, YPC.POQty, YPC.Rate, YPC.PIValue As POValue, YPC.PIQty, YPC.PIValue, 
@@ -1160,12 +1163,12 @@ namespace EPYSLTEX.Infrastructure.Services
             var sql = $@"
                 -- YarnPIReceiveAdditionalValueList
                 ;Select YPIReceiveAdditionalID, YPIReceiveMasterID, AdditionalValueID, AdditionalValue 
-                From YarnPIReceiveAdditionalValue
+                From {TableNames.YarnPIReceiveAdditionalValue}
                 Where YPIReceiveMasterID = {id};
 
                 -- YarnPIReceiveDeductionValueList
                 ;Select YPIReceiveDeductionID, YPIReceiveMasterID, DeductionValueID, DeductionValue
-                From YarnPIReceiveDeductionValue
+                From {TableNames.YarnPIReceiveDeductionValue}
                 Where YPIReceiveMasterID = {id};
 
                 -- Companies
@@ -1755,21 +1758,28 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task SaveAsync(YarnPIReceiveMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 if (entity.IsRevise)
                 {
-                    await _connection.ExecuteAsync("spBackupYarnPIReceiveMaster_Full", new { YPIReceiveMasterID = entity.YPIReceiveMasterID, UserId = entity.AddedBy }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spBackupYarnPIReceiveMaster, new { YPIReceiveMasterID = entity.YPIReceiveMasterID, UserId = entity.AddedBy }, transaction, 30, CommandType.StoredProcedure);
                 }
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity = await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
                     default:
                         break;
@@ -1782,24 +1792,27 @@ namespace EPYSLTEX.Infrastructure.Services
                 await _service.SaveAsync(entity.YarnPIReceivePOList, transaction);
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
-        private async Task<YarnPIReceiveMaster> AddAsync(YarnPIReceiveMaster entity)
+        private async Task<YarnPIReceiveMaster> AddAsync(YarnPIReceiveMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            entity.YPIReceiveMasterID = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveMaster);
-            var maxYPIReceiveChildId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveChild, entity.Childs.Count);
-            var maxYPIReceivePOId = await _service.GetMaxIdAsync(TableNames.YarnPIReceivePO, entity.YarnPIReceivePOList.Count);
-            var maxYPIReceiveAddtionalId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveAdditionalValue, entity.YarnPIReceiveAdditionalValueList.Count);
-            var maxYPIReceiveDeductionId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveDeductionValue, entity.YarnPIReceiveDeductionValueList.Count);
+            entity.YPIReceiveMasterID = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveMaster, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxYPIReceiveChildId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveChild, entity.Childs.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxYPIReceivePOId = await _service.GetMaxIdAsync(TableNames.YarnPIReceivePO, entity.YarnPIReceivePOList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxYPIReceiveAddtionalId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveAdditionalValue, entity.YarnPIReceiveAdditionalValueList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxYPIReceiveDeductionId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveDeductionValue, entity.YarnPIReceiveDeductionValueList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
             
             foreach (var item in entity.Childs)
             {
@@ -1834,12 +1847,12 @@ namespace EPYSLTEX.Infrastructure.Services
 
             return entity;
         }
-        private async Task<YarnPIReceiveMaster> UpdateAsync(YarnPIReceiveMaster entity)
+        private async Task<YarnPIReceiveMaster> UpdateAsync(YarnPIReceiveMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            var maxYPIReceiveChildId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveChild, entity.Childs.Where(x => x.EntityState == EntityState.Added).Count());
-            var maxYPIReceivePOId = await _service.GetMaxIdAsync(TableNames.YarnPIReceivePO, entity.YarnPIReceivePOList.Where(x => x.EntityState == EntityState.Added).Count());
-            var maxYPIReceiveAddtionalId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveAdditionalValue, entity.YarnPIReceiveAdditionalValueList.Where(x => x.EntityState == EntityState.Added).Count());
-            var maxYPIReceiveDeductionId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveDeductionValue, entity.YarnPIReceiveDeductionValueList.Where(x => x.EntityState == EntityState.Added).Count());
+            var maxYPIReceiveChildId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveChild, entity.Childs.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxYPIReceivePOId = await _service.GetMaxIdAsync(TableNames.YarnPIReceivePO, entity.YarnPIReceivePOList.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxYPIReceiveAddtionalId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveAdditionalValue, entity.YarnPIReceiveAdditionalValueList.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxYPIReceiveDeductionId = await _service.GetMaxIdAsync(TableNames.YarnPIReceiveDeductionValue, entity.YarnPIReceiveDeductionValueList.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
             
             foreach (var item in entity.Childs.ToList())
             {

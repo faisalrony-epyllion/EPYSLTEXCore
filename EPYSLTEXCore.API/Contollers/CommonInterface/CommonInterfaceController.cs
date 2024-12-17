@@ -6,6 +6,7 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.SupplyChain;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Data.Entity.Core.Metadata.Edm;
@@ -25,17 +26,25 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
         private readonly IUserService _userService;
         private readonly ICommonInterfaceService _service;
         private readonly IConfiguration _configuration;
-        //private readonly IDapperCRUDService<Signatures> _signatures;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMemoryCache _memoryCache;
-        public CommonInterfaceController(IUserService userService, ICommonInterfaceService service, IMemoryCache memoryCache
+        public CommonInterfaceController(IUserService userService, ICommonInterfaceService service, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor
         ) : base(userService)
         {
 
             _service = service;
             _userService = userService;
             _memoryCache = memoryCache;
-            //  _signatures = signatures;
-            // _sqlQueryRepository = sqlQueryRepository;
+
+            _httpContextAccessor = httpContextAccessor;
+            var userClaims = _httpContextAccessor.HttpContext?.User?.Claims;
+
+            if (userClaims != null)
+            {
+                _service.UserCode = Convert.ToInt32(userClaims.FirstOrDefault(c => c.Type == JwtTokenStorage.UserID)?.Value);
+            }
+
+
         }
         JsonSerializerOptions options = new JsonSerializerOptions
         {
@@ -119,6 +128,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             //  string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName
                string connKey = commonInterfaceMaster.ConName;
             var childColumn = commonInterfaceMaster.Childs.Find(p=>p.ChildID==ChildID);
+             
             string selectSql = childColumn.SelectSql;
             var records = await _service.GetDynamicDataAsync(selectSql, connKey);
             return Ok(records);

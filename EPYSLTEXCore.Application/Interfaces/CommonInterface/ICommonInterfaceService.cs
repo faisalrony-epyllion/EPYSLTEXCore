@@ -4,7 +4,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
 {
     public interface ICommonInterfaceService
     {
-
+        public int UserCode { get; set; }
         Task<CommonInterfaceMaster> GetConfigurationAsync(int menuId);
 
         Task<int> ExecuteAsync(string query, object param);

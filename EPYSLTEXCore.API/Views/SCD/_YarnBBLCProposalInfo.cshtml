@@ -69,12 +69,18 @@
                 <input type="hidden" name="CompanyID" id="CompanyID" />
                 <input type="hidden" name="ProposeContractID" id="ProposeContractID" />
 
-                <div class="box-body" id="@divDetailsId" style="display:none">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            New BBLC Proposal
-                        </div>
-                        <div class="panel-body">
+                <div class="card card-default" id="@divDetailsId" style="display:none">
+                    <div class="card-body">
+                        <div class="card" style="border-color:transparent; border-style:none;">
+                            <div class="card-header">
+                                <h3 class="card-title"> New BBLC Proposal </h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -120,14 +126,14 @@
                         </div>
                     </div>
 
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            PI Information
+                    <div class="card" style="border-color: transparent; border-style: none;">
+                        <div class="card-header d-flex justify-content-between align-items-left">
+                            <h3 class="mb-0">PI Information</h3>
                             <button type="button" id="btnAddPI" class="btn btn-success btn-xs">
                                 <i class="fa fa-plus"></i>&nbsp;&nbsp;Add PI
                             </button>
                         </div>
-                        <div class="panel-body">
+                        <div class="card-body">
                             <div class="form-horizontal">
                                 <div class="col-sm-12">
                                     <div class="form-group">
@@ -138,39 +144,40 @@
                         </div>
                     </div>
 
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="col-sm-2 divCashStatus">
-                                        <input type="checkbox" style="margin:5px;" id="CashStatus" name="CashStatus" value="0" />
-                                        <label for="CashStatus">Cash L/C</label>
-                                    </div>
 
-                                    <label class="control-label col-sm-2 small divProposeContract">
-                                        <span id="lblContractNo">Propose Contract No</span>
-                                    </label>
-                                    <div class="col-sm-3 divProposeContract">
-                                        <input id="ProposeContract" name="ProposeContract" type="text" style="width: calc(100% - 40px); float: left;" class="form-control input-sm" readonly />
-                                        <button type="button" id="btnAddCOntractNo" class="btn btn-success btn-xs" style="width: 28px; margin-left: 10px;">
-                                            <i class="fa fa-search"></i>&nbsp;&nbsp;
-                                        </button>
-                                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <!-- Cash L/C Checkbox -->
+                            <div class="col-sm-2 d-flex align-items-center divCashStatus">
+                                <input type="checkbox" class="mr-2" id="CashStatus" name="CashStatus" value="0" />
+                                <label for="CashStatus" class="mb-0">Cash L/C</label>
+                            </div>
 
-                                    <div class="divIssueBankID">
-                                        <label class="control-label col-sm-2 small">Bank</label>
-                                        <div class="col-sm-3">
-                                            <select id="ProposeBankID" name="ProposeBankID" class="form-control input-sm" style="width:100%" disabled="disabled"></select>
-                                        </div>
-                                    </div>
+                            <!-- Propose Contract -->
+                            <div class="col-sm-5 d-flex align-items-center divProposeContract">
+                                <label for="ProposeContract" class="col-form-label col-sm-4">Propose Contract No</label>
+                                <div class="col-sm-8 d-flex">
+                                    <input id="ProposeContract" name="ProposeContract" type="text" class="form-control form-control-sm" readonly />
+                                    <button type="button" id="btnAddCOntractNo" class="btn btn-success btn-xs ml-2">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Bank Selection -->
+                            <div class="col-sm-5 d-flex align-items-center divIssueBankID">
+                                <label for="ProposeBankID" class="col-form-label col-sm-3">Bank</label>
+                                <div class="col-sm-9">
+                                    <select id="ProposeBankID" name="ProposeBankID" class="form-control form-control-sm" disabled></select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+
                     <div class="box-footer btn-e-float-margin" id="divFormButtons">
-                        <div class="col-md-offset-2 col-md-10">
-                            <div class="pull-right">
+                        <div class="row">
+                            <div class="col-md-12 text-right">
                                 <button type="button" class="btn btn-default m-w-120" id="btCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
                                 <button type="button" class="btn btn-success m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
                                 <button type="button" class="btn btn-success m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>

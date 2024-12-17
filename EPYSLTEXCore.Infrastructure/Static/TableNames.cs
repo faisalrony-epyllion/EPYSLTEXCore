@@ -74,7 +74,7 @@
         public const string FABRIC_CI_CHILD = "T_FabricCIChild";
         public const string YARN_CI_CHILD_PI = "T_YarnCIChildPI";
         public const string FABRIC_CI_CHILD_PI = "T_FabricCIChildPI";
-        public const string YARN_CI_MASTER = "T_YarnCIMaster";
+        public const string YARN_CI_MASTER = "YarnCIMaster";//t removed
         public const string FABRIC_CI_MASTER = "T_FabricCIMaster";
         public const string YARN_CI_DOC = "T_YarnCIDoc";
         public const string FABRIC_CI_DOC = "T_FabricCIDoc";
@@ -152,7 +152,7 @@
         public const string LandedCostType = "T_LandedCostType";
         public const string YarnLCChild = "T_YarnLCChild";
         public const string YarnLCDocument = "T_YarnLCDocument";
-        public const string YarnLCMaster = "T_YarnLCMaster";
+        public const string YarnLCMaster = "YarnLCMaster";//t removed
         public const string IMPORT_LC_NO = "LcNo";
         public const string MachineGaugeSetup = "T_MachineGaugeSetup";
         public const string ManufacturingCost = "T_ManufacturingCost";

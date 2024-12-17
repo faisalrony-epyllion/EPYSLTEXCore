@@ -14,14 +14,9 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Application.Services.Booking
 {
@@ -30,6 +25,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
         private readonly IDapperCRUDService<FBookingAcknowledge> _service;
         //private readonly ISignatureRepository _signatureRepository;
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _connectionGmt;
         private readonly IDapperCRUDService<SampleBookingMaster> _gmtservice;
         private string _yarnBookingNo = "";
         string _startingDate = "31-May-2024";
@@ -39,11 +35,15 @@ namespace EPYSLTEXCore.Application.Services.Booking
             //, ISignatureRepository signatureRepository
             )
         {
-            _service = service;
-            //_signatureRepository = signatureRepository;
-            _connection = service.Connection;
+
             _gmtservice = gmtservice;
             _gmtservice.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
+            _connectionGmt = _gmtservice.Connection;
+
+            _service = service;
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+            //_signatureRepository = signatureRepository;
+            _connection = service.Connection;
 
 #if DEBUG
             _startingDate = "31-May-2023";
@@ -15624,10 +15624,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
             int UserId = 0)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
 
                 List<FBookingAcknowledge> FBAListForBulk = new List<FBookingAcknowledge>();
                 if (isBDS == 2)
@@ -15636,7 +15640,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 }
 
                 if (entity.FBAckID > 0) entity.EntityState = EntityState.Modified;
-                else entity.FBAckID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE);
+                else entity.FBAckID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                 if (entityFBA == null) entityFBA = new List<FabricBookingAcknowledge>();
                 if (entityChildsLiabilitiesDistribution == null) entityChildsLiabilitiesDistribution = new List<FBookingAcknowledgementLiabilityDistribution>();
@@ -15644,7 +15648,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 if (entityFBA.Count > 0)
                 {
                     if (entityFBA[0].AcknowledgeID > 0) entity.EntityState = EntityState.Modified;
-                    else entityFBA[0].AcknowledgeID = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge);
+                    else entityFBA[0].AcknowledgeID = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                 }
                 if (entityFBYL == null) entityFBYL = new List<FBookingAcknowledgementYarnLiability>();
                 int maxConceptMRId = 0;
@@ -15672,18 +15676,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     List<YarnBookingChild> newYarnBookingChildList = new List<YarnBookingChild>();
                     List<YarnBookingChildItem> newYarnBookingChildItemList = new List<YarnBookingChildItem>();
 
-                    int maxChildId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildAddProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildGarmentPartId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildTextId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildDistributionId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count(x => x.EntityState == EntityState.Added));
-                    int maxChildYarnSubBrandId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count(x => x.EntityState == EntityState.Added));
-                    int maxPlanningId = await _service.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count(y => y.EntityState == EntityState.Added)));
-                    int maxBDSEventID = await _service.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count(x => x.EntityState == EntityState.Added));
-                    int maxLCID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
-                    int maxYLID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildAddProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildGarmentPartId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildTextId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildDistributionId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildYarnSubBrandId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxPlanningId = await _service.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count(y => y.EntityState == EntityState.Added)), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxBDSEventID = await _service.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxLCID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxYLID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                     if (entity.PageName == "BulkBookingKnittingInfo")
                     {
@@ -15707,21 +15711,21 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             }
                         });
 
-                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, tempObjList.Count);
-                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, tempObjList.Count);
+                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, tempObjList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, tempObjList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
-                        maxConceptMRId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, tempObjList.Count);
-                        maxConceptMRChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, maxChildCount);
+                        maxConceptMRId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, tempObjList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxConceptMRChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, maxChildCount, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                     }
                     else
                     {
 
-                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count(x => x.EntityState == EntityState.Added));
-                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count(x => x.EntityState == EntityState.Added));
+                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         if (maxConceptId == 0 & entityFreeConcepts.Count() == 0)
                         {
-                            maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count(x => x.EntityState == EntityState.Modified));
-                            maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count(x => x.EntityState == EntityState.Modified));
+                            maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count(x => x.EntityState == EntityState.Modified), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                            maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count(x => x.EntityState == EntityState.Modified), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                         }
                     }
@@ -15984,23 +15988,23 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 }
                 else
                 {
-                    int maxChildId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count);
-                    int maxChildAddProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count);
-                    int maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count);
-                    int maxChildGarmentPartId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count);
-                    int maxChildProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count);
-                    int maxChildTextId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count);
-                    int maxChildDistributionId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count);
-                    int maxChildYarnSubBrandId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count);
-                    int maxImageId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_IMAGE, entityChildsImage.Count);
-                    int maxLCID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
-                    int maxPlanningId = await _service.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count));
-                    int maxBDSEventID = await _service.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count);
-                    int maxYLID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added));
+                    int maxChildId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildAddProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_ADD_PROCESS, entityChildAddProcess.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, entityChildDetails.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildGarmentPartId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_GARMENT_PART, entityChildsGpart.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildProcessId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_PROCESS, entityChildsProcess.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildTextId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_TEXT, entityChildsText.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildDistributionId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DISTRIBUTION, entityChildsDistribution.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxChildYarnSubBrandId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_YARN_SUB_BRAND, entityChildsYarnSubBrand.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxImageId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_IMAGE, entityChildsImage.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxLCID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxPlanningId = await _service.GetMaxIdAsync(TableNames.FBOOKING_ACKNOWLEDGE_CHILD_PLANNING, entityChilds.Sum(x => x.FBAChildPlannings.Count), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxBDSEventID = await _service.GetMaxIdAsync(TableNames.BDS_Dependent_TNA_Calander, BDCalander.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                    int maxYLID = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityChildsLiabilitiesDistribution.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                     if (isBDS == 1 || isBDS == 3)
                     {
-                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count);
-                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count);
+                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, entityChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, entityChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                     }
                     entityFreeConcepts = new List<FreeConceptMaster>();
                     childColors = new List<FreeConceptChildColor>();
@@ -16211,15 +16215,15 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             }
                         });
 
-                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, tempObjList.Count);
-                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, tempObjList.Count);
+                        maxConceptId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MASTER, tempObjList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxConceptChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_CHILD_COLOR, tempObjList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                         if (isBDS == 2)
                         {
                             entityChildDetails = new List<FBookingAcknowledgeChildDetails>();
-                            maxConceptMRId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, tempObjList.Count);
-                            maxConceptMRChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, maxChildCount);
-                            maxFBAckChildDetailId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, maxChildCount);
+                            maxConceptMRId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, tempObjList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                            maxConceptMRChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, maxChildCount, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                            maxFBAckChildDetailId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD_DETAILS, maxChildCount, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         }
                         i = 0;
 
@@ -16379,10 +16383,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //{
                 //    throw new Exception(validationMessage);
                 //}
-
-                await _service.SaveSingleAsync(entity, transaction);
+                if (transaction.Connection.State == ConnectionState.Open)
+                {
+                    Console.WriteLine("The transaction connection is open.");
+                }
+                await _service.SaveSingleAsync(entity, _connection, transaction);
                 //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FBookingAcknowledge", entity.EntityState, UserId, entity.FBAckID);
-                await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge", new { EntityState = entity.EntityState, UserId = UserId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge, new { EntityState = entity.EntityState, UserId = UserId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
                 List<FBookingAcknowledgeChild> SaveEntityChilds = new List<FBookingAcknowledgeChild>();
                 List<FBookingAcknowledgeChild> DeleteEntityChilds = new List<FBookingAcknowledgeChild>();
@@ -16486,51 +16493,51 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //Delete
                 if (DeleteFabricBookingAcknowledge.Count() > 0)
                 {
-                    await _service.SaveAsync(DeleteFabricBookingAcknowledge, transaction);
+                    await _service.SaveAsync(DeleteFabricBookingAcknowledge, _connection, transaction);
                 }
-                await _service.SaveAsync(DeleteEntityChilds, transaction);
-                await _service.SaveAsync(DeleteEntityChildAddProcess, transaction);
-                await _service.SaveAsync(DeleteEntityChildDetails, transaction);
-                await _service.SaveAsync(DeleteEntityChildsGpart, transaction);
-                await _service.SaveAsync(DeleteEntityChildsProcess, transaction);
-                await _service.SaveAsync(DeleteEntityChildsText, transaction);
-                await _service.SaveAsync(DeleteEntityChildsDistribution, transaction);
-                await _service.SaveAsync(DeleteEntityChildsYarnSubBrand, transaction);
-                await _service.SaveAsync(DeleteFBookingAcknowledgementLiabilityDistribution, transaction);
-                await _service.SaveAsync(DeleteEntityChildsLiability, transaction);
-                await _service.SaveAsync(DeleteEntityChildsImage, transaction);
-                await _service.SaveAsync(DeleteEntityFreeConcepts, transaction);
-                await _service.SaveAsync(DeleteChildColors, transaction);
+                await _service.SaveAsync(DeleteEntityChilds, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildAddProcess, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildDetails, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildsGpart, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildsProcess, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildsText, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildsDistribution, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildsYarnSubBrand, _connection, transaction);
+                await _service.SaveAsync(DeleteFBookingAcknowledgementLiabilityDistribution, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildsLiability, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityChildsImage, _connection, transaction);
+                await _service.SaveAsync(DeleteEntityFreeConcepts, _connection, transaction);
+                await _service.SaveAsync(DeleteChildColors, _connection, transaction);
                 if (isBDS == 2)
                 {
-                    await _service.SaveAsync(DeleteEntityFreeMRs, transaction);
-                    await _service.SaveAsync(DeleteChildMRs, transaction);
+                    await _service.SaveAsync(DeleteEntityFreeMRs, _connection, transaction);
+                    await _service.SaveAsync(DeleteChildMRs, _connection, transaction);
                 }
-                await _service.SaveAsync(DeleteBDCalander, transaction);
-                await _service.SaveAsync(DeletePlannings, transaction);
+                await _service.SaveAsync(DeleteBDCalander, _connection, transaction);
+                await _service.SaveAsync(DeletePlannings, _connection, transaction);
 
                 //Save
                 if (SaveFabricBookingAcknowledge.Count() > 0)
                 {
-                    await _service.SaveAsync(SaveFabricBookingAcknowledge, transaction);
+                    await _service.SaveAsync(SaveFabricBookingAcknowledge, _connection, transaction);
                 }
 
                 if (isBDS == 2 && FBAListForBulk.Count() > 0)
                 {
-                    await _service.SaveAsync(FBAListForBulk, transaction);
+                    await _service.SaveAsync(FBAListForBulk, _connection, transaction);
                 }
 
-                await _service.SaveAsync(SaveEntityChilds, transaction);
-                await _service.SaveAsync(SaveEntityChildAddProcess, transaction);
-                await _service.SaveAsync(SaveEntityChildDetails, transaction);
-                await _service.SaveAsync(SaveEntityChildsGpart, transaction);
-                await _service.SaveAsync(SaveEntityChildsProcess, transaction);
-                await _service.SaveAsync(SaveEntityChildsText, transaction);
-                await _service.SaveAsync(SaveEntityChildsDistribution, transaction);
-                await _service.SaveAsync(SaveEntityChildsYarnSubBrand, transaction);
-                await _service.SaveAsync(SaveFBookingAcknowledgementLiabilityDistribution, transaction);
-                await _service.SaveAsync(SaveEntityChildsLiability, transaction);
-                await _service.SaveAsync(SaveEntityChildsImage, transaction);
+                await _service.SaveAsync(SaveEntityChilds, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildAddProcess, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildDetails, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildsGpart, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildsProcess, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildsText, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildsDistribution, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildsYarnSubBrand, _connection, transaction);
+                await _service.SaveAsync(SaveFBookingAcknowledgementLiabilityDistribution, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildsLiability, _connection, transaction);
+                await _service.SaveAsync(SaveEntityChildsImage, _connection, transaction);
 
                 //SaveEntityFreeConcepts[0].AddedBy = 0;
 
@@ -16540,12 +16547,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //    throw new Exception(FCMvalidationMessage);
                 //}
 
-                await _service.SaveAsync(SaveEntityFreeConcepts, transaction);
+                await _service.SaveAsync(SaveEntityFreeConcepts, _connection, transaction);
 
                 foreach (FreeConceptMaster item in SaveEntityFreeConcepts)
                 {
                     //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FreeConceptMaster", item.EntityState, UserId, item.ConceptID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMaster", new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.ConceptID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMaster, new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.ConceptID }, transaction, 30, CommandType.StoredProcedure);
 
                 }
 
@@ -16554,19 +16561,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //    await _connection.ExecuteAsync("sp_Validation_FreeConceptMaster", new { ConceptID = item.ConceptID, UserId = UserId, EntityState = item.EntityState }, transaction, 30, CommandType.StoredProcedure);
                 //}
 
-                await _service.SaveAsync(SaveChildColors, transaction);
+                await _service.SaveAsync(SaveChildColors, _connection, transaction);
                 if (isBDS == 2)
                 {
-                    await _service.SaveAsync(SaveEntityFreeMRs, transaction);
+                    await _service.SaveAsync(SaveEntityFreeMRs, _connection, transaction);
                     //var childsTemp = SaveChildMRs.Where(x => x.YarnCategory.Trim() == "").ToList();
                     //if (childsTemp.Count() > 0)
                     //{
                     //    throw new Exception("Yarn Category missing => SaveAsync => BDSAcknowledgeService");
                     //}
-                    await _service.SaveAsync(SaveChildMRs, transaction);
+                    await _service.SaveAsync(SaveChildMRs, _connection, transaction);
                 }
-                await _service.SaveAsync(SaveBDCalander, transaction);
-                await _service.SaveAsync(SavePlannings, transaction);
+                await _service.SaveAsync(SaveBDCalander, _connection, transaction);
+                await _service.SaveAsync(SavePlannings, _connection, transaction);
 
                 #region Update For Labdip
                 if (sampleBookingChilds.Count() > 0)
@@ -16603,15 +16610,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //await _gmtservice.ExecuteAsync(query, AppConstants.GMT_CONNECTION);
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -17032,7 +17042,6 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 }
 
                 transaction.Commit();
-
                 return _yarnBookingNo;
             }
             catch (Exception ex)

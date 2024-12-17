@@ -231,8 +231,8 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<List<FabricWastageGrid>> GetFabricWastageGridAsync(string wastageFor)
         {
             var sql = $@"Select FWG.FWGID, FWG.WastageFor, FWG.IsFabric, FWG.GSMFrom, FWG.GSMTo, FWG.BookingQtyFrom, FWG.BookingQtyTo, FWG.FixedQty, FWG.ExcessQty, FWG.ExcessPercentage
-                        From FabricWastageGrid FWG WHERE wastageFor='{wastageFor}'";
-
+                        From {TableNames.FABRIC_WASTAGE_GRID} FWG WHERE wastageFor='{wastageFor}'";
+            _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
             return await _service.GetDataAsync<FabricWastageGrid>(sql);
         }
 

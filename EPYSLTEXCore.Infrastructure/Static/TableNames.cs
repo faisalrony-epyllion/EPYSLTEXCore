@@ -599,7 +599,7 @@
         //public const string YARN_PR_CHILD_PROGRAM = "YarnPRChildSubProgram";
         public const string YARN_PRNO = "Yarn PRNo";
         public const string YARN_PR_COMPANY = "T_YarnPRCompany";
-        //public const string YARN_CPR_COMPANY = "YarnCPRCompany";
+        public const string YARN_CPR_COMPANY = "T_YarnCPRCompany";
 
         public const string YARN_RND_ISSUE_MASTER = "T_YarnRnDIssueMaster";
         public const string YARN_RND_ISSUE_CHILD = "T_YarnRnDIssueChild";
@@ -912,6 +912,13 @@
         public const string SpinnerWiseYarnPackingHK = "T_SpinnerWiseYarnPacking_HK";
         public const string StockType = "StockType";
         public const string YarnStockMaster_New = "T_YarnStockMaster_New";
+
+        public const string FabricConstructionSubClassTechnicalName = "T_FabricConstructionSubClassTechnicalName";
+        public const string CertificationsBasicSetup = "T_CertificationsBasicSetup";
+        public const string FiberBasicSetup = "T_FiberBasicSetup";
+        public const string SubProgramBasicSetup = "T_SubProgramBasicSetup";
+        public const string DayValidDuration = "T_DayValidDuration";
+        public const string YarnPRFrom_HK = "T_YarnPRFrom_HK";
     }
 
 }

@@ -1994,16 +1994,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     default:
                         break;
                 }
-                await _service.SaveSingleAsync(entity, transaction);
-                await _service.SaveAsync(entity.ProjectionYarnBookingItemChilds, transaction);
-                await _service.SaveAsync(entity.PYBookingBuyerAndBuyerTeams, transaction);
+                await _service.SaveSingleAsync(entity, _connection, transaction);
+                await _service.SaveAsync(entity.ProjectionYarnBookingItemChilds, _connection, transaction);
+                await _service.SaveAsync(entity.PYBookingBuyerAndBuyerTeams, _connection, transaction);
 
                 List<ProjectionYarnBookingItemChildDetails> childRecorddetails = new List<ProjectionYarnBookingItemChildDetails>();
                 entity.ProjectionYarnBookingItemChilds.ForEach(x =>
                 {
                     childRecorddetails.AddRange(x.PYBItemChildDetails);
                 });
-                await _service.SaveAsync(childRecorddetails, transaction);
+                await _service.SaveAsync(childRecorddetails, _connection, transaction);
                 foreach (ProjectionYarnBookingItemChildDetails item in childRecorddetails)
                 {
                     //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_ProjectionYarnBookingItemChildDetails", item.EntityState, userId, item.PYBBookingChildDetailsID);
@@ -2034,7 +2034,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
-                await _service.SaveSingleAsync(entity, transaction);
+                await _service.SaveSingleAsync(entity, _connection, transaction);
 
                 transaction.Commit();
             }
@@ -2062,7 +2062,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 await _connectionGmt.OpenAsync();
                 transactionGmt = _connectionGmt.BeginTransaction();
 
-                await _service.SaveSingleAsync(entity, transaction);
+                await _service.SaveSingleAsync(entity, _connection, transaction);
 
                 if (yarnPRMaster.EntityState == EntityState.Added)
                 {
@@ -2079,8 +2079,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                 await _connection.ExecuteAsync(SPNames.spBackupYarnAutoPR, new { YarnPRMasterID = yarnPRMaster.YarnPRMasterID }, transaction, 30, CommandType.StoredProcedure);
 
-                await _service.SaveSingleAsync(yarnPRMaster, transaction);
-                await _service.SaveAsync(yarnPRMaster.Childs, transaction);
+                await _service.SaveSingleAsync(yarnPRMaster, _connection, transaction);
+                await _service.SaveAsync(yarnPRMaster.Childs, _connection, transaction);
                 foreach (YarnPRChild item in yarnPRMaster.Childs)
                 {
                     if (yarnPRMaster.UpdatedBy.IsNull()) yarnPRMaster.UpdatedBy = 0;
@@ -2088,7 +2088,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnPRChild_From_PYB", item.EntityState, userId, item.YarnPRChildID);
                     await _connection.ExecuteAsync(SPNames.sp_Validation_YarnPRChild_From_PYB, new { PrimaryKeyId = item.YarnPRChildID, UserId = userId, EntityState = item.EntityState }, transaction, 30, CommandType.StoredProcedure);
                 }
-                await _service.SaveAsync(yarnPRMaster.YarnPOMasters, transaction);
+                await _service.SaveAsync(yarnPRMaster.YarnPOMasters, _connection, transaction);
                 transaction.Commit();
             }
             catch (Exception ex)

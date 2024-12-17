@@ -4,6 +4,7 @@ using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -24,9 +25,9 @@ namespace EPYSLTEX.Infrastructure.Services
         private readonly IConfiguration _configuration;
         private readonly SqlConnection _connection;
         private readonly SqlConnection _connectionGmt;
-
+     
         private readonly IDapperCRUDService<Signatures> _signatures;
-
+        public int UserCode { get; set; }
         public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service, IConfiguration configuration, IDapperCRUDService<Signatures> signatures)
         {
             _configuration = configuration;
@@ -34,6 +35,7 @@ namespace EPYSLTEX.Infrastructure.Services
             _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
             _connectionGmt = new SqlConnection(_configuration.GetConnectionString(AppConstants.GMT_CONNECTION));
             _signatures = signatures;
+         
         }
 
 
@@ -264,6 +266,7 @@ namespace EPYSLTEX.Infrastructure.Services
                             newId = jObject[primaryKey].ToString();
                             var connection = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? _connectionGmt : _connection;
                             var trans = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? transactionGmt : transaction;
+                            _service.UserCode=this.UserCode;
                             await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, connection, trans);
                         }
                         else
@@ -292,8 +295,8 @@ namespace EPYSLTEX.Infrastructure.Services
                                         }
                                     }
                                 }
+                                _service.UserCode = this.UserCode;
 
-                                
                                 var connection = conKey.LastOrDefault() == AppConstants.GMT_CONNECTION ? _connectionGmt : _connection;
                                 var trans = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? transactionGmt : transaction;
                                 await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, connection, trans);

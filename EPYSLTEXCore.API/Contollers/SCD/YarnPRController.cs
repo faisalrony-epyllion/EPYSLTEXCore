@@ -4,6 +4,7 @@ using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
@@ -63,7 +64,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
 
         [HttpGet]
         [Route("new-mr")]
-        public async Task<IActionResult> GetNewForMR(string iDs, string source, string revisionstatus)
+        public async Task<IActionResult> GetNewForMR(string iDs, string source, string revisionstatus = "")
         {
             YarnPRMaster data = await _service.GetNewForMR(iDs, source, revisionstatus);
             foreach (YarnPRChild item in data.Childs)
@@ -237,7 +238,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
                 }
 
                 entity.AddedBy = AppUser.UserCode;
-                entity.YarnPRBy = model.YarnPRBy;
+                entity.YarnPRBy = AppUser.UserCode; //model.YarnPRBy;
                 entity.SendForApproval = model.SendForApproval;
                 entity.SubGroupID = 102; // yarn
                 entity.ConceptNo = conceptNo;
@@ -314,8 +315,15 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
 
         [HttpPost]
         [Route("save-fpr")]
-        public async Task<IActionResult> UpdateFPRCompany(YarnPRMaster model)
+        public async Task<IActionResult> UpdateFPRCompany(dynamic jsnString)
         {
+            YarnPRMaster model = JsonConvert.DeserializeObject<YarnPRMaster>(
+                Convert.ToString(jsnString),
+                new JsonSerializerSettings
+                {
+                    DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+                });
+
             YarnPRMaster entity = await _service.GetAllByIDAsync(model.YarnPRMasterID);
 
             entity.UpdatedBy = AppUser.UserCode;
@@ -524,6 +532,10 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
                 else if (source == PRFromName.FABRIC_PROJECTION_YARN_BOOKING)
                 {
                     return EnumBaseType.ProjectionBasedBulk;
+                }
+                else if (source == PRFromName.ROL_BASE_BOOKING)
+                {
+                    return EnumBaseType.ProjectionBasedSample;
                 }
             }
             else if (noValue.Contains("PB-"))

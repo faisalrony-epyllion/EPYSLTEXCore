@@ -406,6 +406,7 @@
         public const string BULK_BOOKING = "Bulk Booking";
         public const string PROJECTION_YARN_BOOKING = "Projection Yarn Booking";
         public const string FABRIC_PROJECTION_YARN_BOOKING = "Fabric Projection Yarn Booking";
+        public const string ROL_BASE_BOOKING = "ROL Base Booking";
     }
     public static class DB_TYPE
     {

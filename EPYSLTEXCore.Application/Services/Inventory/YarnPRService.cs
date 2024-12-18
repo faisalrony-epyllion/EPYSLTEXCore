@@ -933,6 +933,29 @@ namespace EPYSLTEX.Infrastructure.Services
                     FROM TOTALROW ";
                     orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By FCMRMasterID, BookingDate Desc" : paginationInfo.OrderBy;
                 }
+                else if (status == Status.ROL_BASE_PENDING)
+                {
+                    sql =
+                    $@"
+                    With RO AS(
+                        SELECT 0 FCMRMasterID, '' As RevisionStatus, 0 As ConceptId, '' As ConceptNo, Null As ConceptDate, 0 [Re-TrialNo],
+                        0 Qty, '' Remarks, '' As KnittingType, '' As Composition, '' As Construction,
+                        '' TechnicalName, '' As Gsm, '' As ConceptForName, ISG.SubGroupName ItemSubGroup, ROL.AddedBy,
+                        L.Name, 0 BookingID, '' BookingNo, null BookingDate, IM.ItemName YarnCategory, ROL.ROSID,
+                        '' Buyer, 'ROL Base Booking' As [Source], ROL.ReOrderQty, ROL.ItemMasterID,
+                        StockQty = SUM(ISNULL(YSM.PipelineStockQty,0) + ISNULL(YSM.QuarantineStockQty,0) + ISNULL(YSM.AdvanceStockQty,0) + ISNULL(YSM.SampleStockQty,0) + ISNULL(YSM.LeftoverStockQty,0) + ISNULL(YSM.LiabilitiesStockQty,0))
+                        --'Concept' [Source]
+                        FROM {TableNames.ItemMasterReOrderStatus} ROL 
+                        LEFT JOIN {TableNames.YarnStockMaster_New} YSM ON YSM.ItemMasterID = ROL.ItemMasterID
+                        INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = ROL.ItemMasterID 
+                        LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=IM.SubGroupID
+                        LEFT JOIN {DbNames.EPYSL}..LoginUser L ON L.UserCode = ROL.AddedBy
+                        --WHERE M.ConceptNo = M.GroupConceptNo
+                        GROUP By L.Name,ISG.SubGroupName, ROL.AddedBy, IM.ItemName, ROL.ReOrderQty, ROL.ROSID, ROL.ItemMasterID
+                        )
+                        Select *, Count(*) Over() TotalRows FROM RO Where StockQty<=ReOrderQty";
+                    orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By ROSID Desc" : paginationInfo.OrderBy;
+                }
                 else if (status == Status.Revise)
                 {
                     sql =
@@ -1283,6 +1306,28 @@ namespace EPYSLTEX.Infrastructure.Services
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV7 On IM.Segment7ValueID = ISV7.SegmentValueID
                 Left Join {DbNames.EPYSL}..Unit U On C.UnitID = U.UnitID
                 Left Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = PM.CompanyID ;";
+            }
+            else if (source == PRFromName.ROL_BASE_BOOKING)
+            {
+                sql = $@"-- Childs
+                
+                SELECT PYBBookingChildID = 0, IM.ItemMasterID, ReqQty = 0, Remarks = '', FPRCompanyID = ROL.CompanyID, CE.ShortName As FPRCompanyName
+	                , UnitID = 28, BookingID = 0, BookingNo = 0, BookingDate = null
+					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID
+	                , ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc
+	                , ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, BaseTypeId = 0,
+                    'ROL Base Booking' As [Source]
+                FROM {TableNames.ItemMasterReOrderStatus} ROL
+				INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = ROL.ItemMasterID
+                Left Join {DbNames.EPYSL}..ItemSegmentValue ISV1 On IM.Segment1ValueID = ISV1.SegmentValueID
+                Left Join {DbNames.EPYSL}..ItemSegmentValue ISV2 On IM.Segment2ValueID = ISV2.SegmentValueID
+                Left Join {DbNames.EPYSL}..ItemSegmentValue ISV3 On IM.Segment3ValueID = ISV3.SegmentValueID
+                Left Join {DbNames.EPYSL}..ItemSegmentValue ISV4 On IM.Segment4ValueID = ISV4.SegmentValueID
+                Left Join {DbNames.EPYSL}..ItemSegmentValue ISV5 On IM.Segment5ValueID = ISV5.SegmentValueID
+                Left Join {DbNames.EPYSL}..ItemSegmentValue ISV6 On IM.Segment6ValueID = ISV6.SegmentValueID
+                Left Join {DbNames.EPYSL}..ItemSegmentValue ISV7 On IM.Segment7ValueID = ISV7.SegmentValueID
+                Left Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = ROL.CompanyID 
+				Where ROL.ROSID IN ({iDs});";
             }
             else if (source == PRFromName.CONCEPT && revisionstatus == "Revision Pending")
             {
@@ -1919,11 +1964,14 @@ namespace EPYSLTEX.Infrastructure.Services
 
                 await _service.SaveSingleAsync(yarnPRMaster, transaction);
                 await _service.SaveAsync(yarnPRMaster.Childs, transaction);
-                foreach (YarnPRChild item in yarnPRMaster.Childs)
+                if (yarnPRMaster.Status != Status.ROL_BASE_PENDING)
                 {
+                    foreach (YarnPRChild item in yarnPRMaster.Childs)
+                    {
 
-                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnPRChild, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnPRChild, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YarnPRChildID }, transaction, 30, CommandType.StoredProcedure);
 
+                    }
                 }
                 transaction.Commit();
                 transactionGmt.Commit();
@@ -1944,7 +1992,31 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<YarnPRMaster> AddAsync(YarnPRMaster entity, SqlTransaction transaction, SqlTransaction transactionGmt, SqlConnection connection, SqlConnection connectionGmt)
         {
             entity.YarnPRMasterID = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, connectionGmt);
-            if (!entity.IsAdditional)
+            if (entity.Status == Status.ROL_BASE_PENDING)
+            {
+                entity.YarnPRNo = await _service.GetMaxNoAsync(TableNames.YARN_PRNO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _connectionGmt);
+                /*
+                var prNextNumber = await _service.GetUniqueCodeWithoutSignatureAsync(
+                                   connection,
+                                   transaction,
+                                   TableNames.YARN_PR_MASTER,
+                                   "YarnPRNo",
+                                   entity.YarnPRMasterID.ToString());
+
+
+
+                //var prNextNumber = await this.GetMaxReqNo(entity.GroupConceptNo, transaction);
+                if (prNextNumber > 0)
+                {
+                    entity.YarnPRNo = entity.GroupConceptNo + "_" + prNextNumber;
+                }
+                else
+                {
+                    entity.YarnPRNo = entity.GroupConceptNo;
+                }
+                */
+            }
+            else if (!entity.IsAdditional)
             {
                 var prNextNumber = await _service.GetUniqueCodeWithoutSignatureAsync(
                                    connection,

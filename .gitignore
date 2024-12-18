@@ -162,3 +162,7 @@
 *.json
 /.vs/EPYSLTEXCore/v16/.suo
 *.xml
+/EPYSLTEXCore.API
+/EPYSLTEXCore.Application
+/EPYSLTEXCore.Infrastructure
+/EPYSLTEXCore.Report/Properties/PublishProfiles

@@ -513,7 +513,7 @@
                         return [
                             '<span class="btn-group">',
                             '<a class="btn btn-xs btn-primary" href="' + row.PIFilePath + '" target="_blank" title="PI Report">',
-                            '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>',
+                            '<i class="fas fa-file-pdf" aria-hidden="true"></i>',
                             '</a>',
                             '</span>'
                         ].join('');

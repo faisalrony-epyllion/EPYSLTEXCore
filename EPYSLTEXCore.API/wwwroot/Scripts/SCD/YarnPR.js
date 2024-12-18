@@ -363,7 +363,7 @@
             e.preventDefault();
             toggleActiveToolbarBtn(this, $toolbarEl);
             status = statusConstants.ROL_BASE_PENDING;
-            debugger;
+            
             $toolbarEl.find("#divAddPRForMR").fadeIn();
             initMasterTable();
         });
@@ -488,7 +488,7 @@
     }
 
     function initMasterTable() {
-        debugger;
+        
         var commands = [];
         if (isApprovePage) {
             if (status == statusConstants.REJECT || status == statusConstants.COMPLETED) {
@@ -588,7 +588,7 @@
         }
 
         var columns = [];
-        debugger;
+        
         if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ADDITIONAL) {
             commands = [
                 { type: 'ViewMR', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
@@ -881,7 +881,7 @@
     }
 
     function handleCommands(args) {
-        debugger;
+        
         $formEl.find("#btnAcknowledgeMR").hide();
         if (args.commandColumn.type == 'Edit') {
             getDetails(args.rowData.YarnPRMasterID, args.rowData.YarnPRFromID, args.rowData.Source, args.commandColumn.type);
@@ -1186,7 +1186,7 @@
                 return;
             }
         }
-        debugger;
+        
         source = uniqueAry[0].Source;
         var iDs = "";
         if (uniqueAry[0].Source == prFrom.CONCEPT) {
@@ -1465,7 +1465,7 @@
     //check
     async function initChildTable(data) {
         if ($tblChildEl) $tblChildEl.destroy();
-        debugger;
+        
         var columns = [{ field: 'YarnPRChildID', isPrimaryKey: true, visible: false }];
         if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ADDITIONAL || status == statusConstants.APPROVED) {
             columns.push.apply(columns,

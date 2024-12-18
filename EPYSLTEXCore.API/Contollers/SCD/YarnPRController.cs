@@ -529,13 +529,9 @@ namespace EPYSLTEX.Web.Controllers.Apis.Inventory.Yarn
                 {
                     return EnumBaseType.OrderBasedSample;
                 }
-                else if (source == PRFromName.FABRIC_PROJECTION_YARN_BOOKING)
+                else if (source == PRFromName.FABRIC_PROJECTION_YARN_BOOKING || source == PRFromName.ROL_BASE_BOOKING)
                 {
                     return EnumBaseType.ProjectionBasedBulk;
-                }
-                else if (source == PRFromName.ROL_BASE_BOOKING)
-                {
-                    return EnumBaseType.ProjectionBasedSample;
                 }
             }
             else if (noValue.Contains("PB-"))

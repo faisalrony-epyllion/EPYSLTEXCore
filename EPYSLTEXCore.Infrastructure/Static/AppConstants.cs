@@ -368,13 +368,13 @@
         public const string GSM = "GSM";
 
         #region Yarn Item Segments
-        public const string YARN_COMPOSITION = "Yarn Composition";
-        public const string YARN_TYPE = "Yarn Type New";
-        public const string YARN_MANUFACTURING_PROCESS = "Yarn Manufacturing Process";
-        public const string YARN_MANUFACTURING_SUB_PROCESS = "Yarn Manufacturing Sub Process";
-        public const string YARN_QUALITY_PARAMETER = "Yarn Quality Parameter";
+        public const string YARN_COMPOSITION = "Yarn Composition Live";
+        public const string YARN_TYPE = "Yarn Type Live";
+        public const string YARN_MANUFACTURING_PROCESS = "Yarn Manufacturing Process Live";
+        public const string YARN_MANUFACTURING_SUB_PROCESS = "Yarn Manufacturing Sub Process Live";
+        public const string YARN_QUALITY_PARAMETER = "Yarn Quality Parameter Live";
         public const string SHADE = "Shade";
-        public const string YARN_COUNT = "Yarn Count";
+        public const string YARN_COUNT = "Yarn Count New";
         public const string YARN_COUNT_MASTER = "Yarn Count Master";
         public const string NO_OF_PLY = "No of Ply";
 

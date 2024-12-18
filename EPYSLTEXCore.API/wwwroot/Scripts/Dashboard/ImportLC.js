@@ -144,7 +144,9 @@
                 window.open(YarnLcMaster.LCFilePath, "_blank");
             }
         });
-
+        $tblMasterEl.on('post-header.bs.table', function () {
+            $('.bootstrap-table .filter-control input').addClass('form-control-sm');
+        });
     });
 
     function getBankBranch() {
@@ -160,6 +162,9 @@
     function initMasterTable() {
         $tblMasterEl.bootstrapTable('destroy');
         $tblMasterEl.bootstrapTable({
+            classes: 'table-bordered table-striped table-sm',
+            theadClasses: 'text-center',
+            
             showRefresh: true,
             showExport: true,
             showColumns: true,

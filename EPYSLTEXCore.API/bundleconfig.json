@@ -20,8 +20,9 @@
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.min.css",
       "wwwroot/App_Themes/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css",
 
-      "wwwroot/App_Themes/lib/bootstrap-fileinput/css/fileinput.min.css"
-
+      "wwwroot/App_Themes/lib/bootstrap-fileinput/css/fileinput.min.css",
+      "wwwroot/App_Themes/lib/bootstrap-toggle/css/bootstrap-toggle.css",
+      "wwwroot/App_Themes/lib/icheck-bootstrap/icheck-bootstrap.min.css"
     ],
     "minify": {
       "enabled": true

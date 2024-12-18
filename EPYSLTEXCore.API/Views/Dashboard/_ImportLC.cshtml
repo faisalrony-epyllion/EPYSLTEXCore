@@ -46,280 +46,228 @@
             @*<input type="hidden" name="SupplierID" id="SupplierID" />*@
             <input type="hidden" id="IsCDA" name="IsCDA" />
 
-            <div class="box-body" id="@divDetailsId" style="display:none">
-                <div class="col-sm-12">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            General/Commercial Information
+            <div class="card card-default" id="@divDetailsId" style="display:none">
+                <div class="card-body">
+                    <div class="card" style="border-color:transparent; border-style:none;">
+                        <div class="card-header">
+                            <h3 class="card-title"> General/Commercial Information </h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
+
+                        <div class="card-body">
+                            <!-- Row 1 -->
+                            <div class="row">
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Proposal No</label>
-                                        <div class="col-sm-7">
-                                            <input id="ProposalNo" name="ProposalNo" class="form-control input-sm" readonly />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Beneficiary(Supplier)</label>
-                                        <div class="col-sm-7">
-                                            <select id="SupplierID" name="SupplierID" class="form-control" style="width:100%" disabled="disabled"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Applicant</label>
-                                        <div class="col-sm-7">
-                                            <select id="CompanyID" name="CompanyID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Cash L/C</label>
-                                        <div class="col-sm-8">
-                                            <input type="checkbox" style="margin-left:30px;" id="CashStatus" name="CashStatus" value="1" disabled="disabled" />
-                                            <label for="CashStatus"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">D.C. Opening Bank</label>
-                                        <div class="col-sm-7">
-                                            <select id="IssueBankID" name="IssueBankID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group" id="divProposeContractNo">
-                                        <label class="control-label col-sm-5 small">Contract/Export LC No</label>
-                                        <div class="col-sm-7">
-                                            <input id="ProposeContractNo" name="ProposeContractNo" class="form-control input-sm" readonly />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Account Number</label>
-                                        <div class="col-sm-7">
-                                            <input id="AccountNo" name="AccountNo" class="form-control input-sm" />
-                                        </div>
-                                    </div>
-                                    @*<div class="form-group">
-            <label class="control-label col-sm-5 small">Form of D.C.</label>
-            <div class="col-sm-7">
-                <input id="FormOfDC" name="FormOfDC" class="form-control input-sm" />
-            </div>
-        </div>*@
-
-                                    <div class="form-group" id="pnlLCNO">
-                                        <label class="control-label col-sm-5 small">L/C No</label>
-                                        <div class="col-sm-7">
-                                            <input id="LCNo" name="LCNo" class="form-control input-sm" value="" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="pnlLCDate">
-                                        <label class="control-label col-sm-5 small">L/C Date</label>
-                                        <div class="col-sm-7">
-                                            <input id="LCDate" name="LCDate" class="form-control input-sm ej2-datepicker" readonly />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">L/C Value</label>
-                                        <div class="col-sm-7" style="text-align:right">
-                                            <input id="LCValue" name="LCValue" class="form-control input-sm" value="0" />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">L/C Qty</label>
-                                        <div class="col-sm-7" style="text-align:right">
-                                            <input id="LCQty" name="LCQty" class="form-control input-sm" value="0" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Retirement Mode</label>
-                                        <div class="col-sm-7" style="text-align:right">
-                                            <input id="RetirementMode" name="RetirementMode" class="form-control input-sm" readonly />
-                                        </div>
+                                        <input id="ProposalNo" name="ProposalNo" class="form-control input-sm" readonly />
                                     </div>
                                 </div>
-
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Bank Ref Number</label>
-                                        <div class="col-sm-7">
-                                            <input id="BankRefNo" name="BankRefNo" class="form-control input-sm" />
-                                        </div>
+                                        <input id="BankRefNo" name="BankRefNo" class="form-control input-sm" />
                                     </div>
-
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Document Presentation Days</label>
+                                        <input id="DocPresentationDays" name="DocPresentationDays" class="form-control input-sm" placeholder="Doc Presentation Days" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Beneficiary(Supplier)</label>
+                                        <select id="SupplierID" name="SupplierID" class="form-control" style="width:100%" disabled="disabled"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Type of L/C</label>
-                                        <div class="col-sm-7">
-                                            <select id="PaymentModeID" name="PaymentModeID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="PaymentModeID" name="PaymentModeID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Tolerance %(+/-)</label>
+                                        <input id="Tolerance" name="Tolerance" value="0" class="form-control input-sm" placeholder="Tolerance %(+/-)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Applicant</label>
+                                        <select id="CompanyID" name="CompanyID" class="form-control" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group" id="pnlTenureofLCId">
                                         <label class="control-label col-sm-5 small">Tenure of L/C</label>
-                                        <div class="col-sm-7">
-                                            <select id="TenureofLCID" name="TenureofLCID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="TenureofLCID" name="TenureofLCID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Last Shipment Date</label>
-                                        <div class="col-sm-7">
-                                            <input id="LCReceiveDate" name="LCReceiveDate" class="form-control input-sm ej2-datepicker" placeholder="Last Shipment Date" />
-                                        </div>
+                                        <label class="control-label col-sm-5 small">Inco Terms</label>
+                                        <select id="IncoTermsID" name="IncoTermsID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                            </div>
 
+                            <div class="row">
+                                <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-5 small">L/C Expiry Date</label>
-                                        <div class="col-sm-7">
-                                            <input id="LCExpiryDate" name="LCExpiryDate" placeholder="L/C Expiry Date" class="form-control input-sm ej2-datepicker" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Qty Unit</label>
-                                        <div class="col-sm-7">
-                                            <select id="LCUnit" name="LCUnit" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Currency</label>
-                                        <div class="col-sm-7">
-                                            <select id="CurrencyID" name="CurrencyID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-5 small">Lien Bank</label>
-                                        <div class="col-sm-7">
-                                            <select id="LienBankID" name="LienBankID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-5 small">Advising Bank</label>
-                                        <div class="col-sm-7">
-                                            <select id="PaymentBankID" name="PaymentBankID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-5 small"></label>
-                                        <div class="col-sm-7">
-                                            <div class="icheck-success">
-                                                <input type="checkbox" id="NotifyPaymentBank" name="NotifyPaymentBank" />
-                                                <label for="NotifyPaymentBank">Notify Issueing Bank</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">BB Reporting Number</label>
-                                        <div class="col-sm-7">
-                                            <input id="BBReportingNumber" name="BBReportingNumber" placeholder="BB Reporting Number" class="form-control input-sm" />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Bank Acceptance From</label>
-                                        <div class="col-sm-7">
-                                            <select id="BankAcceptanceFrom" name="BankAcceptanceFrom" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">FTT/FDD</label>
-                                        <div class="col-sm-7">
-                                            <select id="TTTypeID" name="TTTypeID" class="form-control" style="width:100%"></select>
+                                        <label class="control-label col-sm-4 small">Cash L/C</label>
+                                        <div class="col-sm-8">
+                                        <input type="checkbox" style="margin-left:30px;" id="CashStatus" name="CashStatus" value="1" disabled="disabled" />
+                                        <label for="CashStatus"></label>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-sm-4">
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-5 small">Maturity Calc.</label>
-                                        <div class="col-sm-7">
-                                            <select id="MaturityCalculationID" name="MaturityCalculationID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Document Presentation Days</label>
-                                        <div class="col-sm-7">
-                                            <input id="DocPresentationDays" name="DocPresentationDays" class="form-control input-sm" placeholder="Doc Presentation Days" />
-                                        </div>
+                                        <label class="control-label col-sm-5 small">Last Shipment Date</label>
+                                        <input id="LCReceiveDate" name="LCReceiveDate" class="form-control input-sm ej2-datepicker" placeholder="Last Shipment Date" />
                                     </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Tolerance %(+/-)</label>
-                                        <div class="col-sm-7">
-                                            <input id="Tolerance" name="Tolerance" value="0" class="form-control input-sm" placeholder="Tolerance %(+/-)" />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-5 small">Inco Terms</label>
-                                        <div class="col-sm-7">
-                                            <select id="IncoTermsID" name="IncoTermsID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-5 small">CI Declaration</label>
-                                        <div class="col-sm-7">
-                                            <select id="CIDecID" name="CIDecID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-5 small">BI Declaration</label>
-                                        <div class="col-sm-7">
-                                            <select id="BCDecID" name="BCDecID" class="form-control" style="width:100%"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group" style="display:none">
-                                        <label class="control-label col-sm-5 small">HS Code</label>
-                                        <div class="col-sm-7">
-                                            <input id="HSCode" name="HSCode" class="form-control input-sm" placeholder="HS Code" />
-                                        </div>
-                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Available With</label>
-                                        <div class="col-sm-7">
-                                            <select id="AvailableWithID" name="AvailableWithID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="AvailableWithID" name="AvailableWithID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">D.C. Opening Bank</label>
+                                        <select id="IssueBankID" name="IssueBankID" class="form-control" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Expiry Date</label>
+                                        <input id="LCExpiryDate" name="LCExpiryDate" placeholder="L/C Expiry Date" class="form-control input-sm ej2-datepicker" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Calculation Of Tenure</label>
-                                        <div class="col-sm-7">
-                                            <select id="CalculationOfTenorID" name="CalculationOfTenorID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="CalculationOfTenorID" name="CalculationOfTenorID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Contract/Export LC No</label>
+                                        <input id="ProposeContractNo" name="ProposeContractNo" class="form-control input-sm" readonly />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Qty Unit</label>
+                                        <select id="LCUnit" name="LCUnit" class="form-control" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Partial Shipment</label>
-                                        <div class="col-sm-7">
-                                            <select id="PartialShipmentID" name="PartialShipmentID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="PartialShipmentID" name="PartialShipmentID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Account Number</label>
+                                        <input id="AccountNo" name="AccountNo" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Currency</label>
+                                        <select id="CurrencyID" name="CurrencyID" class="form-control" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Transshipment</label>
-                                        <div class="col-sm-7">
-                                            <select id="TransshipmentID" name="TransshipmentID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="TransshipmentID" name="TransshipmentID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Value</label>
+                                        <input id="LCValue" name="LCValue" class="form-control input-sm" value="0" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">BB Reporting Number</label>
+                                        <input id="BBReportingNumber" name="BBReportingNumber" placeholder="BB Reporting Number" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Port of Loading</label>
-                                        <div class="col-sm-7">
-                                            <select id="LoadingPortID" name="LoadingPortID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="LoadingPortID" name="LoadingPortID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">L/C Qty</label>
+                                        <input id="LCQty" name="LCQty" class="form-control input-sm" value="0" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Bank Acceptance From</label>
+                                        <select id="BankAcceptanceFrom" name="BankAcceptanceFrom" class="form-control" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Port of Discharge</label>
-                                        <div class="col-sm-7">
-                                            <select id="DischargePortID" name="DischargePortID" class="form-control" style="width:100%"></select>
-                                        </div>
+                                        <select id="DischargePortID" name="DischargePortID" class="form-control" style="width:100%"></select>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">Retirement Mode</label>
+                                        <input id="RetirementMode" name="RetirementMode" class="form-control input-sm" readonly />
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5 small">FTT/FDD</label>
+                                        <select id="TTTypeID" name="TTTypeID" class="form-control" style="width:100%"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Confirmation Instructions</label>
-                                        <div class="col-sm-7">
                                             <div class="icheck-primary icheck-inline">
                                                 <input type="radio" id="IsConInsWith" name="IsConInsWithRadio" value="true" />
                                                 <label for="IsConInsWith">With</label>
@@ -328,7 +276,136 @@
                                                 <input type="radio" id="IsConInsWithout" name="IsConInsWithRadio" value="false" />
                                                 <label for="IsConInsWithout">Without</label>
                                             </div>
-                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group" id="pnlLCNO">
+                                    <label class="control-label col-sm-5 small">L/C No</label>
+                                    <input id="LCNo" name="LCNo" class="form-control input-sm" value="" />
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group" id="pnlLCDate">
+                                    <label class="control-label col-sm-5 small">L/C Date</label>
+                                    <input id="LCDate" name="LCDate" class="form-control input-sm ej2-datepicker" readonly />
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group" style="display:none">
+                                    <label class="control-label col-sm-5 small">Lien Bank</label>
+                                    <select id="LienBankID" name="LienBankID" class="form-control" style="width:100%"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" style="display:none">
+                                    <label class="control-label col-sm-5 small">Advising Bank</label>
+                                    <select id="PaymentBankID" name="PaymentBankID" class="form-control" style="width:100%"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" style="display:none">
+                                    <label class="control-label col-sm-5 small"></label>
+                                    <div class="icheck-success">
+                                        <input type="checkbox" id="NotifyPaymentBank" name="NotifyPaymentBank" />
+                                        <label for="NotifyPaymentBank">Notify Issueing Bank</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group" style="display:none">
+                                    <label class="control-label col-sm-5 small">Maturity Calc.</label>
+                                    <select id="MaturityCalculationID" name="MaturityCalculationID" class="form-control" style="width:100%"></select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group" style="display:none">
+                                    <label class="control-label col-sm-5 small">CI Declaration</label>
+                                    <select id="CIDecID" name="CIDecID" class="form-control" style="width:100%"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" style="display:none">
+                                    <label class="control-label col-sm-5 small">BI Declaration</label>
+                                    <select id="BCDecID" name="BCDecID" class="form-control" style="width:100%"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" style="display:none">
+                                    <label class="control-label col-sm-5 small">HS Code</label>
+                                    <input id="HSCode" name="HSCode" class="form-control input-sm" placeholder="HS Code" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+              
+                <div class="row">
+                    <!-- Upload File Section -->
+                    <div class="col-md-3">
+                        <div class="card" style="border-color: #d4edda; border: 1px solid #d4edda;">
+                            <div class="card-header bg-light-green" style="background-color: #f5fdf0; border-bottom: 1px solid #c3e6cb;">
+                                <strong>Upload File</strong>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="form-group">
+                                    <input id="UploadFile" type="file" class="form-control-file mb-3" name="UploadFile">
+                                    <button type="button" id="btnViewLCImg" class="btn btn-success btn-sm">
+                                        View LC Image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Attached PI Information Section -->
+                    <div class="col-md-9">
+                        <div class="card" style="border-color: #d4edda; border: 1px solid #d4edda;">
+                            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #f5fdf0;">
+                                <strong>Attached PI Information</strong>
+                                <button type="button" id="btnViewAllPI" class="btn btn-success btn-sm">
+                                    View All PI
+                                </button>
+                            </div>
+                            <div class="card-body p-2">
+                                <table id="@tblChildId" class="table table-bordered mb-0">
+                                    <!-- Table content dynamically generated -->
+                                </table>
+                            </div>
+                        </div>
+                
+                        <!-- Documents Required Section -->
+                        <div class="card mt-3" style="border-color: #d4edda; border: 1px solid #d4edda;">
+                            <div class="card-header" style="background-color: #f5fdf0;">
+                                <strong>Documents Required</strong>
+                            </div>
+                            <div class="card-body">
+                                <div id="divCommercialAttachmentDocs" class="form-group mb-0">
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="billExchange">
+                                        <label class="form-check-label" for="billExchange">Bill of Exchange</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="commercialInvoice">
+                                        <label class="form-check-label" for="commercialInvoice">Commercial Invoice</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="packingList">
+                                        <label class="form-check-label" for="packingList">Packing List</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="deliveryChallan">
+                                        <label class="form-check-label" for="deliveryChallan">Delivery Challan</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="airWayBill">
+                                        <label class="form-check-label" for="airWayBill">Air Way Bill</label>
                                     </div>
                                 </div>
                             </div>
@@ -336,69 +413,20 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            Upload File
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <input id="UploadFile" type="file" class="file" name="UploadFile">
-                                        <button type="button" id="btnViewLCImg" class="btn btn-success btn-xs" style="float:left; margin-top:20px;">View LC Image</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            Attached PI Information
-                            <button type="button" id="btnViewAllPI" class="btn btn-success btn-xs" style="float:right">View All PI</button>
-                        </div>
-
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12" id="LCPILists">
-                                    <div class="form-group">
-                                        <table id="@tblChildId"></table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading">
-                            Documents Required
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-horizontal">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <div class="col-sm-12" id="divCommercialAttachmentDocs">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="box-footer btn-e-float-margin" id="divFormButtons">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="pull-right">
+                    <div class="row">
+                        <div class="col-md-12 text-right">
                             <button type="button" class="btn btn-default m-w-120" id="btnLCEditCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
                             <button type="button" class="btn btn-primary m-w-120" id="btnSaveLC"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
                             <button type="button" class="btn btn-success m-w-120" id="btnApprovedLC" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Update</button>
                             <button type="button" class="btn btn-success m-w-120" id="btnProposeLC" style="display:none"><i class="fa fa-angle-double-right"></i>&nbsp;Forwarding Letter</button>
                         </div>
                     </div>
-                </div>
-
+              
+                </div>  
             </div>
-        </form>
-    </div>
+        </form>    
+    </div>       
 </div>
+

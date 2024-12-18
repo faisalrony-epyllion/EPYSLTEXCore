@@ -24,10 +24,10 @@ namespace EPYSLTEXCore.Application.Services.SCD
             //, ISignatureRepository signatureRepository
             )
         {
-            _service = service;
-            //_signatureRepository = signatureRepository;
-            _connection = service.Connection;
+            _service = service;           
             _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+            _connection = service.Connection;
         }
 
         public async Task<List<YarnLcMaster>> GetImportLCData(Status status, bool isCDAPage, PaginationInfo paginationInfo)
@@ -754,11 +754,14 @@ namespace EPYSLTEXCore.Application.Services.SCD
         public async Task SaveAsync(YarnLcMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
-                //For Backup When Revise
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 if (entity.isAmendentValue)
                 {
                     await _connection.ExecuteAsync("spBackupYarnLCMaster_Full", new { LCID = entity.LCID, UserId = entity.AddedBy }, transaction, 30, CommandType.StoredProcedure);
@@ -768,10 +771,10 @@ namespace EPYSLTEXCore.Application.Services.SCD
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity = await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
                     default:
                         break;
@@ -782,24 +785,27 @@ namespace EPYSLTEXCore.Application.Services.SCD
                 await _service.SaveAsync(entity.LcDocuments, transaction);
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 
-        private async Task<YarnLcMaster> AddAsync(YarnLcMaster entity)
+        private async Task<YarnLcMaster> AddAsync(YarnLcMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            entity.LCID = await _service.GetMaxIdAsync(TableNames.YarnLCMaster);
-            //entity.LcNo = await _service.GetMaxNoAsync(TableNames.IMPORT_LC_NO);
-            var maxChildId = await _service.GetMaxIdAsync(TableNames.YarnLCChild, entity.LcChilds.Count);
-            var maxDocId = await _service.GetMaxIdAsync(TableNames.YarnLCDocument, entity.LcDocuments.Count);
+            entity.LCID = await _service.GetMaxIdAsync(TableNames.YarnLCMaster, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+           
+            var maxChildId = await _service.GetMaxIdAsync(TableNames.YarnLCChild, entity.LcChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxDocId = await _service.GetMaxIdAsync(TableNames.YarnLCDocument, entity.LcDocuments.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             foreach (var item in entity.LcChilds)
             {
@@ -816,12 +822,11 @@ namespace EPYSLTEXCore.Application.Services.SCD
             return entity;
         }
 
-        private async Task<YarnLcMaster> UpdateAsync(YarnLcMaster entity)
+        private async Task<YarnLcMaster> UpdateAsync(YarnLcMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            //entity.LCNo = await _service.GetMaxNoAsync(TableNames.IMPORT_LC_NO);
-            //entity.LcDate = DateTime.Now;
-            var maxChildId = await _service.GetMaxIdAsync(TableNames.YarnLCChild, entity.LcChilds.Where(x => x.EntityState == EntityState.Added).Count());
-            var maxDocId = await _service.GetMaxIdAsync(TableNames.YarnLCDocument, entity.LcDocuments.Where(x => x.EntityState == EntityState.Added).Count());
+        
+            var maxChildId = await _service.GetMaxIdAsync(TableNames.YarnLCChild, entity.LcChilds.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxDocId = await _service.GetMaxIdAsync(TableNames.YarnLCDocument, entity.LcDocuments.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             foreach (var item in entity.LcChilds.ToList())
             {

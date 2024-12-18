@@ -41,7 +41,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                    INNER JOIN {TableNames.YarnPIReceiveChild} YPRC ON YPRC.YPIReceiveMasterID = YPRM.YPIReceiveMasterID
 	                    INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = YPRM.SupplierID
                         INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = YPRM.CompanyID 
-                        INNER JOIN YarnPIReceivePO YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+                        INNER JOIN {TableNames.YarnPIReceivePO} YPIPO ON YPRM.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
 						INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID 
                         Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
 	                    WHERE ISNULL(Acknowledge,0) = 1 And ISNULL(Accept,0) = 0 And ISNULL(Reject,0) = 0 AND IsCDA = '{isCDAPage}'
@@ -86,7 +86,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 RVSList AS
                 (
                 SELECT YPI.YPIReceivePOID, YPIReceiveMasterID
-                FROM YarnPIReceivePO YPI
+                FROM {TableNames.YarnPIReceivePO} YPI
                 INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPI.YPOMasterID
                 WHERE YPI.RevisionNo <> YPO.RevisionNo
                 ),  
@@ -99,7 +99,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                     INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = M.CompanyID
-                    INNER JOIN YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+                    INNER JOIN {TableNames.YarnPIReceivePO} YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
                     INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID
                     LEFT JOIN RVSList RV ON RV.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
                     Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
@@ -170,7 +170,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                FROM {TableNames.YarnPIReceiveMaster} M
 	                INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
-	                INNER JOIN YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+	                INNER JOIN {TableNames.YarnPIReceivePO} YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
 	                INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID  
 	                INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = M.CompanyID  
                     Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
@@ -206,7 +206,7 @@ namespace EPYSLTEX.Infrastructure.Services
 	                INNER JOIN {TableNames.YarnPIReceiveChild} C ON C.YPIReceiveMasterID = M.YPIReceiveMasterID
 	                INNER JOIN {DbNames.EPYSL}..Contacts CC ON CC.ContactID = M.SupplierID
                     INNER JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID = M.CompanyID 
-                    INNER JOIN YarnPIReceivePO YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
+                    INNER JOIN {TableNames.YarnPIReceivePO} YPIPO ON M.YPIReceiveMasterID = YPIPO.YPIReceiveMasterID
 				    INNER JOIN {TableNames.YarnPOMaster} YPO ON YPO.YPOMasterID = YPIPO.YPOMasterID 
                     Left JOIN {DbNames.EPYSL}..LoginUser LU ON LU.UserCode = YPO.AddedBy
 					WHERE ISNULL(M.NeedsReview,0) = 0 AND ISNULL(Reject,0) = 1 AND IsCDA = 'False'
@@ -273,7 +273,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;With
                 PO As (
 	                Select YPIReceivePOID, YPIReceiveMasterID, YPOMasterID
-	                From YarnPIReceivePO
+	                From {TableNames.YarnPIReceivePO}
 	                Where YPIReceiveMasterID = {id}
                 )
                 Select PO.YPIReceivePOID, POM.PONo,  PO.YPIReceiveMasterID, PO.YPOMasterID, POM.RevisionNo, 
@@ -290,12 +290,12 @@ namespace EPYSLTEX.Infrastructure.Services
                 AS (
 	                SELECT CDAPOMasterID YPOMasterID, TypeOfLCID, ShippingTolerance, CreditDays
 	                FROM CDAPOMaster 
-	                WHERE CDAPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
+	                WHERE CDAPOMasterID IN (Select YPOMasterID From {TableNames.YarnPIReceivePO} Where YPIReceiveMasterID = {id})
                 ),
                 C AS (
 	                SELECT CDAPOMasterID YPOMasterID, SUM((POQty*Rate)) TotalValue, SUM(POQty) TotalQty 
 	                FROM CDAPOChild
-	                WHERE CDAPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
+	                WHERE CDAPOMasterID IN (Select YPOMasterID From {TableNames.YarnPIReceivePO} Where YPIReceiveMasterID = {id})
 	                GROUP BY CDAPOMasterID
                 ),
                 PM As (
@@ -317,7 +317,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 /*;With
                 PO As (
 	                Select YPIReceivePOID, YPIReceiveMasterID, YPOMasterID
-	                From YarnPIReceivePO
+	                From {TableNames.YarnPIReceivePO}
 	                Where YPIReceiveMasterID = {id}
                 )
                 Select PO.YPIReceivePOID, POM.PONo,  PO.YPIReceiveMasterID, PO.YPOMasterID, POM.RevisionNo, POM.QuotationRefNo, CE.ShortName CompanyName
@@ -331,11 +331,11 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;WITH M
                 AS (
 	                SELECT CDAPOMasterID, TypeOfLCID, ShippingTolerance, CreditDays
-					FROM CDAPOMaster WHERE CDAPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
+					FROM CDAPOMaster WHERE CDAPOMasterID IN (Select YPOMasterID From {TableNames.YarnPIReceivePO} Where YPIReceiveMasterID = {id})
                 ),
                 C AS (
 	                SELECT CDAPOMasterID, SUM((POQty*Rate)) TotalValue, SUM(POQty) TotalQty FROM CDAPOChild
-					WHERE CDAPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
+					WHERE CDAPOMasterID IN (Select YPOMasterID From {TableNames.YarnPIReceivePO} Where YPIReceiveMasterID = {id})
 	                GROUP BY CDAPOMasterID
                 )
 				, PM As (
@@ -387,7 +387,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;With
                 PO As (
 	                Select YPIReceivePOID, YPIReceiveMasterID, YPOMasterID
-	                From YarnPIReceivePO
+	                From {TableNames.YarnPIReceivePO}
 	                Where YPIReceiveMasterID = {id}
                 )
                 Select PO.YPIReceivePOID, POM.PONo,  PO.YPIReceiveMasterID, PO.YPOMasterID, POM.RevisionNo, 
@@ -404,11 +404,11 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;WITH M
                 AS (
 	                SELECT YPOMasterID, TypeOfLCID, ShippingTolerance, CreditDays
-					FROM {TableNames.YarnPOMaster} WHERE YPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
+					FROM {TableNames.YarnPOMaster} WHERE YPOMasterID IN (Select YPOMasterID From {TableNames.YarnPIReceivePO} Where YPIReceiveMasterID = {id})
                 ),
                 C AS (
 	                SELECT YPOMasterID, SUM((POQty*Rate)) TotalValue, SUM(POQty) TotalQty FROM {TableNames.YarnPOChild}
-					WHERE YPOMasterID IN (Select YPOMasterID From YarnPIReceivePO Where YPIReceiveMasterID = {id})
+					WHERE YPOMasterID IN (Select YPOMasterID From {TableNames.YarnPIReceivePO} Where YPIReceiveMasterID = {id})
 	                GROUP BY YPOMasterID
                 ),
 				PM As (

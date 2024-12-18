@@ -12,13 +12,20 @@
         public const int ITEM_SUB_GROUP_YARN_NEW = 102;
         public const int ITEM_SUB_GROUP_YARN = 39;
         public const int APPLICATION_ID=11;
-        public const string YARN_PI_FILE_PATH = "/Uploads/YarnPI";
+        
         public const string ITEM_SUB_GROUP_FABRIC = "Fabric";
     }
     public static class DbNames
     {
         public const string EPYSL = "EPYSL";
         public const string EPYSLTEX = "EPYSLTEX";
+    }
+
+    public static class UploadLocations {
+        public const string YARN_CI_FILE_PATH = "/Uploads/YarnCI";
+        public const string YARN_PI_FILE_PATH = "/Uploads/YarnPI";
+        public const string LC_FILE_PATH = "/Uploads/LC";
+
     }
     public static class ContactCategoryNames
     {
@@ -361,13 +368,13 @@
         public const string GSM = "GSM";
 
         #region Yarn Item Segments
-        public const string YARN_COMPOSITION = "Yarn Composition";
-        public const string YARN_TYPE = "Yarn Type New";
-        public const string YARN_MANUFACTURING_PROCESS = "Yarn Manufacturing Process";
-        public const string YARN_MANUFACTURING_SUB_PROCESS = "Yarn Manufacturing Sub Process";
-        public const string YARN_QUALITY_PARAMETER = "Yarn Quality Parameter";
+        public const string YARN_COMPOSITION = "Yarn Composition Live";
+        public const string YARN_TYPE = "Yarn Type Live";
+        public const string YARN_MANUFACTURING_PROCESS = "Yarn Manufacturing Process Live";
+        public const string YARN_MANUFACTURING_SUB_PROCESS = "Yarn Manufacturing Sub Process Live";
+        public const string YARN_QUALITY_PARAMETER = "Yarn Quality Parameter Live";
         public const string SHADE = "Shade";
-        public const string YARN_COUNT = "Yarn Count";
+        public const string YARN_COUNT = "Yarn Count New";
         public const string YARN_COUNT_MASTER = "Yarn Count Master";
         public const string NO_OF_PLY = "No of Ply";
 

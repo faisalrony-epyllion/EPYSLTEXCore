@@ -1,10 +1,5 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Entities.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Statics;
 
 namespace EPYSLTEXCore.Application.Interfaces.Admin
 {

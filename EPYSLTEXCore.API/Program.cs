@@ -95,17 +95,20 @@ builder.Services.AddSingleton(validateJwt);
 
 #region CORS Policy Configuration
 
+
 builder.Services.AddCors(options =>
 {
+    // Retrieve allowed origins from configuration
+    var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
     options.AddPolicy("AllowSpecificOrigin", policyBuilder =>
     {
-        policyBuilder.WithOrigins("https://localhost:44311") // Allow specific origin
+        policyBuilder.WithOrigins(allowedOrigins)
                      .AllowAnyHeader()
                      .AllowAnyMethod()
                      .AllowCredentials(); // Include credentials if needed
     });
 });
-
 #endregion
 
 var app = builder.Build();

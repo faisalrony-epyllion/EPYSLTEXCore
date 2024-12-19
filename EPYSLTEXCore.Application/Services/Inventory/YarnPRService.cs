@@ -946,7 +946,7 @@ namespace EPYSLTEX.Infrastructure.Services
                         StockQty = SUM(ISNULL(YSM.PipelineStockQty,0) + ISNULL(YSM.QuarantineStockQty,0) + ISNULL(YSM.AdvanceStockQty,0) + ISNULL(YSM.SampleStockQty,0) + ISNULL(YSM.LeftoverStockQty,0) + ISNULL(YSM.LiabilitiesStockQty,0))
                         --'Concept' [Source]
                         FROM {TableNames.ItemMasterReOrderStatus} ROL 
-                        LEFT JOIN {TableNames.YarnStockMaster_New} YSM ON YSM.ItemMasterID = ROL.ItemMasterID
+                        LEFT JOIN {TableNames.YarnStockMaster_New} YSM ON YSM.ItemMasterID = ROL.ItemMasterID AND YSM.CompanyID = ROL.CompanyID
                         INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = ROL.ItemMasterID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=IM.SubGroupID
                         LEFT JOIN {DbNames.EPYSL}..LoginUser L ON L.UserCode = ROL.AddedBy

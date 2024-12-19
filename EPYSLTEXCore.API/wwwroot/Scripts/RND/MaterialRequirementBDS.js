@@ -2669,12 +2669,14 @@
     }
 
     function saveComposition() {
+        debugger;
         var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
         if (totalPercent != 100) return toastr.error("Sum of compostion percent must be 100");
         compositionComponents.reverse();
 
         var composition = "";
-        compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
         compositionComponents.forEach(function (component) {
             composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
             if (component.YarnSubProgramNew) {

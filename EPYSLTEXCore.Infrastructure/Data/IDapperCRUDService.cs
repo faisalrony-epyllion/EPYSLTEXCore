@@ -1,9 +1,8 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Text.Json.Nodes;
 
 namespace EPYSLTEXCore.Infrastructure.Data

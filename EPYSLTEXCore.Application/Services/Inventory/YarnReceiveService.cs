@@ -12,7 +12,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services
 {

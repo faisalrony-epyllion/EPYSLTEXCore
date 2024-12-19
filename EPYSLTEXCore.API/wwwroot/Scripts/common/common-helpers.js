@@ -55,7 +55,7 @@ function findDuplicateValues(paramArray) {
 
 function initCommonControls($formEl) {
     $(function () { // document ready
-  
+
         $formEl.find('.ej2-datepicker').each(function (i, el) {
             $(el).datepicker({
                 todayHighlight: true,
@@ -481,18 +481,18 @@ function setFormData($formEl, data) {
         $formEl.find("input, select, textarea").each(function () {
             try {
                 var $input = $(this);
-               
+
                 var value = data[this.name];
                 if (this.tagName.toLowerCase() === "textarea") {
-           
+
                     $input.val(value);
                 }
                 else if (this.tagName.toLowerCase() === "input") {
-                   
+
                     switch (this.type) {
                         case "checkbox":
                             $input.prop("checked", value);
-                           
+
                             break;
                         case "radio":
                             $input.each(function (i) {
@@ -1058,7 +1058,7 @@ function commonFinder() {
                 if (editTypeArray && (fieldArray.length !== editTypeArray.length)) throw "Number of fields, header texts, widths, formats and edit types must be same.";
             }
 
-            
+
             for (var ind = 0; ind < fieldArray.length; ind++) {
                 var headerText = headerTextArray[ind];
                 var column;
@@ -2504,7 +2504,7 @@ async function getYarnItemColumnsAsync(dataList, isEditable = true) {
 async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true) {
 
     try {
-        
+
         var response = await axios.get(getYarnItemsApiUrl(dataList));
         itemSegmentValues = response.data;
         var yarnTypeElem, manufacturingProcessElem, subProcessElem, qualityParameterElem, countElem;
@@ -5890,3 +5890,53 @@ function loadSelect2(select2Id, dataList, keyProp, valueProp, divAdvanceFilterId
     });
 }
 //=====================End Select2 Data Bind=============================================
+
+//=====================Template editing in EJ2 Drop Down Load & Set======================
+function ejDropDownLoad(ej, args, listP, gridFieldName, textFieldName, valueFieldName, placeHolder) {
+    new ej.dropdowns.DropDownList({
+        value: listP, popupHeight: '200px', floatLabelType: 'Always',
+        dataSource: listP, fields: { text: textFieldName, value: valueFieldName }, placeholder: placeHolder
+    }, args.form.elements.namedItem(gridFieldName)
+    );
+
+}
+function setDropDownValues(masterData, obj) {
+    for (var pName in masterData) {
+        if (pName.includes('List')) {
+            var list = masterData[pName];
+            var propName = pName.slice(0, -4);
+            var propID = propName + "ID";
+            obj[propID] = $.isNumeric(obj[propName]) ? obj[propName] : obj[propID];
+            obj[propName] = list.find(x => x.id == obj[propID]).text;
+        }
+    }
+    return obj;
+}
+function setValidPropsValue(data, rowData) {
+    var mismatches = findMismatchProps(data, rowData);
+    mismatches.map(x => {
+        rowData[x] = data[x];
+    });
+    return rowData;
+}
+function findMismatchProps(obj1, obj2) {
+    var mismatchedProps = [];
+    $.each(obj1, function (key, value) {
+        if (obj2.hasOwnProperty(key)) {
+            if (obj2[key] !== value) {
+                mismatchedProps.push(key);  // If values are different, add the key to the list
+            }
+        } else {
+            mismatchedProps.push(key);  // If obj2 doesn't have the key, add the key to the list
+        }
+    });
+
+    $.each(obj2, function (key, value) {
+        if (!obj1.hasOwnProperty(key)) {
+            mismatchedProps.push(key);  // If obj1 doesn't have the key, add it to the list
+        }
+    });
+
+    return mismatchedProps;
+}
+//=====================End Template editing in EJ2 Drop Down Load & Set===================

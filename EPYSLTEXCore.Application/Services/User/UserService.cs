@@ -3,7 +3,7 @@ using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEX.Infrastructure.Services
 {

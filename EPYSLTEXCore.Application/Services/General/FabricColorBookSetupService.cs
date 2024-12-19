@@ -1,22 +1,12 @@
-﻿using Dapper;
-using EPYSLTEX.Core.Statics;
+﻿using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.Repositories;
-using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
-using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
-using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
-using System.Data.Common;
-using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Text.RegularExpressions;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services.General
 {

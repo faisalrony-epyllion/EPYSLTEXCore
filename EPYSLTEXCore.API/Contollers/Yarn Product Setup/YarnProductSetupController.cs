@@ -7,7 +7,7 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.API.Contollers.Yarn_Product_Setup
 {

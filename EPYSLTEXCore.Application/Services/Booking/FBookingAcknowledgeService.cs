@@ -15,9 +15,9 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services.Booking
 {

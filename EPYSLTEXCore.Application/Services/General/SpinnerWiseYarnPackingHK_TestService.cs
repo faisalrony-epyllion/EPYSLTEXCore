@@ -12,32 +12,16 @@ using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services.General
 {
-    public class SpinnerWiseYarnPackingHKService : ISpinnerWiseYarnPackingHKService
+    public class SpinnerWiseYarnPackingHK_TestService : ISpinnerWiseYarnPackingHK_TestService
     {
 
         private readonly IDapperCRUDService<SpinnerWiseYarnPackingHK> _service;
-        //private readonly IDapperCRUDService<SpinnerWiseYarnPackingHK> _gmtservice;
-        //private readonly ISqlQueryRepository<SpinnerWiseYarnPackingHK> _sqlQueryRepository;
-        //private readonly ISignatureRepository _signatureRepository;
-        //private SqlTransaction _transaction = null;
-        //private SqlTransaction _transactionGmt = null;
         private readonly SqlConnection _connection;
         private readonly SqlConnection _connectionGmt;
 
-        public SpinnerWiseYarnPackingHKService(IDapperCRUDService<SpinnerWiseYarnPackingHK> service
-            //, ISqlQueryRepository<SpinnerWiseYarnPackingHK> sqlQueryRepository
-            //, ISignatureRepository signatureRepository
-            )
+        public SpinnerWiseYarnPackingHK_TestService(IDapperCRUDService<SpinnerWiseYarnPackingHK> service)
         {
-            //_service = service;
-            //_sqlQueryRepository = sqlQueryRepository;
-            ////_signatureRepository = signatureRepository;
-            //_connection = _service.Connection;
-            ////_gmtservice = gmtservice;
-            ////_gmtservice.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
-
             _service = service;
-            //_sqlQueryRepository = sqlQueryRepository;
             _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
             _connectionGmt = service.Connection;
 
@@ -104,13 +88,6 @@ namespace EPYSLTEXCore.Application.Services.General
                 if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
             }
         }
-        //public async Task<List<Select2OptionModel>> GetAllSpinner()
-        //{
-        //    var sql =
-        //        $@"--SpinnerList
-        //            {CommonQueries.GetYarnSpinners()};";
-        //    return await _service.GetDataAsync<Select2OptionModel>(sql);
-        //}
         public async Task<SpinnerWiseYarnPackingHK> GetMaster()
         {
             var sql =
@@ -152,7 +129,6 @@ namespace EPYSLTEXCore.Application.Services.General
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        //entity = await AddAsync(entity, _transactionGmt);
                         entity.YarnPackingID = await _service.GetMaxIdAsync(TableNames.SpinnerWiseYarnPackingHK, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         break;
 
@@ -164,16 +140,11 @@ namespace EPYSLTEXCore.Application.Services.General
                         break;
                 }
 
-                await _service.SaveSingleAsync(entity, transaction);
+                await _service.SaveSingleAsync(entity, _connection, transaction);
 
                 transaction.Commit();
                 transactionGmt.Commit();
             }
-            //catch (DbEntityValidationException ex)
-            //{
-            //    var fex = new FormattedDbEntityValidationException(ex);
-            //    throw new Exception(fex.Message);
-            //}
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
@@ -192,10 +163,8 @@ namespace EPYSLTEXCore.Application.Services.General
         {
             entity.YarnPackingID = await _service.GetMaxIdAsync(TableNames.SpinnerWiseYarnPackingHK, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
-
             return entity;
         }
-
         //private async Task UpdateAsync(SegmentValueYarnTypeMappingSetup entity)
         //{
         //    var maxReqChildId = await _signatureRepository.GetMaxIdAsync(TableNames.BATCH_ITEM_REQUIREMENT, entity.BatchItemRequirements.Where(x => x.EntityState == EntityState.Added).Count());

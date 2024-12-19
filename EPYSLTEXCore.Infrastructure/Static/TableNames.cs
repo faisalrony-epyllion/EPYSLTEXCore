@@ -920,8 +920,6 @@
         public const string DayValidDuration = "T_DayValidDuration";
         public const string YarnPRFrom_HK = "YarnPRFrom_HK";
         public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
-        public const string YarnStockMaster_New = "T_YarnStockMaster_New";
-        public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
     }
 
 }

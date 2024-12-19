@@ -912,6 +912,7 @@
         public const string SpinnerWiseYarnPackingHK = "T_SpinnerWiseYarnPacking_HK";
         public const string StockType = "StockType";
         public const string YarnStockMaster_New = "T_YarnStockMaster_New";
+        public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
     }
 
 }

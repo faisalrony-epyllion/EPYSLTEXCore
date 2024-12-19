@@ -9,27 +9,22 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
     public class SpinnerWiseYarnPackingHK : DapperBaseEntity
     {
         [ExplicitKey]
-        public int YarnPackingID { get; set; }
-        public int SpinnerID { get; set; }
-        public string PackNo { get; set; }
-        public int Cone { get; set; }
-        public decimal NetWeight { get; set; }
-        public int AddedBy { get; set; }
+        public int YarnPackingID { get; set; } = 0;
+        public int SpinnerID { get; set; } = 0;
+        public string PackNo { get; set; } = "";
+        public int Cone { get; set; } = 0;
+        public decimal NetWeight { get; set; } = 0;
+        public int AddedBy { get; set; } = 0;
         public DateTime DateAdded { get; set; }
-        public int UpdatedBy { get; set; }
-        public DateTime DateUpdated { get; set; }
+        public int UpdatedBy { get; set; } = 0;
+        public DateTime? DateUpdated { get; set; }
 
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || YarnPackingID > 0;
         [Write(false)]
-        public string Spinner { get; set; }
+        public string Spinner { get; set; } = "";
         [Write(false)]
         public List<Select2OptionModel> SpinnerList { get; set; }
-
-        public SpinnerWiseYarnPackingHK()
-        {
-            YarnPackingID = 0;
-        }
     }
 }

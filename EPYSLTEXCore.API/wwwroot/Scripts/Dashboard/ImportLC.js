@@ -162,7 +162,7 @@
     function initMasterTable() {
         $tblMasterEl.bootstrapTable('destroy');
         $tblMasterEl.bootstrapTable({
-            classes: 'table-bordered table-striped table-sm',
+            classes: 'table-bordered table-striped',
             theadClasses: 'text-center',
             
             showRefresh: true,

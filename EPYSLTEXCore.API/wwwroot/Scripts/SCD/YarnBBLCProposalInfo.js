@@ -642,6 +642,7 @@
         $tblChildEl.bootstrapTable({
             //showRefresh: true,
             showExport: true,
+  
            // showColumns: true,
            // toolbar: $toolbarEl,
             exportTypes: "['csv', 'excel']",
@@ -654,10 +655,10 @@
                     formatter: function (value, row, index, field) { 
                         return [
                             '<span class="btn-group">',
-                            '<a class="btn btn-danger btn-xs remove" href="javascript:void(0)" title="Delete Item">',
+                            '<a class="btn btn-danger btn-sm remove" href="javascript:void(0)" title="Delete Item">',
                             '<i class="fa fa-times"></i>',
                             '</a>',
-                            '<a class="btn btn-xs btn-primary" href="' + row.PiFilePath + '" target="_blank" title="PI Report">',
+                            '&nbsp;<a class="btn btn-sm btn-primary" href="' + row.PiFilePath + '" target="_blank" title="PI Report">',
                             '<i class="fas fa-file-pdf" aria-hidden="true"></i>',
                             '</a>',
                             '</span>'

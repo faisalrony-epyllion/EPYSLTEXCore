@@ -3,12 +3,12 @@ using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Application.Interfaces.Admin;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
 
 namespace EPYSLTEXCore.Application.Services.General
 {

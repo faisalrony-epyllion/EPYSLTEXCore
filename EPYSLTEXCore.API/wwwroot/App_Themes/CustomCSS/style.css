@@ -195,6 +195,11 @@
         .skin-grey .main-header > .logo:hover {
             background-color: #263238
         }
+    .form-horizontal .ci {
+        padding-top: 7px !important;
+        margin-bottom: 0 !important;
+        text-align: right !important;
+    }
 }
 
 .skin-grey .main-header li.user-header {
@@ -509,3 +514,6 @@ form, .box-body {
     padding: 0px !important;
 }
 */
+.form-group {
+    margin-bottom: 2px !important;
+}

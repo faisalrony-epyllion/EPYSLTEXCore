@@ -79,7 +79,7 @@ var validateJwt = new TokenValidationParameters
     ValidateLifetime = true,
     ValidateIssuerSigningKey = true,
     ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+    ValidAudiences = jwtSettings.GetSection("JwtSettings:Audiences").Get<string[]>(),
     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new ArgumentException("security key can not be null"))),
 };
 

@@ -46,7 +46,7 @@
 
   
         if (isAcknowledgePage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
             $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
             $toolbarEl.find("#btnProposedList").hide();
             $toolbarEl.find("#btnApprovedList").hide();
@@ -79,7 +79,7 @@
             isEditable = false;
         }
         else if (isApprovePage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
             $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
             $toolbarEl.find("#btnProposedList").show();
             $toolbarEl.find("#btnApprovedList").show();
@@ -113,7 +113,7 @@
             $formEl.find("#BuyerTeam,#Buyer").show();
         }
         else if (isCPRPage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
             $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
             $toolbarEl.find("#btnProposedList").hide();
             $toolbarEl.find("#btnApprovedList").hide();
@@ -145,7 +145,7 @@
             isEditable = true;
         }
         else if (isFPRPage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
             $toolbarEl.find("#btnNewItem").hide();
             $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
             $toolbarEl.find("#btnProposedList").hide();
@@ -359,6 +359,14 @@
             $toolbarEl.find("#divAddPRForMR").fadeIn();
             initMasterTable();
         });
+        $toolbarEl.find("#btnROLBasePendingList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.ROL_BASE_PENDING;
+            
+            $toolbarEl.find("#divAddPRForMR").fadeIn();
+            initMasterTable();
+        });
         $toolbarEl.find("#btnPendingRevisionList").on("click", function (e) {
             e.preventDefault();
             toggleActiveToolbarBtn(this, $toolbarEl);
@@ -480,6 +488,7 @@
     }
 
     function initMasterTable() {
+        
         var commands = [];
         if (isApprovePage) {
             if (status == statusConstants.REJECT || status == statusConstants.COMPLETED) {
@@ -579,7 +588,7 @@
         }
 
         var columns = [];
-
+        
         if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ADDITIONAL) {
             commands = [
                 { type: 'ViewMR', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
@@ -597,6 +606,15 @@
                 },
                 {
                     field: 'Source', headerText: 'Source'
+                },
+                {
+                    field: 'YarnCategory', headerText: 'Yarn Category', width: 100, visible: status == statusConstants.ROL_BASE_PENDING
+                },
+                {
+                    field: 'ReOrderQty', headerText: 'ROL Qty', width: 100, visible: status == statusConstants.ROL_BASE_PENDING
+                },
+                {
+                    field: 'StockQty', headerText: 'Stock Qty', width: 100, visible: status == statusConstants.ROL_BASE_PENDING
                 },
                 {
                     field: 'RevisionStatus', headerText: 'Status', width: 100
@@ -642,7 +660,38 @@
                 }
             ];
         }
+        else if (status == statusConstants.ROL_BASE_PENDING) {
+            commands = [
+                { type: 'ViewMR', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
+                { type: 'AcknowledgeMR', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check', title: "Acknowledge MR" } },
+                { type: 'RejectMR', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-ban' } }
 
+            ]
+            columns = [
+                {
+                    headerText: '', commands: commands, visible: status == statusConstants.ADDITIONAL,
+                    textAlign: 'Center', width: ch_setActionCommandCellWidth(commands)
+                },
+                {
+                    field: 'YarnPRFromID', visible: false
+                },
+                {
+                    field: 'Source', headerText: 'Source'
+                },
+                {
+                    field: 'YarnCategory', headerText: 'Yarn Category', width: 100
+                },
+                {
+                    field: 'ReOrderQty', headerText: 'ROL Qty', width: 100
+                },
+                {
+                    field: 'StockQty', headerText: 'Stock Qty', width: 100
+                },
+                {
+                    field: 'ROSID', headerText: 'ROSID', width: 100, visible: false
+                }
+            ];
+        }
         else if (status == statusConstants.APPROVED) {
             columns = [
                 {
@@ -811,7 +860,7 @@
         }
 
         var selectionType = "Single";
-        if (status == statusConstants.AWAITING_PROPOSE) {
+        if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ROL_BASE_PENDING) {
             columns.unshift({ type: 'checkbox', width: 50 });
             //selectionType = "Multiple";
         }
@@ -832,6 +881,7 @@
     }
 
     function handleCommands(args) {
+        
         $formEl.find("#btnAcknowledgeMR").hide();
         if (args.commandColumn.type == 'Edit') {
             getDetails(args.rowData.YarnPRMasterID, args.rowData.YarnPRFromID, args.rowData.Source, args.commandColumn.type);
@@ -1136,7 +1186,7 @@
                 return;
             }
         }
-
+        
         source = uniqueAry[0].Source;
         var iDs = "";
         if (uniqueAry[0].Source == prFrom.CONCEPT) {
@@ -1159,6 +1209,10 @@
         else if (uniqueAry[0].Source == prFrom.FABRIC_PROJECTION_YARN_BOOKING) {
             iDs = $tblMasterEl.getSelectedRecords().map(function (el) { return "'" + el.ConceptNo + "'" }).toString();
             yarnPRFromID = 5;
+        }
+        else if (uniqueAry[0].Source == prFrom.ROL_BASE_BOOKING) {
+            iDs = $tblMasterEl.getSelectedRecords().map(function (el) { return "'" + el.ROSID + "'" }).toString();
+            yarnPRFromID = 6;
         }
         axios.get(`/api/yarn-pr/new-mr?iDs=${iDs}&source=${uniqueAry[0].Source}&revisionstatus=${uniqueAry[0].RevisionStatus}`)
             .then(function (response) {
@@ -1190,7 +1244,11 @@
 
                 if (uniqueAry[0].Source == "Bulk Booking") {
                     $formEl.find("#TriggerPointID").val('1251').trigger("change"); //Projection Based
-                } else {
+                }
+                if (uniqueAry[0].Source == "ROL Base Booking") {
+                    $formEl.find("#TriggerPointID").val('1253').trigger("change"); //Projection Based
+                }
+                else {
                     $formEl.find("#TriggerPointID").val('1252').trigger("change"); //Projection Based
                 }
 
@@ -1407,7 +1465,7 @@
     //check
     async function initChildTable(data) {
         if ($tblChildEl) $tblChildEl.destroy();
-      
+        
         var columns = [{ field: 'YarnPRChildID', isPrimaryKey: true, visible: false }];
         if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ADDITIONAL || status == statusConstants.APPROVED) {
             columns.push.apply(columns,
@@ -1466,11 +1524,11 @@
             //},
             { field: 'Source', headerText: 'Source', width: 20, visible: false },
             {
-                field: 'ReqQty', headerText: 'Req Qty(Kg)', editType: "numericedit", allowEditing: status == statusConstants.AWAITING_PROPOSE || status == statusConstants.EDIT || status == statusConstants.REVISE || addAdditionalReq, //addAdditionalReq || status == statusConstants.REVISE,
+                field: 'ReqQty', headerText: 'Req Qty(Kg)', editType: "numericedit", allowEditing: status == statusConstants.AWAITING_PROPOSE || status == statusConstants.EDIT || status == statusConstants.REVISE || addAdditionalReq || status == statusConstants.ROL_BASE_PENDING, //addAdditionalReq || status == statusConstants.REVISE,
                 textAlign: 'Right', edit: { params: { showSpinButton: false, decimals: 2, min: 1, format: "N2" } }
             },
             {
-                field: 'ReqCone', headerText: 'Req Cone(Pcs)', editType: "numericedit", allowEditing: status == statusConstants.AWAITING_PROPOSE || status == statusConstants.EDIT || status == statusConstants.REVISE || addAdditionalReq, //addAdditionalReq || status == statusConstants.REVISE,
+                field: 'ReqCone', headerText: 'Req Cone(Pcs)', editType: "numericedit", allowEditing: status == statusConstants.AWAITING_PROPOSE || status == statusConstants.EDIT || status == statusConstants.REVISE || addAdditionalReq || status == statusConstants.ROL_BASE_PENDING, //addAdditionalReq || status == statusConstants.REVISE,
                 textAlign: 'Right', edit: { params: { showSpinButton: false, decimals: 0, min: 0, format: "N2" } }
             },
             {

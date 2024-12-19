@@ -163,7 +163,7 @@
 
         //menuType = localStorage.getItem("bulkBookingAckPage");
         //menuType = parseInt(menuType);
-        debugger;
+        
         menuType = setBulkBookingAckPage(menuParam);
 
         $formEl.find(".divForBBFA").hide();

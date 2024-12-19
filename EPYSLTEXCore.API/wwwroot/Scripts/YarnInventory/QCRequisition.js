@@ -541,7 +541,6 @@
         });
     }
     function handleCommands(args) {
-        debugger;
         _isRetest = false;
         selectedargs = args;
         if (args.commandColumn.type == "NoTest") {

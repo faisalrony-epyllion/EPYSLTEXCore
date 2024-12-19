@@ -1,5 +1,4 @@
-﻿using Dapper;
-using EPYSLTEX.Core.Interfaces;
+﻿using EPYSLTEX.Core.Interfaces;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
@@ -7,9 +6,8 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEX.Infrastructure.Services
 {
@@ -232,13 +230,13 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             var sql = $@"Select FWG.FWGID, FWG.WastageFor, FWG.IsFabric, FWG.GSMFrom, FWG.GSMTo, FWG.BookingQtyFrom, FWG.BookingQtyTo, FWG.FixedQty, FWG.ExcessQty, FWG.ExcessPercentage
                         From {TableNames.FABRIC_WASTAGE_GRID} FWG WHERE wastageFor='{wastageFor}'";
-            _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+            _service.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
             return await _service.GetDataAsync<FabricWastageGrid>(sql);
         }
 
         public async Task UpdateFreeConceptStatus(string interfaceFrom, int conceptID = 0, string groupConceptNo = "", int bookingID = 0, int isBDS = 0, int ccColorID = 0, int colorID = 0, int itemMasterID = 0, string conceptIDs = "")
         {
-            _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+            _service.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
             await _service.ExecuteAsync(SPNames.spUpdateFreeConceptStatus, new { InterfaceFrom = interfaceFrom, ConceptID = conceptID, GroupConceptNo = groupConceptNo, BookingID = bookingID, IsBDS = isBDS, CCColorID = ccColorID, ColorID = colorID, ItemMasterID = itemMasterID, ConceptIDs = conceptIDs }, 30, CommandType.StoredProcedure);
         }
     }

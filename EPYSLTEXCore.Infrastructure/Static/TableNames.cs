@@ -911,14 +911,15 @@
 
         public const string SpinnerWiseYarnPackingHK = "T_SpinnerWiseYarnPacking_HK";
         public const string StockType = "StockType";
-        public const string YarnStockMaster_New = "T_YarnStockMaster_New";
+        public const string YarnStockMaster_New = "YarnStockMaster_New";
 
         public const string FabricConstructionSubClassTechnicalName = "T_FabricConstructionSubClassTechnicalName";
         public const string CertificationsBasicSetup = "T_CertificationsBasicSetup";
         public const string FiberBasicSetup = "T_FiberBasicSetup";
         public const string SubProgramBasicSetup = "T_SubProgramBasicSetup";
         public const string DayValidDuration = "T_DayValidDuration";
-        public const string YarnPRFrom_HK = "T_YarnPRFrom_HK";
+        public const string YarnPRFrom_HK = "YarnPRFrom_HK";
+        public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
     }
 
 }

@@ -111,7 +111,7 @@ namespace EPYSLTEXCore.API.Contollers.SCD
                     previewTemplate = "office";
                 }
 
-                filePath = $"{AppConstants.LC_FILE_PATH}/{string.Join("_", model.LCNo.Split(Path.GetInvalidFileNameChars()))}_{fileName}";
+                filePath = $"{UploadLocations.LC_FILE_PATH}/{string.Join("_", model.LCNo.Split(Path.GetInvalidFileNameChars()))}_{fileName}";
                 var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
                 string directoryPath = Path.GetDirectoryName(fullPath);
                 if (!Directory.Exists(directoryPath))

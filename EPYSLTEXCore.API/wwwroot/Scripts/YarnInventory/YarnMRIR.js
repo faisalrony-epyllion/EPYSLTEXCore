@@ -40,7 +40,6 @@
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
 
         pageIdWithHash = "#" + pageId;
-        debugger;
         //menuType = localStorage.getItem("YarnMRIRPage");
         if (menuParam === "YarnMRIRSCD") {
             menuType = 2;

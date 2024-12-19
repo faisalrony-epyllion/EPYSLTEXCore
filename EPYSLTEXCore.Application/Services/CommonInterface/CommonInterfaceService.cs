@@ -5,9 +5,9 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
 using Microsoft.Extensions.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Text.Json.Nodes;
- 
+using static Dapper.SqlMapper;
 
 namespace EPYSLTEX.Infrastructure.Services
 {

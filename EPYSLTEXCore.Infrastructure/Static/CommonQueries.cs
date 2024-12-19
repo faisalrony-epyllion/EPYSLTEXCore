@@ -33,14 +33,14 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {DbNames.EPYSL}..ItemSegmentValue ISV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
                     LEFT JOIN YarnCompositionBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
-                    WHERE ISN.SegmentName In ('Yarn Composition') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+                    WHERE ISN.SegmentName In ('Yarn Composition Live') --AND (ISNULL(YCBS.IsInactive,0) = 0)
                 ),
                 YT as (
                     select distinct SV.YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(SV.YarnTypeSVID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
                     from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.YarnTypeSVID    
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Type New')                
+                    WHERE ISN.SegmentName In ('Yarn Type Live')                
                     --ORDER BY ISV.SegmentValue
                 ),
                 MP as (
@@ -48,7 +48,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingProcessSVID    
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Manufacturing Process')                
+                    WHERE ISN.SegmentName In ('Yarn Manufacturing Process Live')                
                     --ORDER BY ISV.SegmentValue
                 ),
                 SP as (
@@ -56,7 +56,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.SubProcessSVID    
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Manufacturing Sub Process')                
+                    WHERE ISN.SegmentName In ('Yarn Manufacturing Sub Process Live')                
                     --ORDER BY ISV.SegmentValue
                 ),
                 YQP as (
@@ -64,7 +64,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.QualityParameterSVID    
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('Yarn Quality Parameter')                
+                    WHERE ISN.SegmentName In ('Yarn Quality Parameter Live')                
                     --ORDER BY ISV.SegmentValue
                 ),
                 YCM as (
@@ -79,7 +79,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {DbNames.EPYSL}..ItemSegmentValue ISV
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
                     LEFT JOIN YarnCountBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
-                    WHERE ISN.SegmentName In ('Yarn Count') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+                    WHERE ISN.SegmentName In ('Yarn Count New') --AND (ISNULL(YCBS.IsInactive,0) = 0)
 				)
                 --select * from(
                 Select * from YCO
@@ -584,14 +584,14 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 select 0 YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
                 from {DbNames.EPYSL}..ItemSegmentValue ISV
                 INNER JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                WHERE ISN.SegmentName In ('Yarn Composition') 
+                WHERE ISN.SegmentName In ('Yarn Composition Live') 
                 ),
                 YT as(
                 select distinct isnull(SV.YarnTypeSVID,0)YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
                 from {DbNames.EPYSL}..ItemSegmentValue ISV
 				LEFT JOIN {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV  ON ISV.SegmentValueID=SV.QualityParameterSVID 
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                WHERE ISN.SegmentName In ('Yarn Type New')                
+                WHERE ISN.SegmentName In ('Yarn Type Live')                
                 --ORDER BY ISV.SegmentValue
                 ),
                 MP as(
@@ -599,7 +599,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 from {DbNames.EPYSL}..ItemSegmentValue ISV
 				LEFT JOIN {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV  ON ISV.SegmentValueID=SV.QualityParameterSVID 
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                WHERE ISN.SegmentName In ('Yarn Manufacturing Process')                   
+                WHERE ISN.SegmentName In ('Yarn Manufacturing Process Live')                   
                 --ORDER BY ISV.SegmentValue
                 ),
                 SP as(
@@ -607,7 +607,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 from {DbNames.EPYSL}..ItemSegmentValue ISV 
 				LEFT JOIN {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV  ON ISV.SegmentValueID=SV.QualityParameterSVID 
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                WHERE ISN.SegmentName In ('Yarn Manufacturing Sub Process')                
+                WHERE ISN.SegmentName In ('Yarn Manufacturing Sub Process Live')                
                 --ORDER BY ISV.SegmentValue
                 ),
                 YQP as(
@@ -615,7 +615,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 from {DbNames.EPYSL}..ItemSegmentValue ISV  
 				LEFT JOIN {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV  ON ISV.SegmentValueID=SV.QualityParameterSVID 
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                WHERE ISN.SegmentName In ('Yarn Quality Parameter')                
+                WHERE ISN.SegmentName In ('Yarn Quality Parameter Live')                
                 --ORDER BY ISV.SegmentValue
                 ),
                 YCM as (
@@ -629,7 +629,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
 				select 0 YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
                 from {DbNames.EPYSL}..ItemSegmentValue ISV
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                WHERE ISN.SegmentName In ('Yarn Count')  
+                WHERE ISN.SegmentName In ('Yarn Count New')  
 				)
                 --select * from(
                 Select * from YCO

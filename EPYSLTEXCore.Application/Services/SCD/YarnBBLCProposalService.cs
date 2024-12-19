@@ -1,20 +1,15 @@
-﻿using EPYSLTEX.Core.Statics;
+﻿using Dapper;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Application.Interfaces.SCD;
 using EPYSLTEXCore.Infrastructure.Data;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Statics;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-using EPYSLTEXCore.Infrastructure.Static;
-using Dapper;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using System.Data;
+using System.Data.Entity;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services.SCD
 {

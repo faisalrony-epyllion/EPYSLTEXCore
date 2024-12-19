@@ -93,6 +93,16 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public bool IsCheckDVD { get; set; } = true;
         [Write(false)]
+        public int ROSID { get; set; } = 0;
+        [Write(false)]
+        public decimal StockQty { get; set; } = 0;
+        [Write(false)]
+        public decimal ReOrderQty { get; set; } = 0;
+        [Write(false)]
+        public string YarnCategory { get; set; } = "";
+        [Write(false)]
+        public int ItemMasterID { get; set; } = 0;
+        [Write(false)]
         public IEnumerable<Select2OptionModel> DayValidDurations { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public List<YarnPOMaster> YarnPOMasters { get; set; } = new List<YarnPOMaster>();

@@ -8,7 +8,7 @@ namespace EPYSLTEXCore.Application.Interfaces
     {
         Task<List<YarnPRMaster>> GetPagedAsync(Status status, string pageName, PaginationInfo paginationInfo);
         Task<YarnPRMaster> GetNewAsync();
-        Task<YarnPRMaster> GetNewForMR(string ids, string source, string revisionstatus);
+        Task<YarnPRMaster> GetNewForMR(string ids, string source, string revisionstatus = "");
         Task<YarnPRMaster> GetAsync(int id, int prFromID, string source, bool isNewForPRAck);
         Task<List<YarnPRMaster>> GetByPRNo(string prNo);
         Task<YarnPRMaster> GetForReviseAsync(int id, int prFromID, string source, string groupConceptNo);

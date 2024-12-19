@@ -13,7 +13,7 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using static Dapper.SqlMapper;
 
 namespace EPYSLTEXCore.Application.Services.RND

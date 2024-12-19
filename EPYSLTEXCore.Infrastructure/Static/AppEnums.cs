@@ -80,7 +80,8 @@ namespace EPYSLTEXCore.Infrastructure.Statics
         PendingExportData = 69,
         ExportData = 70,
         ADDITIONAL_INTERNAL_REJECTION = 71,
-        ADDITIONAL_APPROVED_OPERATION_HEAD = 72
+        ADDITIONAL_APPROVED_OPERATION_HEAD = 72,
+        ROL_BASE_PENDING = 73
 
     }
     public enum FreeConceptStatus

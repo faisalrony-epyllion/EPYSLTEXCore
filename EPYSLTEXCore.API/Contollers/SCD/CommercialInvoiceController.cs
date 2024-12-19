@@ -1,23 +1,16 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Application.Interfaces.SCD;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Hosting.Internal;
 using Newtonsoft.Json;
-using NLog;
-using System.Text.Json;
-using EPYSLTEXCore.API.Extension;
-using EPYSLTEX.Infrastructure.Services;
 using System.Data.Entity;
+using System.Text.RegularExpressions;
 
 namespace EPYSLTEXCore.API.Contollers.SCD
 {
@@ -25,10 +18,11 @@ namespace EPYSLTEXCore.API.Contollers.SCD
     public class CommercialInvoiceController : ApiBaseController
     {
         private readonly ICommercialInvoiceService _service;
-
-        public CommercialInvoiceController(ICommercialInvoiceService service, IUserService userService) : base(userService)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        public CommercialInvoiceController(ICommercialInvoiceService service, IUserService userService, IWebHostEnvironment hostingEnvironment) : base(userService)
         {
             _service = service;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [Route("list")]
@@ -54,78 +48,102 @@ namespace EPYSLTEXCore.API.Contollers.SCD
             YarnCIMaster record = await _service.GetAsync(id);
             return Ok(record);
         }
-        /*//OFF FOR CORE// Have to solve error
+       
         [Route("save")]
         [HttpPost]
         public async Task<IActionResult> Save()
         {
-            if (!Request.Content.IsMimeMultipartContent())
-                return BadRequest("Unsupported media type.");
+            var formData = Request.Form;
+         
 
-            if (Request.Content.Headers.ContentLength >= 4 * 1024 * 1024)
-                return BadRequest("File is bigger than 4MB");
+            // Access the uploaded file
+            var file = Request.Form.Files.FirstOrDefault();
 
-            var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartFormDataStreamProvider());
+            // Validate file
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded or the file is empty.");
 
-            if (!provider.Files.Any()) return BadRequest("You must upload PI file.");
-
-
-            var formData = provider.FormData;
+            if (file.Length > 4 * 1024 * 1024)
+                return BadRequest("File is bigger than 4MB.");
 
             YarnCIMaster model = formData.ConvertToObject<YarnCIMaster>();
-            model.CIChilds = JsonConvert.DeserializeObject<List<YarnCIChild>>(formData.Get("CiChilds"));
-            model.CIChildPIs = JsonConvert.DeserializeObject<List<YarnCIChildPI>>(formData.Get("CiChildPis"));
+            model.CIChilds = JsonConvert.DeserializeObject<List<YarnCIChild>>(formData["CiChilds"]);
+            model.CIChildPIs = JsonConvert.DeserializeObject<List<YarnCIChildPI>>(formData["CiChildPis"]);
+
+            #region Save Image
+
+            var filePath = "";
+            var previewTemplate = "";
 
 
-
-            #region Single Image Save
-
-            string fileName = "";
-            string filePath = "";
-            string previewTemplate = "";
-
-            if (provider.Files.Any())
+            if (file != null)
             {
-                var originalFile = provider.Files[0];
-                var inputStream = await originalFile.ReadAsStreamAsync();
+                var originalFile = file;
+                var inputStream = originalFile.OpenReadStream();
 
-                fileName = string.Join("", originalFile.Headers.ContentDisposition.FileName.Split(Path.GetInvalidFileNameChars()));
-                var contentType = originalFile.Headers.ContentType.ToString();
+                var fileName = string.Join("", originalFile.FileName.Split(Path.GetInvalidFileNameChars()));
+                fileName = GetValidFileName(fileName);
+                var contentType = originalFile.ContentType;
 
                 var fileExtension = Path.GetExtension(fileName);
-                previewTemplate = fileExtension.Contains(".pdf") ? "pdf" : MimeMapping.GetMimeMapping(fileName).StartsWith("image/") ? "image" : "office";
 
-                filePath = $"{AppConstants.YARN_CI_FILE_PATH}/{string.Join("_", model.CINo.Split(Path.GetInvalidFileNameChars()))}_{fileName}";
 
-                model.CIFilePath = filePath;
-                model.AttachmentPreviewTemplate = previewTemplate;
+                var provider = new FileExtensionContentTypeProvider();
+                string mimeType;
 
-                var savePath = HttpContext.Current.Server.MapPath(filePath);
-                using (var fileStream = File.Create(savePath))
+                if (provider.TryGetContentType(fileName, out mimeType))
                 {
-                    inputStream.Seek(0, SeekOrigin.Begin);
+                    // Set previewTemplate based on file type
+                    previewTemplate = fileExtension.Contains(".pdf") ? "pdf" :
+                                      mimeType.StartsWith("image/") ? "image" :
+                                      "office";
+                }
+                else
+                {
+                    // If MIME type couldn't be determined, fallback to "office"
+                    previewTemplate = "office";
+                }
+
+                filePath = $"{UploadLocations.YARN_CI_FILE_PATH}/{string.Join("_", model.CINo.Split(Path.GetInvalidFileNameChars()))}_{fileName}";
+                var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
+                string directoryPath = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+
+
+                using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                {
                     await inputStream.CopyToAsync(fileStream);
                 }
             }
+            else
+            {
+                filePath = "defaultFilePath";  // Handle no file uploaded scenario
+                previewTemplate = "office";    // Set default preview template
+            }
 
-            #endregion Single Image Save 
+            #endregion Save Image    
 
             #region Other Attachments Save
-            fileName = "";
-            filePath = "";
-            previewTemplate = "";
+         
 
             model.YarnCIDocs.ForEach(x =>
             {
                 x.FileName = Path.GetFileNameWithoutExtension(x.FileName);
             });
 
-            for (int i = 1; i < provider.Files.Count(); i++)
+            for (int i = 1; i < Request.Form.Files.Count(); i++)
             {
-                var originalFile = provider.Files[i];
-                var inputStream = await originalFile.ReadAsStreamAsync();
+                var fileName = "";
+                 filePath = "";
+                previewTemplate = "";
+                var originalFile = Request.Form.Files[i];
+                var inputStream = originalFile.OpenReadStream();
 
-                fileName = string.Join("", originalFile.Headers.ContentDisposition.FileName.Split(Path.GetInvalidFileNameChars()));
+                fileName = string.Join("", originalFile.FileName.Split(Path.GetInvalidFileNameChars()));
                 var splitFileName = fileName.Split('~');
                 int docTypeID = 0;
                 if (splitFileName.Count() > 0)
@@ -133,20 +151,37 @@ namespace EPYSLTEXCore.API.Contollers.SCD
                     fileName = splitFileName[0];
                     docTypeID = Convert.ToInt32(splitFileName[1]);
                 }
-                var contentType = originalFile.Headers.ContentType.ToString();
+                var contentType = originalFile.ContentType;
 
                 var fileExtension = Path.GetExtension(fileName);
-                previewTemplate = fileExtension.Contains(".pdf") ? "pdf" : MimeMapping.GetMimeMapping(fileName).StartsWith("image/") ? "image" : "office";
+                var provider = new FileExtensionContentTypeProvider();
+                string mimeType;
 
-                filePath = $"{AppConstants.YARN_CI_FILE_PATH}/CommercialInvoice_{fileName}";
-                var savePath = HttpContext.Current.Server.MapPath(filePath);
-
-                using (var fileStream = File.Create(savePath))
+                if (provider.TryGetContentType(fileName, out mimeType))
                 {
-                    inputStream.Seek(0, SeekOrigin.Begin);
-                    await inputStream.CopyToAsync(fileStream);
+                    // Set previewTemplate based on file type
+                    previewTemplate = fileExtension.Contains(".pdf") ? "pdf" :
+                                      mimeType.StartsWith("image/") ? "image" :
+                                      "office";
+                }
+                else
+                {
+                    // If MIME type couldn't be determined, fallback to "office"
+                    previewTemplate = "office";
                 }
 
+
+                filePath = $"{UploadLocations.YARN_CI_FILE_PATH}/CommercialInvoice_{fileName}";
+                var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
+                string directoryPath = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                {
+                    await inputStream.CopyToAsync(fileStream);
+                }
                 string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
                 int indexF = model.YarnCIDocs.FindIndex(x => x.FileName == fileNameWithoutExtension);
                 if (indexF > -1)
@@ -271,7 +306,7 @@ namespace EPYSLTEXCore.API.Contollers.SCD
 
             return Ok();
         }
-        */
+
         [Route("approve")]
         [HttpPost]
         public async Task<IActionResult> Approve(YarnCIMaster model)
@@ -477,5 +512,15 @@ namespace EPYSLTEXCore.API.Contollers.SCD
         {
             return Ok(await _service.createBankAcceptance(nCIIDs, companyIDs, supplierIDs, bankBranchIDs));
         }
+
+        private string GetValidFileName(string fileName)
+        {
+            fileName = fileName.Replace("#", " ")
+                               .Replace("?", "");
+            fileName = Regex.Replace(fileName, @"[^\u0000-\u007F]+", string.Empty);
+            return fileName;
+        }
+
+
     }
 }

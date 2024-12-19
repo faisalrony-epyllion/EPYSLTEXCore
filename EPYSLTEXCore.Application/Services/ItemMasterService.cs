@@ -4,11 +4,9 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Entities.General;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 using EPYSLTEXCore.Infrastructure.Static;
-using System.Data.Common;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services
 {

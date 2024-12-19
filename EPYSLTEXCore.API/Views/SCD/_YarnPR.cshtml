@@ -33,6 +33,9 @@
                 <button id="btnAcknowledgedMaterialReqList" class="btn btn-success text-white btn-sm">
                     <i class="fa fa-hourglass"></i>&nbsp;Pending MR
                 </button>
+                <button id="btnROLBasePendingList" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending ROL Base
+                </button>
                 @*<button id="btnPendingRevisionList" class="btn btn-default btn-sm">
             <i class="fa fa-hourglass"></i>&nbsp;Pending Revision List
         </button>*@
@@ -72,7 +75,7 @@
                     <i class="fa fa-list-ul"></i>&nbsp;All PR
                 </button>
                 <button id="btnRefreshList" class="btn btn-default btn-sm">
-                    <i class="fa fa-refresh"></i>
+                    <i class="fa fa-retweet" aria-hidden="true"></i>
                 </button>
 
                 <div id="divAddPRForMR" style="margin-top: 5px; margin-left: 10px;">
@@ -142,102 +145,102 @@
                                 </div>
                             </div>
 
-                       
-                        <div class="row">
+
+                            <div class="row">
                                 <div class="col-md-3" id="ApvBuyer">
-                                <div class="form-group">
-                                    <label>Buyer</label>
+                                    <div class="form-group">
+                                        <label>Buyer</label>
 
-                                    <input id="Buyer" name="Buyer" type="text" class="form-control form-control-sm" readonly />
+                                        <input id="Buyer" name="Buyer" type="text" class="form-control form-control-sm" readonly />
 
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group d-none">
+                                <div class="col-md-3">
+                                    <div class="form-group d-none">
 
-                                    <div class="icheck-primary">
-                                        <input type="checkbox" id="IsRNDPR" class="form-control form-control-sm" name="IsRNDPR" />
-                                        <label for="IsRNDPR">Is this PR for RND?</label>
+                                        <div class="icheck-primary">
+                                            <input type="checkbox" id="IsRNDPR" class="form-control form-control-sm" name="IsRNDPR" />
+                                            <label for="IsRNDPR">Is this PR for RND?</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3" id="divStatus" style="display:none;">
+                                    <div class="form-group">
+                                        <label>Status</label>
+
+                                        <input id="PRStatus" name="PRStatus" class="form-control form-control-sm" readonly />
+
                                     </div>
                                 </div>
                             </div>
-                                <div class="col-md-3" id="divStatus" style="display:none;">
-                                <div class="form-group" >
-                                    <label>Status</label>
+                            <div class="row">
 
-                                    <input id="PRStatus" name="PRStatus" class="form-control form-control-sm" readonly />
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Required Date</label>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Required Date</label>
 
                                         <input id="YarnPRRequiredDate" name="YarnPRRequiredDate" class="form-control form-control-sm ej2-datepicker" data-date-start-date="0d" readonly />
 
+                                    </div>
                                 </div>
-                            </div>
                                 <div class="col-md-3" id="ApvBuyerTeam">
-                                <div class="form-group" >
-                                    <label>Buyer Team</label>
+                                    <div class="form-group">
+                                        <label>Buyer Team</label>
 
                                         <input id="BuyerTeam" name="BuyerTeam" type="text" class="form-control form-control-sm" readonly />
 
+                                    </div>
                                 </div>
-                            </div>
 
 
-                      
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Requisition By</label>
 
-                                    <input id="YarnPRByName" name="YarnPRByName" type="text" class="form-control form-control-sm" readonly />
-                                    <!--<select id="YarnPRBy" name="YarnPRBy" class="form-control input-sm" style="width:100%"></select>-->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Requisition By</label>
+
+                                        <input id="YarnPRByName" name="YarnPRByName" type="text" class="form-control form-control-sm" readonly />
+                                        <!--<select id="YarnPRBy" name="YarnPRBy" class="form-control input-sm" style="width:100%"></select>-->
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Remarks</label>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Remarks</label>
 
-                                    <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control form-control-sm"></textarea>
+                                        <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control form-control-sm"></textarea>
 
+                                    </div>
                                 </div>
-                            </div>
                                 <div class="col-md-3" id="divRejectReason" style="display:none;">
-                                <div class="form-group">
-                                    <label>Rejct Reason</label>
+                                    <div class="form-group">
+                                        <label>Rejct Reason</label>
 
-                                    <textarea id="RejectReason" rows="2" name="RejectReason" type="text" class="form-control form-control-sm" readonly></textarea>
+                                        <textarea id="RejectReason" rows="2" name="RejectReason" type="text" class="form-control form-control-sm" readonly></textarea>
+                                    </div>
                                 </div>
-                            </div>
                                 <div class="col-md-3" id="divUnAcknowledgeReason" style="display:none;">
-                                <div class="form-group">
-                                    <label>UnAcknowledge Reason</label>
+                                    <div class="form-group">
+                                        <label>UnAcknowledge Reason</label>
 
-                                    <textarea id="UnAcknowledgeReason" rows="2" name="UnAcknowledgeReason" type="text" class="form-control form-control-sm" readonly></textarea>
+                                        <textarea id="UnAcknowledgeReason" rows="2" name="UnAcknowledgeReason" type="text" class="form-control form-control-sm" readonly></textarea>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                     <div class="card" style="border-color:transparent; border-style:none;">
-                    <div class="card-header">
-                        <h3 class="card-title">  Item Information</h3>
+                    <div class="card" style="border-color:transparent; border-style:none;">
+                        <div class="card-header">
+                            <h3 class="card-title">  Item Information</h3>
 
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div style="width:100% !important">
-                                <table id="@tblChildId"></table>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div style="width:100% !important">
+                                    <table id="@tblChildId"></table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                     <div class="card-footer btn-e-float-margin">
                         <div class="row">
                             <div class="offset-md-2 col-md-10">
@@ -268,13 +271,13 @@
                         </div>
                     </div>
 
+                </div>
+                <!-- /.row -->
             </div>
-            <!-- /.row -->
+            <!-- /.card-body -->
+
+        </form>
     </div>
-    <!-- /.card-body -->
-   
-    </form>
-</div>
 </div>
 
 <div class="modal fade" id="modal-child">
@@ -305,7 +308,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                
+
             </div>
         </div>
     </div>

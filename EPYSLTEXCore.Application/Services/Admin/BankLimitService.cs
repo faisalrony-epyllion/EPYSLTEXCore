@@ -1,24 +1,13 @@
 ﻿using Dapper;
 using EPYSLTEX.Core.Statics;
-using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Admin;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
-using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Admin;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Data.Common;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Transactions;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services.Admin
 {

@@ -1,28 +1,20 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Interfaces.Repositories;
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
-using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 
 namespace EPYSLTEX.Infrastructure.Services
 {
-  public  class YarnRackBinAllocationService : IYarnRackBinAllocationService
+    public  class YarnRackBinAllocationService : IYarnRackBinAllocationService
     {
         private readonly IDapperCRUDService<YarnReceiveMaster> _service;
 

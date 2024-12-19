@@ -11,7 +11,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Text.RegularExpressions;
 
 namespace EPYSLTEXCore.Application.Services.RND
@@ -990,7 +990,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     default:
                         break;
                 }
-                _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+                _service.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
                 await _service.Connection.OpenAsync();
                 transaction = _service.Connection.BeginTransaction();
                 await _service.SaveAsync(entities, transaction);
@@ -1123,7 +1123,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             {
                 //await _connection.OpenAsync();
                 //transaction = _connection.BeginTransaction();
-                _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+                _service.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
                 await _service.Connection.OpenAsync();
                 transaction = _service.Connection.BeginTransaction();
 
@@ -1233,7 +1233,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     item.CCColorID = maxId++;
                 }
                 
-                _service.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
+                _service.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
                 await _service.Connection.OpenAsync();
                 transaction = _service.Connection.BeginTransaction();
                 await _service.SaveAsync(entities, transaction);

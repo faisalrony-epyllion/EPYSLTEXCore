@@ -6,24 +6,12 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections;
-using System.Configuration;
 using System.Data;
-using System.Data.Common;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Dynamic;
-using System.Runtime.InteropServices.JavaScript;
-using System.Security.Cryptography.Xml;
-using System.Transactions;
+using Microsoft.Data.SqlClient;
 using System.Text.Json.Nodes;
 using static Dapper.SqlMapper;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using EPYSLTEX.Core.Statics;
-using System.Xml.Linq;
-using System.Text.RegularExpressions;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity

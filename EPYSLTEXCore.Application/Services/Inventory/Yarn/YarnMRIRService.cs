@@ -1,21 +1,17 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Transactions;
 
 namespace EPYSLTEXCore.Application.Services.Inventory
 {

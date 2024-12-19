@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
@@ -8,8 +7,7 @@ using EPYSLTEXCore.Infrastructure.Entities.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
 using System.Data;
-using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEX.Infrastructure.Services
 {

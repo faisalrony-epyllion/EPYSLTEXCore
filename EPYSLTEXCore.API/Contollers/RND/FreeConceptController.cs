@@ -10,14 +10,11 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using Microsoft.AspNetCore.Authorization;
-
 //using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Security.Cryptography.Xml;
 namespace EPYSLTEXCore.API.Contollers.RND
 {
 
@@ -360,7 +357,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
         private async Task<string> GetMaxGroupConceptNoAsync()
         {
-            _signatureRepository.Connection = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString(AppConstants.GMT_CONNECTION));
+            _signatureRepository.Connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.GMT_CONNECTION));
             var id = await _signatureRepository.GetMaxIdAsync(TableNames.RND_GROUP_CONCEPTNO, RepeatAfterEnum.EveryMonth);
             var datePart = DateTime.Now.ToString("yyMM");
             return $@"{datePart}{id:0000}";

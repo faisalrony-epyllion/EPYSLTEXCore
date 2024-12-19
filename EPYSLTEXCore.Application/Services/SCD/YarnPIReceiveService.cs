@@ -10,7 +10,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using EPYSLTEXCore.Interfaces.Services;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEX.Infrastructure.Services
 {

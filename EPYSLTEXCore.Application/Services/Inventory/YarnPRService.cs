@@ -7,13 +7,9 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
-using Newtonsoft.Json;
-using System.ComponentModel.Design;
+using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Data.Common;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Transactions;
 
 namespace EPYSLTEX.Infrastructure.Services
 {

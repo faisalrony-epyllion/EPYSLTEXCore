@@ -14,7 +14,7 @@ using System.ComponentModel.Design;
 using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Transactions;
 using static Dapper.SqlMapper;
 

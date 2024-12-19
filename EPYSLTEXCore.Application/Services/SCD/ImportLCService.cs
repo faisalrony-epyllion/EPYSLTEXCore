@@ -9,14 +9,13 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EPYSLTEXCore.Application.Services.SCD
 {
     public class ImportLCService : IImportLCService
     {
-        private readonly IDapperCRUDService<YarnLcMaster> _service;
-        //private readonly ISignatureRepository _signatureRepository;
+        private readonly IDapperCRUDService<YarnLcMaster> _service;     
         private readonly SqlConnection _connection;
         private readonly SqlConnection _gmtConnection;
 

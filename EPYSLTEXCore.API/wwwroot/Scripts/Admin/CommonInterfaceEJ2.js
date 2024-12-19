@@ -22,6 +22,7 @@
     };
     const commonAPiUrls = {
         combo: "/api/common-interface/combodata/",
+        comboChildGrid: "/api/common-interface/combodatachildgrid/",
         finder: "/api/common-interface/finderdata/",
       
     };
@@ -44,7 +45,8 @@
         $formEl = $("#form-ci-" + menuId);
         // Append the menuId to the baseKey
         localStorageKeys.baseKey = `${localStorageKeys.baseKey}${menuId}`;
-        commonAPiUrls.combo=`${commonAPiUrls.combo}${menuId}`;
+        commonAPiUrls.combo = `${commonAPiUrls.combo}${menuId}`;
+        commonAPiUrls.comboChildGrid = `${commonAPiUrls.comboChildGrid}${menuId}`;
         commonAPiUrls.finder=`${commonAPiUrls.finder}${menuId}`;
         childForm = $("#form-ci-child-" + menuId);
         tblChildId = "#tabaleGridData-" + menuId;
@@ -286,11 +288,10 @@
         interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" ).map(x => {
             var dIndex = interfaceConfigs.ChildGridColumns.findIndex(d => d.DependentColumnName == x.ColumnName);
             if (!dependentColumnList.includes(x.ColumnName) || dIndex > -1) {
-                
+               
                 var obj = {
                     ColumnName: x.ColumnName,
-                    // ApiUrl: x.SelectSql ? commonAPiUrls.combo : x.ApiUrl,
-                    ApiUrl:  commonAPiUrls.combo,
+                    ApiUrl: x.SelectSql ? commonAPiUrls.comboChildGrid + '/' + x.ChildGridColumnID : x.ApiUrl,                   
                     ValueColumnName: x.ValueColumnName,
                     DisplayColumnName: x.DisplayColumnName,
                     Label: x.Label,
@@ -307,7 +308,7 @@
         await Promise.all(
             apiUrls.map(x =>
                 axios.get(x.ApiUrl).then(function (res) {
-                
+ 
                     var obj = {
                         ColumnName: x.ColumnName,
                         List: res.data,                         
@@ -351,6 +352,7 @@
             });
     }
     function getSelectApiUrl(paramArray) {
+    
         var selectApiUrl = interfaceConfigs.Childs.find(x => x.ColumnName = paramArray[0].ColumnName).SelectApiUrl;
         paramArray.map(x => {
             selectApiUrl = selectApiUrl.replace("{" + x.ColumnName + "}", x.Value);
@@ -639,8 +641,8 @@
     }
 
     function adNew(IsAllowAddNew, menuId, childID, interfaceConfigs, ColumnName) {
-       
-        if (IsAllowAddNew && interfaceConfigs.PrimaryKeyColumn == ColumnName) {
+    
+        if (IsAllowAddNew && interfaceConfigs.PrimaryKeyColumn.toLowerCase().trim() == ColumnName.toLowerCase().trim()) {
             return `<span class="input-group-btn">
                         <button type="button" class="btn btn-success ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     </span>`;
@@ -693,7 +695,7 @@
             lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
-              
+                
                 finder.hideModal();
                 var data = res.rowData;                 
                 for (var p in data) {

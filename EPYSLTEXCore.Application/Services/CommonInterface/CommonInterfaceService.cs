@@ -1,20 +1,13 @@
 ﻿using Dapper;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
 using System.Text.Json.Nodes;
-using System.Transactions;
-using static Dapper.SqlMapper;
+ 
 
 namespace EPYSLTEX.Infrastructure.Services
 {

@@ -1245,7 +1245,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
 
         #region signature Methods
-        
+
         public async Task<int> GetMaxIdAsync(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             var signature = await GetSignatureAsync(field, 1, 1, repeatAfter, transaction, connectionGmt);
@@ -1600,14 +1600,16 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                 var data = dataObject
                  .Where(property => columns.Contains(property.Key))
-                 .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
+                 .ToDictionary(property => property.Key,
+
+                 property => property.Value == null ? "" : ConvertJsonNodeToType<object>(property.Value));
 
                 // Ensure there are valid columns in the data
                 if (!data.Any())
                 {
                     throw new ArgumentException("The object does not contain any matching columns for the specified table.");
                 }
-                 
+
                 // Add default columns if they exist in the table
                 if (columns.Contains("AddedBy"))
                 {
@@ -1722,8 +1724,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 }
                 if (columns.Contains("DateUpdated"))
                 {
-                    dataObject["DateUpdated"] = DateTime.UtcNow.ToString("yyyy-MM-dd"); 
-                 
+                    dataObject["DateUpdated"] = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
                 }
 
                 var data = dataObject

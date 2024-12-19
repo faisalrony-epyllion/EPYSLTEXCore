@@ -133,17 +133,32 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             var records = await _service.GetDynamicDataAsync(selectSql, connKey);
             return Ok(records);
 
-            //var childGridColumns = commonInterfaceMaster.ChildGridColumns;
-            //foreach (var childGridColumn in childGridColumns)
-            //{
-            //    string selectSql = childGridColumn.SelectSql;
-            //    var records = await _service.GetDynamicDataAsync(selectSql, connKey);
-            //    return Ok(records);
-            //}
+             
 
             return Ok();
 
         }
+        [Route("combodatachildgrid/{menuId}/{childGridColumnID}")]
+        public async Task<IActionResult> GetComboDataChildgrid(int menuId, int childGridColumnID)
+        {
+
+            var commonInterfaceMasterlst = await GetOrCreateCacheValue(InMemoryCacheKeys.CommonInterfaceConfig, AppConstants.APPLICATION_ID);
+            CommonInterfaceMaster commonInterfaceMaster = commonInterfaceMasterlst.FirstOrDefault(p => p.MenuId == menuId);
+
+            //  string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName
+            string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName;
+            var childGridColumn = commonInterfaceMaster.ChildGridColumns.Find(p => p.ChildGridColumnID == childGridColumnID);
+
+            string selectSql = childGridColumn.SelectSql;
+            var records = await _service.GetDynamicDataAsync(selectSql, connKey);
+            return Ok(records);
+
+             
+
+           
+
+        }
+
         [Route("selectfinderdata/{menuId}/{ChildID}/{id}")]
         public async Task<IActionResult> SelectFinderData(int menuId, int ChildID, int id)
         {

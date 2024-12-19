@@ -16,16 +16,19 @@ namespace EPYSLTEXCore.Application.Services.SCD
     internal class CommercialInvoiceService : ICommercialInvoiceService
     {
         private readonly IDapperCRUDService<YarnCIMaster> _service;
-        //private readonly ISignatureRepository _signatureRepository;
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
 
         public CommercialInvoiceService(IDapperCRUDService<YarnCIMaster> service
             //, ISignatureRepository signatureRepository
             )
         {
             _service = service;
-            //_signatureRepository = signatureRepository;
+
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
+
         }
 
         public async Task<List<YarnCIMaster>> GetPagedAsync(Status status, bool isCDAPage, PaginationInfo paginationInfo)
@@ -638,10 +641,15 @@ namespace EPYSLTEXCore.Application.Services.SCD
         public async Task SaveAsync(YarnCIMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
 
                 int maxChildId = 0;
                 int maxPIId = 0;
@@ -651,14 +659,14 @@ namespace EPYSLTEXCore.Application.Services.SCD
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity.CIID = await _service.GetMaxIdAsync(TableNames.YARN_CI_MASTER);
+                        entity.CIID = await _service.GetMaxIdAsync(TableNames.YARN_CI_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
                         //entity.CINo = await _service.GetMaxNoAsync(TableNames.YARN_CI_MASTER_NO);
 
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD, entity.CIChilds.Count);
-                        maxPIId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_PI, entity.CIChildPIs.Count);
-                        maxSubProgramId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_YARN_SUBPROGRAM, entity.CIChilds.Sum(x => x.SubPrograms.Count()));
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD, entity.CIChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+                        maxPIId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_PI, entity.CIChildPIs.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+                        maxSubProgramId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_YARN_SUBPROGRAM, entity.CIChilds.Sum(x => x.SubPrograms.Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
-                        maxDocId = await _service.GetMaxIdAsync(TableNames.YARN_CI_DOC, entity.YarnCIDocs.Count());
+                        maxDocId = await _service.GetMaxIdAsync(TableNames.YARN_CI_DOC, entity.YarnCIDocs.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
                         foreach (var item in entity.CIChilds)
                         {
@@ -690,10 +698,10 @@ namespace EPYSLTEXCore.Application.Services.SCD
                         var addedChilds = entity.CIChilds.FindAll(x => x.EntityState == EntityState.Added);
                         var addedChildPIs = entity.CIChildPIs.FindAll(x => x.EntityState == EntityState.Added);
 
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD, addedChilds.Count);
-                        maxPIId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_PI, entity.CIChildPIs.Count);
-                        maxSubProgramId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_YARN_SUBPROGRAM, entity.CIChilds.Sum(x => x.SubPrograms.Count()));
-                        maxDocId = await _service.GetMaxIdAsync(TableNames.YARN_CI_DOC, entity.YarnCIDocs.FindAll(x => x.EntityState == EntityState.Added).Count());
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD, addedChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+                        maxPIId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_PI, entity.CIChildPIs.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+                        maxSubProgramId = await _service.GetMaxIdAsync(TableNames.YARN_CI_CHILD_YARN_SUBPROGRAM, entity.CIChilds.Sum(x => x.SubPrograms.Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+                        maxDocId = await _service.GetMaxIdAsync(TableNames.YARN_CI_DOC, entity.YarnCIDocs.FindAll(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
                         foreach (var item in addedChilds)
                         {
@@ -741,15 +749,18 @@ namespace EPYSLTEXCore.Application.Services.SCD
                 await _service.SaveAsync(entity.CIChildPIs, transaction);
                 await _service.SaveAsync(entity.YarnCIDocs, transaction);
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 

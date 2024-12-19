@@ -165,11 +165,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public List<YarnCIDoc> YarnCIDocs { get; set; } //Use for DB records
 
-        [Write(false)]
-        public string LcNo { get; set; }
 
-        [Write(false)]
-        public DateTime LcDate { get; set; }
 
         [Write(false)]
         public DateTime LcExpiryDate { get; set; }
@@ -186,8 +182,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public int CurrencyId { get; set; }
 
-        [Write(false)]
-        public decimal LcValue { get; set; }
 
         [Write(false)]
         public decimal LcQty { get; set; }

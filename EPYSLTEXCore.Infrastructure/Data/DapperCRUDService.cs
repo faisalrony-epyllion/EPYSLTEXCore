@@ -1263,6 +1263,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             else
             {
                 signature.LastNumber++;
+                signature.EntityState = EntityState.Modified;
                 await connectionGmt.UpdateAsync(signature, transaction);
             }
 

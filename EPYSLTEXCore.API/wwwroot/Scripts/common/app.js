@@ -772,6 +772,7 @@ var statusConstants = Object.freeze({
     EXPORT_DATA: 70,
     ADDITIONAL_INTERNAL_REJECTION: 71,
     ADDITIONAL_APPROVED_OPERATION_HEAD: 72,
+    ROL_BASE_PENDING: 73,
 });
 
 var freeConceptStatus = Object.freeze({
@@ -867,7 +868,8 @@ var prFrom = Object.freeze({
     BDS: "BDS",
     BULK_BOOKING: "Bulk Booking",
     PROJECTION_YARN_BOOKING: "Projection Yarn Booking",
-    FABRIC_PROJECTION_YARN_BOOKING: "Fabric Projection Yarn Booking"
+    FABRIC_PROJECTION_YARN_BOOKING: "Fabric Projection Yarn Booking",
+    ROL_BASE_BOOKING: "ROL Base Booking"
 });
 
 var ReceiveNoteType = Object.freeze({

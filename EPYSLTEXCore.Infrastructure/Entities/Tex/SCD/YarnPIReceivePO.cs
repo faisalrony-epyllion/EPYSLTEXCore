@@ -1,9 +1,10 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("YarnPIReceivePO")]
+    [Table(TableNames.YarnPIReceivePO)]
     public class YarnPIReceivePO : DapperBaseEntity
     {
         [ExplicitKey]

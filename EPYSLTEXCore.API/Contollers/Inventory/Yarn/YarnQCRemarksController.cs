@@ -9,6 +9,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
@@ -67,8 +68,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SaveYarnQCRemarks(YarnQCRemarksMaster model)
+        public async Task<IActionResult> SaveYarnQCRemarks(dynamic jsonString)
         {
+            YarnQCRemarksMaster model = JsonConvert.DeserializeObject<YarnQCRemarksMaster>(Convert.ToString(jsonString));
+
             YarnQCRemarksMaster entity = new YarnQCRemarksMaster();
 
             if (model.IsRetest)
@@ -244,6 +247,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                             childEntity.CommerciallyApproveDate = DateTime.Now;
                             childEntity.CommerciallyApproveBy = AppUser.UserCode;
                         }
+
+                        int childEntityIndex = entity.YarnQCRemarksChilds.FindIndex(x => x.QCRemarksChildID == child.QCRemarksChildID);
+
                         #region YarnQCRemarksChildResult
                         child.YarnQCRemarksChildResults.ToList().ForEach(x =>
                         {
@@ -275,13 +281,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                                 childResultEntity.TechnicalNameID = x.TechnicalNameID;
                                 childResultEntity.Remarks = x.Remarks;
                                 childResultEntity.EntityState = EntityState.Modified;
-                                childEntity.YarnQCRemarksChildResults[indexF] = childResultEntity;
+                                childEntity.YarnQCRemarksChildResults[indexF] = CommonFunction.DeepClone(childResultEntity);
                             }
                         });
-                        childEntity.YarnQCRemarksChildResults.Where(x => x.EntityState == EntityState.Unchanged).ToList().ForEach(x =>
-                        {
-                            x.EntityState = EntityState.Deleted;
-                        });
+                        childEntity.YarnQCRemarksChildResults.Where(x => x.EntityState == EntityState.Unchanged).SetDeleted();
                         #endregion
 
                         #region YarnQCRemarksChildFiber
@@ -302,16 +305,15 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                                 childFiberEntity.ComponentID = x.ComponentID;
                                 childFiberEntity.PercentageValue = x.PercentageValue;
                                 childFiberEntity.EntityState = EntityState.Modified;
-
-
-                                childEntity.YarnQCRemarksChildFibers[indexF] = childFiberEntity;
+                                childEntity.YarnQCRemarksChildFibers[indexF] = CommonFunction.DeepClone(childFiberEntity);
                             }
                         });
-                        childEntity.YarnQCRemarksChildFibers.Where(x => x.EntityState == EntityState.Unchanged).ToList().ForEach(x =>
-                        {
-                            x.EntityState = EntityState.Deleted;
-                        });
+                        childEntity.YarnQCRemarksChildFibers.Where(x => x.EntityState == EntityState.Unchanged).SetDeleted();
                         #endregion
+
+
+                        entity.YarnQCRemarksChilds[childEntityIndex] = childEntity;
+
                     }
                 }
                 entity.YarnQCRemarksChilds.Where(x => x.EntityState == EntityState.Unchanged).ToList().ForEach(x =>
@@ -449,8 +451,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("approve")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> ApproveYarnQCRemarks(YarnQCRemarksMaster model)
+        public async Task<IActionResult> ApproveYarnQCRemarks(dynamic jsonString)
         {
+           YarnQCRemarksMaster model = JsonConvert.DeserializeObject<YarnQCRemarksMaster>(Convert.ToString(jsonString));
+
             YarnQCRemarksMaster entity = await _service.GetAllAsync(model.QCRemarksMasterID);
             entity.IsApproved = true;
             entity.ApprovedBy = AppUser.UserCode;

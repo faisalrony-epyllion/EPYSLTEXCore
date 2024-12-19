@@ -589,7 +589,6 @@
         var url = "/api/selectoption/rack-no-by-locationid-rack-for/" + id + "/" + rackFor;
         axios.get(url)
             .then(function (response) {
-                debugger
                 var dataList = response.data;
                 showBootboxSelect2Dialog("Select Rack No", "sb", "Select Rack No", dataList, function (result) {
                     if (!result)

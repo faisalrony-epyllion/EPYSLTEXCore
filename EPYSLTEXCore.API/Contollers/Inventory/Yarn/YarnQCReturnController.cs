@@ -8,6 +8,7 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
@@ -56,8 +57,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SaveYarnReturn(YarnQCReturnMaster model)
+        public async Task<IActionResult> SaveYarnReturn(dynamic jsonString)
         {
+            YarnQCReturnMaster model = JsonConvert.DeserializeObject<YarnQCReturnMaster>(Convert.ToString(jsonString));
+
             YarnQCReturnMaster entity;
             if (model.IsModified)
             {

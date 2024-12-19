@@ -4,6 +4,7 @@ using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Static;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -24,9 +25,9 @@ namespace EPYSLTEX.Infrastructure.Services
         private readonly IConfiguration _configuration;
         private readonly SqlConnection _connection;
         private readonly SqlConnection _connectionGmt;
-
+     
         private readonly IDapperCRUDService<Signatures> _signatures;
-
+        public int UserCode { get; set; }
         public CommonInterfaceService(IDapperCRUDService<CommonInterfaceMaster> service, IConfiguration configuration, IDapperCRUDService<Signatures> signatures)
         {
             _configuration = configuration;
@@ -34,6 +35,7 @@ namespace EPYSLTEX.Infrastructure.Services
             _connection = new SqlConnection(_configuration.GetConnectionString(AppConstants.TEXTILE_CONNECTION));
             _connectionGmt = new SqlConnection(_configuration.GetConnectionString(AppConstants.GMT_CONNECTION));
             _signatures = signatures;
+         
         }
 
 
@@ -170,7 +172,7 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             var query = sqlQuery;
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By LEN({primaryKeyColumn}), {primaryKeyColumn} ASC" : paginationInfo.OrderBy;
-            var isSp = sqlQuery.ToLower().Contains("sp");
+            var isSp = sqlQuery.ToLower().Contains("sp_");
             query = isSp ? sqlQuery : $@"
                  {sqlQuery}
                 {paginationInfo.FilterBy}
@@ -222,7 +224,7 @@ namespace EPYSLTEX.Infrastructure.Services
             SqlTransaction transaction = null;
             SqlTransaction transactionGmt = null;
             JsonObject parentObjecct = null;
-            int newId =  0;
+            string newId ="";
 
             try
             {
@@ -261,9 +263,11 @@ namespace EPYSLTEX.Infrastructure.Services
                                 // Set the status
                                 jObject[StatusConstants.STATUS] = StatusConstants.ADD;
                             }
-
-                            // Perform Add/Update/Delete on the first connection
-                            newId= await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
+                            newId = jObject[primaryKey].ToString();
+                            var connection = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? _connectionGmt : _connection;
+                            var trans = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? transactionGmt : transaction;
+                            _service.UserCode=this.UserCode;
+                            await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, connection, trans);
                         }
                         else
                         {
@@ -291,9 +295,12 @@ namespace EPYSLTEX.Infrastructure.Services
                                         }
                                     }
                                 }
+                                _service.UserCode = this.UserCode;
 
-                                // Perform Add/Update/Delete on the first connection
-                                await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, _connection, transaction);
+                                var connection = conKey.LastOrDefault() == AppConstants.GMT_CONNECTION ? _connectionGmt : _connection;
+                                var trans = conKey.FirstOrDefault() == AppConstants.GMT_CONNECTION ? transactionGmt : transaction;
+                                await _service.AddUpDateDeleteDynamicObjectAsync(tableName, obj, new List<string> { primaryKey }, connection, trans);
+                                
                             }
                         }
                     }
@@ -302,7 +309,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     await transaction.CommitAsync();
                     await transactionGmt.CommitAsync();
 
-                    return  newId.ToString();
+                    return  newId;
                 }
                 else
                 {

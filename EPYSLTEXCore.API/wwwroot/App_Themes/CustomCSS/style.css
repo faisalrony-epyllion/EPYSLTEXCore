@@ -502,3 +502,10 @@ form, .box-body {
 .btnToolBar {
     color: #000 !important;
 }
+.row{
+    width: 100% !important;
+}
+/*.content, .container-fluid {
+    padding: 0px !important;
+}
+*/

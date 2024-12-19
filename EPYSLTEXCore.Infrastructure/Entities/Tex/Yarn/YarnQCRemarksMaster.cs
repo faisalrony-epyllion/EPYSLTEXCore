@@ -8,7 +8,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
 {
-    [Table("YarnQCRemarksMaster")]
+    [Table(TableNames.YARN_QC_REMARKS_MASTER)]
     public class YarnQCRemarksMaster : DapperBaseEntity
     {
         [ExplicitKey]

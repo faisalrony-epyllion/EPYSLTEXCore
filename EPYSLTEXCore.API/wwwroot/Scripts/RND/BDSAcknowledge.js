@@ -116,10 +116,9 @@
         if (!menuId)
             menuId = localStorage.getItem("menuId");
         if (!pageName)
-            pageName = localStorage.getItem("pageName");
+            pageName = localStorage.getItem("pageName"); 
         if (!menuParam)
             menuParam = localStorage.getItem("menuParam");
-
         pageId = pageName + "-" + menuId;
         $pageEl = $(`#${pageId}`);
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -164,7 +163,7 @@
 
         //menuType = localStorage.getItem("bulkBookingAckPage");
         //menuType = parseInt(menuType);
-        debugger;
+        
         menuType = setBulkBookingAckPage(menuParam);
 
         $formEl.find(".divForBBFA").hide();

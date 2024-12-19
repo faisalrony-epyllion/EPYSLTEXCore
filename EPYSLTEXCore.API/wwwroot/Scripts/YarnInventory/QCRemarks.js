@@ -894,7 +894,13 @@
             //    hasError = true;
             //    break;
             //}
-            if ($.trim(child.Remarks) == "") {
+            //if ($.trim(child.Remarks) == "") {
+            //    toastr.error("Give Remarks.");
+            //    hasError = true;
+            //    break;
+            //}
+
+            if (!child.Remarks || child.Remarks.trim() === "") {
                 toastr.error("Give Remarks.");
                 hasError = true;
                 break;

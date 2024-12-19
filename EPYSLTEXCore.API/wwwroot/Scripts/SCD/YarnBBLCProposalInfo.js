@@ -65,7 +65,10 @@
         getMasterTableData();
 
         initMergeExistingTable();
-        
+        $tblMasterEl.on('post-header.bs.table', function () {
+            $('.bootstrap-table .filter-control input').addClass('form-control-sm');
+        });
+  
         $formEl.find("#btnBackNew").on("click", function (e) {
             e.preventDefault();
             backToList();
@@ -384,6 +387,9 @@
     function initMasterTable() {
         $tblMasterEl.bootstrapTable('destroy');
         $tblMasterEl.bootstrapTable({
+            classes: 'table-bordered table-striped table-sm',
+            theadClasses: 'text-center',
+            showToggle:true,
             showRefresh: true,
             showExport: true,
             showColumns: true,
@@ -395,9 +401,9 @@
             sidePagination: "server",
             pageList: "[10, 25, 50, 100, 500]",
             cache: false,
-            showFooter: true,
             checkboxHeader: false,
             clickToSelect: true,
+      
             idField: "ProposalID",
             columns: [
                 {
@@ -451,11 +457,15 @@
                     filterControl: "input",
                     cellStyle: function () { return { classes: 'm-w-50' } },
                     filterControlPlaceholder: FILTERCONTROLPLACEHOLDER,
-                    visible: status != statusConstants.PENDING
+                    visible: status != statusConstants.PENDING,
+                    filterTemplate: (column) => {
+                        return `<input type="text" class="form-control form-control-sm" placeholder="Filter ${column.title}">`;
+                    }
                 },
                 {
                     field: "ProposalDate",
                     title: "Proposal Date",
+                   
                     cellStyle: function () { return { classes: 'm-w-50' } },
                     formatter: function (value, row, index, field) {
                         return formatDateToDefault(value);
@@ -471,7 +481,7 @@
                 },
                 {
                     field: "PIDate",
-                    title: "PI Date",
+                    title: "PI Date", width: 120,
                     formatter: function (value, row, index, field) {
                         return formatDateToDefault(value);
                     },
@@ -479,14 +489,14 @@
                 },
                 {
                     field: "CompanyName",
-                    title: "Company",
+                    title: "Company", width: 80,
                     filterControl: "input",
                     cellStyle: function () { return { classes: 'm-w-50' } },
                     filterControlPlaceholder: FILTERCONTROLPLACEHOLDER
                 },
                 {
                     field: "SupplierName",
-                    title: "Supplier",
+                    title: "Supplier", width: 300,
                     filterControl: "input",
                     cellStyle: function () { return { classes: 'm-w-100' } },
                     filterControlPlaceholder: FILTERCONTROLPLACEHOLDER
@@ -539,7 +549,7 @@
 
                 {
                     field: "TotalQty",
-                    title: "Total Qty",
+                    title: "Total Qty", width: 120,
                     filterControl: "input",
                     align: 'right',
                     cellStyle: function () { return { classes: 'm-w-50' } },
@@ -548,11 +558,12 @@
                 },
                 {
                     field: "TotalValue",
-                    title: "Total Value",
+                    title: "Total Value", width: 120,
                     filterControl: "input",
                     align: 'right',
                     cellStyle: function () { return { classes: 'm-w-50' } },
                     footerFormatter: calculateTotalYarnValueAll,
+
                     filterControlPlaceholder: FILTERCONTROLPLACEHOLDER
                 },
                 {
@@ -631,6 +642,7 @@
         $tblChildEl.bootstrapTable({
             //showRefresh: true,
             showExport: true,
+  
            // showColumns: true,
            // toolbar: $toolbarEl,
             exportTypes: "['csv', 'excel']",
@@ -638,16 +650,16 @@
             columns: [
                 {
                     title: "",
-                    align: "center",
+                    align: "center", 
                     cellStyle: function () { return { classes: 'm-w-10' } },
                     formatter: function (value, row, index, field) { 
                         return [
                             '<span class="btn-group">',
-                            '<a class="btn btn-danger btn-xs remove" href="javascript:void(0)" title="Delete Item">',
-                            '<i class="fa fa-remove"></i>',
+                            '<a class="btn btn-danger btn-sm remove" href="javascript:void(0)" title="Delete Item">',
+                            '<i class="fa fa-times"></i>',
                             '</a>',
-                            '<a class="btn btn-xs btn-primary" href="' + row.PiFilePath + '" target="_blank" title="PI Report">',
-                            '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>',
+                            '&nbsp;<a class="btn btn-sm btn-primary" href="' + row.PiFilePath + '" target="_blank" title="PI Report">',
+                            '<i class="fas fa-file-pdf" aria-hidden="true"></i>',
                             '</a>',
                             '</span>'
                         ].join('');
@@ -695,7 +707,7 @@
                 {
                     field: "TotalQty",
                     title: "PI Qty",
-                    align: 'right',
+                    align: 'right', 
                     footerFormatter: calculateTotalQty
                 },
                 {
@@ -914,7 +926,7 @@
 
     function calculateTotalQty(data) {
         var totalQty = 0;
-
+       
         $.each(data, function (i, row) {
             totalQty += isNaN(parseFloat(row.TotalQty)) ? 0 : parseFloat(row.TotalQty);
         });
@@ -934,7 +946,7 @@
 
     function calculateTotalYarnQtyAll(data) {
         var yarnPoQtyAll = 0;
-
+        
         $.each(data, function (i, row) {
             yarnPoQtyAll += isNaN(parseFloat(row.TotalQty)) ? 0 : parseFloat(row.TotalQty);
         });

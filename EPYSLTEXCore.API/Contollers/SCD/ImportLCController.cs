@@ -1,22 +1,17 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Application.Interfaces.SCD;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json;
-using NLog;
-using System.Text.Json;
-using EPYSLTEXCore.API.Extension;
-using EPYSLTEX.Infrastructure.Services;
+using System.Data.Entity;
+using System.Text.RegularExpressions;
 
 namespace EPYSLTEXCore.API.Contollers.SCD
 {
@@ -25,18 +20,18 @@ namespace EPYSLTEXCore.API.Contollers.SCD
     {
         private readonly IImportLCService _importLCService;
         private readonly ICommonHelpers _commonHelpers;
-        //private readonly ISignatureRepository _signatureRepository;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ISelect2Service _select2Service;
 
         public ImportLCController(IImportLCService importLCService
             , ICommonHelpers commonHelpers
-        //, ISignatureRepository signatureRepository
+         ,IWebHostEnvironment hostingEnvironment
         , IUserService userService
             , ISelect2Service select2Service) : base(userService)
         {
             _importLCService = importLCService;
             _commonHelpers = commonHelpers;
-            //_signatureRepository = signatureRepository;
+            _hostingEnvironment = hostingEnvironment;
             _select2Service = select2Service;
         }
 
@@ -66,91 +61,75 @@ namespace EPYSLTEXCore.API.Contollers.SCD
             Guard.Against.NullObject(id, record);
             return Ok(record);
         }
-        /*//OFF FOR CORE// Have to solve error
+      
         [Route("save")]
         [HttpPost]
         public async Task<IActionResult> Save()
         {
-            //if (!Request.Content.IsMimeMultipartContent())
-            if (Request.ContentType != null && Request.ContentType.StartsWith("multipart/", StringComparison.OrdinalIgnoreCase))
-                return BadRequest("Unsupported media type.");
+            var formData = Request.Form;    
 
-            //if (Request.Content.Headers.ContentLength >= 4 * 1024 * 1024)
-            if (Request.ContentLength.HasValue && Request.ContentLength >= 4 * 1024 * 1024)
-                return BadRequest("File is bigger than 4MB");
-
-            //OFF FOR CORE//var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartFormDataStreamProvider());
-            #region New For CORE
-            var form = await Request.ReadFormAsync();
-            var provider = new InMemoryMultipartFormDataStreamProvider();
-
-            // Mimicking the functionality of the old `InMemoryMultipartFormDataStreamProvider`
-            foreach (var file in form.Files)
-            {
-                using var stream = file.OpenReadStream();
-                var fileData = new InMemoryFileData
-                {
-                    FileName = file.FileName,
-                    ContentType = file.ContentType,
-                    Content = new MemoryStream()
-                };
-
-                await stream.CopyToAsync(fileData.Content);
-                provider.Files.Add(fileData);
-            }
-
-            foreach (var field in form)
-            {
-                provider.FormData.Add(field.Key, field.Value.ToString());
-            }
-
-            // Your existing variable `provider` now has the files and form data.
-            #endregion
-
-            var formData = provider.FormData;
-
+            // Access the uploaded file
+            var file = Request.Form.Files.FirstOrDefault();
+      
             YarnLcMaster model = formData.ConvertToObject<YarnLcMaster>();
-            model.LcChilds = JsonConvert.DeserializeObject<List<YarnLcChild>>(formData.Get("LcChilds"));
-            model.LcDocuments = JsonConvert.DeserializeObject<List<YarnLcDocument>>(formData.Get("LcDocuments"));
-            //model.LcNo = await _signatureRepository.GetMaxNoAsync(TableNames.IMPORT_LC_NO);
-
-            //// Validate Data should be called for each type before saving file
-            //var validator = new YarnLcMasterValidator();
-            //var validationResult = validator.Validate(model);
-            //if (!validationResult.IsValid)
-            //{
-            //    string messages = string.Join("<br>", validationResult.Errors.Select(x => x.PropertyName.Replace("Childs", "Row") + " : " + x.ErrorMessage));
-            //    return BadRequest(messages);
-            //}
+            model.LcChilds = JsonConvert.DeserializeObject<List<YarnLcChild>>(formData["LcChilds"]);
+            model.LcDocuments = JsonConvert.DeserializeObject<List<YarnLcDocument>>(formData["LcDocuments"]);
 
             #region Save Image
 
             var filePath = "";
             var previewTemplate = "";
-            if (provider.Files.Any())
-            {
-                var originalFile = provider.Files[0];
-                var inputStream = await originalFile.ReadAsStreamAsync();
 
-                var fileName = string.Join("", originalFile.Headers.ContentDisposition.FileName.Split(Path.GetInvalidFileNameChars()));
-                var contentType = originalFile.Headers.ContentType.ToString();
+
+            if (file != null)
+            {
+                if (file.Length > 4 * 1024 * 1024)
+                    return BadRequest("File is bigger than 4MB.");
+                var originalFile = file;
+                var inputStream = originalFile.OpenReadStream();
+
+                var fileName = string.Join("", originalFile.FileName.Split(Path.GetInvalidFileNameChars()));
+                fileName = GetValidFileName(fileName);
+                var contentType = originalFile.ContentType;
 
                 var fileExtension = Path.GetExtension(fileName);
-                previewTemplate = fileExtension.Contains(".pdf") ? "pdf" : MimeMapping.GetMimeMapping(fileName).StartsWith("image/") ? "image" : "office";
 
-                //model.LcNo = await _signatureRepository.GetMaxNoAsync(TableNames.IMPORT_LC_NO);
-                filePath = $"{AppConstants.LC_FILE_PATH}/{string.Join("_", model.LCNo.Split(Path.GetInvalidFileNameChars()))}_{fileName}";
-                var savePath = HttpContext.Current.Server.MapPath(filePath);
-                using (var fileStream = File.Create(savePath))
+
+                var provider = new FileExtensionContentTypeProvider();
+                string mimeType;
+
+                if (provider.TryGetContentType(fileName, out mimeType))
                 {
-                    inputStream.Seek(0, SeekOrigin.Begin);
+                    // Set previewTemplate based on file type
+                    previewTemplate = fileExtension.Contains(".pdf") ? "pdf" :
+                                      mimeType.StartsWith("image/") ? "image" :
+                                      "office";
+                }
+                else
+                {
+                    // If MIME type couldn't be determined, fallback to "office"
+                    previewTemplate = "office";
+                }
+
+                filePath = $"{UploadLocations.LC_FILE_PATH}/{string.Join("_", model.LCNo.Split(Path.GetInvalidFileNameChars()))}_{fileName}";
+                var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
+                string directoryPath = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+
+
+                using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                {
                     await inputStream.CopyToAsync(fileStream);
                 }
             }
             else
             {
-                filePath = model.LCFilePath;
-                previewTemplate = model.AttachmentPreviewTemplate;
+                filePath = "defaultFilePath";  // Handle no file uploaded scenario
+                previewTemplate = "office";    // Set default preview template
             }
 
             #endregion Save Image
@@ -197,7 +176,7 @@ namespace EPYSLTEXCore.API.Contollers.SCD
                 entity.LoadingPortID = model.LoadingPortID;
                 entity.DischargePortID = model.DischargePortID;
                 entity.IsConInsWith = model.IsConInsWith;
-                entity.UpdatedBy = UserId;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;
                 entity.PreRevisionNo = entity.YarnPIRevision;
 
@@ -211,7 +190,7 @@ namespace EPYSLTEXCore.API.Contollers.SCD
                 if (model.Approve)
                 {
                     entity.Approve = model.Approve;
-                    entity.ApproveBy = UserId;
+                    entity.ApproveBy = AppUser.UserCode;
                     entity.ApproveDate = DateTime.Now;
                 }
                 entity.EntityState = EntityState.Modified;
@@ -258,7 +237,7 @@ namespace EPYSLTEXCore.API.Contollers.SCD
                 entity = model;
                 entity.LCFilePath = filePath;
                 entity.AttachmentPreviewTemplate = previewTemplate;
-                entity.AddedBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
                 entity.Proposed = model.Proposed;
                 entity.ProposedDate = DateTime.Now;
             }
@@ -267,6 +246,14 @@ namespace EPYSLTEXCore.API.Contollers.SCD
 
             return Ok();
         }
-        */
+        private string GetValidFileName(string fileName)
+        {
+            fileName = fileName.Replace("#", " ")
+                               .Replace("?", "");
+            fileName = Regex.Replace(fileName, @"[^\u0000-\u007F]+", string.Empty);
+            return fileName;
+        }
+
+
     }
 }

@@ -19,13 +19,20 @@ namespace EPYSLTEX.Core.Interfaces.Services
     {
         private readonly IDapperCRUDService<FreeConceptMRMaster> _service;
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _connectionGmt;
         private SqlTransaction transaction;
+        private SqlTransaction transactionGmt;
         private readonly IConceptStatusService _conceptStatusService;
         public FreeConceptMRService(IDapperCRUDService<FreeConceptMRMaster> service
             , IConceptStatusService conceptStatusService)
         {
             _service = service;
+            _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
+            _connectionGmt = service.Connection;
+
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+
             _conceptStatusService = conceptStatusService;
         }
 
@@ -45,14 +52,14 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 sql = $@"
                  WITH FABRIC AS (
 	                SELECT M.* 
-	                FROM FreeConceptMaster M
-					LEFT JOIN FreeConceptMRMaster MR ON MR.ConceptID = M.ConceptID
+	                FROM {TableNames.RND_FREE_CONCEPT_MASTER} M
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR ON MR.ConceptID = M.ConceptID
 					WHERE M.IsBDS = 0 AND M.SubGroupID = 1 AND M.ConceptNo = M.GroupConceptNo AND MR.ConceptID IS NULL
                 ),
                 OTHER AS (
 	                SELECT M.*
-	                FROM FreeConceptMaster M
-					LEFT JOIN FreeConceptMRMaster MR ON MR.ConceptID = M.ConceptID
+	                FROM {TableNames.RND_FREE_CONCEPT_MASTER} M
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR ON MR.ConceptID = M.ConceptID
 					WHERE M.IsBDS = 0 AND SubGroupID != 1 AND MR.ConceptID IS NULL  
                     AND M.ConceptNo = M.GroupConceptNo
 	                AND M.GroupConceptNo NOT IN (SELECT GroupConceptNo FROM FABRIC)
@@ -105,8 +112,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
                     S.ValueName ConceptStatus,ISG.SubGroupName ItemSubGroup,MR.AddedBy,L.Name,L.Name[MaterialRequirmentBy], 
                     T.ConcepTypeName, E.EmployeeName UserName, Isnull(YPM.YDProductionMasterID,0)YDProductionMasterID,M.TechnicalNameId,
 	                M.SubGroupID
-	                From FreeConceptMRMaster MR
-	                INNER JOIN FreeConceptMaster M ON M.ConceptID=MR.ConceptID --AND M.RevisionNo=MR.RevisionNo
+	                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=MR.ConceptID --AND M.RevisionNo=MR.RevisionNo
 	                LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=M.KnittingTypeID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID=M.CompositionID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Construction ON Construction.SegmentValueID=M.ConstructionID
@@ -128,7 +135,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 (
 	                SELECT F.GroupConceptNo, TechnicalName = STRING_AGG(T.TechnicalName,',')
 	                FROM F
-	                INNER JOIN FreeConceptMaster FCM ON FCM.GroupConceptNo = F.GroupConceptNo
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.GroupConceptNo = F.GroupConceptNo
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FCM.TechnicalNameId
 	                WHERE FCM.SubGroupID = 1
 	                GROUP BY F.GroupConceptNo
@@ -151,8 +158,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
 	                ,F.ValueName ConceptForName,S.ValueName ConceptStatus,ISG.SubGroupName ItemSubGroup,MR.AddedBy,L.Name
 	                ,L.Name[MaterialRequirmentBy], T.ConcepTypeName, E.EmployeeName UserName
 	                ,M.TechnicalNameId
-	                From FreeConceptMRMaster MR
-	                INNER JOIN FreeConceptMaster M ON M.ConceptID=MR.ConceptID --AND M.RevisionNo=MR.RevisionNo
+	                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=MR.ConceptID --AND M.RevisionNo=MR.RevisionNo
 	                LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=M.KnittingTypeID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID=M.CompositionID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Construction ON Construction.SegmentValueID=M.ConstructionID
@@ -172,7 +179,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 (
 	                SELECT F.GroupConceptNo, TechnicalName = STRING_AGG(T.TechnicalName,',')
 	                FROM F
-	                INNER JOIN FreeConceptMaster FCM ON FCM.GroupConceptNo = F.GroupConceptNo
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.GroupConceptNo = F.GroupConceptNo
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FCM.TechnicalNameId
 	                WHERE FCM.SubGroupID = 1
 	                GROUP BY F.GroupConceptNo
@@ -193,8 +200,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
 	                Select MR.FCMRMasterID,M.ConceptID,ConceptNo,M.GroupConceptNo,ConceptDate,M.TrialNo,Qty,MR.Remarks, M.ConceptTypeID
 	                ,KnittingType.TypeName KnittingType,Composition.SegmentValue Composition,Construction.SegmentValue Construction,Gsm.SegmentValue Gsm
 	                ,F.ValueName ConceptForName,S.ValueName ConceptStatus,ISG.SubGroupName ItemSubGroup,MR.AddedBy,L.Name,L.Name[MaterialRequirmentBy], T.ConcepTypeName, E.EmployeeName UserName
-	                From FreeConceptMRMaster MR
-	                INNER JOIN FreeConceptMaster M ON M.ConceptID=MR.ConceptID --AND M.RevisionNo=MR.RevisionNo
+	                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=MR.ConceptID --AND M.RevisionNo=MR.RevisionNo
 	                LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=M.KnittingTypeID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID=M.CompositionID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Construction ON Construction.SegmentValueID=M.ConstructionID
@@ -213,7 +220,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 (
 	                SELECT F.GroupConceptNo, TechnicalName = STRING_AGG(T.TechnicalName,',')
 	                FROM F
-	                INNER JOIN FreeConceptMaster FCM ON FCM.GroupConceptNo = F.GroupConceptNo
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.GroupConceptNo = F.GroupConceptNo
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FCM.TechnicalNameId
 	                WHERE FCM.SubGroupID = 1
 	                GROUP BY F.GroupConceptNo
@@ -238,8 +245,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
                     Gsm.SegmentValue Gsm, F.ValueName ConceptForName, S.ValueName ConceptStatus,
                     ISG.SubGroupName ItemSubGroup, MR.AddedBy, L.Name, L.Name[MaterialRequirmentBy], T.ConcepTypeName,
                     E.EmployeeName UserName, Isnull(YPM.YDProductionMasterID,0)YDProductionMasterID
-	                From FreeConceptMRMaster MR
-	                INNER JOIN FreeConceptMaster M ON M.ConceptID=MR.ConceptID
+	                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=MR.ConceptID
 	                LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=M.KnittingTypeID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID = M.CompositionID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Construction ON Construction.SegmentValueID = M.ConstructionID
@@ -260,7 +267,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 (
 	                SELECT F.GroupConceptNo, TechnicalName = STRING_AGG(T.TechnicalName,',')
 	                FROM F
-	                INNER JOIN FreeConceptMaster FCM ON FCM.GroupConceptNo = F.GroupConceptNo
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.GroupConceptNo = F.GroupConceptNo
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FCM.TechnicalNameId
 	                GROUP BY F.GroupConceptNo
                 ),
@@ -304,7 +311,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 With
                 M As (
 	                Select *
-	                From FreeConceptMaster
+	                FROM {TableNames.RND_FREE_CONCEPT_MASTER}
 	                Where ConceptID = {conceptId}
                 )
 
@@ -388,7 +395,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 KM.TypeName KnittingType, M.ConstructionID, M.TechnicalNameId, M.CompositionID, M.GSMID, M.Qty, M.ConceptStatusID, M.Remarks, M.SubGroupID,
                 M.ItemMasterID, M.ConceptTypeID, M.FUPartID, M.IsYD, M.MachineGauge, E.ValueName ConceptForName, SC.SubClassName MCSubClassName, FTN.TechnicalName,
                 Composition.SegmentValue Composition, Construction.SegmentValue Construction ,Gsm.SegmentValue GSM
-                From FreeConceptMaster M
+                FROM {TableNames.RND_FREE_CONCEPT_MASTER} M
                 Inner Join KnittingMachineType KM ON KM.TypeID = KnittingTypeID
                 INNER JOIN {DbNames.EPYSL}..EntityTypeValue E ON E.ValueID = M.ConceptFor
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID = M.CompositionID
@@ -407,7 +414,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 M.ItemMasterID, M.ConceptTypeID, M.FUPartID, M.IsYD, M.MachineGauge, E.ValueName ConceptForName, FTN.TechnicalName, Composition.SegmentValue Composition,
                 Construction.SegmentValue Construction,Gsm.SegmentValue GSM, FU.PartName FUPartName, MCS.SubClassName MCSubClassName,
                 M.[Length], M.[Width]                
-                From FreeConceptMaster M
+                FROM {TableNames.RND_FREE_CONCEPT_MASTER} M
                 LEFT Join KnittingMachineType KM ON KM.TypeID = KnittingTypeID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue E ON E.ValueID = M.ConceptFor
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID = M.CompositionID
@@ -426,7 +433,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 M.ItemMasterID, M.ConceptTypeID, M.FUPartID, M.IsYD, M.MachineGauge, E.ValueName ConceptForName, FTN.TechnicalName, Composition.SegmentValue Composition,
                 Construction.SegmentValue Construction,FTN.TechnicalName ,Gsm.SegmentValue GSM, FU.PartName FUPartName, MCS.SubClassName MCSubClassName,
                 M.[Length], M.[Width]                
-                From FreeConceptMaster M
+                FROM {TableNames.RND_FREE_CONCEPT_MASTER} M
                 LEFT Join KnittingMachineType KM ON KM.TypeID = KnittingTypeID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue E ON E.ValueID = M.ConceptFor
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID = M.CompositionID
@@ -442,7 +449,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 FROM FreeConceptChildColor C
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue ISV ON FCBS.ColorID = ISV.SegmentValueID
-                WHERE ConceptID = (SELECT ConceptID FROM FreeConceptMaster FM where GroupConceptNo='{grpConceptNo}' AND FM.GroupConceptNo=FM.ConceptNo)
+                WHERE ConceptID = (SELECT ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} FM where GroupConceptNo='{grpConceptNo}' AND FM.GroupConceptNo=FM.ConceptNo)
                 GROUP BY C.CCColorID, C.ConceptID, C.ColorID, C.ColorCode, ISV.SegmentValue, FCBS.RGBOrHex, C.Remarks;
 
                 --Item Segments
@@ -531,9 +538,9 @@ namespace EPYSLTEX.Core.Interfaces.Services
         {
             string query =
                 $@"-- Master Data
-                Select * From FreeConceptMRMaster Where FCMRMasterID = {id}
+                Select * FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} Where FCMRMasterID = {id}
 
-                Select * From FreeConceptMRChild Where FCMRMasterID = {id}";
+                Select * FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} Where FCMRMasterID = {id}";
 
             try
             {
@@ -558,15 +565,15 @@ namespace EPYSLTEX.Core.Interfaces.Services
             string query =
                 $@"-- Master Data
                 SELECT * 
-                FROM FreeConceptMRMaster FCMR
-                LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID=FCMR.ConceptID
+                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} FCMR
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID=FCMR.ConceptID
                 WHERE FCM.GroupConceptNo='{groupConceptNo}'
 
                 -- Child Data
                 SELECT * 
-                FROM FreeConceptMRChild FCMRC
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCMRC
                 LEFT JOIN  FreeConceptMRMaster FCMR ON FCMR.FCMRMasterID=FCMRC.FCMRMasterID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID=FCMR.ConceptID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID=FCMR.ConceptID
                 WHERE FCM.GroupConceptNo='{groupConceptNo}'";
 
             try
@@ -593,7 +600,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
             string query =
                 $@"-- Master Data
                 SELECT MRC.*
-                FROM FreeConceptMRChild MRC
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} MRC
                 INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = MRC.YBChildItemID
                 INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
                 INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
@@ -623,7 +630,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
             string query =
                 $@"-- Master Data
                 SELECT MRC.*
-                FROM FreeConceptMRChild MRC
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} MRC
                 INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = MRC.YBChildItemID
                 INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
                 INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
@@ -631,7 +638,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 WHERE FBA.BookingNo = '{bookingNo}'
 
                 SELECT MRC.*
-                FROM FreeConceptMRChild MRC
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} MRC
                 INNER JOIN YarnBookingChildItem_New_Revision YBCI ON YBCI.YBChildItemID = MRC.YBChildItemID
                 INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
                 INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
@@ -676,7 +683,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 WITH
                 M As (
 	                Select *
-	                From FreeConceptMRMaster
+	                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER}
 	                Where FCMRMasterID = {id}
                 )
 
@@ -684,7 +691,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
 	                , KnittingTypeID, CM.ConstructionID, CM.TechnicalNameId, CompositionID, GSMID, Qty,ConceptStatusID, M.Remarks, E.ValueName ConceptForName
 	                , KnittingType.TypeName KnittingType, Composition.SegmentValue Composition,Construction.SegmentValue Construction,FTN.TechnicalName, Gsm.SegmentValue GSM
                 from M
-                LEFT JOIN FreeConceptMaster CM ON M.ConceptID = CM.ConceptID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON M.ConceptID = CM.ConceptID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue E ON E.ValueID = CM.ConceptFor
                 LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID = CM.KnittingTypeID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID = CM.CompositionID
@@ -698,7 +705,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 IM.Segment8ValueID, ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc,
                 ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc,
                 ISV8.SegmentValue Segment8ValueDesc, FCC.DayValidDurationId
-                from FreeConceptMRChild FCC
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCC
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FCC.ItemMasterID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -712,8 +719,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
                 select CCColorID, C.ColorId, C.ColorCode, C.ConceptID, Color.SegmentValue ColorName, FCBS.RGBOrHex
                 from FreeConceptChildColor C
-				INNER JOIN FreeConceptMaster M ON M.ConceptID=C.ConceptID
-				INNER JOIN FreeConceptMRMaster MR ON MR.ConceptID=M.ConceptID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=C.ConceptID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR ON MR.ConceptID=M.ConceptID
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue Color On FCBS.ColorID = Color.SegmentValueID
                 where MR.FCMRMasterID={id}
@@ -780,8 +787,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 WITH M As (
                     SELECT F.*, CM.ConceptNo, CM.GroupConceptNo, CM.ConceptDate, CM.TrialDate, CM.ConceptFor, CM.KnittingTypeID, CM.CompositionID,
                     CM.GSMID, CM.Qty, CM.ConceptStatusID, CM.ConstructionID, CM.TechnicalNameId, CM.ConceptTypeID, SC.SubClassName MCSubClassName
-                    FROM FreeConceptMRMaster F
-                    LEFT JOIN FreeConceptMaster CM ON F.ConceptID = CM.ConceptID
+                    FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} F
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON F.ConceptID = CM.ConceptID
                     LEFT JOIN KnittingMachineSubClass SC ON SC.SubClassID = CM.MCSubClassID
                     WHERE GroupConceptNo='{grpConceptNo}' AND SubGroupID=1
                 )
@@ -807,7 +814,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 M.ItemMasterID, M.ConceptTypeID, M.FUPartID, M.IsYD, M.MachineGauge, E.ValueName ConceptForName, FTN.TechnicalName, Composition.SegmentValue Composition,
                 Construction.SegmentValue Construction,FTN.TechnicalName ,Gsm.SegmentValue GSM, FU.PartName FUPartName, MCS.SubClassName MCSubClassName,
                 M.[Length], M.[Width]                
-                From FreeConceptMaster M
+                FROM {TableNames.RND_FREE_CONCEPT_MASTER} M
                 LEFT Join KnittingMachineType KM ON KM.TypeID = KnittingTypeID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue E ON E.ValueID = M.ConceptFor
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID = M.CompositionID
@@ -823,8 +830,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 WITH M As (
                 SELECT F.*, CM.ConceptNo, CM.ConceptDate, CM.TrialDate, CM.ConceptFor, CM.KnittingTypeID, CM.CompositionID, CM.[Length], CM.[Width],
                 CM.GSMID, CM.Qty, CM.ConceptStatusID, CM.ConstructionID, CM.TechnicalNameId, CM.FUPartID, CM.MCSubClassID, CM.MachineGauge
-                FROM FreeConceptMRMaster F
-                LEFT JOIN FreeConceptMaster CM ON F.ConceptID = CM.ConceptID
+                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} F
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON F.ConceptID = CM.ConceptID
                 WHERE GroupConceptNo='{grpConceptNo}' AND SubGroupID != 1
                 )
                 
@@ -851,9 +858,9 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 ISV8.SegmentValue Segment8ValueDesc, Isnull(YPM.YDProductionMasterID,0)YDProductionMasterID,
                 FCC.YarnStockSetId,YSS.PhysicalCount,YSS.YarnLotNo,YSM.SampleStockQty,YSM.AdvanceStockQty,SpinnerName=SP.ShortName
                 , FCC.DayValidDurationId
-                FROM FreeConceptMRChild FCC
-				INNER JOIN FreeConceptMRMaster FCM ON FCM.FCMRMasterID = FCC.FCMRMasterID
-				INNER JOIN FreeConceptMaster CM ON CM.ConceptID = FCM.ConceptID
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCC
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} FCM ON FCM.FCMRMasterID = FCC.FCMRMasterID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = FCM.ConceptID
                 LEFT Join YDBookingMaster YBM ON YBM.ConceptID = FCM.ConceptID And YBM.ConceptID = CM.ConceptID
                 LEFT Join YDProductionMaster YPM ON YPM.YDBookingMasterID = YBM.YDBookingMasterID
                 LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId=FCC.YarnStockSetId
@@ -872,11 +879,11 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
                 ;SELECT CCColorID, C.ColorId, C.ColorCode, C.ConceptID, Color.SegmentValue ColorName, FCBS.RGBOrHex
                 from FreeConceptChildColor C
-				INNER JOIN FreeConceptMaster M ON M.ConceptID=C.ConceptID
-				INNER JOIN FreeConceptMRMaster MR ON MR.ConceptID=M.ConceptID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=C.ConceptID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR ON MR.ConceptID=M.ConceptID
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue Color ON FCBS.ColorID = Color.SegmentValueID
-                WHERE M.ConceptID IN (SELECT ConceptID FROM FreeConceptMaster WHERE GroupConceptNo='{grpConceptNo}')
+                WHERE M.ConceptID IN (SELECT ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} WHERE GroupConceptNo='{grpConceptNo}')
                 GROUP BY CCColorID, C.ColorId, C.ColorCode, C.ConceptID, Color.SegmentValue, FCBS.RGBOrHex;
 
                 -- Fabric Components
@@ -889,7 +896,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 {CommonQueries.GetItemSegmentValuesBySegmentNamesWithSegmentName()};";
 
             string query2 = $@"
-                    ;With C As(Select ConceptID From FreeConceptMaster WHERE GroupConceptNo='{grpConceptNo}') 
+                    ;With C As(Select ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} WHERE GroupConceptNo='{grpConceptNo}') 
                     Select ConceptID From (
                     SELECT a.ConceptID FROM YDBookingMaster a Inner Join C On C.ConceptID = a.ConceptID GROUP BY a.ConceptID
                     Union
@@ -900,7 +907,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                     SELECT a.ConceptID FROM YarnRnDReqChild a Inner Join C On C.ConceptID = a.ConceptID GROUP BY a.ConceptID
                     ) C Group By ConceptID;
 
-                    ;With C As(Select ConceptID From FreeConceptMaster WHERE GroupConceptNo='{grpConceptNo}') 
+                    ;With C As(Select ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} WHERE GroupConceptNo='{grpConceptNo}') 
                     Select ConceptID From (
                     SELECT a.ConceptID FROM 
                     YarnRnDReqChild a 
@@ -1007,8 +1014,8 @@ namespace EPYSLTEX.Core.Interfaces.Services
 					SELECT FCMRMasterID = ISNULL(F.FCMRMasterID,0), CM.ConceptID, CM.ConceptNo, CM.GroupConceptNo, CM.ConceptDate, CM.TrialDate, CM.ConceptFor, CM.KnittingTypeID, CM.CompositionID,
 					CM.GSMID, CM.Qty, CM.ConceptStatusID, CM.ConstructionID, CM.TechnicalNameId, CM.SubGroupID, MCS.SubClassName MCSubClassName, CM.TrialNo, HasYD = ISNULL(F.HasYD,0),
 					F.ReqDate, F.Remarks, PreProcessRevNo = ISNULL(CM.RevisionNo,0), RevisionNo = ISNULL(F.RevisionNo,0), F.RevisionDate, CM.RevisionBy, CM.RevisionReason
-					FROM FreeConceptMaster CM
-					LEFT JOIN FreeConceptMRMaster F ON F.ConceptID = CM.ConceptID
+					FROM {TableNames.RND_FREE_CONCEPT_MASTER} CM
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} F ON F.ConceptID = CM.ConceptID
 					LEFT JOIN KnittingMachineSubClass MCS ON MCS.SubClassID = CM.MCSubClassID
 					WHERE GroupConceptNo='{grpConceptNo}' AND SubGroupID = 1
                 )
@@ -1034,7 +1041,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 M.ItemMasterID, M.ConceptTypeID, M.FUPartID, M.IsYD, M.MachineGauge, E.ValueName ConceptForName, FTN.TechnicalName, Composition.SegmentValue Composition,
                 Construction.SegmentValue Construction,FTN.TechnicalName ,Gsm.SegmentValue GSM, FU.PartName FUPartName, MCS.SubClassName MCSubClassName,
                 M.[Length], M.[Width]                
-                From FreeConceptMaster M
+                FROM {TableNames.RND_FREE_CONCEPT_MASTER} M
                 LEFT Join KnittingMachineType KM ON KM.TypeID = KnittingTypeID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue E ON E.ValueID = M.ConceptFor
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Composition ON Composition.SegmentValueID = M.CompositionID
@@ -1052,7 +1059,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 F.FCMRMasterID,F.TrialNo,F.ReqDate,F.HasYD,F.Remarks,F.PreProcessRevNo, F.RevisionNo,F.RevisionDate, F.RevisionBy, F.RevisionReason, 
                 CM.ConceptID,CM.ConceptNo, CM.ConceptDate, CM.TrialDate, CM.ConceptFor, CM.KnittingTypeID, CM.CompositionID, CM.[Length], CM.[Width],
                 CM.GSMID, CM.Qty, CM.ConceptStatusID, CM.ConstructionID, CM.TechnicalNameId, CM.FUPartID, CM.MCSubClassID, CM.MachineGauge
-                FROM FreeConceptMaster CM 
+                FROM {TableNames.RND_FREE_CONCEPT_MASTER} CM 
                 LEFT JOIN  FreeConceptMRMaster F ON F.ConceptID = CM.ConceptID
                 WHERE GroupConceptNo='{grpConceptNo}' AND CM.IsBDS = 0 AND SubGroupID != 1
                 )
@@ -1077,9 +1084,9 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 IM.Segment8ValueID, ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc,
                 ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc,
                 ISV8.SegmentValue Segment8ValueDesc, FCC.DayValidDurationId
-                FROM FreeConceptMRChild FCC
-				INNER JOIN FreeConceptMRMaster FCM ON FCM.FCMRMasterID = FCC.FCMRMasterID
-				INNER JOIN FreeConceptMaster CM ON CM.ConceptID = FCM.ConceptID
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCC
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} FCM ON FCM.FCMRMasterID = FCC.FCMRMasterID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = FCM.ConceptID
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FCC.ItemMasterID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -1093,11 +1100,11 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
                 ;SELECT CCColorID, C.ColorId, C.ColorCode, C.ConceptID, Color.SegmentValue ColorName, FCBS.RGBOrHex
                 from FreeConceptChildColor C
-				INNER JOIN FreeConceptMaster M ON M.ConceptID=C.ConceptID
-				INNER JOIN FreeConceptMRMaster MR ON MR.ConceptID=M.ConceptID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} M ON M.ConceptID=C.ConceptID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR ON MR.ConceptID=M.ConceptID
                 LEFT Join {DbNames.EPYSL}..FabricColorBookSetup FCBS ON FCBS.ColorID = C.ColorID
                 LEFT Join {DbNames.EPYSL}..ItemSegmentValue Color ON FCBS.ColorID = Color.SegmentValueID
-                WHERE M.ConceptID IN (SELECT ConceptID FROM FreeConceptMaster WHERE GroupConceptNo='{grpConceptNo}')
+                WHERE M.ConceptID IN (SELECT ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} WHERE GroupConceptNo='{grpConceptNo}')
                 GROUP BY CCColorID, C.ColorId, C.ColorCode, C.ConceptID, Color.SegmentValue, FCBS.RGBOrHex;
 
                 -- Fabric Components
@@ -1111,11 +1118,11 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
             string query2 = $@"
 
-                    ;Select F.ConceptID From FreeConceptMRMaster F
-					Inner JOIN FreeConceptMaster CM ON F.ConceptID = CM.ConceptID
+                    ;Select F.ConceptID FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} F
+					Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON F.ConceptID = CM.ConceptID
 					WHERE GroupConceptNo='{grpConceptNo}'
 
-                    ;With C As(Select ConceptID From FreeConceptMaster WHERE GroupConceptNo='{grpConceptNo}') 
+                    ;With C As(Select ConceptID FROM {TableNames.RND_FREE_CONCEPT_MASTER} WHERE GroupConceptNo='{grpConceptNo}') 
                     Select ConceptID From (
                     SELECT a.ConceptID FROM 
                     YarnRnDReqChild a 
@@ -1206,18 +1213,18 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
         public async Task<bool> ExistsAsync(int conceptID, int trialNo)
         {
-            string sql = $@"Select * From FreeConceptMRMaster Where ConceptID = {conceptID} And TrialNo = {trialNo}";
+            string sql = $@"Select * FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} Where ConceptID = {conceptID} And TrialNo = {trialNo}";
             FreeConceptMRMaster record = await _service.GetFirstOrDefaultAsync<FreeConceptMRMaster>(sql);
             return record != null;
         }
         public async Task<FreeConceptMRMaster> GetMRByConceptNo(string conceptNo)
         {
             string sql = $@"SELECT MR.* 
-                            FROM FreeConceptMRMaster MR
-                            INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = MR.ConceptID
+                            FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+                            INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = MR.ConceptID
                             WHERE FCM.ConceptNo = '{conceptNo}'
                         ";
-            FreeConceptMRMaster mrMaster = await _service.GetFirstOrDefaultAsync<FreeConceptMRMaster>(sql);
+            FreeConceptMRMaster mrMaster = await _service.GetFirstOrDefaultAsync<FreeConceptMRMaster>(sql, _connection);
             return mrMaster;
         }
 
@@ -1303,14 +1310,14 @@ namespace EPYSLTEX.Core.Interfaces.Services
             string query =
                 $@"-- Master Data
                 Select MR.*, FC.SubGroupID, FreeConceptRevisionNo = FC.RevisionNo
-                From FreeConceptMRMaster MR
-                INNER JOIN FreeConceptMaster FC ON FC.ConceptID = MR.ConceptID
+                FROM {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR
+                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FC ON FC.ConceptID = MR.ConceptID
                 Where FC.GroupConceptNo = '{grpConceptNo}';
 
                 ;Select MRC.*
-                From FreeConceptMRChild MRC
-                INNER JOIN FreeConceptMRMaster MR ON MR.FCMRMasterID = MRC.FCMRMasterID
-                INNER JOIN FreeConceptMaster FC ON FC.ConceptID = MR.ConceptID
+                FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} MRC
+                INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} MR ON MR.FCMRMasterID = MRC.FCMRMasterID
+                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FC ON FC.ConceptID = MR.ConceptID
                 Where FC.GroupConceptNo = '{grpConceptNo}'";
 
             try

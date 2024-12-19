@@ -1,9 +1,10 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
 {
-    [Table("YarnPIReceiveDeductionValue")]
+    [Table(TableNames.YarnPIReceiveDeductionValue)]
     public class YarnPIReceiveDeductionValue : DapperBaseEntity
     {
         [ExplicitKey]

@@ -62,8 +62,8 @@
 
         //    initMasterTable();
         //});
-
-        $formEl.find("#btnSave").click(save);
+      
+        $formEl.find("#btnSave").on("click", save);
 
         $formEl.find("#btnCancel").on("click", backToList);
 

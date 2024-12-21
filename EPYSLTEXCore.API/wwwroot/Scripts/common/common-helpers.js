@@ -708,12 +708,18 @@ function setSelect2Data($el, value) {
  * @param {HTMLDivElement} $parentEl - Jquery Div element
  */
 function toggleActiveToolbarBtn(el, $parentEl) {
-    $parentEl.find('button').not("#" + el.id).removeClass("btn-success").addClass("btn-default text-grey");
+    $parentEl.find('button').not("#" + el.id)
+        .removeClass("btn-success")
+        .removeClass("text-white")
+        .addClass("btn-default")
+        .addClass("text-grey");
 
-    if (el instanceof jQuery)
-        el.removeClass("btn-default text-grey").addClass("btn-success text-white");
-    else
-        $(el).removeClass("btn-default text-grey").addClass("btn-success text-white");
+    $parentEl.find("#" + el.id).removeClass("btn-default").removeClass("text-grey").addClass("btn-success").addClass("text-white");
+
+    //if (el instanceof jQuery)
+    //    el.removeClass("btn-default").removeClass("text-grey").addClass("btn-success").addClass("text-white");
+    //else
+    //    $(el).removeClass("btn-default").removeClass("text-grey").addClass("btn-success").addClass("text-white");
 }
 
 /**

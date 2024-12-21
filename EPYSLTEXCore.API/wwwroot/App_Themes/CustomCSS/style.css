@@ -333,7 +333,6 @@
 
 
 .nav-tabs-custom {
-    margin-bottom: 20px;
     background: #fff;
     box-shadow: 0 1px 1px rgba(0,0,0,.1);
     border-radius: 3px
@@ -431,7 +430,7 @@
             }
 
     .nav-tabs-custom > .tab-content {
-        background: #fff;
+        background-color: #fff;
         padding: 10px;
         border-bottom-right-radius: 3px;
         border-bottom-left-radius: 3px
@@ -502,10 +501,262 @@ form, .box-body {
 .btnToolBar {
     color: #000 !important;
 }
-.row{
+
+.row {
     width: 100% !important;
 }
 /*.content, .container-fluid {
     padding: 0px !important;
 }
 */
+.content-wrapper {
+    background-color: #eef2e9 !important;
+}
+
+.content {
+    background-color: #ffffff !important;
+}
+
+
+/*bootstrap 3.4 css*/
+
+.panel-body {
+    padding: 5px;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+}
+
+
+.form-horizontal .control-label {
+    text-align: left;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.control-label {
+    /*line-height: 24px !important;*/
+}
+
+.form-control {
+    border-radius: 0;
+    box-shadow: none;
+    border-color: #d2d6de;
+}
+
+    .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+        background-color: #eee;
+        opacity: 1;
+    }
+
+.input-sm {
+    border: 1px solid #d2d6de;
+    height: 25px;
+    padding: 7px 7px;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.form-group {
+    clear: both;
+    margin-bottom: 5px !important;
+}
+
+.btn-file, .file-caption, .file-input, .file-loading:before, .file-preview, .file-zoom-dialog .modal-dialog, .krajee-default .file-thumbnail-footer, .krajee-default.file-preview-frame {
+    position: relative;
+}
+
+.file-preview {
+    height: 136px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 8px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+    .file-preview .fileinput-remove {
+        top: 1px;
+        right: 1px;
+        line-height: 10px;
+    }
+
+button.close {
+    padding: 0;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.file-drop-zone {
+    border: 1px dashed #aaa;
+    min-height: 135px;
+    border-radius: 4px;
+    text-align: center;
+    vertical-align: middle;
+    margin: -9px -9px 0 -9px;
+    padding: 5px;
+}
+
+.file-drop-zone-title {
+    color: #aaa;
+    font-size: 1.6em;
+    text-align: center;
+    padding: 50px 10px;
+    cursor: default;
+}
+
+.file-drop-zone .file-preview-thumbnails {
+    cursor: default;
+}
+
+.file-error-message {
+    color: #a94442;
+    background-color: #f2dede;
+    margin: 5px;
+    border: 1px solid #ebccd1;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+@media (min-width: 768px) {
+    .col-sm-1,
+    .col-sm-2,
+    .col-sm-3,
+    .col-sm-4,
+    .col-sm-5,
+    .col-sm-6,
+    .col-sm-7,
+    .col-sm-8,
+    .col-sm-9,
+    .col-sm-10,
+    .col-sm-11,
+    .col-sm-12,
+    .col-md-1,
+    .col-md-2,
+    .col-md-3,
+    .col-md-4,
+    .col-md-5,
+    .col-md-6,
+    .col-md-7,
+    .col-md-8,
+    .col-md-9,
+    .col-md-10,
+    .col-md-11,
+    .col-md-12 {
+        float: left;
+    }
+}
+
+
+
+.panel-success > .panel-heading {
+    color: #151515;
+    background-color: #f3fae3;
+    font-weight: bold;
+    font-size: 14px;
+    border-color: #d6e9c6;
+}
+
+.panel-heading {
+    padding: 4px 12px;
+    border-bottom: 1px solid transparent;
+}
+/*
+.text-white {
+    background-color: #e9ecef;
+    color: #2b2b2b;
+}
+*/
+
+/*Select2 CSS*/
+.select2-container .select2-selection--single .select2-selection__rendered {
+    padding-right: 10px;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    padding-left: 0;
+    padding-right: 0;
+    height: auto;
+    margin-top: -4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 26px;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    display: block;
+    padding-left: 0px;
+    padding-right: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select2-container--default .select2-selection--single, .select2-selection .select2-selection--single {
+    border: 1px solid #d2d6de;
+    /*border-radius: 6px;*/
+    padding: 2px 6px;
+    height: 25px;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 17px;
+        right: 1px;
+    }
+
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #3c8dbc !important;
+}
+
+.select2-results__option[aria-selected=true] {
+    display: none !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #333 !important;
+}
+
+.form-group .select2-container {
+    margin-bottom: 2px !important;
+    margin-top: 2px !important;
+}
+
+/*Select2 CSS*/
+
+
+/*Syncfusion Grid CSS*/
+.e-grid .e-rowcell {
+    padding: 8px 5px 6px !important;
+}
+
+.e-grid .e-headercell, .e-grid .e-detailheadercell {
+    height: 36px !important;
+    padding: 0 10px 0;
+}
+
+.e-grid .e-gridheader {
+    background-color: #fff;
+    border-bottom-color: #e0e0e0;
+    border-top-color: #e0e0e0;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 14px !important;
+}
+
+.e-grid .e-headercelldiv {
+    font-size: 12px !important;
+}
+
+    .e-grid .e-headercelldiv e-toolbar-items {
+        font-size: 12px;
+    }
+
+
+/*Syncfusion Grid CSS*/

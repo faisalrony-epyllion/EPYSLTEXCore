@@ -54,7 +54,8 @@
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/reorder-rows/bootstrap-table-reorder-rows.min.js",
       "wwwroot/App_Themes/lib/bootstrap-table/extensions/editable/bootstrap-table-editable.min.js",
       "wwwroot/App_Themes/lib/bootstrap-datepicker/js/bootstrap-datepicker.js",
-      "wwwroot/App_Themes/lib/bootstrap-fileinput/js/fileinput.min.js"
+      "wwwroot/App_Themes/lib/bootstrap-fileinput/js/fileinput.min.js",
+      "wwwroot/App_Themes/lib/validatejs/validate.min.js"
     ],
     "minify": {
       "enabled": true,

@@ -150,7 +150,7 @@
         var columns = [
             { field: 'BondEntitlementChildID', isPrimaryKey: true, visible: false, width: 10 },
             { field: 'SegmentName', headerText: 'RM Types', width: 120, textAlign: 'left', allowEditing: false },
-            { field: 'HSCode', headerText: 'HS Code', width: 120, textAlign: 'left' },
+            { field: 'ItemName', headerText: 'Item Name', width: 120, textAlign: 'left' },
             {
                 field: 'UnitID',
                 headerText: 'Unit',
@@ -161,15 +161,15 @@
                 edit: ej2GridDropDownObj({
                 })
             },
-            { field: 'BankFacilityAmount', headerText: 'Bank Facility Amount', textAlign: 'left', width: 120 }
+            { field: 'EntitlementQty', headerText: 'Entitlement Qty', textAlign: 'left', width: 120 }
         ];
 
         var childColumns = [
             { field: 'BondEntitlementChildItemID', isPrimaryKey: true, visible: false, width: 10 },
             { field: 'BondEntitlementChildID', visible: false, width: 10 },
             { field: 'SegmentValue', headerText: 'Item Name', width: 120, textAlign: 'left', allowEditing: false },
-            { field: 'HSCode', headerText: 'HS Code', width: 120, textAlign: 'left' },
-            { field: 'BankFacilityAmount', headerText: 'Bank Facility Amount', textAlign: 'left', width: 120 }
+            { field: 'ItemName', headerText: 'Item Name', width: 120, textAlign: 'left' },
+            { field: 'EntitlementQty', headerText: 'Entitlement Qty', textAlign: 'left', width: 120 }
         ];
 
         var childItems = [];
@@ -236,23 +236,23 @@
         var childs = DeepClone(data.Childs);
         for (var i = 0; i < childs.length; i++) {
             var child = DeepClone(childs[i]);
-            var bankFacilityAmount = getDefaultValueWhenInvalidN_Float(child.BankFacilityAmount);
-            var bankFacilityAmount_CI = 0;
-            debugger;
+            var entitlementQty = getDefaultValueWhenInvalidN_Float(child.EntitlementQty);
+            var entitlementQty_CI = 0;
+   
             for (var iC = 0; iC < child.ChildItems.length; iC++) {
                 var childItem = DeepClone(child.ChildItems[iC]);
-                bankFacilityAmount_CI += getDefaultValueWhenInvalidN_Float(childItem.BankFacilityAmount);
+                entitlementQty_CI += getDefaultValueWhenInvalidN_Float(childItem.EntitlementQty);
             }
-            if (bankFacilityAmount_CI != bankFacilityAmount) {
-                toastr.error(`For RM Type ${child.SegmentName} bank facility amount ${bankFacilityAmount} mismatched with items bank facility amount ${bankFacilityAmount_CI}`);
+            if (entitlementQty_CI != entitlementQty) {
+                toastr.error(`For RM Type ${child.SegmentName} Entitlement Qty ${entitlementQty} mismatched with items Entitlement Qty ${entitlementQty_CI}`);
                 hasError = true;
                 break;
             }
         }
 
-        data.Childs = data.Childs.filter(x => x.BankFacilityAmount > 0);
+        data.Childs = data.Childs.filter(x => x.EntitlementQty > 0);
         data.Childs.map(c => {
-            c.ChildItems = c.ChildItems.filter(x => x.BankFacilityAmount > 0);
+            c.ChildItems = c.ChildItems.filter(x => x.EntitlementQty > 0);
         });
 
         if (hasError) return false;

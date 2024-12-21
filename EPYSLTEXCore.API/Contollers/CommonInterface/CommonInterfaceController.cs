@@ -247,13 +247,15 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             primaryKeyColumnValue = await _service.Save(tableNames, childGridParentColumn, parentChildObject, sqlConnection, primaryKeyColumns);
 
- 
+            if (string.IsNullOrWhiteSpace(primaryKeyColumnValue))
+            {
+                return NotFound();
+            }
+            else
+            {
 
-
-
-
-
-            return Ok(primaryKeyColumnValue);
+                return Ok(primaryKeyColumnValue);
+            }
 
         }
         static void SetProperty(object target, string propertyName, JsonNode propertyValue)

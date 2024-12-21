@@ -93,32 +93,32 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Booking No</label>
-                                       
-                                            <input id="PYBookingNo" name="PYBookingNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
-                                      
+
+                                        <input id="PYBookingNo" name="PYBookingNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Booking Date</label>
-                                       
-                                            <input id="PYBookingDate" name="PYBookingDate" class="form-control input-sm ej2-datepicker" />
-                                        </div>
+
+                                        <input id="PYBookingDate" name="PYBookingDate" class="form-control input-sm ej2-datepicker" />
                                     </div>
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Booking By</label>
-                                    
-                                            <select id="BookingByID" name="BookingByID" class="form-control input-sm" style="width:100%"></select>
-                                        </div>
+
+                                        <select id="BookingByID" name="BookingByID" class="form-control input-sm" style="width:100%"></select>
                                     </div>
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Company</label>
-                                  
-                                            <select id="CompanyID" name="CompanyID" class="form-control input-sm" style="width:100%"></select>
-                                        </div>
+
+                                        <select id="CompanyID" name="CompanyID" class="form-control input-sm" style="width:100%"></select>
                                     </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
@@ -196,9 +196,9 @@
                                 <div class="col-md-3 divReject" style="display:none;">
                                     <div class="form-group">
                                         <label>Reject Reason</label>
-                                            <input id="RejectReason" name="RejectReason" class="form-control input-sm" disabled />
-                                        </div>
+                                        <input id="RejectReason" name="RejectReason" class="form-control input-sm" disabled />
                                     </div>
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group divCopyFromExistingBooking" style="display:none;">
                                         <label class="col-form-label col-sm-5 small"></label>
@@ -233,19 +233,17 @@
                 </div>
 
                 <div class="box-footer btn-e-float-margin">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                            @*<button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>*@
-                            <button type="button" class="btn btn-primary m-w-120" id="btnReviseAndSendToApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise & Send To Approver</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
-                            <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnMnMAck" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge(M&M)</button>
-                            <button type="button" class="btn btn-danger m-w-120" id="btnUnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;UnAcknowledge</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnSendYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Send To Approver</button>
-                        </div>
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                        <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        @*<button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>*@
+                        <button type="button" class="btn btn-primary m-w-120" id="btnReviseAndSendToApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise & Send To Approver</button>
+                        <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                        <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
+                        <button type="button" class="btn btn-success m-w-120" id="btnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
+                        <button type="button" class="btn btn-success m-w-120" id="btnMnMAck" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge(M&M)</button>
+                        <button type="button" class="btn btn-danger m-w-120" id="btnUnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;UnAcknowledge</button>
+                        <button type="button" class="btn btn-success m-w-120" id="btnSendYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Send To Approver</button>
                     </div>
                 </div>
             </div>

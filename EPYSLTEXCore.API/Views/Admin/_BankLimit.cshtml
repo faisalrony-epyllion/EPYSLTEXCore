@@ -25,7 +25,7 @@
                 <button id="btnNew" class="btn btn-default text-grey btn-sm btnToolBar">
                     <i class="fa fa-plus"></i>&nbsp;Create New
                 </button>
-                <button id="btnList" class="btn btn-success text-white btn-sm btnToolBar">
+                <button id="btnList" class="btn btn-success btn-sm btnToolBar">
                     <i class="fa fa-list"></i>&nbsp;List
                 </button>
             </div>
@@ -37,59 +37,62 @@
     <div class="row">
         <form class="form-horizontal" id="@formId">
             <input type="hidden" id="BankLimitMasterID" name="BankLimitMasterID" value="-1111" />
-
-            <div class="card card-default" id="@divDetailsId" style="display:none">
-                <div class="card-body">
-                    <div class="card" style="border-color:transparent; border-style:none;">
-                        <div class="card-header">
-                            <h3 class="card-title"> General Information</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
+            <div class="box-body" id="@divDetailsId" style="display:none;">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group cbo">
-                                        <label>Company</label>
-                                        <select id="CompanyID" name="CompanyID" class="form-control form-control-sm" style="width:100%;"></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group cbo">
-                                        <label>Bank</label>
-                                        <select id="BankID" name="BankID" class="form-control form-control-sm" style="width:100%"></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 cbo">
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-6">
+
                                     <div class="form-group">
-                                        <label>Bank Facility</label>
-                                        <select id="BankFacilityTypeID" name="BankFacilityTypeID" class="form-control form-control-sm" style="width:100%"></select>
+                                        <label class="control-label col-sm-4 small">Company</label>
+                                        <div class="col-sm-8">
+                                            <select id="CompanyID" name="CompanyID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group cbo">
-                                        <label>Accumulated Limit</label>
-                                        <input id="AccumulatedLimit" name="AccumulatedLimit" class="form-control form-control-sm" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3 cbo">
                                     <div class="form-group">
-                                        <label>Currency</label>
-                                        <select id="CurrencyID" name="CurrencyID" class="form-control form-control-sm" style="width:100%"></select>
+                                        <label class="control-label col-sm-4 small">Bank</label>
+                                        <div class="col-sm-8">
+                                            <select id="BankID" name="BankID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Bank Facility</label>
+                                        <div class="col-sm-8">
+                                            <select id="BankFacilityTypeID" name="BankFacilityTypeID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Accumulated Limit</label>
+                                        <div class="col-sm-8">
+                                            <input id="AccumulatedLimit" name="AccumulatedLimit" class="form-control form-control-sm" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Currency</label>
+                                        <div class="col-sm-8">
+                                            <select id="CurrencyID" name="CurrencyID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card" style="border-color:transparent; border-style:none;">
-                        <div class="card-header">
-                            <h3 class="card-title">Item Information</h3>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color: transparent; border-style: none;">
+                        <div class="panel-heading">
+                            Item Information
                         </div>
-                        <div class="card-body">
-                            <div class="row">
+                        <div class="panel-body">
+                            <div class="form-horizontal">
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <table id="@tblChildId"></table>
@@ -98,15 +101,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="box-footer btn-e-float-margin" id="divFormButtons">
-                        <div class="row">
-                            <div class="offset-md-2 col-md-10">
-                                <div class="d-flex justify-content-end">
-                                    <button type="button" class="btn btn-default m-w-120 mr-2" id="btnBackToList"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                                    <button type="button" class="btn btn-primary m-w-120 btnAction mr-2" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-default m-w-120 mr-2" id="btnBackToList"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                        <button type="button" class="btn btn-primary m-w-120 btnAction mr-2" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
                     </div>
                 </div>
             </div>

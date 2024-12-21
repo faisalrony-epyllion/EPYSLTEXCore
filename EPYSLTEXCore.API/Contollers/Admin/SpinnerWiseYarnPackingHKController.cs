@@ -1,26 +1,11 @@
-﻿using AutoMapper;
-using Azure.Core;
-using EPYSLTEX.Core.Interfaces;
-using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.Admin;
-using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Admin;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
-using EPYSLTEXCore.Infrastructure.Static;
-using EPYSLTEXCore.Infrastructure.Statics;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.SqlServer.Server;
 using Newtonsoft.Json;
-using NLog;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.API.Contollers.Admin

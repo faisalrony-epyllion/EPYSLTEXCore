@@ -1583,18 +1583,18 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public async Task<int> AddDynamicObjectAsync(string tableName, JsonObject dataObject, SqlConnection connection, IDbTransaction transaction = null)
         {
 
+
             try
             {
                 var columns = await GetColumnNamesAsync(tableName, connection, transaction);
                 var columnNames = "";
                 var parameters = "";
                 var sql = "";
-
+ 
                 var data = dataObject
                  .Where(property => columns.Contains(property.Key))
-                 .ToDictionary(property => property.Key,
+                 .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
 
-                 property => property.Value == null ? "" : ConvertJsonNodeToType<object>(property.Value));
 
                 // Ensure there are valid columns in the data
                 if (!data.Any())

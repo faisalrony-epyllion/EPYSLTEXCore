@@ -16,9 +16,9 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Admin
         public int BondEntitlementChildID { get; set; } = 0;
         public int BondEntitlementMasterID { get; set; } = 0;
         public int SegmentNameID { get; set; } = 0;
-        public string HSCode { get; set; } = "";
+        public string ItemName { get; set; } = "";
         public int UnitID { get; set; } = 0;
-        public decimal BankFacilityAmount { get; set; } = 0;
+        public decimal EntitlementQty { get; set; } = 0;
 
         #region Additional Property
 

@@ -231,10 +231,28 @@
 
         var data = formDataToJson($formEl.serializeArray());
 
-        data.CompanyID = $formEl.find('#CompanyID').val();
-        data.CurrencyID = $formEl.find('#CurrencyID').val();
-        data.BankID = $formEl.find('#BankID').val();
-        data.BankFacilityTypeID = $formEl.find('#BankFacilityTypeID').val();
+        data.CompanyID = getDefaultValueWhenInvalidN($formEl.find('#CompanyID').val());
+        data.CurrencyID = getDefaultValueWhenInvalidN($formEl.find('#CurrencyID').val());
+        data.BankID = getDefaultValueWhenInvalidN($formEl.find('#BankID').val());
+        data.BankFacilityTypeID = getDefaultValueWhenInvalidN($formEl.find('#BankFacilityTypeID').val());
+
+
+        if (data.CompanyID == 0) {
+            toastr.error('Select company');
+            return false;
+        }
+        if (data.CurrencyID == 0) {
+            toastr.error('Select currency');
+            return false;
+        }
+        if (data.BankID == 0) {
+            toastr.error('Select bank');
+            return false;
+        }
+        if (data.BankFacilityTypeID == 0) {
+            toastr.error('Select bank facility type');
+            return false;
+        }
 
         var accumulatedLimit = getDefaultValueWhenInvalidN_Float(data.AccumulatedLimit);
 

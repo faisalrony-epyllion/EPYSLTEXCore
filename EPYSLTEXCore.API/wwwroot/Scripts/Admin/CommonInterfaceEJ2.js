@@ -525,12 +525,13 @@
                     if (value.IsSys) {
                         template +=
                             `<div class="form-group" style='${cssHidden}'>
-                                <label class="col-sm-2 control-label ci">${value.Label}</label>
+                                <label class="col-sm-2 control-label ci d-flex justify-content-end">${value.Label}</label>
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
-                                        <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" readonly />                                        
+                                        <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" readonly />              
+                                        &nbsp;
                                           ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}                  
-                                       
+                                        &nbsp;
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
                                 </div>
@@ -542,11 +543,11 @@
                     else {
                         template +=
                             `<div class="form-group" style='${cssHidden}'>
-                                <label class="col-sm-2 control-label ci">${value.Label}</label>
+                                <label class="col-sm-2 control-label ci d-flex justify-content-end">${value.Label}</label>
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
-                                        <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />
-                                           ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}        
+                                        <input type="text" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />&nbsp;
+                                           ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}         &nbsp;
                                         ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                     </div>
                                 </div>
@@ -557,7 +558,7 @@
                 case "date":
                     template +=
                         `<div class="form-group" style='${cssHidden}'>
-                            <label class="col-sm-2 control-label ci">${value.Label}</label>
+                            <label class="col-sm-2 control-label ci d-flex justify-content-end">${value.Label}</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control input-sm bootstrap-datepicker" id="${value.ColumnName}" name="${value.ColumnName}" placeholder="${value.Label}" ${cssEnable} />
                             </div>
@@ -568,7 +569,7 @@
                     template +=
                     
                         `<div class="form-group" style='${cssHidden}'>
-                                <label class="col-sm-2 control-label ci">${value.Label}</label>
+                                <label class="col-sm-2 control-label ci d-flex justify-content-end">${value.Label}</label>
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm" style='width: 100%;'>
                                         <select class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" style="width: 100%;" ${cssEnable}></select>
@@ -590,11 +591,11 @@
                 case "number":
                     template +=
                         `<div class="form-group" style='` + cssHidden + `'>
-                            <label class="col-sm-2 control-label ci">${value.Label}</label>
+                            <label class="col-sm-2 control-label ci d-flex justify-content-end">${value.Label}</label>
                             <div class="col-sm-10">
                                 <div class="input-group input-group-sm" style='width: 100%;'>
-                                    <input type="number" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />
-                                       ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}   
+                                    <input type="number" class="form-control" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />&nbsp;
+                                       ${adNew(interfaceConfigs.IsAllowAddNew, menuId, value.ChildID, interfaceConfigs, value.ColumnName)}   &nbsp;
                                     ${setFinder(value.HasFinder, menuId, value.ChildID)}
                                 </div>
                             </div>
@@ -605,7 +606,7 @@
                         `<div class="form-group" style='` + cssHidden + `'>
                             <div class="col-sm-offset-2 col-sm-10">
                                 <div class="checkbox checkbox-success">
-                                    <input type="checkbox" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />
+                                    <input type="checkbox" id="${value.ColumnName}" name="${value.ColumnName}" ${cssEnable} />&nbsp;
                                     <label for="${value.ColumnName}" style='margin-top:4px;'>${value.Label}</label>
                                 </div>
                             </div>
@@ -644,7 +645,7 @@
     
         if (IsAllowAddNew && interfaceConfigs.PrimaryKeyColumn.toLowerCase().trim() == ColumnName.toLowerCase().trim()) {
             return `<span class="input-group-btn">
-                        <button type="button" class="btn btn-success ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <button type="button" class="btn btn-success btn-sm ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     </span>`;
         }
         return "";
@@ -653,7 +654,7 @@
     function setFinder(hasFinder, menuId, childID) {
         if (hasFinder) {
             return `<span class="input-group-btn">
-                        <button type="button" class="btn btn-success ci-finder-${menuId}-${childID}"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <button type="button" class="btn btn-success btn-sm ci-finder-${menuId}-${childID}"><i class="fa fa-search" aria-hidden="true"></i></button>
                     </span>`;
         }
         return "";
@@ -1005,7 +1006,7 @@
     function saveMaster(e) {
  
         e.preventDefault();
-        //if (!validateMasterForm()) return;
+       // if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
@@ -1041,7 +1042,11 @@
                 toastr.success(constants.SUCCESS_MESSAGE);
                 //resetForm();
             })
-            .catch(e);
+            .catch(function (error) {
+                // Log or display an error message if the request fails
+                console.error('An error occurred:', error);
+                toastr.error(constants.ERROR_MESSAGE || 'An error occurred while saving.');
+            });
     }
 
     function validateMasterForm() {

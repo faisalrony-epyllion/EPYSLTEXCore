@@ -522,9 +522,12 @@ form, .box-body {
     background-color: #ffffff !important;
 }
 
+.pull-right {
+    float: right !important;
+}
+
 
 /*bootstrap 3.4 css*/
-
 .panel-body {
     padding: 5px;
     font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;

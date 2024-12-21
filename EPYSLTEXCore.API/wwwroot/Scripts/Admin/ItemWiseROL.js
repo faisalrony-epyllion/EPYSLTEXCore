@@ -2,7 +2,6 @@
     var menuId, pageName;
     var $tblMasterEl, $formEl, tblMasterId;
     var itemMasterList, itemMasterLists = []
-    var grid;
     var _maxROSID = -999;
     var _isEdit = false;
     var pageId;
@@ -22,11 +21,11 @@
         var url = "/api/item-wise-rol/list";
         axios.get(url)
             .then(function (response) {
-                if (grid) {
-                    grid.destroy();
+                if ($tblMasterEl) {
+                    $tblMasterEl.destroy();
                 }
                 ej.grids.Grid.Inject(ej.grids.Edit, ej.grids.Toolbar);
-                grid = new ej.grids.Grid({
+                $tblMasterEl = new ej.grids.Grid({
                     dataSource: response.data.Items,
                     toolbar: ['Add', 'Edit', 'Delete'],
                     editSettings: {
@@ -135,7 +134,7 @@
                             if (args.data.ROSID == 0) {
                                 args.data.ROSID = _maxROSID--;
                             }
-                            var allData = grid.dataSource;
+                            var allData = $tblMasterEl.dataSource;
                             console.log(allData);
 
                             debugger;
@@ -225,7 +224,7 @@
                         }
                     }
                 });
-                grid.appendTo('#Grid');
+                $tblMasterEl.appendTo('#Grid');
             })
             .catch(showResponseError)
     }

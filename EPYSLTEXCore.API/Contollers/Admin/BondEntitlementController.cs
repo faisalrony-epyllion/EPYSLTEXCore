@@ -97,9 +97,9 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                     else
                     {
                         child.EntityState = EntityState.Modified;
-                        child.HSCode = modelChild.HSCode;
+                        child.ItemName = modelChild.ItemName;
                         child.UnitID = modelChild.UnitID;
-                        child.BankFacilityAmount = modelChild.BankFacilityAmount;
+                        child.EntitlementQty = modelChild.EntitlementQty;
                     }
 
                     modelChild.ChildItems.ForEach(modelChildItem =>
@@ -115,8 +115,8 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                         else
                         {
                             childItem.EntityState = EntityState.Modified;
-                            childItem.HSCode = modelChildItem.HSCode;
-                            childItem.BankFacilityAmount = modelChildItem.BankFacilityAmount;
+                            childItem.ItemName = modelChildItem.ItemName;
+                            childItem.EntitlementQty = modelChildItem.EntitlementQty;
                         }
                         if (indexChild > -1)
                         {

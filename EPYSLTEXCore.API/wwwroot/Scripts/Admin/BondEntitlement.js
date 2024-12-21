@@ -220,8 +220,17 @@
 
         var data = formDataToJson($formEl.serializeArray());
 
-        data.CompanyID = $formEl.find('#CompanyID').val();
-        data.CurrencyID = $formEl.find('#CurrencyID').val();
+        data.CompanyID = getDefaultValueWhenInvalidN($formEl.find('#CompanyID').val());
+        data.CurrencyID = getDefaultValueWhenInvalidN($formEl.find('#CurrencyID').val());
+
+        if (data.CompanyID == 0) {
+            toastr.error('Select company');
+            return false;
+        }
+        if (data.CurrencyID == 0) {
+            toastr.error('Select currency');
+            return false;
+        }
 
         data.Childs = DeepClone($tblChildEl.getCurrentViewRecords());
         var childs = DeepClone(data.Childs);
@@ -229,13 +238,13 @@
             var child = DeepClone(childs[i]);
             var bankFacilityAmount = getDefaultValueWhenInvalidN_Float(child.BankFacilityAmount);
             var bankFacilityAmount_CI = 0;
-
+            debugger;
             for (var iC = 0; iC < child.ChildItems.length; iC++) {
                 var childItem = DeepClone(child.ChildItems[iC]);
                 bankFacilityAmount_CI += getDefaultValueWhenInvalidN_Float(childItem.BankFacilityAmount);
             }
             if (bankFacilityAmount_CI != bankFacilityAmount) {
-                toastr.error(`For RM Type ${child.SegmentName} bank facility amount ${bankFacilityAmount} mismatched with items facility amount ${bankFacilityAmount_CI}`);
+                toastr.error(`For RM Type ${child.SegmentName} bank facility amount ${bankFacilityAmount} mismatched with items bank facility amount ${bankFacilityAmount_CI}`);
                 hasError = true;
                 break;
             }

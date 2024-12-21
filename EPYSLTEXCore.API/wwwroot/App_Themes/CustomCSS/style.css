@@ -340,7 +340,8 @@
 .nav-tabs-custom {
     background: #fff;
     box-shadow: 0 1px 1px rgba(0,0,0,.1);
-    border-radius: 3px
+    border-radius: 3px;
+    margin-bottom: 0 !important;
 }
 
     .nav-tabs-custom > .nav-tabs {
@@ -478,7 +479,7 @@
 
 
 
-.bg-info {
+    .bg-info {
     background-color: #f0f8ff !important;
 }
 

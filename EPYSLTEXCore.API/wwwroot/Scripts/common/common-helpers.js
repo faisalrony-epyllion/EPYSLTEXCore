@@ -27,13 +27,18 @@ var dateFormats = Object.freeze({
 
 //Array Methods
 Array.prototype.multiIndexOfSameItem = function (el) {
+    
+    if (!el) return;
     //var indexList = listC.multiIndexOfSameItem("TechnicalName");
+
     var idxs = [];
-    for (var i = this.length - 1; i >= 0; i--) {
-        if (this[i] === el) {
-            idxs.unshift(i);
+    
+        for (var i = this.length - 1; i >= 0; i--) {
+            if (this[i] === el) {
+                idxs.unshift(i);
+            }
         }
-    }
+    
     return idxs;
 };
 function findDuplicateValues(paramArray) {

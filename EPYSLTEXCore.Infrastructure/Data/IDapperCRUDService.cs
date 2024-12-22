@@ -123,6 +123,9 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<int> GetUniqueCodeWithoutSignatureAsync(IDbConnection connection, IDbTransaction transaction, string tableName, string fieldName, string preFix);
 
         Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat);
-        Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null); 
+        Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null);
+        Task<T> FindAsync<T>(string tableName, string columnName, object value);
+        Task<bool> ExistsAsync(string tableName, string columnName1, object value1, string columnName2, object value2);
+        Task AddAsync<T>(T entity, string tableName);
     }
 }

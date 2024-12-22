@@ -108,7 +108,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                             newSegmentValues.Add(
                                 new ItemSegmentValue
                                 {
-                                    SegmentNameId = Convert.ToInt32(segmentValues.First().additionalValue),
+                                    SegmentNameID = Convert.ToInt32(segmentValues.First().additionalValue),
                                     SegmentValue = displayValue
                                 });
 

@@ -1,12 +1,9 @@
-﻿using AutoMapper;
-using Azure.Core;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
-using EPYSLTEXCore.Application.Interfaces.Knitting;
-using EPYSLTEXCore.Application.Interfaces.Repositories;
 using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Interfaces.Knitting;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
@@ -14,18 +11,8 @@ using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.Entity;
-using EPYSLTEX.Core.Interfaces;
-using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEXCore.Application.Interfaces.Booking;
-using EPYSLTEXCore.Application.Interfaces.RND;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using Newtonsoft.Json;
-using EPYSLTEXCore.Application.Services;
-using EPYSLTEX.Infrastructure.Services;
+using System.Data.Entity;
 
 
 namespace EPYSLTEXCore.API.Contollers.RND

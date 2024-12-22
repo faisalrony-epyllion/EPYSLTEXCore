@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Security.Cryptography.Xml;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EPYSLTEXCore.API.Contollers.CommonInterface
 {
@@ -247,7 +248,7 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
 
             primaryKeyColumnValue = await _service.Save(tableNames, childGridParentColumn, parentChildObject, sqlConnection, primaryKeyColumns);
 
-            if (string.IsNullOrWhiteSpace(primaryKeyColumnValue))
+            if (string.IsNullOrWhiteSpace(primaryKeyColumnValue) || primaryKeyColumnValue.ToLower().Contains("error"))
             {
                 return NotFound();
             }

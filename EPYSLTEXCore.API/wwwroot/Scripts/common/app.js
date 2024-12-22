@@ -5,7 +5,8 @@
 'use strict'
 
 var rootPath;
-var apiRootPath;
+
+var reportRootPath;
 var HasAutoNumber = false;
 var CanInsert = false;
 var CanUpdate = false;
@@ -24,7 +25,8 @@ var globalActionName = 'index';
 $(document).ready(function () {
 
     rootPath = window.location.protocol + '//' + window.location.host;
-    apiRootPath = "https://localhost:7053/";
+
+    reportRootPath = "https://localhost:44311/";
     toastr.options.escapeHtml = true;
 
     $.fn.editable.defaults.mode = 'inline';
@@ -262,7 +264,7 @@ function reloadTableData(type, tableId) {
             var navUrlName = $(this).data("navurl-name");
             var pageType = $(this).data("page-type");
             var pageName = $(this).data("page-name");
-        
+
             var menuParam = $(this).data("menu-param");
 
             if (pageName) pageName = pageName.split(' ').join('');
@@ -637,8 +639,8 @@ function generateMenu(menuList) {
                 template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else if (item.PageName == 'ReportViewer') {
-                var path = rootPath + '/reports/index';
-                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                var path = reportRootPath + '/reports/index';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else {
                 template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';

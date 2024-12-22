@@ -12,6 +12,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
+using EPYSLTEXCore.Infrastructure.Entities.Tex;
 
 namespace EPYSLTEX.Core.Interfaces.Services
 {
@@ -1553,6 +1554,29 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 });
             });
             return finalList;
+        }
+
+        public async Task SaveBlendTypeName(CompositionBlendType entity)
+        {
+            try
+            {
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
+                entity.EntityState = EntityState.Added;
+                await _service.SaveSingleAsync(entity, transaction);
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (transaction != null) transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (transaction != null) transaction.Dispose();
+                _connection.Close();
+            }
         }
     }
 }

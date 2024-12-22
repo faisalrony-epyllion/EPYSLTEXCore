@@ -528,6 +528,10 @@ form, .box-body {
     float: right !important;
 }
 
+.pull-right-mb {
+    margin-bottom: 10px;
+}
+
 .validation-message {
     color: #c00;
     font-weight: bold;

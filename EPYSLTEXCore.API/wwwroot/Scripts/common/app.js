@@ -836,7 +836,7 @@ var subGroupNames = Object.freeze({
     CUFF: "Cuff",
     DYES: "Dyes",
     CHEMICALS: "Chemicals",
-    YARN_NEW: "Yarn New"
+    YARN_NEW: "Yarn Live"
 });
 
 var knittingProgramType = Object.freeze({

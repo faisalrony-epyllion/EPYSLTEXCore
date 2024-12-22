@@ -41,6 +41,12 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Admin
         public IEnumerable<Select2OptionModel> CurrencyList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public IEnumerable<Select2OptionModel> UnitList { get; set; } = Enumerable.Empty<Select2OptionModel>();
+        [Write(false)]
+        public IEnumerable<Select2OptionModel> SubGroups { get; set; } = Enumerable.Empty<Select2OptionModel>();
+        [Write(false)]
+        public IEnumerable<Select2OptionModel> Dyes { get; set; } = Enumerable.Empty<Select2OptionModel>();
+        [Write(false)]
+        public IEnumerable<Select2OptionModel> Chemicals { get; set; } = Enumerable.Empty<Select2OptionModel>();
 
         #endregion Additional Property
     }

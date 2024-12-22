@@ -23,13 +23,20 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
         public int TSID3 { get; set; } = 0;
         public int TSID4 { get; set; } = 0;
         public int TSID5 { get; set; } = 0;
+        public decimal MonthlyAvgConsumptionLP { get; set; } = 0;
+        public decimal MonthlyAvgConsumptionFP { get; set; } = 0;
+        public decimal ROLLocalPurchase { get; set; } = 0;
+        public decimal ROLForeignPurchase { get; set; } = 0;
+        public decimal ReOrderQty { get; set; } = 0;
+        public decimal MaximumPRQtyLP { get; set; } = 0;
+        public decimal MaximumPRQtyFP { get; set; } = 0;
+        public decimal MOQ { get; set; } = 0;
+        public DateTime? ValidDate { get; set; }
         public int UnitID { get; set; } = 0;
-        public decimal MonthlyAvgConsumption { get; set; } = 0;
         public int LeadTimeDays { get; set; } = 0;
         public int SafetyStockDays { get; set; } = 0;
         public int MonthlyWorkingDays { get; set; } = 0;
         public int PackSize { get; set; } = 0;
-        public int MOQ { get; set; } = 0;
         public string Remarks { get; set; } = "";
         public string LeadTimeRemarks { get; set; } = "";
         public bool Propose { get; set; } = false;
@@ -61,10 +68,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
         public string FeedBackRemarks { get; set; } = "";
         public string LeadTimeFeedBackRemarks { get; set; } = "";
 
-
         #region Additional Properties
-        [Write(false)]
-        public decimal? ReOrderQty { get; set; } = 0;
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || ROSID > 0;
         [Write(false)]

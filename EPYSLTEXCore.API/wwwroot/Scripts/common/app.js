@@ -5,8 +5,7 @@
 'use strict'
 
 var rootPath;
-
-var reportRootPath;
+var apiRootPath;
 var HasAutoNumber = false;
 var CanInsert = false;
 var CanUpdate = false;
@@ -25,8 +24,7 @@ var globalActionName = 'index';
 $(document).ready(function () {
 
     rootPath = window.location.protocol + '//' + window.location.host;
-
-   reportRootPath = "https://localhost:44311/";
+    apiRootPath = "https://localhost:7053/";
     toastr.options.escapeHtml = true;
 
     $.fn.editable.defaults.mode = 'inline';
@@ -639,8 +637,8 @@ function generateMenu(menuList) {
                 template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else if (item.PageName == 'ReportViewer') {
-                var path = reportRootPath + '/reports/index';
-                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+                var path = rootPath + '/reports/index';
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon fa fa-circle-o"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else {
                 template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';

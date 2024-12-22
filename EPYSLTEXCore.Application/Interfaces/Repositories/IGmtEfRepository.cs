@@ -1,4 +1,5 @@
 ﻿using EPYSLTEX.Core.Interfaces;
+using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Statics;
@@ -6,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace EPYSLTEXCore.Application.Interfaces.Repositories
 {
-    public interface IGmtEfRepository<T> where T : IBaseEntity
+    public interface IGmtEfRepository<T> where T : DapperBaseEntity
     {
         T Find(int id);
         T Find(ISpecification<T> spec);

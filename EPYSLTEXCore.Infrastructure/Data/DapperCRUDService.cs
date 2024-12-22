@@ -12,6 +12,9 @@ using System.Data.Entity;
 using Microsoft.Data.SqlClient;
 using System.Text.Json.Nodes;
 using static Dapper.SqlMapper;
+using System.Data.Common;
+using Newtonsoft.Json.Linq;
+using System.Security.Cryptography.Xml;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -1963,5 +1966,98 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 }
             }
         }
+
+        public async Task<T> FindAsync<T>(string tableName, string columnName, object value)
+        {
+            var query = $"SELECT * FROM {tableName} WHERE {columnName} = @Value";
+            var parameters = new { Value = value };
+
+            using (var connection = Connection)
+            {
+                var res = await connection.QueryFirstOrDefaultAsync<T>(query, parameters);
+                return res;
+            }
+        }
+        public async Task<bool> ExistsAsync(string tableName, string columnName1, object value1, string columnName2, object value2)
+        {
+            var query = $"SELECT 1 FROM {tableName} WHERE {columnName1} = @Value1 AND {columnName2} = @Value2";
+            var parameters = new { Value1 = value1, Value2 = value2 };
+
+            using (var connection = Connection) // Replace _dbConnection with your actual connection object
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<int?>(query, parameters);
+                return result.HasValue;
+            }
+        }
+        public async Task AddAsync<T>(T entity, string tableName)
+        {
+            //var query = GenerateInsertQuery(entity, tableName);
+
+            //using (var connection = Connection) // Replace _dbConnection with your actual Dapper connection object
+            //{
+            //    await connection.ExecuteAsync(query, entity);
+            //}
+
+            ///////////
+
+            using var connection = GetConnection(AppConstants.GMT_CONNECTION);
+            await connection.OpenAsync();
+
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                // Retrieve the maximum ID
+                var maxId = await GetMaxIdAsync(tableName, RepeatAfterEnum.NoRepeat, transaction, connection);
+
+                var columns = await GetColumnNamesAsync(tableName, connection, transaction);
+
+                // Generate insert query
+
+                
+                var properties = typeof(T).GetProperties()
+                          .Where(p => columns.Contains(p.Name));
+                //var properties = typeof(T).GetProperties().Where(p => p.CanRead && p.CanWrite);
+                var columnNames = string.Join(",", properties.Select(p => p.Name));
+                var parameterNames = string.Join(",", properties.Select(p => "@" + p.Name));
+
+                var insertQuery = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameterNames})";
+
+                // Assign new ID
+                //var idProperty = typeof(T).GetProperty("Id");
+                var idProperty = typeof(T).GetProperties()
+                          .FirstOrDefault(p => Attribute.IsDefined(p, typeof(ExplicitKeyAttribute)));
+
+                if (idProperty != null)
+                {
+                    idProperty.SetValue(entity, ++maxId);
+                }
+
+                // Execute insert query
+                await connection.ExecuteAsync(insertQuery, entity, transaction: transaction);
+
+                // Commit transaction
+                transaction.Commit();
+            }
+            catch
+            {
+                // Rollback transaction on error
+                transaction.Rollback();
+                throw; // Propagate the exception
+            }
+            //finally
+            //{
+            //    // Ensure transaction and connection are disposed
+            //    connection.Close();
+            //}
+        }
+        private string GenerateInsertQuery<T>(T entity, string tableName)
+        {
+            var properties = typeof(T).GetProperties().Where(p => p.CanRead && p.GetValue(entity) != null).ToList();
+            var columnNames = string.Join(", ", properties.Select(p => p.Name));
+            var columnValues = string.Join(", ", properties.Select(p => "@" + p.Name));
+
+            return $"INSERT INTO {tableName} ({columnNames}) VALUES ({columnValues})";
+        }
+        
     }
 }

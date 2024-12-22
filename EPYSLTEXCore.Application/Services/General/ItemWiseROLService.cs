@@ -173,12 +173,17 @@ namespace EPYSLTEXCore.Application.Services.General
         }
         public async Task<List<ItemMasterReOrderStatus>> GetItemMasterDataAsync(PaginationInfo paginationInfo)
         {
-            string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By IM.ItemMasterID" : paginationInfo.OrderBy;
+            string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By ItemName" : paginationInfo.OrderBy;
 
             var query = $@"
-                SELECT IM.ItemMasterID, ISG.SubGroupID , ISG.SubGroupName, ISG.SubGroupName, IM.ItemName, COUNT(*) Over() TotalRows
-				FROM {DbNames.EPYSL}..ItemMaster IM
-				INNER JOIN {DbNames.EPYSL}..ItemSubgroup ISG ON ISG.SubGroupID=IM.SubGroupID
+                WITH FinalList AS
+                (
+                    SELECT IM.ItemMasterID, ISG.SubGroupID , ISG.SubGroupName, IM.ItemName
+				    FROM {DbNames.EPYSL}..ItemMaster IM
+				    INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=IM.SubGroupID
+                    WHERE ISNULL(IM.ItemName,'') <> ''
+                )
+                SELECT *, COUNT(*) Over() TotalRows FROM FinalList
 
                 {paginationInfo.FilterBy}
                 {orderBy}

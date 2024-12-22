@@ -11,51 +11,53 @@
 	var formId = "form" + pageId;
 	var divDetailsId = "divDetails" + pageId;
 }
-<style type="text/css">
-	.cbo {
-		font-size: 16px !important;
-	}
-</style>
 <div id="@pageId">
 	<div class="row">
 		<form class="form-horizontal" id="@formId">
 			<input type="hidden" id="ROSID" name="ROSID" value="-1111" />
 			<input type="hidden" id="ItemMasterID" name="ItemMasterID" />
-			<input type="hidden" id="SubGroupID" name="SubGroupID"/>
+			<input type="hidden" id="SubGroupID" name="SubGroupID" />
 			<div class="box-body" id="@divDetailsId">
-				<div class="col-12">
-					<div class="card border-0">
-						<div class="card" style="border-color:transparent; border-style:none;">
-							<div class="card-header">
-								<h3 class="card-title"> Item Master Re-Order Status</h3>
-								<div class="card-tools">
-									<button type="button" class="btn btn-tool" data-card-widget="collapse">
-										<i class="fas fa-minus"></i>
-									</button>
+
+				<div class="col-sm-12">
+					<div class="panel panel-success" style="border-color:transparent; border-style:none;">
+						<div class="panel-heading">
+							Item Master Re-Order Status
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Item Master</label>
+										<div class="col-sm-8">
+											<input id="ItemName" name="ItemName" class="form-control form-control-sm input-with-single-button" readonly />
+											<button id="btnAddItemMaster" class="btn btn-sm btn-success" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Company</label>
+										<div class="col-sm-8">
+											<select id="CompanyID" name="CompanyID" class="form-control form-control-sm" style="width:100%"></select>
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="card-body">
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group cbo">
-											<label>Item Master</label>
-											<div class="input-group">
-												<input id="ItemName" name="ItemName" class="form-control form-control-sm" readonly />
-												<div class="input-group-append">
-													<button id="btnAddItemMaster" class="btn btn-sm btn-success" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group cbo">
-											<label>Company</label>
-											<select id="CompanyID" name="CompanyID" class="form-control form-control-sm"></select>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-12">
+						</div>
+					</div>
+				</div>
+
+				<div class="col-sm-12">
+					<div class="panel panel-success" style="border-color: transparent; border-style: none;">
+						<div class="panel-heading">
+							Item Information
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-12">
+									<div class="form-group">
 										<div id='Grid'></div>
 									</div>
 								</div>
@@ -64,25 +66,6 @@
 					</div>
 				</div>
 			</div>
-
-			@* <div class="box-body" id="@divDetailsId">
-
-				<div class="col-12">
-					<div class="card border-0">
-						<div class="card-header">
-							<h3 class="card-title"> Item Master Re-Order Status</h3>
-						</div>
-						<div class="card-body">
-							<div class="form-row">
-								<div class="col-12">
-									<div id='Grid'></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-			</div> *@
 
 			<script id='dialogtemplate' type="text/x-template">
 				<div>

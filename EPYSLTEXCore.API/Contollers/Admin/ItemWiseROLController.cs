@@ -95,7 +95,7 @@ namespace EPYSLTEXCore.API.Contollers.Admin
             return Ok(data);
         }
         [HttpGet]
-        [Route("getitemmaster")]
+        [Route("get-item-master")]
         public async Task<IActionResult> GetItemMaster()
         {
             var paginationInfo = Request.GetPaginationInfo();

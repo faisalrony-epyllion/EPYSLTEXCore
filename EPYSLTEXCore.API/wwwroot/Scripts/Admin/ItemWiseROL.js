@@ -120,7 +120,7 @@
                     height: 500,
                     actionBegin: function (args) {
                         if (args.requestType === 'save') {
-                            debugger;
+                            
                             //    // cast string to integer value.
                             //    args.data['NetWeight'] =
                             //        parseFloat(args.form.querySelector("#NetWeight").value);
@@ -137,7 +137,7 @@
                             var allData = $tblMasterEl.dataSource;
                             console.log(allData);
 
-                            debugger;
+                            
                             var isExist = false;
                             var list = allData.filter(item => item.ItemName === args.data.ItemName);
 
@@ -175,12 +175,12 @@
                             };
                         }
                         if (args.requestType === 'delete') {
-                            debugger;
+                            
 
                         }
                     },
                     actionComplete: function (args) {
-                        debugger;
+                        
                         _isEdit = false;
                         if (args.requestType === 'add') {
                             let itemNameID = getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val());
@@ -245,14 +245,14 @@
         var url = "/api/item-wise-rol/getitemmaster/" + subGroupId;
         axios.get(url)
             .then(function (response) {
-                debugger;
+                
                 masterData.ItemMasterList = response.data.ItemMasterList;
             })
             .catch(showResponseError)
     }
     function save(dataObj) {
         let returnFlag = false;
-        debugger;
+        
         //e.preventDefault();
         var data = formElToJson($formEl);
         data.SetupID = 0;
@@ -274,23 +274,23 @@
                 initMasterTable();
             })
             .catch(showResponseError);
-        debugger;
+        
         returnFlag = false;
     }
     function addItemMaster(e) {
         e.preventDefault();
-        debugger;
+        
         var finder = new commonFinder({
             title: "Select Item Master for Re-Order Status",
             pageId: pageId,
             height: 350,
             width: 500,
-            apiEndPoint: "/api/item-wise-rol/getitemmaster/",
+            apiEndPoint: "/api/item-wise-rol/get-item-master/",
             fields: "SubGroupName,ItemName",
             headerTexts: "Item Category,Item Name",
             //customFormats: ",,,ej2GridColorFormatter",
-
-            //widths: "50,80,150,100",
+            modalSize: "modal-lg",
+            widths: "50,100",
             isMultiselect: false,
             primaryKeyColumn: "ItemMasterID",
             onSelect: function (selectedRecords) {

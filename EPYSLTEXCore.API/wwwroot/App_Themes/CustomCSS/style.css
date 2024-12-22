@@ -195,6 +195,7 @@
         .skin-grey .main-header > .logo:hover {
             background-color: #263238
         }
+
     .form-horizontal .ci {
         padding-top: 7px !important;
         margin-bottom: 0 !important;
@@ -479,7 +480,7 @@
 
 
 
-    .bg-info {
+.bg-info {
     background-color: #f0f8ff !important;
 }
 
@@ -527,8 +528,15 @@ form, .box-body {
     float: right !important;
 }
 
-
+.validation-message {
+    color: #c00;
+    font-weight: bold;
+}
 /*bootstrap 3.4 css*/
+.panel {
+    margin-top: 10px !important;
+}
+
 .panel-body {
     padding: 5px;
     font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;

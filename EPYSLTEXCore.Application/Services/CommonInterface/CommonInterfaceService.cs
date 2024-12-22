@@ -315,7 +315,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 await transaction.RollbackAsync();
                 await transactionGmt.RollbackAsync();
 
-                Console.WriteLine($"Error during transaction: {ex.Message}");
+               
                 return $"Error: {ex.Message}";  // Return the error message to caller
             }
             finally

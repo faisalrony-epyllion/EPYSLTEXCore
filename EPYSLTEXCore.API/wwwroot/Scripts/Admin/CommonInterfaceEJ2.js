@@ -1006,7 +1006,7 @@
     function saveMaster(e) {
  
         e.preventDefault();
-        //if (!validateMasterForm()) return;
+        if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
@@ -1042,7 +1042,11 @@
                 toastr.success(constants.SUCCESS_MESSAGE);
                 //resetForm();
             })
-            .catch(e);
+            .catch(function (error) {
+                // Log or display an error message if the request fails
+                console.error('An error occurred:', error);
+                toastr.error(constants.ERROR_MESSAGE || 'An error occurred while saving.');
+            });
     }
 
     function validateMasterForm() {

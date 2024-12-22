@@ -9,8 +9,10 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         ///<summary>
         /// SegmentValueID (Primary key)
         ///</summary> 
+        [Write(false)]
         public int Id { get; set; }
-
+        [ExplicitKey]
+        public int SegmentValueID { get; set; }
         ///<summary>
         /// SegmentValue (length: 250)
         ///</summary>
@@ -19,7 +21,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         ///<summary>
         /// SegmentNameID
         ///</summary>
-        public int SegmentNameId { get; set; }
+        public int SegmentNameID { get; set; }
 
         ///<summary>
         /// IsUsed
@@ -45,13 +47,14 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         /// DateUpdated
         ///</summary>
         public DateTime? DateUpdated { get; set; }
-
+        [Write(false)]
         public EntityState EntityState { get; set; }
 
         /// <summary>
         /// Parent ItemSegmentName pointed by [ItemSegmentValue].([SegmentNameId]) (FK_ItemSegmentValue_ItemSegmentName)
         /// </summary>
-        public virtual ItemSegmentName ItemSegmentName { get; set; }
+       [Write(false)]
+        public virtual ItemSegmentName ItemSegmentName { get; set; } 
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified;

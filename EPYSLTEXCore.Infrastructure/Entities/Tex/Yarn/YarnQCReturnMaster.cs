@@ -31,6 +31,9 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn
         public DateTime DateAdded { get; set; }
         public int UpdatedBy { get; set; } = 0;
         public DateTime? DateUpdated { get; set; }
+        public bool IsSendForApproval { get; set; }
+        public int SendForApprovalBy { get; set; }
+        public DateTime? SendForApprovalDate { get; set; }
 
         #region Additional Columns
         [Write(false)]

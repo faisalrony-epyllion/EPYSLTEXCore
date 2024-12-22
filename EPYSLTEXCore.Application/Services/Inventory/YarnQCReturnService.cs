@@ -36,180 +36,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         {
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By QCReturnMasterID Desc" : paginationInfo.OrderBy;
 
-            string sql;
-            if (status == Status.Pending)
+            string sql = "";
+
+            switch (status)
             {
-                sql = $@"
-                WITH
-                PartialRcv AS
-                (
-	                SELECT RCC.QCReceiveChildID
-	                FROM {TableNames.YARN_QC_RETURN_CHILD} RC
-	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RCC ON RCC.QCReceiveChildID = RC.QCReceiveChildID
-	                GROUP BY RCC.QCReceiveChildID, ISNULL(RCC.ReceiveQty,0)
-	                HAVING ISNULL(SUM(RC.ReturnQty),0) < ISNULL(RCC.ReceiveQty,0)
-                ),
-                A AS
-                (
-	                SELECT QCRC.QCReceiveChildID,RM.QCReqNo,YRC.YarnCategory,YRC.PhysicalCount,YRC.LotNo,Spinner = SP.ShortName,YRC.ShadeCode,IM.QCIssueNo,YRM.ReceiveNo
-	                ,QCRM.QCReceiveNo
-	
-	                --, QCRC.QCReceiveMasterID, QCRM.QCReceiveNo, QCRM.QCReceivedBy, 
-	                --QCRM.QCReqMasterID, QCIC.QCIssueMasterID,
-	                --QCReceiveDate = CONVERT(DATETIME, CONVERT(CHAR(8), QCRM.QCReceiveDate, 112) + ' ' + CONVERT(CHAR(8), QCRM.DateAdded, 108)),
-	                --YRM.LocationId, YRM.RCompanyId, QCRM.CompanyId, YRM.SupplierId, YRC.SpinnerId, YRM.ReceiveNo,
-	                --IM.QCIssueNo,
-	                --QCIssueDate = CONVERT(DATETIME, CONVERT(CHAR(8), IM.QCIssueDate, 112) + ' ' + CONVERT(CHAR(8), IM.DateAdded, 108)), ER.EmployeeName QCReceivedByUser,
-	                --QCIssueByUser = EU.EmployeeName, RM.QCReqNo, RM.QCReqDate, RM.QCForID, QCReqByUser = ERU.EmployeeName, QCReqFor = QCReqFor.ValueName,
-	                --Status = CASE WHEN RM.RetestQCReqMasterID > 0 THEN 'Retest' ELSE '' END
-
-	                FROM {TableNames.YARN_QC_RECEIVE_CHILD} QCRC
-	                INNER JOIN {TableNames.YARN_QC_RECEIVE_MASTER} QCRM ON QCRM.QCReceiveMasterID = QCRC.QCReceiveMasterID
-	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} QCRC2 ON QCRC2.QCReqChildID = QCIC.QCReqChildID 
-	                INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = QCRM.ReceiveID
-	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = QCRC2.ReceiveChildID
-
-	                INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = QCRM.QCReqMasterID
-	                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} IM On IM.QCIssueMasterID = QCIC.QCIssueMasterID
-	                INNER JOIN {DbNames.EPYSL}..LoginUser IR On IR.UserCode = QCRM.QCReceivedBy
-	                INNER JOIN {DbNames.EPYSL}..Employee ER On ER.EmployeeCode=IR.EmployeeCode
-	                INNER JOIN {DbNames.EPYSL}..LoginUser IU On IU.UserCode = IM.QCIssueBy
-	                INNER JOIN {DbNames.EPYSL}..Employee EU On EU.EmployeeCode=IU.EmployeeCode
-	                INNER JOIN {DbNames.EPYSL}..LoginUser RU On RU.UserCode = RM.QCReqBy 
-	                INNER JOIN {DbNames.EPYSL}..Employee ERU On ERU.EmployeeCode=RU.EmployeeCode
-	                LEFT JOIN {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
-	                LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YRC.SpinnerID
-	                LEFT JOIN {TableNames.YARN_QC_RETURN_CHILD} RC ON RC.QCReceiveChildID = QCRC.QCReceiveChildID
-	                WHERE RC.QCReturnChildID IS NULL
-                ),
-                B AS
-                (
-	                SELECT QCRC.QCReceiveChildID,RM.QCReqNo,YRC.YarnCategory,YRC.PhysicalCount,YRC.LotNo,Spinner = SP.ShortName,YRC.ShadeCode,IM.QCIssueNo,YRM.ReceiveNo
-	                ,QCRM.QCReceiveNo
-	
-	                --, QCRC.QCReceiveMasterID, QCRM.QCReceiveNo, QCRM.QCReceivedBy, 
-	                --QCRM.QCReqMasterID, QCIC.QCIssueMasterID,
-	                --QCReceiveDate = CONVERT(DATETIME, CONVERT(CHAR(8), QCRM.QCReceiveDate, 112) + ' ' + CONVERT(CHAR(8), QCRM.DateAdded, 108)),
-	                --YRM.LocationId, YRM.RCompanyId, QCRM.CompanyId, YRM.SupplierId, YRC.SpinnerId, YRM.ReceiveNo,
-	                --IM.QCIssueNo,
-	                --QCIssueDate = CONVERT(DATETIME, CONVERT(CHAR(8), IM.QCIssueDate, 112) + ' ' + CONVERT(CHAR(8), IM.DateAdded, 108)), ER.EmployeeName QCReceivedByUser,
-	                --QCIssueByUser = EU.EmployeeName, RM.QCReqNo, RM.QCReqDate, RM.QCForID, QCReqByUser = ERU.EmployeeName, QCReqFor = QCReqFor.ValueName,
-	                --Status = CASE WHEN RM.RetestQCReqMasterID > 0 THEN 'Retest' ELSE '' END
-
-	                FROM PartialRcv A
-	                INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = A.QCReceiveChildID
-	                INNER JOIN {TableNames.YARN_QC_RECEIVE_MASTER} QCRM ON QCRM.QCReceiveMasterID = QCRC.QCReceiveMasterID
-	                INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
-	                INNER JOIN {TableNames.YARN_QC_REQ_CHILD} QCRC2 ON QCRC2.QCReqChildID = QCIC.QCReqChildID 
-	                INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = QCRM.ReceiveID
-	                INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = QCRC2.ReceiveChildID
-
-	                INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = QCRM.QCReqMasterID
-	                INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} IM On IM.QCIssueMasterID = QCIC.QCIssueMasterID
-	                INNER JOIN {DbNames.EPYSL}..LoginUser IR On IR.UserCode = QCRM.QCReceivedBy
-	                INNER JOIN {DbNames.EPYSL}..Employee ER On ER.EmployeeCode=IR.EmployeeCode
-	                INNER JOIN {DbNames.EPYSL}..LoginUser IU On IU.UserCode = IM.QCIssueBy
-	                INNER JOIN {DbNames.EPYSL}..Employee EU On EU.EmployeeCode=IU.EmployeeCode
-	                INNER JOIN {DbNames.EPYSL}..LoginUser RU On RU.UserCode = RM.QCReqBy 
-	                INNER JOIN {DbNames.EPYSL}..Employee ERU On ERU.EmployeeCode=RU.EmployeeCode
-	                LEFT JOIN {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
-	                LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YRC.SpinnerID
-	                LEFT JOIN {TableNames.YARN_QC_RETURN_CHILD} RC ON RC.QCReceiveChildID = QCRC.QCReceiveChildID
-                ),
-                A1 AS
-                (
-	                SELECT A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
-	                FROM A
-	                GROUP BY A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
-                ),
-                B1 AS
-                (
-	                SELECT A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
-	                FROM B A
-	                GROUP BY A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
-                ),
-                FinalList AS
-                (
-	                SELECT * FROM A1
-	                --UNION
-	                --SELECT * FROM B1
-                )
-                SELECT *,Count(*) Over() TotalRows FROM FinalList
-                ";
-
-                orderBy = "Order By QCReceiveChildID Desc";
-
-
-                /*
-
-                sql = $@"
-                /*With
-                RC As (
-	                Select *
-	                From YarnQCRemarksChild C
-	                Where Approve = 1 OR Reject = 1
-                )
-                ,PR As (
-	                Select M.QCRemarksMasterID, M.QCReqMasterID, REQ.QCReqNo, REQ.QCReqDate,REQ.QCReqBy,QCReqFor.ValueName as QCReqForUser, RCV.QCReceivedBy,
-                    RCV.QCReceiveDate,RCV.QCReceiveNo, SUM(RCVC.ReceiveQtyCarton) ReceiveQtyCarton, SUM(RCVC.ReceiveQtyCone) ReceiveQtyCone, SUM(REQC.ReqQty) QCReqQty,
-                    M.QCRemarksNo,M.QCRemarksDate
-	                From RC
-	                Inner Join YarnQCRemarksMaster M On RC.QCRemarksMasterID = M.QCRemarksMasterID
-	                Inner Join YarnQCReqMaster REQ On REQ.QCReqMasterID = M.QCReqMasterID
-	                Inner Join YarnQCReqChild REQC On REQ.QCReqMasterID = REQC.QCReqMasterID
-	                Inner Join YarnQCReceiveMaster RCV On RCV.QCReceiveMasterID = M.QCReceiveMasterID
-	                Inner Join YarnQCReceiveChild RCVC on RCVC.QCReceiveMasterID = RCV.QCReceiveMasterID
-	                Left Join YarnQCReturnMaster RTM On M.QCRemarksMasterID = RTM.QCRemarksMasterID
-					Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On REQ.QCForID = QCReqFor.ValueID
-	                Where RTM.QCReturnMasterID IS NULL And M.IsApproved = 1
-	                GROUP BY M.QCRemarksMasterID,M.QCRemarksNo,M.QCRemarksDate, M.QCReqMasterID, REQ.QCReqNo, REQ.QCReqDate,REQ.QCReqBy, RCV.QCReceivedBy,
-                    RCV.QCReceiveDate,RCV.QCReceiveNo,QCReqFor.ValueName
-                )
-
-                Select QCRemarksMasterID,QCRemarksNo,QCRemarksDate, QCReqMasterID, QCReqNo, QCReqDate, QCReqBy, QCReceivedBy, QCReceiveDate, ReceiveQtyCarton, 
-                ReceiveQtyCone, QCReqQty,QCReceiveNo,QCReqForUser, Count(*) Over() TotalRows
-
-
-                With
-                M As (
-                        Select RM.QCRemarksMasterID,RM.QCRemarksNo,RM.QCRemarksDate,RC.QCReceiveMasterID, RC.QCReceiveNo, QCReceivedBy, RC.QCReqMasterID, RC.QCIssueMasterID,
-                        CONVERT(DATETIME, CONVERT(CHAR(8), QCReceiveDate, 112) + ' ' + CONVERT(CHAR(8), RC.DateAdded, 108)) QCReceiveDate,
-                        RC.LocationId, RC.RCompanyId, RC.CompanyId, RC.SupplierId, RC.SpinnerId, YRM.ReceiveNo
-                        From YarnQCReceiveMaster RC
-                        INNER JOIN YarnReceiveMaster YRM ON YRM.ReceiveID = RC.ReceiveID
-                        LEFT JOIN YarnQCRemarksMaster RM ON RM.QCReqMasterID=RC.QCReqMasterID 
-                        LEFT JOIN YarnQCReturnMaster RT ON RT.QCReqMasterID=RC.QCReqMasterID 
-                        WHERE RT.QCReqMasterID Is Null
-                     )
-                SELECT M.QCRemarksMasterID,M.QCRemarksNo,M.QCRemarksDate,M.QCReceiveMasterID, M.QCReceiveNo, M.QCReceivedBy, M.QCReceiveDate, M.QCReqMasterID, M.QCIssueMasterID, 
-                 M.LocationId, M.RCompanyId, M.CompanyId, M.SupplierId, M.SpinnerId, IM.QCIssueNo,
-				CONVERT(DATETIME, CONVERT(CHAR(8), IM.QCIssueDate, 112) + ' ' + CONVERT(CHAR(8), IM.DateAdded, 108)) QCIssueDate, ER.EmployeeName QCReceivedByUser,
-                EU.EmployeeName QCIssueByUser, RM.QCReqNo, RM.QCReqDate, RM.QCForID, ERU.EmployeeName QCReqByUser, QCReqFor.ValueName QCReqFor ,
-                Status = CASE WHEN RM.RetestQCReqMasterID > 0 THEN 'Retest' ELSE '' END, M.ReceiveNo,
-                Count(*) Over() TotalRows
-                FROM M
-                Inner Join YarnQCReqMaster RM On RM.QCReqMasterID = M.QCReqMasterID
-                Inner Join YarnQCIssueMaster IM On IM.QCIssueMasterID = M.QCIssueMasterID
-                Inner Join {DbNames.EPYSL}..LoginUser IR On IR.UserCode = M.QCReceivedBy
-				Inner Join {DbNames.EPYSL}..Employee ER On ER.EmployeeCode=IR.EmployeeCode
-                Inner Join {DbNames.EPYSL}..LoginUser IU On IU.UserCode = IM.QCIssueBy
-				Inner Join {DbNames.EPYSL}..Employee EU On EU.EmployeeCode=IU.EmployeeCode
-                Inner Join {DbNames.EPYSL}..LoginUser RU On RU.UserCode = RM.QCReqBy 
-				Inner Join {DbNames.EPYSL}..Employee ERU On ERU.EmployeeCode=RU.EmployeeCode
-                Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID";
-
-                */
-            }
-            else
-            {
-                sql = $@"
+                case Status.Completed:
+                    sql = $@"
                 
                 With
                 RM As (
 	                Select *
 	                From {TableNames.YARN_QC_RETURN_MASTER} C
-	                Where IsApprove = 0 
+	                Where IsSendForApproval = 0 
                 )
                 ,PR As (
 	                Select RM.QCReturnMasterID,RM.QCReturnNo,RMK.QCRemarksNo,RMK.QCRemarksDate, RU.Name as QCReturnByUser, RM.QCReturnDate, RM.QCRemarksMasterID, 
@@ -231,6 +69,175 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Select QCReturnMasterID,QCReturnNo, QCRemarksNo, QCRemarksDate, QCReturnByUser,QCReturnDate,QCRemarksMasterID, QCReqMasterID, QCReqNo, QCReqDate,ReqQty, 
                 QCReqBy, QCReceivedBy, QCReceiveDate, ReceiveQtyCarton, ReceiveQtyCone,ReturnQtyCarton,ReturnQtyCone,ReceiveNo, Count(*) Over() TotalRows
                 From PR ";
+
+                    break;
+
+                case Status.ProposedForApproval:
+                    sql = $@"
+                
+                With
+                RM As (
+	                Select *
+	                From {TableNames.YARN_QC_RETURN_MASTER} C
+	                Where IsSendForApproval = 1 and IsApprove = 0
+                )
+                ,PR As (
+	                Select RM.QCReturnMasterID,RM.QCReturnNo,RMK.QCRemarksNo,RMK.QCRemarksDate, RU.Name as QCReturnByUser, RM.QCReturnDate, RM.QCRemarksMasterID, 
+                    RM.QCReqMasterID, REQ.QCReqNo, REQ.QCReqDate,REQ.QCReqBy, RCV.QCReceivedBy,RCV.QCReceiveDate, SUM(RC.ReceiveQtyCarton) ReceiveQtyCarton, 
+                    SUM(RC.ReceiveQtyCone) ReceiveQtyCone, SUM(RCVC.ReqQtyCone) ReqQty, SUM(RC.ReturnQtyCarton) ReturnQtyCarton, SUM(RC.ReturnQtyCone) ReturnQtyCone, YRM.ReceiveNo
+	                From RM
+	                inner JOIN {TableNames.YARN_QC_RETURN_CHILD} RC ON RM.QCReturnMasterID = RC.QCReturnMasterID
+					inner JOIN {TableNames.YARN_QC_REQ_MASTER} REQ ON RM.QCReqMasterID = REQ.QCReqMasterID
+					Left JOIN {TableNames.YARN_QC_REMARKS_MASTER} RMK ON RM.QCRemarksMasterID = RMK.QCRemarksMasterID
+					inner JOIN {TableNames.YARN_QC_RECEIVE_MASTER} RCV ON REQ.QCReqMasterID = RCV.QCReqMasterID
+					inner JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RCVC ON RCV.QCReceiveMasterID = RCVC.QCReceiveMasterID
+                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = RCV.ReceiveID
+					Inner Join {DbNames.EPYSL}..LoginUser RU On RM.QCReturnBy = RU.UserCode
+
+	                GROUP BY RM.QCReturnMasterID,RMK.QCRemarksNo,RMK.QCRemarksDate,RM.QCReturnNo, RU.Name , RM.QCReturnDate, RM.QCRemarksMasterID, RM.QCReqMasterID, 
+                    REQ.QCReqNo, REQ.QCReqDate,REQ.QCReqBy, RCV.QCReceivedBy,RCV.QCReceiveDate, YRM.ReceiveNo
+                )
+
+                Select QCReturnMasterID,QCReturnNo, QCRemarksNo, QCRemarksDate, QCReturnByUser,QCReturnDate,QCRemarksMasterID, QCReqMasterID, QCReqNo, QCReqDate,ReqQty, 
+                QCReqBy, QCReceivedBy, QCReceiveDate, ReceiveQtyCarton, ReceiveQtyCone,ReturnQtyCarton,ReturnQtyCone,ReceiveNo, Count(*) Over() TotalRows
+                From PR 
+                ";
+                    break;
+
+                case Status.Approved:
+                    sql = $@"
+                
+                With
+                RM As (
+	                Select *
+	                From {TableNames.YARN_QC_RETURN_MASTER} C
+	                Where IsApprove = 1
+                )
+                ,PR As (
+	                Select RM.QCReturnMasterID,RM.QCReturnNo,RMK.QCRemarksNo,RMK.QCRemarksDate, RU.Name as QCReturnByUser, RM.QCReturnDate, RM.QCRemarksMasterID, 
+                    RM.QCReqMasterID, REQ.QCReqNo, REQ.QCReqDate,REQ.QCReqBy, RCV.QCReceivedBy,RCV.QCReceiveDate, SUM(RC.ReceiveQtyCarton) ReceiveQtyCarton, 
+                    SUM(RC.ReceiveQtyCone) ReceiveQtyCone, SUM(RCVC.ReqQtyCone) ReqQty, SUM(RC.ReturnQtyCarton) ReturnQtyCarton, SUM(RC.ReturnQtyCone) ReturnQtyCone, YRM.ReceiveNo
+	                From RM
+	                inner JOIN {TableNames.YARN_QC_RETURN_CHILD} RC ON RM.QCReturnMasterID = RC.QCReturnMasterID
+					inner JOIN {TableNames.YARN_QC_REQ_MASTER} REQ ON RM.QCReqMasterID = REQ.QCReqMasterID
+					Left JOIN {TableNames.YARN_QC_REMARKS_MASTER} RMK ON RM.QCRemarksMasterID = RMK.QCRemarksMasterID
+					inner JOIN {TableNames.YARN_QC_RECEIVE_MASTER} RCV ON REQ.QCReqMasterID = RCV.QCReqMasterID
+					inner JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RCVC ON RCV.QCReceiveMasterID = RCVC.QCReceiveMasterID
+                    INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = RCV.ReceiveID
+					Inner Join {DbNames.EPYSL}..LoginUser RU On RM.QCReturnBy = RU.UserCode
+
+	                GROUP BY RM.QCReturnMasterID,RMK.QCRemarksNo,RMK.QCRemarksDate,RM.QCReturnNo, RU.Name , RM.QCReturnDate, RM.QCRemarksMasterID, RM.QCReqMasterID, 
+                    REQ.QCReqNo, REQ.QCReqDate,REQ.QCReqBy, RCV.QCReceivedBy,RCV.QCReceiveDate, YRM.ReceiveNo
+                )
+
+                Select QCReturnMasterID,QCReturnNo, QCRemarksNo, QCRemarksDate, QCReturnByUser,QCReturnDate,QCRemarksMasterID, QCReqMasterID, QCReqNo, QCReqDate,ReqQty, 
+                QCReqBy, QCReceivedBy, QCReceiveDate, ReceiveQtyCarton, ReceiveQtyCone,ReturnQtyCarton,ReturnQtyCone,ReceiveNo, Count(*) Over() TotalRows
+                From PR ";
+                    break;
+
+                default:
+                    sql = $@"
+                    WITH
+                    PartialRcv AS
+                    (
+                     SELECT RCC.QCReceiveChildID
+                     FROM {TableNames.YARN_QC_RETURN_CHILD} RC
+                     INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} RCC ON RCC.QCReceiveChildID = RC.QCReceiveChildID
+                     GROUP BY RCC.QCReceiveChildID, ISNULL(RCC.ReceiveQty,0)
+                     HAVING ISNULL(SUM(RC.ReturnQty),0) < ISNULL(RCC.ReceiveQty,0)
+                    ),
+                    A AS
+                    (
+                     SELECT QCRC.QCReceiveChildID,RM.QCReqNo,YRC.YarnCategory,YRC.PhysicalCount,YRC.LotNo,Spinner = SP.ShortName,YRC.ShadeCode,IM.QCIssueNo,YRM.ReceiveNo
+                     ,QCRM.QCReceiveNo
+
+                     --, QCRC.QCReceiveMasterID, QCRM.QCReceiveNo, QCRM.QCReceivedBy, 
+                     --QCRM.QCReqMasterID, QCIC.QCIssueMasterID,
+                     --QCReceiveDate = CONVERT(DATETIME, CONVERT(CHAR(8), QCRM.QCReceiveDate, 112) + ' ' + CONVERT(CHAR(8), QCRM.DateAdded, 108)),
+                     --YRM.LocationId, YRM.RCompanyId, QCRM.CompanyId, YRM.SupplierId, YRC.SpinnerId, YRM.ReceiveNo,
+                     --IM.QCIssueNo,
+                     --QCIssueDate = CONVERT(DATETIME, CONVERT(CHAR(8), IM.QCIssueDate, 112) + ' ' + CONVERT(CHAR(8), IM.DateAdded, 108)), ER.EmployeeName QCReceivedByUser,
+                     --QCIssueByUser = EU.EmployeeName, RM.QCReqNo, RM.QCReqDate, RM.QCForID, QCReqByUser = ERU.EmployeeName, QCReqFor = QCReqFor.ValueName,
+                     --Status = CASE WHEN RM.RetestQCReqMasterID > 0 THEN 'Retest' ELSE '' END
+
+                     FROM {TableNames.YARN_QC_RECEIVE_CHILD} QCRC
+                     INNER JOIN {TableNames.YARN_QC_RECEIVE_MASTER} QCRM ON QCRM.QCReceiveMasterID = QCRC.QCReceiveMasterID
+                     INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+                     INNER JOIN {TableNames.YARN_QC_REQ_CHILD} QCRC2 ON QCRC2.QCReqChildID = QCIC.QCReqChildID 
+                     INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = QCRM.ReceiveID
+                     INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = QCRC2.ReceiveChildID
+
+                     INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = QCRM.QCReqMasterID
+                     INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} IM On IM.QCIssueMasterID = QCIC.QCIssueMasterID
+                     INNER JOIN {DbNames.EPYSL}..LoginUser IR On IR.UserCode = QCRM.QCReceivedBy
+                     INNER JOIN {DbNames.EPYSL}..Employee ER On ER.EmployeeCode=IR.EmployeeCode
+                     INNER JOIN {DbNames.EPYSL}..LoginUser IU On IU.UserCode = IM.QCIssueBy
+                     INNER JOIN {DbNames.EPYSL}..Employee EU On EU.EmployeeCode=IU.EmployeeCode
+                     INNER JOIN {DbNames.EPYSL}..LoginUser RU On RU.UserCode = RM.QCReqBy 
+                     INNER JOIN {DbNames.EPYSL}..Employee ERU On ERU.EmployeeCode=RU.EmployeeCode
+                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
+                     LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YRC.SpinnerID
+                     LEFT JOIN {TableNames.YARN_QC_RETURN_CHILD} RC ON RC.QCReceiveChildID = QCRC.QCReceiveChildID
+                     WHERE RC.QCReturnChildID IS NULL
+                    ),
+                    B AS
+                    (
+                     SELECT QCRC.QCReceiveChildID,RM.QCReqNo,YRC.YarnCategory,YRC.PhysicalCount,YRC.LotNo,Spinner = SP.ShortName,YRC.ShadeCode,IM.QCIssueNo,YRM.ReceiveNo
+                     ,QCRM.QCReceiveNo
+
+                     --, QCRC.QCReceiveMasterID, QCRM.QCReceiveNo, QCRM.QCReceivedBy, 
+                     --QCRM.QCReqMasterID, QCIC.QCIssueMasterID,
+                     --QCReceiveDate = CONVERT(DATETIME, CONVERT(CHAR(8), QCRM.QCReceiveDate, 112) + ' ' + CONVERT(CHAR(8), QCRM.DateAdded, 108)),
+                     --YRM.LocationId, YRM.RCompanyId, QCRM.CompanyId, YRM.SupplierId, YRC.SpinnerId, YRM.ReceiveNo,
+                     --IM.QCIssueNo,
+                     --QCIssueDate = CONVERT(DATETIME, CONVERT(CHAR(8), IM.QCIssueDate, 112) + ' ' + CONVERT(CHAR(8), IM.DateAdded, 108)), ER.EmployeeName QCReceivedByUser,
+                     --QCIssueByUser = EU.EmployeeName, RM.QCReqNo, RM.QCReqDate, RM.QCForID, QCReqByUser = ERU.EmployeeName, QCReqFor = QCReqFor.ValueName,
+                     --Status = CASE WHEN RM.RetestQCReqMasterID > 0 THEN 'Retest' ELSE '' END
+
+                     FROM PartialRcv A
+                     INNER JOIN {TableNames.YARN_QC_RECEIVE_CHILD} QCRC ON QCRC.QCReceiveChildID = A.QCReceiveChildID
+                     INNER JOIN {TableNames.YARN_QC_RECEIVE_MASTER} QCRM ON QCRM.QCReceiveMasterID = QCRC.QCReceiveMasterID
+                     INNER JOIN {TableNames.YARN_QC_ISSUE_CHILD} QCIC ON QCIC.QCIssueChildID = QCRC.QCIssueChildID
+                     INNER JOIN {TableNames.YARN_QC_REQ_CHILD} QCRC2 ON QCRC2.QCReqChildID = QCIC.QCReqChildID 
+                     INNER JOIN {TableNames.YARN_RECEIVE_MASTER} YRM ON YRM.ReceiveID = QCRM.ReceiveID
+                     INNER JOIN {TableNames.YARN_RECEIVE_CHILD} YRC ON YRC.ChildID = QCRC2.ReceiveChildID
+
+                     INNER JOIN {TableNames.YARN_QC_REQ_MASTER} RM On RM.QCReqMasterID = QCRM.QCReqMasterID
+                     INNER JOIN {TableNames.YARN_QC_ISSUE_MASTER} IM On IM.QCIssueMasterID = QCIC.QCIssueMasterID
+                     INNER JOIN {DbNames.EPYSL}..LoginUser IR On IR.UserCode = QCRM.QCReceivedBy
+                     INNER JOIN {DbNames.EPYSL}..Employee ER On ER.EmployeeCode=IR.EmployeeCode
+                     INNER JOIN {DbNames.EPYSL}..LoginUser IU On IU.UserCode = IM.QCIssueBy
+                     INNER JOIN {DbNames.EPYSL}..Employee EU On EU.EmployeeCode=IU.EmployeeCode
+                     INNER JOIN {DbNames.EPYSL}..LoginUser RU On RU.UserCode = RM.QCReqBy 
+                     INNER JOIN {DbNames.EPYSL}..Employee ERU On ERU.EmployeeCode=RU.EmployeeCode
+                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
+                     LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YRC.SpinnerID
+                     LEFT JOIN {TableNames.YARN_QC_RETURN_CHILD} RC ON RC.QCReceiveChildID = QCRC.QCReceiveChildID
+                    ),
+                    A1 AS
+                    (
+                     SELECT A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
+                     FROM A
+                     GROUP BY A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
+                    ),
+                    B1 AS
+                    (
+                     SELECT A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
+                     FROM B A
+                     GROUP BY A.QCReceiveChildID,A.QCReqNo,A.YarnCategory,A.PhysicalCount,A.LotNo,A.Spinner,A.ShadeCode,A.QCIssueNo,A.ReceiveNo,A.QCReceiveNo
+                    ),
+                    FinalList AS
+                    (
+                     SELECT * FROM A1
+                     --UNION
+                     --SELECT * FROM B1
+                    )
+                    SELECT *,Count(*) Over() TotalRows FROM FinalList
+                    ";
+
+                    orderBy = "Order By QCReceiveChildID Desc";
+                    break;
+
             }
 
             sql += $@"
@@ -549,5 +556,30 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 _connectionGmt.Close();
             }
         }
+
+        public async Task ApproveAsync(YarnQCReturnMaster entity)
+        {
+            SqlTransaction transaction = null;
+            try
+            {
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
+
+                await _service.SaveSingleAsync(entity, transaction);
+                await _service.SaveAsync(entity.YarnQCReturnChilds, transaction);
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (transaction != null) transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
     }
 }

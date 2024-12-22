@@ -2669,7 +2669,73 @@
     }
 
     function saveComposition() {
-        debugger;
+        var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
+        if (totalPercent != 100) return toastr.error("Sum of compostion percent must be 100");
+        compositionComponents.reverse();
+        
+        var composition = "";
+        var blendTypeNames = [];
+        var programTypeNames = [];
+
+        compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
+        compositionComponents.forEach(function (component) {
+            composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
+            if (component.YarnSubProgramNew) {
+                if (component.YarnSubProgramNew != 'N/A') {
+                    composition += ` ${component.YarnSubProgramNew}`;
+                }
+            }
+            //if (component.Certification) composition += ` ${component.Certification}`;
+            if (component.Certification) {
+                if (component.Certification != 'N/A') {
+                    composition += ` ${component.Certification}`;
+                }
+            }
+            composition += ` ${component.Fiber}`;
+
+            component.FiberTypeName = getDefaultValueWhenInvalidS(component.FiberTypeName);
+            if (component.FiberTypeName.length > 0) {
+                blendTypeNames.push(component.FiberTypeName);
+            }
+            component.ProgramTypeName = getDefaultValueWhenInvalidS(component.ProgramTypeName);
+            if (component.ProgramTypeName.length > 0) {
+                programTypeNames.push(component.ProgramTypeName);
+            }
+        });
+
+        blendTypeNames = [...new Set(blendTypeNames)];
+        var blendTypeName = blendTypeNames.join(" + ");
+
+        programTypeNames = [...new Set(programTypeNames)];
+        var programTypeName = "Conventional";
+        var indexF = programTypeNames.findIndex(x => x == "Sustainable");
+        if (indexF > -1) {
+            programTypeName = "Sustainable";
+        }
+
+        //var data = {
+        //    SegmentValue: composition
+        //};
+        var data = {
+            ItemSegmentValue: {
+                SegmentValue: composition
+            },
+            BlendTypeName: blendTypeName,
+            ProgramTypeName: programTypeName
+        }
+
+        axios.post("/api/rnd-free-concept-mr/save-yarn-composition", data)
+            .then(function () {
+                $pageEl.find(`#modal-new-composition-${pageId}`).modal("hide");
+                toastr.success("Composition added successfully.");
+                //masterData.CompositionList.unshift({ id: response.data.Id, text: response.data.SegmentValue });
+                // initChildTable(masterData.Childs);
+            })
+            .catch(showResponseError)
+    }
+    /*
+    function saveComposition() {
+        
         var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
         if (totalPercent != 100) return toastr.error("Sum of compostion percent must be 100");
         compositionComponents.reverse();
@@ -2706,7 +2772,7 @@
             })
             .catch(showResponseError)
     }
-
+    */
     function GetNumberValue(value) {
         if (isNaN(value) || typeof value === "undefined" || value == null) return 0;
         return value;

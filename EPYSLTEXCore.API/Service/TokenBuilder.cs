@@ -20,19 +20,27 @@ namespace EPYSLTEX.Web.Services
         {
             var role = user.IsSuperUser ? UserRoles.SUPER_USER : user.IsAdmin ? UserRoles.ADMIN : UserRoles.GENERAL;
 
-            var claims = new[]
+            List<Claim> claims = new List<Claim>
         {
             new Claim(JwtTokenStorage.UserID, user.UserCode.ToString()),
             new Claim(JwtTokenStorage.CompanyId, user.CompanyId.ToString()),
 
         };
 
+            string[] audiences = _configuration.GetSection("JwtSettings:Audiences").Get<string[]>();
+
+
+            foreach (var audience in audiences)
+            {
+                claims.Add(new Claim(JwtRegisteredClaimNames.Aud, audience));
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],
-                audience: _configuration["JwtSettings:Audience"],                 
+
                 claims: claims,
                 expires: DateTime.Now.AddDays(1),  // Set token expiry time
                 signingCredentials: creds

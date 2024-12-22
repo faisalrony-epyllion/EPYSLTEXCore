@@ -82,27 +82,37 @@
                             width: 150
                         },
                         {
-                            field: 'MonthlyAvgConsumption',
-                            headerText: 'Monthly Avg Consumption',
+                            field: 'MonthlyAvgConsumptionLP',
+                            headerText: 'Monthly Avg Consumption LP',
                         },
                         {
-                            field: 'LeadTimeDays',
-                            headerText: 'Lead Time Days',
+                            field: 'MonthlyAvgConsumptionFP',
+                            headerText: 'Monthly Avg Consumption FP',
                             width: 120,
                         },
                         {
-                            field: 'SafetyStockDays',
-                            headerText: 'Safety Stock Days',
+                            field: 'ROLLocalPurchase',
+                            headerText: 'ROL Local Purchase',
                             width: 120,
                         },
                         {
-                            field: 'MonthlyWorkingDays',
-                            headerText: 'Monthly Working Days',
+                            field: 'ROLForeignPurchase',
+                            headerText: 'ROL Foreign Purchase',
                             width: 120,
                         },
                         {
-                            field: 'PackSize',
-                            headerText: 'PackSize',
+                            field: 'ReOrderQty',
+                            headerText: 'Re-Order Qty',
+                            width: 120,
+                        },
+                        {
+                            field: 'MaximumPRQtyLP',
+                            headerText: 'Maximum PR Qty LP',
+                            width: 120,
+                        },
+                        {
+                            field: 'MaximumPRQtyFP',
+                            headerText: 'Maximum PR Qty FP',
                             width: 120,
                         },
                         {
@@ -111,10 +121,11 @@
                             width: 120,
                         },
                         {
-                            field: 'ReOrderQty',
-                            headerText: 'Re Order Qty',
+                            field: 'ValidDate',
+                            headerText: 'Valid Date',
                             width: 120,
                         },
+
                     ],
                     pageSettings: {
                         pageSize: 5,
@@ -162,13 +173,14 @@
                                 ItemMasterID: getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val()),
                                 SubGroupID: getDefaultValueWhenInvalidN($formEl.find("#SubGroupID").val()),
                                 CompanyID: getDefaultValueWhenInvalidN($formEl.find("#CompanyID").val()),
-                                MonthlyAvgConsumption: args.data.MonthlyAvgConsumption,
-                                LeadTimeDays: args.data.LeadTimeDays,
-                                SafetyStockDays: args.data.SafetyStockDays,
-                                MonthlyWorkingDays: args.data.MonthlyWorkingDays,
-                                PackSize: args.data.PackSize,
+                                MonthlyAvgConsumptionLP: args.data.MonthlyAvgConsumptionLP,
+                                MonthlyAvgConsumptionFP: args.data.MonthlyAvgConsumptionFP,
+                                ROLLocalPurchase: args.data.ROLLocalPurchase,
+                                ROLForeignPurchase: args.data.ROLForeignPurchase,
+                                MaximumPRQtyLP: args.data.MaximumPRQtyLP,
+                                MaximumPRQtyFP: args.data.MaximumPRQtyFP,
                                 MOQ: args.data.MOQ,
-                                ReOrderQty: args.data.ReOrderQty
+                                ValidDate: formatDateToDefault(args.data.ValidDate)
                             };
 
                             args.rowData = DeepClone(args.data);
@@ -188,12 +200,22 @@
                         _isEdit = false;
                         if (args.requestType === 'add') {
                             let itemNameID = getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val());
+                            let companyID = getDefaultValueWhenInvalidN($formEl.find("#CompanyID").val());
                             if (itemNameID == 0) {
-                                toastr.error("Please Selecet a Item Master!!!");
+                                toastr.error("Selecet Item!!!");
                                 args.cancel = true;
                                 var closeButton = document.querySelector('.e-dialog .e-dlg-closeicon-btn');
 
-                                // If the button is found, click it
+                                if (closeButton) {
+                                    closeButton.click();
+                                }
+                                return;
+                            }
+                            if (companyID == 0) {
+                                toastr.error("Selecet Company!!!");
+                                args.cancel = true;
+                                var closeButton = document.querySelector('.e-dialog .e-dlg-closeicon-btn');
+
                                 if (closeButton) {
                                     closeButton.click();
                                 }
@@ -201,10 +223,7 @@
                             }
                             let itemName = $formEl.find("#ItemName").val();
                             $("#ItemMaster_Finder").val(itemName);
-                            //getItemMastedData(subGroupID);
                             console.log(args);
-                            //ejDropDownLoad(ej, args, masterData.ItemMasterList, "ItemMaster", "text", "id", "ItemName");
-                            //function ejDropDownLoad(ej, args, listP, gridFieldName, textFieldName, valueFieldName, placeHolder)
                             args.dialog.header = 'Add Details';
 
                         }
@@ -219,12 +238,14 @@
 
                             let itemName = $formEl.find("#ItemName").val();
                             $("#ItemMaster_Finder").val(itemName);
-                            $("#MonthlyAvgConsumption").val(args.rowData.MonthlyAvgConsumption);
-                            $("#LeadTimeDays").val(args.rowData.LeadTimeDays);
-                            $("#SafetyStockDays").val(args.rowData.SafetyStockDays);
-                            $("#MonthlyWorkingDays").val(args.rowData.MonthlyWorkingDays);
-                            $("#PackSize").val(args.rowData.PackSize);
+                            $("#MonthlyAvgConsumptionLP").val(args.rowData.MonthlyAvgConsumptionLP);
+                            $("#MonthlyAvgConsumptionFP").val(args.rowData.MonthlyAvgConsumptionFP);
+                            $("#ROLLocalPurchase").val(args.rowData.ROLLocalPurchase);
+                            $("#ROLForeignPurchase").val(args.rowData.ROLForeignPurchase);
+                            $("#MaximumPRQtyLP").val(args.rowData.MaximumPRQtyLP);
+                            $("#MaximumPRQtyFP").val(args.rowData.MaximumPRQtyFP);
                             $("#MOQ").val(args.rowData.MOQ);
+                            $("#ValidDate").val(args.rowData.ValidDate);
                         }
                     }
                 });
@@ -264,12 +285,13 @@
         data.ItemMasterID = dataObj.ItemMasterID;
         data.SubGroupID = dataObj.SubGroupID;
         data.CompanyID = dataObj.CompanyID;
-        data.MonthlyAvgConsumption = dataObj.MonthlyAvgConsumption;
-        data.LeadTimeDays = dataObj.LeadTimeDays;
-        data.SafetyStockDays = dataObj.SafetyStockDays;
-        data.MonthlyWorkingDays = dataObj.MonthlyWorkingDays;
-        data.PackSize = dataObj.PackSize;
-        data.MOQ = dataObj.MOQ;
+        data.MonthlyAvgConsumptionLP = dataObj.MonthlyAvgConsumptionLP;
+        data.MonthlyAvgConsumptionFP = dataObj.MonthlyAvgConsumptionFP;
+        data.ROLLocalPurchase = dataObj.ROLLocalPurchase;
+        data.ROLForeignPurchase = dataObj.ROLForeignPurchase;
+        data.MaximumPRQtyLP = dataObj.MaximumPRQtyLP;
+        data.MaximumPRQtyFP = dataObj.MaximumPRQtyFP;
+        data.ValidDate = formatDateToDefault(dataObj.ValidDate);
         console.log(data);
         axios.post("/api/item-wise-rol/save", data)
             .then(function () {

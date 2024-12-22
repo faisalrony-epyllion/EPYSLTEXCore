@@ -1006,7 +1006,7 @@
     function saveMaster(e) {
  
         e.preventDefault();
-       // if (!validateMasterForm()) return;
+        if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });

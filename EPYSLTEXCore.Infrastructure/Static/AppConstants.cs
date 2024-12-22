@@ -624,4 +624,10 @@
         public const int StockTransfer = 7;
         public const int LocationTransfer = 8;
     }
+    public static class SubGroupNames
+    {
+        public const string YARNS = "Yarn Live";
+        public const string DYES = "Dyes";
+        public const string CHEMICALS = "Chemicals";
+    }
 }

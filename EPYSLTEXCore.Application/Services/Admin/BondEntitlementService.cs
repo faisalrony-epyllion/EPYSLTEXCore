@@ -70,19 +70,32 @@ namespace EPYSLTEXCore.Application.Services.Admin
         {
             string query =
                 $@"
+
+                SELECT IG.SubGroupID
+                ,SubGroupName = TRIM(REPLACE(IG.SubGroupName,'LIVE',''))
+                FROM {DbNames.EPYSL}..ItemSubGroup IG 
+                WHERE IG.SubGroupName IN ('{SubGroupNames.YARNS}','{SubGroupNames.DYES}','{SubGroupNames.CHEMICALS}')
+                ORDER BY IG.SubGroupName DESC;
+
                 {CommonQueries.GetCompany()};
 
-                SELECT id = ISNULL(ISN.SegmentNameID,0)
-                ,text = ISN.SegmentName 
-                FROM {DbNames.EPYSL}..ItemSegmentName ISN
-                WHERE ISN.SegmentNameID IN (270,273);
+                --Dyes
+                SELECT id = ISV1.SegmentValueID, text = ISV1.SegmentValue
+                FROM {DbNames.EPYSL}..ItemMaster IM
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
+                INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = IM.SubGroupID
+                WHERE ISG.SubGroupName = '{SubGroupNames.DYES}' 
+                GROUP BY ISV1.SegmentValue,ISV1.SegmentValueID
+                ORDER BY ISV1.SegmentValue;
 
-                SELECT id = ISV.SegmentValueID
-                ,text = ISV.SegmentValue 
-                ,additionalValue = ISNULL(ISN.SegmentNameID,0)
-                FROM {DbNames.EPYSL}..ItemSegmentValue ISV
-                INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                WHERE ISN.SegmentNameID IN (270,273);
+                --Chemicals
+                SELECT id = ISV2.SegmentValueID, text = ISV2.SegmentValue
+                FROM {DbNames.EPYSL}..ItemMaster IM
+                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
+                INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = IM.SubGroupID
+                WHERE ISG.SubGroupName = '{SubGroupNames.CHEMICALS}' 
+                GROUP BY ISV2.SegmentValue,ISV2.SegmentValueID
+                ORDER BY ISV2.SegmentValue;
 
                 --Currency
                 SELECT id = CurrencyID, text = CurrencyCode FROM {DbNames.EPYSL}..Currency;
@@ -98,37 +111,13 @@ namespace EPYSLTEXCore.Application.Services.Admin
                 var records = await _connection.QueryMultipleAsync(query);
 
                 BondEntitlementMaster data = new BondEntitlementMaster();
+                data.Childs = records.Read<BondEntitlementChild>().ToList();
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
-                var itemSegmentNames = await records.ReadAsync<Select2OptionModel>();
-                var itemSegmentValues = await records.ReadAsync<Select2OptionModel>();
+                data.Dyes = await records.ReadAsync<Select2OptionModel>();
+                data.Chemicals = await records.ReadAsync<Select2OptionModel>();
                 data.CurrencyList = await records.ReadAsync<Select2OptionModel>();
                 data.UnitList = await records.ReadAsync<Select2OptionModel>();
 
-                data.Childs = new List<BondEntitlementChild>();
-
-                int childId = 10000;
-                int childItemId = 10000;
-                foreach (var isn in itemSegmentNames)
-                {
-                    var tempItemSegmentValues = itemSegmentValues.Where(x => x.additionalValue == isn.id).ToList();
-
-                    BondEntitlementChild child = new BondEntitlementChild();
-                    child.BondEntitlementChildID = childId++;
-                    child.SegmentNameID = Convert.ToInt32(isn.id);
-                    child.SegmentName = isn.text;
-                    child.ChildItems = new List<BondEntitlementChildItem>();
-
-                    foreach (var isv in tempItemSegmentValues)
-                    {
-                        BondEntitlementChildItem childItem = new BondEntitlementChildItem();
-                        childItem.BondEntitlementChildItemID = childItemId++;
-                        childItem.BondEntitlementChildID = child.BondEntitlementChildID;
-                        childItem.SegmentValueID = Convert.ToInt32(isv.id);
-                        childItem.SegmentValue = isv.text;
-                        child.ChildItems.Add(childItem);
-                    }
-                    data.Childs.Add(child);
-                }
                 return data;
             }
             catch (Exception ex)
@@ -139,97 +128,7 @@ namespace EPYSLTEXCore.Application.Services.Admin
             {
                 if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
             }
-            /*
-            public async Task<List<BondEntitlementMaster>> GetAsync()
-            {
-                string query =
-                    $@"
-                    SELECT BondEntitlementMasterID = ISNULL(BEM.BondEntitlementMasterID,0)
-                    ,C.CompanyID
-                    ,C.CompanyName
-                    ,BondLicenceNo = ISNULL(BEM.BondLicenceNo,'')
-                    ,EBINNo = ISNULL(BEM.EBINNo,'')
-                    ,BEM.FromDate
-                    ,BEM.ToDate
-                    ,CurrencyID = ISNULL(BEM.CurrencyID,0)
-                    ,CurrencyName = ISNULL(CU.CurrencyCode,'')
-                    FROM {DbNames.EPYSL}..CompanyEntity C
-                    LEFT JOIN BondEntitlementMaster BEM ON BEM.CompanyID = C.CompanyID
-                    LEFT JOIN {DbNames.EPYSL}..Currency CU ON CU.CurrencyID = BEM.CurrencyID
-                    WHERE C.CompanyID IN (8,6)
-                    ORDER BY C.CompanyName;
 
-                    SELECT BondEntitlementChildID = ISNULL(BEC.BondEntitlementChildID,0)
-                    ,BondEntitlementMasterID = ISNULL(BEC.BondEntitlementMasterID,0)
-                    ,SegmentNameID = ISNULL(ISN.SegmentNameID,0)
-                    ,HSCode = ISNULL(BEC.HSCode,'')
-                    ,SegmentName = ISN.SegmentName 
-                    ,UnitID = ISNULL(UnitID,0)
-                    ,BankFacilityAmount = ISNULL(BankFacilityAmount,0)
-                    FROM {DbNames.EPYSL}..ItemSegmentName ISN
-                    LEFT JOIN BondEntitlementChild BEC ON BEC.SegmentNameID = ISN.SegmentNameID
-                    WHERE ISN.SegmentNameID IN (270,273)
-
-                    SELECT BondEntitlementChildItemID = ISNULL(BECI.BondEntitlementChildItemID,0)
-                    ,BondEntitlementChildID = ISNULL(BECI.BondEntitlementChildID,0)
-                    ,SegmentNameID = ISNULL(ISN.SegmentNameID,0)
-                    ,SegmentValueID = ISV.SegmentValueID
-                    ,HSCode = ISNULL(BEC.HSCode,'')
-                    ,BankFacilityAmount = ISNULL(BankFacilityAmount,0)
-                    ,SegmentValue = ISN.SegmentValue 
-                    FROM {DbNames.EPYSL}..ItemSegmentValue ISV
-                    INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                    LEFT JOIN BondEntitlementChildItem BECI ON BECI.SegmentValueID = ISV.SegmentValueID
-                    WHERE ISN.SegmentNameID IN (270,273)
-
-                  ";
-
-                try
-                {
-                    await _connection.OpenAsync();
-                    var records = await _connection.QueryMultipleAsync(query);
-
-                    var datas = await records.ReadAsync<BondEntitlementMaster>();
-                    var childs = await records.ReadAsync<BondEntitlementChild>();
-                    var childItems = await records.ReadAsync<BondEntitlementChildItem>();
-
-                    foreach (var company in companys)
-                    {
-                        BondEntitlementMaster data = new BondEntitlementMaster();
-                        data.CompanyID = Convert.ToInt32(company.id);
-                        data.Childs = new List<BondEntitlementChild>();
-
-                        foreach (var isn in itemSegmentNames)
-                        {
-                            var tempItemSegmentValues = itemSegmentValues.Where(x => x.additionalValue == isn.id);
-
-                            BondEntitlementChild child = new BondEntitlementChild();
-                            child.SegmentNameID = Convert.ToInt32(isn.id);
-                            child.ChildItems = new List<BondEntitlementChildItem>();
-
-                            foreach (var isv in tempItemSegmentValues)
-                            {
-                                BondEntitlementChildItem childItem = new BondEntitlementChildItem();
-                                childItem.BondEntitlementChildID = child.BondEntitlementChildID;
-                                childItem.SegmentValueID = Convert.ToInt32(isv.id);
-
-                                child.ChildItems.Add(childItem);
-                            }
-                            data.Childs.Add(child);
-                        }
-                    }
-                    return datas;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
-                }
-            }
-            */
         }
         public async Task<BondEntitlementMaster> GetDetails(int id)
         {
@@ -238,30 +137,44 @@ namespace EPYSLTEXCore.Application.Services.Admin
             From BondEntitlementMaster M
             Where M.BondEntitlementMasterID = {id};
 
-            Select C.* 
+            Select C.*, SubGroupName = TRIM(REPLACE(ISG.SubGroupName,'LIVE',''))
             From BondEntitlementMaster M
             INNER JOIN BondEntitlementChild C ON C.BondEntitlementMasterID = M.BondEntitlementMasterID
+            INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = C.SubGroupID
             Where M.BondEntitlementMasterID = {id};
 
-            Select CI.* 
+            Select CI.*, SegmentValue = ISV.SegmentValue
             From BondEntitlementMaster M
             INNER JOIN BondEntitlementChild C ON C.BondEntitlementMasterID = M.BondEntitlementMasterID
             INNER JOIN BondEntitlementChildItem CI ON CI.BondEntitlementChildID = C.BondEntitlementChildID
+            INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = CI.SegmentValueID
             Where M.BondEntitlementMasterID = {id};
+
+            SELECT id = IG.SubGroupID
+            ,text = TRIM(REPLACE(IG.SubGroupName,'LIVE',''))
+            FROM {DbNames.EPYSL}..ItemSubGroup IG 
+            WHERE IG.SubGroupName IN ('{SubGroupNames.YARNS}','{SubGroupNames.DYES}','{SubGroupNames.CHEMICALS}')
+            ORDER BY IG.SubGroupName DESC;
 
             {CommonQueries.GetCompany()};
 
-            SELECT id = ISNULL(ISN.SegmentNameID,0)
-            ,text = ISN.SegmentName 
-            FROM {DbNames.EPYSL}..ItemSegmentName ISN
-            WHERE ISN.SegmentNameID IN (270,273);
+            --Dyes
+            SELECT id = ISV1.SegmentValueID, text = ISV1.SegmentValue
+            FROM {DbNames.EPYSL}..ItemMaster IM
+            INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
+            INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = IM.SubGroupID
+            WHERE ISG.SubGroupName = '{SubGroupNames.DYES}' 
+            GROUP BY ISV1.SegmentValue,ISV1.SegmentValueID
+            ORDER BY ISV1.SegmentValue;
 
-            SELECT id = ISV.SegmentValueID
-            ,text = ISV.SegmentValue 
-            ,additionalValue = ISNULL(ISN.SegmentNameID,0)
-            FROM {DbNames.EPYSL}..ItemSegmentValue ISV
-            INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-            WHERE ISN.SegmentNameID IN (270,273);
+            --Chemicals
+            SELECT id = ISV2.SegmentValueID, text = ISV2.SegmentValue
+            FROM {DbNames.EPYSL}..ItemMaster IM
+            INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
+            INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = IM.SubGroupID
+            WHERE ISG.SubGroupName = '{SubGroupNames.CHEMICALS}' 
+            GROUP BY ISV2.SegmentValue,ISV2.SegmentValueID
+            ORDER BY ISV2.SegmentValue;
 
             --Currency
             SELECT id = CurrencyID, text = CurrencyCode FROM {DbNames.EPYSL}..Currency;
@@ -276,47 +189,34 @@ namespace EPYSLTEXCore.Application.Services.Admin
                 await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 BondEntitlementMaster data = records.Read<BondEntitlementMaster>().FirstOrDefault();
-                var childs = records.Read<BondEntitlementChild>().ToList();
+                data.Childs = records.Read<BondEntitlementChild>().ToList();
                 var childItems = records.Read<BondEntitlementChildItem>().ToList();
 
+                data.SubGroups = await records.ReadAsync<Select2OptionModel>();
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
-                var itemSegmentNames = await records.ReadAsync<Select2OptionModel>();
-                var itemSegmentValues = await records.ReadAsync<Select2OptionModel>();
+
+                data.Dyes = await records.ReadAsync<Select2OptionModel>();
+                data.Chemicals = await records.ReadAsync<Select2OptionModel>();
+
                 data.CurrencyList = await records.ReadAsync<Select2OptionModel>();
                 data.UnitList = await records.ReadAsync<Select2OptionModel>();
 
-                int childId = 10000;
-                int childItemId = 10000;
-                foreach (var isn in itemSegmentNames)
+                int childId = 999;
+                var childs = new List<BondEntitlementChild>();
+                data.SubGroups.ToList().ForEach(sg =>
                 {
-                    var tempItemSegmentValues = itemSegmentValues.Where(x => x.additionalValue == isn.id).ToList();
-
-                    BondEntitlementChild child = childs.FirstOrDefault(x => x.SegmentNameID.ToString() == isn.id);
+                    var child = data.Childs.Find(c => c.SubGroupID == Convert.ToInt32(sg.id));
                     if (child.IsNull())
                     {
                         child = new BondEntitlementChild();
                         child.BondEntitlementChildID = childId++;
+                        child.SubGroupID = Convert.ToInt32(sg.id);
+                        child.SubGroupName = sg.text;
                     }
-                    child.SegmentNameID = Convert.ToInt32(isn.id);
-                    child.SegmentName = isn.text;
-                    //child.ChildItems = new List<BondEntitlementChildItem>();
-
-                    List<BondEntitlementChildItem> tempChildItems = new List<BondEntitlementChildItem>();
-                    foreach (var isv in tempItemSegmentValues)
-                    {
-                        BondEntitlementChildItem childItem = childItems.FirstOrDefault(x => x.SegmentValueID.ToString() == isv.id && x.BondEntitlementChildID == child.BondEntitlementChildID);
-                        if (childItem.IsNull())
-                        {
-                            childItem = new BondEntitlementChildItem();
-                            childItem.BondEntitlementChildItemID = childItemId++;
-                        }
-                        childItem.BondEntitlementChildID = child.BondEntitlementChildID;
-                        childItem.SegmentValueID = Convert.ToInt32(isv.id);
-                        childItem.SegmentValue = isv.text;
-                        child.ChildItems.Add(childItem);
-                    }
-                    data.Childs.Add(child);
-                }
+                    child.ChildItems = childItems.Where(ci => ci.BondEntitlementChildID == child.BondEntitlementChildID).ToList();
+                    childs.Add(child);
+                });
+                data.Childs = childs;
 
                 return data;
             }
@@ -412,6 +312,7 @@ namespace EPYSLTEXCore.Application.Services.Admin
                             {
                                 childItem.BondEntitlementChildItemID = maxChildItemId++;
                                 childItem.BondEntitlementChildID = item.BondEntitlementChildID;
+                                childItem.BondEntitlementMasterID = item.BondEntitlementMasterID;
                                 childItem.EntityState = EntityState.Added;
                             }
                         }
@@ -436,6 +337,7 @@ namespace EPYSLTEXCore.Application.Services.Admin
                             {
                                 childItem.BondEntitlementChildItemID = maxChildItemId++;
                                 childItem.BondEntitlementChildID = item.BondEntitlementChildID;
+                                childItem.BondEntitlementMasterID = item.BondEntitlementMasterID;
                                 childItem.EntityState = EntityState.Added;
                             }
                         }

@@ -27,6 +27,10 @@
                 ej.grids.Grid.Inject(ej.grids.Edit, ej.grids.Toolbar);
                 $tblMasterEl = new ej.grids.Grid({
                     dataSource: response.data.Items,
+                    allowPaging: true,
+                    pageSettings: { pageSize: 10 },
+                    allowFiltering: true,
+                    filterSettings: { type: 'FilterBar' },
                     toolbar: ['Add', 'Edit', 'Delete'],
                     editSettings: {
                         allowEditing: true,

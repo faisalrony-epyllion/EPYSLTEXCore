@@ -7,6 +7,7 @@
     var _isEdit = false;
 
     $(function () {
+        debugger;
         if (!menuId) menuId = localStorage.getItem("menuId");
         if (!pageName) pageName = localStorage.getItem("pageName");
 
@@ -22,13 +23,19 @@
         var url = "/api/yarn-properties-mapping/list";
         axios.get(url)
             .then(function (response) {
-                if (grid) {
-                    grid.destroy();
+                debugger;
+                if ($tblMasterEl) {
+                    $tblMasterEl.destroy();
                 }
                 ej.grids.Grid.Inject(ej.grids.Edit, ej.grids.Toolbar);
-                grid = new ej.grids.Grid({
+                $tblMasterEl = new ej.grids.Grid({
                     dataSource: response.data.Items,
-                    toolbar: ['Add', 'Edit', 'Delete'],
+                    allowPaging: true,
+                    pageSettings: { pageSize: 10 },
+                    allowFiltering: true,
+                    filterSettings: { type: 'FilterBar' },
+                    //toolbar: ['Add', 'Edit', 'Delete'],
+                    toolbar: ['Add'],
                     editSettings: {
                         allowEditing: false,
                         allowAdding: true,
@@ -140,6 +147,7 @@
                     height: 500,
                     actionBegin: function (args) {
                         if (args.requestType === 'save') {
+                            debugger;
                             console.log(args.data);
 
                             args.data.YarnPropertiesMappingID = getDefaultValueWhenInvalidN(args.data.YarnPropertiesMappingID);
@@ -150,7 +158,7 @@
                             if (args.data.YarnPropertiesMappingID == 0) {
                                 args.data.YarnPropertiesMappingID = _maxYarnPropertiesMappingID--;
                             }
-                            var allData = grid.dataSource;
+                            var allData = $tblMasterEl.dataSource;
                             console.log(allData);
 
                             debugger;
@@ -183,6 +191,11 @@
                                 args.cancel = true;
                                 return;
                             }
+                            //if (getDefaultValueWhenInvalidN(args.data.YarnCountID) == 0) {
+                            //    toastr.error("Please Select Yarn Count!!!");
+                            //    args.cancel = true;
+                            //    return;
+                            //}
 
                             var dataObj = {
                                 YarnPropertiesMappingID: args.data.YarnPropertiesMappingID,
@@ -216,33 +229,42 @@
                         }
                     },
                     actionComplete: function (args) {
+                        debugger;
                         _isEdit = false;
                         if ((args.requestType === 'beginEdit' || args.requestType === 'add')) {
                             console.log(args);
-                            ejDropDownLoad(ej, args, masterData.FiberTypeList, "FiberType", "text", "id", "FiberType");
-                            ejDropDownLoad(ej, args, masterData.BlendTypeList, "BlendType", "text", "id", "BlendType");
-                            ejDropDownLoad(ej, args, masterData.YarnTypeList, "YarnType", "text", "id", "YarnType");
+                            //(args.form.elements.namedItem('FiberType')).focus();
+                            ejDropDownLoad(ej, args, masterData.FiberTypeList, "FiberType", "text", "id", "Fiber Type");
+                            ejDropDownLoad(ej, args, masterData.BlendTypeList, "BlendType", "text", "id", "Blend Type");
+                            ejDropDownLoad(ej, args, masterData.YarnTypeList, "YarnType", "text", "id", "Yarn Type");
                             ejDropDownLoad(ej, args, masterData.ProgramList, "Program", "text", "id", "Program");
-                            ejDropDownLoad(ej, args, masterData.SubProgramList, "SubProgram", "text", "id", "SubProgram");
+                            ejDropDownLoad(ej, args, masterData.SubProgramList, "SubProgram", "text", "id", "Sub-Program");
                             ejDropDownLoad(ej, args, masterData.CertificationList, "Certification", "text", "id", "Certification");
-                            ejDropDownLoad(ej, args, masterData.TechnicalParameterList, "TechnicalParameter", "text", "id", "TechnicalParameter");
-                            ejDropDownLoad(ej, args, masterData.YarnCompositionList, "YarnComposition", "text", "id", "YarnComposition");
-                            ejDropDownLoad(ej, args, masterData.ShadeReferenceList, "ShadeReference", "text", "id", "ShadeReference");
-                            ejDropDownLoad(ej, args, masterData.ManufacturingLineList, "ManufacturingLine", "text", "id", "ManufacturingLine");
-                            ejDropDownLoad(ej, args, masterData.ManufacturingProcessList, "ManufacturingProcess", "text", "id", "ManufacturingProcess");
-                            ejDropDownLoad(ej, args, masterData.ManufacturingSubProcessList, "ManufacturingSubProcess", "text", "id", "ManufacturingSubProcess");
+                            ejDropDownLoad(ej, args, masterData.TechnicalParameterList, "TechnicalParameter", "text", "id", "Technical Parameter");
+                            ejDropDownLoad(ej, args, masterData.YarnCompositionList, "YarnComposition", "text", "id", "Yarn Composition");
+                            ejDropDownLoad(ej, args, masterData.ShadeReferenceList, "ShadeReference", "text", "id", "Shade Reference");
+                            ejDropDownLoad(ej, args, masterData.ManufacturingLineList, "ManufacturingLine", "text", "id", "Manufacturing Line");
+                            ejDropDownLoad(ej, args, masterData.ManufacturingProcessList, "ManufacturingProcess", "text", "id", "Manufacturing Process");
+                            ejDropDownLoad(ej, args, masterData.ManufacturingSubProcessList, "ManufacturingSubProcess", "text", "id", "Manufacturing Sub-Process");
                             ejDropDownLoad(ej, args, masterData.ColorList, "Color", "text", "id", "Color");
-                            ejDropDownLoad(ej, args, masterData.ColorGradeList, "ColorGrade", "text", "id", "ColorGrade");
-                            ejDropDownLoad(ej, args, masterData.YarnCountList, "YarnCount", "text", "id", "YarnCount");
+                            ejDropDownLoad(ej, args, masterData.ColorGradeList, "ColorGrade", "text", "id", "Color Grade");
+                            ejDropDownLoad(ej, args, masterData.YarnCountList, "YarnCount", "text", "id", "Yarn Count");
                             args.dialog.header = 'Add Yarn RM Properties';
                         }
                         if (args.requestType === 'beginEdit') {
                             _isEdit = true;
                             args.dialog.header = 'Edit Yarn RM Properties';
                         }
+                        //var select2Element = args.form.elements.namedItem('FiberType');
+                        //select2Element.innerHTML = '<option value="" disabled selected>Select Fiber Type</option>';
+
+                        //$(select2Element).select2({
+                        //    placeholder: "Select Fiber Type",
+                        //    width: '100%'
+                        //});
                     }
                 });
-                grid.appendTo('#Grid');
+                $tblMasterEl.appendTo('#Grid');
             })
             .catch(showResponseError)
     }
@@ -283,6 +305,7 @@
             .then(function () {
                 toastr.success("Saved successfully.");
                 initMasterTable();
+                //$tblMasterEl.refresh();
             })
             .catch(showResponseError);
         debugger;

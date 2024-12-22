@@ -34,7 +34,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || YarnPropertiesMappingID > 0;
         [Write(false)]
-        public string Fiber { get; set; } = "";
+        public string FiberType { get; set; } = "";
         [Write(false)]
         public string BlendType { get; set; } = "";
         [Write(false)]

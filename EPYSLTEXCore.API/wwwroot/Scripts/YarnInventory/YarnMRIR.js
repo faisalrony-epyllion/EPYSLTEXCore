@@ -42,6 +42,7 @@
         pageIdWithHash = "#" + pageId;
         //menuType = localStorage.getItem("YarnMRIRPage");
         if (menuParam === "YarnMRIRSCD") {
+            debugger;
             menuType = 2;
         }
         else if (menuParam === "GRN Sign In") {
@@ -51,6 +52,7 @@
             menuType = 0;
         }
         menuType = parseInt(menuType);
+        debugger;
         if (menuType == _paramType.YarnMRIR) {
 
             $toolbarEl.find("#btnPendingMRIRList").show();
@@ -65,7 +67,8 @@
             $toolbarEl.find("#btnPendingGRNSignInList").hide();
             $toolbarEl.find("#btnGRNMRIRList").hide();
 
-            toggleActiveToolbarBtn($(pageIdWithHash).find("#btnPendingMRIRList"), $toolbarEl);
+            //toggleActiveToolbarBtn($(pageIdWithHash).find("#btnPendingMRIRList"), $toolbarEl);
+            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingMRIRList"), $toolbarEl);
             status = statusConstants.PENDING;
             $divDetailsEl.find("#btnGRNMRIRSave").hide();
             $divTblEl.find("#btnMRIRSave").show();

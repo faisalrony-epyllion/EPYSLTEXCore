@@ -26,7 +26,7 @@ $(document).ready(function () {
 
     rootPath = window.location.protocol + '//' + window.location.host;
 
-   reportRootPath = "https://localhost:44311/";
+    reportRootPath = "https://localhost:44311/";
     toastr.options.escapeHtml = true;
 
     $.fn.editable.defaults.mode = 'inline';
@@ -264,7 +264,7 @@ function reloadTableData(type, tableId) {
             var navUrlName = $(this).data("navurl-name");
             var pageType = $(this).data("page-type");
             var pageName = $(this).data("page-name");
-        
+
             var menuParam = $(this).data("menu-param");
 
             if (pageName) pageName = pageName.split(' ').join('');

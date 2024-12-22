@@ -27,19 +27,20 @@ namespace EPYSLTEX.Web.Services
 
         };
 
-             string [] audiences = _configuration.GetSection("JwtSettings:Audiences").Get<string[]>();
-        
+            string[] audiences = _configuration.GetSection("JwtSettings:Audiences").Get<string[]>();
 
-            foreach (var audience in audiences) { 
+
+            foreach (var audience in audiences)
+            {
                 claims.Add(new Claim(JwtRegisteredClaimNames.Aud, audience));
             }
-          
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],
-                              
+
                 claims: claims,
                 expires: DateTime.Now.AddDays(1),  // Set token expiry time
                 signingCredentials: creds

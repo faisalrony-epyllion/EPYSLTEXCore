@@ -1,4 +1,5 @@
 using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
@@ -32,5 +33,6 @@ namespace EPYSLTEXCore.Application.Interfaces
         Task SaveMultipleAsync(List<FreeConceptMRMaster> entities, EntityState entityState);
 
         Task ReviseAsync(List<FreeConceptMRMaster> entities, string grpConceptNo, int userId, string fcmrChildIds);
+        Task SaveBlendTypeName(CompositionBlendType entity);
     }
 }

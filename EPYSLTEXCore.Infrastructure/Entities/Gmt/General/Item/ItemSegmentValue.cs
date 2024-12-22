@@ -66,4 +66,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
             EntityState = EntityState.Added;
         }
     }
+
+    public class TempItemSegmentValue
+    {
+        public ItemSegmentValue ItemSegmentValue { get; set; }
+        public string BlendTypeName { get; set; } = "";
+        public string ProgramTypeName { get; set; } = "";
+    }
 }

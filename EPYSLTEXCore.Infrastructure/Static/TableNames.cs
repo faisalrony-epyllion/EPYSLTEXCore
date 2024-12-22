@@ -922,6 +922,8 @@
         public const string YarnPRFrom_HK = "YarnPRFrom_HK";
         public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
         public const string YarnPropertiesMapping = "YarnPropertiesMapping";
+
+        public const string CompositionBlendType = "T_CompositionBlendType";
     }
 
 }

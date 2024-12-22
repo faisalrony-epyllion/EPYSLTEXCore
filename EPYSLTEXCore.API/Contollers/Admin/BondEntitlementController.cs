@@ -85,8 +85,8 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                 }
                 model.Childs.ForEach(modelChild =>
                 {
-                    var child = entity.Childs.FirstOrDefault(c => c.SegmentNameID == modelChild.SegmentNameID);
-                    var indexChild = entity.Childs.FindIndex(c => c.SegmentNameID == modelChild.SegmentNameID);
+                    var child = entity.Childs.FirstOrDefault(c => c.SubGroupID == modelChild.SubGroupID);
+                    var indexChild = entity.Childs.FindIndex(c => c.SubGroupID == modelChild.SubGroupID);
 
                     if (child.IsNull())
                     {
@@ -97,8 +97,8 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                     else
                     {
                         child.EntityState = EntityState.Modified;
-                        child.ItemName = modelChild.ItemName;
                         child.UnitID = modelChild.UnitID;
+                        child.HSCode = modelChild.HSCode;
                         child.EntitlementQty = modelChild.EntitlementQty;
                     }
 
@@ -115,8 +115,8 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                         else
                         {
                             childItem.EntityState = EntityState.Modified;
-                            childItem.ItemName = modelChildItem.ItemName;
                             childItem.EntitlementQty = modelChildItem.EntitlementQty;
+                            childItem.HSCode = modelChildItem.HSCode;
                         }
                         if (indexChild > -1)
                         {
@@ -132,11 +132,15 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                     });
                 });
 
-                foreach (var item in entity.Childs.Where(x => x.EntityState == EntityState.Unchanged))
+                entity.Childs.ForEach(c =>
                 {
-                    item.EntityState = EntityState.Deleted;
-                    item.ChildItems.SetDeleted();
-                }
+                    if (c.EntityState == EntityState.Unchanged)
+                    {
+                        c.EntityState = EntityState.Deleted;
+                        c.ChildItems.SetDeleted();
+                    }
+                    c.ChildItems.Where(x => x.EntityState == EntityState.Unchanged).SetDeleted();
+                });
             }
             else
             {

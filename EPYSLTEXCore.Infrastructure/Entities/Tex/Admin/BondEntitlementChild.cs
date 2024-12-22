@@ -15,10 +15,10 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Admin
         [ExplicitKey]
         public int BondEntitlementChildID { get; set; } = 0;
         public int BondEntitlementMasterID { get; set; } = 0;
-        public int SegmentNameID { get; set; } = 0;
-        public string ItemName { get; set; } = "";
+        public int SubGroupID { get; set; } = 0;
         public int UnitID { get; set; } = 0;
         public decimal EntitlementQty { get; set; } = 0;
+        public string HSCode { get; set; } = "";
 
         #region Additional Property
 
@@ -27,7 +27,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Admin
         [Write(false)]
         public List<BondEntitlementChildItem> ChildItems { get; set; } = new List<BondEntitlementChildItem>();
         [Write(false)]
-        public string SegmentName { get; set; } = "";
+        public string SubGroupName { get; set; } = "";
+
 
         #endregion Additional Property
     }

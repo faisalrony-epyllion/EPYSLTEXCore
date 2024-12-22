@@ -24,9 +24,11 @@ $(document).ready(function () {
     $.fn.editable.defaults.mode = 'inline';
     toastr.options.escapeHtml = true;
     axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-    //if (localStorage.getItem("token")) {
-    //    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-    //}
+ 
+    localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiIxIiwiQ29tcGFueUlkIjoiMiIsImF1ZCI6WyJodHRwczovL2xvY2FsaG9zdDo3MDUzIiwiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzMTEiXSwiZXhwIjoxNzM0OTM3NDY0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MDUzIn0.CPZ8u9HUSb9FIa1EVEC8dRxTAUXkTIXSuXlmehG52HM");
+    if (localStorage.getItem("token")) {
+        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+    }
 
     loadProgressBar();
 
@@ -256,7 +258,14 @@ function logout() {
 // #endregion 
 
 function getMenus() {
-    axios.get(`${apiRootPath}api/MenuAPI/GetAllMenuReport/` + constants.APPLICATION_ID)
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + localStorage.getItem("token")
+        }
+    }
+    console.log(config);
+    axios.get(`${apiRootPath}api/MenuAPI/GetAllMenuReport/` + constants.APPLICATION_ID, config)
     
         .then(function (response) {
             generateMenu(response.data);

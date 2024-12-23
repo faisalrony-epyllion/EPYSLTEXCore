@@ -45,159 +45,7 @@
         
 
   
-        if (isAcknowledgePage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
-            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
-            $toolbarEl.find("#btnProposedList").hide();
-            $toolbarEl.find("#btnApprovedList").hide();
-            $toolbarEl.find("#btnRejectdList").hide();
-            $toolbarEl.find("#btnAcknowledgeList").show();
-            $toolbarEl.find("#btnUnAcknowledgeList").show();
-            $toolbarEl.find("#btnPendingAcknowledgeList").show();
-            $toolbarEl.find("#btnPendingCPRList").hide();
-            $toolbarEl.find("#btnDraftList").hide();
-            $toolbarEl.find("#btnCPRList").hide();
-            $toolbarEl.find("#btnDraftList").hide();
-            $toolbarEl.find("#btnPendingCFRList").hide();
-            $toolbarEl.find("#btnCFRList").hide();
-            $toolbarEl.find("#btnAllPRList").hide();
-            $toolbarEl.find("#btnSave").hide();
-            $toolbarEl.find("#btnSaveForApproval").hide();
-            $toolbarEl.find("#btnAcknowledge").hide();
-            $toolbarEl.find("#btnApproveYPR").hide();
-            $toolbarEl.find("#btnRejectYPR").hide();
-            $toolbarEl.find("#btnAkgYPR").show();
-            $toolbarEl.find("#btnUnAkgYPR").show();
-            $toolbarEl.find("#btnNewItem").hide();
-            $formEl.find("#btnAcknowledgeMR").hide();
 
-            status = statusConstants.PARTIALLY_COMPLETED;
-            $toolbarEl.find("#divAddPRForMR").fadeOut();
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingAcknowledgeList"), $toolbarEl);
-            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
-
-            isEditable = false;
-        }
-        else if (isApprovePage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
-            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
-            $toolbarEl.find("#btnProposedList").show();
-            $toolbarEl.find("#btnApprovedList").show();
-            $toolbarEl.find("#btnRejectdList").show();
-            $toolbarEl.find("#btnAcknowledgeList").hide();
-            $toolbarEl.find("#btnUnAcknowledgeList").hide();
-            $toolbarEl.find("#btnPendingAcknowledgeList").hide();
-            $toolbarEl.find("#btnPendingCPRList").hide();
-            $toolbarEl.find("#btnDraftList").hide();
-            $toolbarEl.find("#btnCPRList").hide();
-            $toolbarEl.find("#btnDraftList").hide();
-            $toolbarEl.find("#btnPendingCFRList").hide();
-            $toolbarEl.find("#btnCFRList").show();
-            $toolbarEl.find("#btnAllPRList").hide();
-            $toolbarEl.find("#btnSave").hide();
-            $toolbarEl.find("#btnSaveForApproval").hide();
-            $toolbarEl.find("#btnAcknowledge").hide();
-
-            $toolbarEl.find("#btnApproveYPR").show();
-            $toolbarEl.find("#btnRejectYPR").show();
-            $toolbarEl.find("#btnAkgYPR").hide();
-            $toolbarEl.find("#btnUnAkgYPR").hide();
-            $toolbarEl.find("#btnNewItem").hide();
-            $formEl.find("#btnAcknowledgeMR").hide();
-
-            status = statusConstants.PROPOSED;
-            $toolbarEl.find("#divAddPRForMR").fadeOut();
-            toggleActiveToolbarBtn($toolbarEl.find("#btnProposedList"), $toolbarEl);
-
-            isEditable = false;
-            $formEl.find("#BuyerTeam,#Buyer").show();
-        }
-        else if (isCPRPage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
-            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
-            $toolbarEl.find("#btnProposedList").hide();
-            $toolbarEl.find("#btnApprovedList").hide();
-            $toolbarEl.find("#btnRejectdList").hide();
-            $toolbarEl.find("#btnAcknowledgeList").hide();
-            $toolbarEl.find("#btnUnAcknowledgeList").hide();
-            $toolbarEl.find("#btnPendingAcknowledgeList").hide();
-            $toolbarEl.find("#btnPendingCPRList").show();
-            $toolbarEl.find("#btnDraftList").show();
-            $toolbarEl.find("#btnCPRList").show();
-            $toolbarEl.find("#btnPendingCFRList").hide();
-            $toolbarEl.find("#btnCFRList").hide();
-            $toolbarEl.find("#btnAllPRList").hide();
-            $toolbarEl.find("#btnSave").hide();
-            $toolbarEl.find("#btnSaveForApproval").hide();
-            $toolbarEl.find("#btnAcknowledge").hide();
-
-            $toolbarEl.find("#btnApproveYPR").hide();
-            $toolbarEl.find("#btnRejectYPR").hide();
-            $toolbarEl.find("#btnAkgYPR").hide();
-            $toolbarEl.find("#btnUnAkgYPR").hide();
-            $toolbarEl.find("#btnNewItem").hide();
-            $formEl.find("#btnAcknowledgeMR").hide();
-
-            status = statusConstants.PENDING;
-            $toolbarEl.find("#divAddPRForMR").fadeOut();
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingCPRList"), $toolbarEl);
-            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
-            isEditable = true;
-        }
-        else if (isFPRPage) {
-            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
-            $toolbarEl.find("#btnNewItem").hide();
-            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
-            $toolbarEl.find("#btnProposedList").hide();
-            $toolbarEl.find("#btnApprovedList").hide();
-            $toolbarEl.find("#btnRejectdList").hide();
-            $toolbarEl.find("#btnAcknowledgeList").hide();
-            $toolbarEl.find("#btnUnAcknowledgeList").hide();
-            $toolbarEl.find("#btnPendingAcknowledgeList").hide();
-            $toolbarEl.find("#btnPendingCPRList").hide();
-            $toolbarEl.find("#btnDraftList").hide();
-            $toolbarEl.find("#btnCPRList").hide();
-            $toolbarEl.find("#btnPendingCFRList").show();
-            $toolbarEl.find("#btnCFRList").show();
-            $toolbarEl.find("#btnAllPRList").show();
-            //$toolbarEl.find("#btnSave").show();
-            $toolbarEl.find("#btnSave").hide();
-            $toolbarEl.find("#btnSaveForApproval").hide();
-            $toolbarEl.find("#btnAcknowledge").show();
-            $toolbarEl.find("#btnApproveYPR").hide();
-            $toolbarEl.find("#btnRejectYPR").hide();
-            $toolbarEl.find("#btnAkgYPR").hide();
-            $toolbarEl.find("#btnUnAkgYPR").hide();
-            $toolbarEl.find("#btnNewItem").hide();
-            $formEl.find("#btnAcknowledgeMR").hide();
-
-            status = statusConstants.PENDING;
-            $toolbarEl.find("#divAddPRForMR").fadeOut();
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingCFRList"), $toolbarEl);
-            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
-            isEditable = false;
-        }
-        else {
-            $toolbarEl.find("#btnEditList").show();
-            $toolbarEl.find("#btnPendingCPRList").hide();
-            $toolbarEl.find("#btnDraftList").hide();
-            $toolbarEl.find("#btnCPRList").hide();
-            $toolbarEl.find("#btnPendingCFRList").hide();
-            $toolbarEl.find("#btnCFRList").show();
-            $toolbarEl.find("#btnAllPRList").show();
-            $toolbarEl.find("#btnSave").show();
-            $toolbarEl.find("#btnSaveForApproval").show();
-            $toolbarEl.find("#btnAcknowledge").hide();
-            $toolbarEl.find("#btnApproveYPR").hide();
-            $toolbarEl.find("#btnRejectYPR").hide();
-            $toolbarEl.find("#btnAkgYPR").hide();
-            $toolbarEl.find("#btnUnAkgYPR").hide();
-            $toolbarEl.find("#btnNewItem").hide();
-            $formEl.find("#btnAcknowledgeMR").hide();
-            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
-            isEditable = true;
-        }
-        initMasterTable();
 
         //$toolbarEl.find("#btnList").on("click", function (e) {
         //    e.preventDefault();
@@ -384,10 +232,6 @@
 
         $toolbarEl.find("#btnAddPRForMR").on("click", getNewDataPRForMR);
 
-       
-
-
-
         $formEl.find("#btnRejectYPR").click(function (e) {
             e.preventDefault();
 
@@ -466,6 +310,164 @@
         });
 
         $formEl.find("#btnCancel").on("click", backToList);
+
+        if (isAcknowledgePage) {
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
+            $toolbarEl.find("#btnProposedList").hide();
+            $toolbarEl.find("#btnApprovedList").hide();
+            $toolbarEl.find("#btnRejectdList").hide();
+            $toolbarEl.find("#btnAcknowledgeList").show();
+            $toolbarEl.find("#btnUnAcknowledgeList").show();
+            $toolbarEl.find("#btnPendingAcknowledgeList").show();
+            $toolbarEl.find("#btnPendingCPRList").hide();
+            $toolbarEl.find("#btnDraftList").hide();
+            $toolbarEl.find("#btnCPRList").hide();
+            $toolbarEl.find("#btnDraftList").hide();
+            $toolbarEl.find("#btnPendingCFRList").hide();
+            $toolbarEl.find("#btnCFRList").hide();
+            $toolbarEl.find("#btnAllPRList").hide();
+            $toolbarEl.find("#btnSave").hide();
+            $toolbarEl.find("#btnSaveForApproval").hide();
+            $toolbarEl.find("#btnAcknowledge").hide();
+            $toolbarEl.find("#btnApproveYPR").hide();
+            $toolbarEl.find("#btnRejectYPR").hide();
+            $toolbarEl.find("#btnAkgYPR").show();
+            $toolbarEl.find("#btnUnAkgYPR").show();
+            $toolbarEl.find("#btnNewItem").hide();
+            $formEl.find("#btnAcknowledgeMR").hide();
+
+            status = statusConstants.PARTIALLY_COMPLETED;
+            $toolbarEl.find("#divAddPRForMR").fadeOut();
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingAcknowledgeList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingAcknowledgeList").click();
+            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
+
+            isEditable = false;
+        }
+        else if (isApprovePage) {
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
+            $toolbarEl.find("#btnProposedList").show();
+            $toolbarEl.find("#btnApprovedList").show();
+            $toolbarEl.find("#btnRejectdList").show();
+            $toolbarEl.find("#btnAcknowledgeList").hide();
+            $toolbarEl.find("#btnUnAcknowledgeList").hide();
+            $toolbarEl.find("#btnPendingAcknowledgeList").hide();
+            $toolbarEl.find("#btnPendingCPRList").hide();
+            $toolbarEl.find("#btnDraftList").hide();
+            $toolbarEl.find("#btnCPRList").hide();
+            $toolbarEl.find("#btnDraftList").hide();
+            $toolbarEl.find("#btnPendingCFRList").hide();
+            $toolbarEl.find("#btnCFRList").show();
+            $toolbarEl.find("#btnAllPRList").hide();
+            $toolbarEl.find("#btnSave").hide();
+            $toolbarEl.find("#btnSaveForApproval").hide();
+            $toolbarEl.find("#btnAcknowledge").hide();
+
+            $toolbarEl.find("#btnApproveYPR").show();
+            $toolbarEl.find("#btnRejectYPR").show();
+            $toolbarEl.find("#btnAkgYPR").hide();
+            $toolbarEl.find("#btnUnAkgYPR").hide();
+            $toolbarEl.find("#btnNewItem").hide();
+            $formEl.find("#btnAcknowledgeMR").hide();
+
+            status = statusConstants.PROPOSED;
+            $toolbarEl.find("#divAddPRForMR").fadeOut();
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnProposedList"), $toolbarEl);
+            $toolbarEl.find("#btnProposedList").click();
+
+            isEditable = false;
+            $formEl.find("#BuyerTeam,#Buyer").show();
+        }
+        else if (isCPRPage) {
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
+            $toolbarEl.find("#btnProposedList").hide();
+            $toolbarEl.find("#btnApprovedList").hide();
+            $toolbarEl.find("#btnRejectdList").hide();
+            $toolbarEl.find("#btnAcknowledgeList").hide();
+            $toolbarEl.find("#btnUnAcknowledgeList").hide();
+            $toolbarEl.find("#btnPendingAcknowledgeList").hide();
+            $toolbarEl.find("#btnPendingCPRList").show();
+            $toolbarEl.find("#btnDraftList").show();
+            $toolbarEl.find("#btnCPRList").show();
+            $toolbarEl.find("#btnPendingCFRList").hide();
+            $toolbarEl.find("#btnCFRList").hide();
+            $toolbarEl.find("#btnAllPRList").hide();
+            $toolbarEl.find("#btnSave").hide();
+            $toolbarEl.find("#btnSaveForApproval").hide();
+            $toolbarEl.find("#btnAcknowledge").hide();
+
+            $toolbarEl.find("#btnApproveYPR").hide();
+            $toolbarEl.find("#btnRejectYPR").hide();
+            $toolbarEl.find("#btnAkgYPR").hide();
+            $toolbarEl.find("#btnUnAkgYPR").hide();
+            $toolbarEl.find("#btnNewItem").hide();
+            $formEl.find("#btnAcknowledgeMR").hide();
+
+            status = statusConstants.PENDING;
+            $toolbarEl.find("#divAddPRForMR").fadeOut();
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingCPRList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingCPRList").click();
+            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
+            isEditable = true;
+        }
+        else if (isFPRPage) {
+            $toolbarEl.find("#btnNewPR,#btnPendingMaterialReqList,#btnAcknowledgedMaterialReqList,#btnROLBasePendingList,#btnPendingRevisionList").hide();
+            $toolbarEl.find("#btnNewItem").hide();
+            $toolbarEl.find("#btnEditList,#btnRevisionList").hide();
+            $toolbarEl.find("#btnProposedList").hide();
+            $toolbarEl.find("#btnApprovedList").hide();
+            $toolbarEl.find("#btnRejectdList").hide();
+            $toolbarEl.find("#btnAcknowledgeList").hide();
+            $toolbarEl.find("#btnUnAcknowledgeList").hide();
+            $toolbarEl.find("#btnPendingAcknowledgeList").hide();
+            $toolbarEl.find("#btnPendingCPRList").hide();
+            $toolbarEl.find("#btnDraftList").hide();
+            $toolbarEl.find("#btnCPRList").hide();
+            $toolbarEl.find("#btnPendingCFRList").show();
+            $toolbarEl.find("#btnCFRList").show();
+            $toolbarEl.find("#btnAllPRList").show();
+            //$toolbarEl.find("#btnSave").show();
+            $toolbarEl.find("#btnSave").hide();
+            $toolbarEl.find("#btnSaveForApproval").hide();
+            $toolbarEl.find("#btnAcknowledge").show();
+            $toolbarEl.find("#btnApproveYPR").hide();
+            $toolbarEl.find("#btnRejectYPR").hide();
+            $toolbarEl.find("#btnAkgYPR").hide();
+            $toolbarEl.find("#btnUnAkgYPR").hide();
+            $toolbarEl.find("#btnNewItem").hide();
+            $formEl.find("#btnAcknowledgeMR").hide();
+
+            status = statusConstants.PENDING;
+            $toolbarEl.find("#divAddPRForMR").fadeOut();
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingCFRList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingCFRList").click();
+            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
+            isEditable = false;
+        }
+        else {
+            $toolbarEl.find("#btnEditList").show();
+            $toolbarEl.find("#btnPendingCPRList").hide();
+            $toolbarEl.find("#btnDraftList").hide();
+            $toolbarEl.find("#btnCPRList").hide();
+            $toolbarEl.find("#btnPendingCFRList").hide();
+            $toolbarEl.find("#btnCFRList").show();
+            $toolbarEl.find("#btnAllPRList").show();
+            $toolbarEl.find("#btnSave").show();
+            $toolbarEl.find("#btnSaveForApproval").show();
+            $toolbarEl.find("#btnAcknowledge").hide();
+            $toolbarEl.find("#btnApproveYPR").hide();
+            $toolbarEl.find("#btnRejectYPR").hide();
+            $toolbarEl.find("#btnAkgYPR").hide();
+            $toolbarEl.find("#btnUnAkgYPR").hide();
+            $toolbarEl.find("#btnNewItem").hide();
+            $formEl.find("#btnAcknowledgeMR").hide();
+            $formEl.find("#BuyerTeam,#Buyer,#ApvBuyer,#ApvBuyerTeam").hide();
+            isEditable = true;
+        }
+        initMasterTable();
 
         getYarnSegments();
     });
@@ -1083,7 +1085,8 @@
     function backToList() {
         if (status === statusConstants.NEW) {
             status = statusConstants.ADDITIONAL;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnAcknowledgedMaterialReqList"), $toolbarEl);
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnAcknowledgedMaterialReqList"), $toolbarEl);
+            $toolbarEl.find("#btnAcknowledgedMaterialReqList").click();
         }
         $divDetailsEl.fadeOut();
         resetForm();
@@ -1094,7 +1097,8 @@
     function reloadMasterTable() {
         if (status === statusConstants.NEW) {
             status = statusConstants.ADDITIONAL;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnAcknowledgedMaterialReqList"), $toolbarEl);
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnAcknowledgedMaterialReqList"), $toolbarEl);
+            $toolbarEl.find("#btnAcknowledgedMaterialReqList").click();
         }
         $divDetailsEl.fadeOut();
         resetForm();
@@ -1105,7 +1109,8 @@
     function reloadMasterTable() {
         if (status === statusConstants.NEW) {
             status = statusConstants.ADDITIONAL;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnAcknowledgedMaterialReqList"), $toolbarEl);
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnAcknowledgedMaterialReqList"), $toolbarEl);
+            $toolbarEl.find("#btnAcknowledgedMaterialReqList").click();
         }
         $divDetailsEl.fadeOut();
         resetForm();

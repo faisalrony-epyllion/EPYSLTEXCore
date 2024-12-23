@@ -13,7 +13,7 @@
     var formId = "form" + pageId;
     var divDetailsId = "divDetails" + pageId;
 }
-<link href="~/Content/SyncfusionSelect2.css" rel="stylesheet" />
+@* <link href="~/Content/SyncfusionSelect2.css" rel="stylesheet" /> *@
 <div id="@pageId">
     @* 
     <input type="hidden" id="AcknowledgePage" value="@ViewBag.AcknowledgePage" />
@@ -25,12 +25,12 @@
     <input type="hidden" id="AcknowledgeMnMPage" value="@ViewBag.AcknowledgeMnMPage" />
  *@
     <div class="row" id="@divTblId">
-        <div class="col-12">
-            <div id="@toolbarId" class="master-toolbar">
+        <div class="col-sm-12 toolBar-parent-div">
+            <div id="@toolbarId">
                 <button id="btnNew" class="btn btn-default btn-sm">
                     <i class="fa fa-plus"></i>&nbsp;New
                 </button>
-                <button id="btnPendingList" class="btn btn-default btn-sm">
+                <button id="btnPendingList" class="btn btn-success text-white btn-sm">
                     <i class="fa fa-hourglass"></i>&nbsp;Projection Booking Lists
                 </button>
                 <button id="btnSendList" class="btn btn-default btn-sm">
@@ -58,13 +58,13 @@
                     <i class="fa fa-hourglass"></i>&nbsp;All Lists
                 </button>
             </div>
-            <div style="font-size:12px">
+            <div class="col-sm-12" style="font-size:12px">
                 <table id="@tblMasterId"></table>
             </div>
         </div>
     </div>
     <div class="row">
-        <form class="row" id="@formId">
+        <form class="form-horizontal" id="@formId">
             <input type="hidden" id="PYBookingID" name="PYBookingID" value="-1111" />
             <input type="hidden" id="FiberTypeID" name="FiberTypeID" />
             <input type="hidden" id="BuyerID" name="BuyerID" />
@@ -72,140 +72,132 @@
             <input type="hidden" id="BuyerTeamIDsList" name="BuyerTeamIDsList" />
             <input type="hidden" id="DepertmentDescription" name="DepertmentDescription" />
             <input type="hidden" id="PBookingType" name="PBookingType" />
-            @*             <input type="hidden" id="DepartmentID" name="DepartmentID" />
-            <input type="hidden" id="SeasonID" name="SeasonID" />
-            <input type="hidden" id="FinancialYearID" name="FinancialYearID" /> *@
+            @*<input type="hidden" id="DepartmentID" name="DepartmentID" />*@
 
-            <div class="card card-default" id="@divDetailsId" style="display:none">
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="card" style="border-color:transparent; border-style:none;">
-                        <div class="card-header">
-                            <h3 class="card-title">  General Information</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Booking No</label>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Booking No</label>
+                                            <div class="col-sm-7">
+                                                <input id="PYBookingNo" name="PYBookingNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                            </div>
+                                        </div>
 
-                                        <input id="PYBookingNo" name="PYBookingNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Booking Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="PYBookingDate" name="PYBookingDate" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Booking By</label>
+                                            <div class="col-sm-7">
+                                                <select id="BookingByID" name="BookingByID" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Company</label>
+                                            <div class="col-sm-7">
+                                                <select id="CompanyID" name="CompanyID" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group divCopyFromExistingBooking" style="display:none;">
+                                            <label class="control-label col-sm-5 small"></label>
+                                            <div class="col-sm-7">
+                                                <button id="btnCopyFromExistingBooking" class="btn btn-default btn-sm" style="width:100%;">
+                                                    <i class="fa fa-plus"></i>&nbsp;Copy From Existing Booking
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="divRevisionNo">
+                                            <label class="control-label col-sm-5 small">RevisionNo</label>
+                                            <div class="col-sm-7">
+                                                <input id="RevisionNo" name="RevisionNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="divRevisionDate">
+                                            <label class="control-label col-sm-5 small">Revision Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="RevisionDate" name="RevisionDate" class="form-control input-sm ej2-datepicker" disabled="disabled" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="divRevisionReason">
+                                            <label class="control-label col-sm-5 small">Revision Reason</label>
+                                            <div class="col-sm-7">
+                                                <input id="RevisionReason" name="RevisionReason" class="form-control input-sm" />
+                                            </div>
+                                        </div>
 
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Booking Date</label>
 
-                                        <input id="PYBookingDate" name="PYBookingDate" class="form-control input-sm ej2-datepicker" />
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Buyer</label>
+                                            <div class="col-sm-7">
+                                                <select id="BuyerIDs" name="BuyerIDs" class="form-control input-sm" style="width:100%" multiple></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Buyer Team</label>
+                                            <div class="col-sm-7">
+                                                <select id="BuyerTeamIDs" name="BuyerTeamIDs" class="form-control input-sm" style="width:100%" multiple></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">From Depertment</label>
+                                            <div class="col-sm-7">
+                                                <select id="DepartmentID" name="DepartmentID" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Remarks</label>
+                                            <div class="col-sm-7">
+                                                <textarea rows="2" id="Remarks" name="Remarks" class="form-control" placeholder="Enter additional notes"></textarea>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Booking By</label>
-
-                                        <select id="BookingByID" name="BookingByID" class="form-control input-sm" style="width:100%"></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Company</label>
-
-                                        <select id="CompanyID" name="CompanyID" class="form-control input-sm" style="width:100%"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Buyer</label>
-                                        <select id="BuyerIDs" name="BuyerIDs" class="form-control input-sm" style="width:100%" multiple></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Buyer Team</label>
-                                        <select id="BuyerTeamIDs" name="BuyerTeamIDs" class="form-control input-sm" style="width:100%" multiple></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>From Depertment</label>
-                                        <select id="DepartmentID" name="DepartmentID" class="form-control input-sm" style="width:100%"></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Season</label>
-                                        <select id="SeasonID" name="SeasonID" class="form-control input-sm" style="width:100%"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Session</label>
-                                        <select id="FinancialYearID" name="FinancialYearID" class="form-control input-sm" style="width:100%"></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Fabric Booking Strat (Month)</label>
-                                        <input id="FabricBookingStartMonth" name="FabricBookingStartMonth" class="form-control input-sm ej2-datepicker" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Fabric Booking End (Month)</label>
-                                        <input id="FabricBookingEndMonth" name="FabricBookingEndMonth" class="form-control input-sm ej2-datepicker" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Remarks</label>
-                                        <textarea rows="2" id="Remarks" name="Remarks" class="form-control" placeholder="Enter additional notes"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3" id="divRevisionNo">
-                                    <div class="form-group">
-                                        <label>RevisionNo</label>
-                                        <input id="RevisionNo" name="RevisionNo" class="form-control input-sm" readonly />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3" id="divRevisionDate">
-                                    <div class="form-group">
-                                        <label>Revision Date</label>
-                                        <input id="RevisionDate" name="RevisionDate" class="form-control input-sm ej2-datepicker" disabled="disabled" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3" id="divRevisionReason">
-                                    <div class="form-group">
-                                        <label>Revision Reason</label>
-                                        <input id="RevisionReason" name="RevisionReason" class="form-control input-sm" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3 divReject" style="display:none;">
-                                    <div class="form-group">
-                                        <label>Reject Reason</label>
-                                        <input id="RejectReason" name="RejectReason" class="form-control input-sm" disabled />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group divCopyFromExistingBooking" style="display:none;">
-                                        <label class="col-form-label col-sm-5 small"></label>
-
-                                        <button id="btnCopyFromExistingBooking" class="btn btn-default btn-sm" style="width:100%;">
-                                            <i class="fa fa-plus"></i>&nbsp;Copy From Existing Booking
-                                        </button>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Season</label>
+                                            <div class="col-sm-8">
+                                                <select id="SeasonID" name="SeasonID" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Session</label>
+                                            <div class="col-sm-8">
+                                                <select id="FinancialYearID" name="FinancialYearID" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Fabric Booking Strat (Month)</label>
+                                            <div class="col-sm-8">
+                                                <input id="FabricBookingStartMonth" name="FabricBookingStartMonth" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Fabric Booking End (Month)</label>
+                                            <div class="col-sm-8">
+                                                <input id="FabricBookingEndMonth" name="FabricBookingEndMonth" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group divReject" style="display:none;">
+                                            <label class="control-label col-sm-4 small">Reject Reason</label>
+                                            <div class="col-sm-8">
+                                                <input id="RejectReason" name="RejectReason" class="form-control input-sm" disabled />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -213,39 +205,42 @@
                     </div>
                 </div>
 
-                <div class="card" style="border-color:transparent; border-style:none;">
-                    <div class="card-header">
-                        <h3 class="card-title">  Item Information</h3>
-                        <button type="button" id="addYarnComposition" class="btn btn-success btn-xs">
-                            <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Composition
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12">
-                                @*<button id="btnNewItem" type="button" class="btn btn-default text-grey btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;Add New Item</button>*@
-                                <div class="form-group">
-                                    <table id="@tblChildId"></table>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                            <button type="button" id="addYarnComposition" class="btn btn-success btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Composition
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    @*<button id="btnNewItem" type="button" class="btn btn-default text-grey btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;Add New Item</button>*@
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="box-footer btn-e-float-margin">
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
                     <div class="pull-right pull-right-mb">
-                        <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                        <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                        @*<button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>*@
-                        <button type="button" class="btn btn-primary m-w-120" id="btnReviseAndSendToApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise & Send To Approver</button>
-                        <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
-                        <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
-                        <button type="button" class="btn btn-success m-w-120" id="btnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
-                        <button type="button" class="btn btn-success m-w-120" id="btnMnMAck" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge(M&M)</button>
-                        <button type="button" class="btn btn-danger m-w-120" id="btnUnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;UnAcknowledge</button>
-                        <button type="button" class="btn btn-success m-w-120" id="btnSendYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Send To Approver</button>
+                        <button type="button" class="btn btn-default btn-sm w-150" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                        <button type="button" class="btn btn-primary btn-sm w-150" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        @*<button type="button" class="btn btn-primary btn-sm w-150" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>*@
+                        <button type="button" class="btn btn-primary btn-sm w-150" id="btnReviseAndSendToApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise & Send To Approver</button>
+                        <button type="button" class="btn btn-success btn-sm w-150" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                        <button type="button" class="btn btn-danger btn-sm w-150" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>
+                        <button type="button" class="btn btn-success btn-sm w-150" id="btnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
+                        <button type="button" class="btn btn-success btn-sm w-150" id="btnMnMAck" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge(M&M)</button>
+                        <button type="button" class="btn btn-danger btn-sm w-150" id="btnUnAkgYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;UnAcknowledge</button>
+                        <button type="button" class="btn btn-success btn-sm w-150" id="btnSendYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Send To Approver</button>
+
                     </div>
                 </div>
+
             </div>
         </form>
     </div>

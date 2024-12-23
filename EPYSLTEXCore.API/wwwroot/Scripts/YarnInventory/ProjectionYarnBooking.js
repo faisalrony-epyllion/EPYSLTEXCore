@@ -647,13 +647,13 @@
             if (status == statusConstants.APPROVED) {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-envelope-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'far fa-envelope' } }
                 ]
             } else if (status == statusConstants.REJECT) {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }//,
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }//,
                     //{ type: 'Revise', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-plus' } }
                 ]
             } else {
@@ -661,7 +661,7 @@
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                     { type: 'Approve', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
                     { type: 'Reject', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-ban' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
             }
         }
@@ -669,7 +669,7 @@
             if (status == statusConstants.ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE) {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }//,
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }//,
                     //{ type: 'Revise', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-recycle' } }
                 ]
             }
@@ -678,7 +678,7 @@
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                     /*{ type: 'Acknowledge', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },*/
                     { type: 'UnAcknowledge', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-times' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
             }
         }
@@ -686,21 +686,21 @@
             if (status == statusConstants.APPROVED || status == statusConstants.REJECT || status == statusConstants.ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE) {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Revise', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-recycle' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                    { type: 'Revise', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-recycle' } }
                 ]
             }
             else if (status == statusConstants.PROPOSED) {
                 commands = [
                     { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Revise', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-recycle' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                    { type: 'Revise', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-recycle' } }
                 ]
             }
             else {
                 commands = [
                     { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     //{ type: 'ApprovePYB', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
                     //{ type: 'RejectPYB', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-ban' } }
                 ]
@@ -711,7 +711,7 @@
         if (status == statusConstants.REVISE || status == statusConstants.ADDITIONAL) {
             commands = [
                 { type: 'ViewPYB', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 //{ type: 'ApprovePYB', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
                 //{ type: 'RejectPYB', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-ban' } }
             ]

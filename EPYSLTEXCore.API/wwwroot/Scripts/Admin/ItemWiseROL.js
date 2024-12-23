@@ -201,6 +201,7 @@
                         if (args.requestType === 'add') {
                             let itemNameID = getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val());
                             let companyID = getDefaultValueWhenInvalidN($formEl.find("#CompanyID").val());
+                            $("#ValidDate").val(moment().format("mm/dd/yyyy"));
                             if (itemNameID == 0) {
                                 toastr.error("Selecet Item!!!");
                                 args.cancel = true;
@@ -245,7 +246,7 @@
                             $("#MaximumPRQtyLP").val(args.rowData.MaximumPRQtyLP);
                             $("#MaximumPRQtyFP").val(args.rowData.MaximumPRQtyFP);
                             $("#MOQ").val(args.rowData.MOQ);
-                            $("#ValidDate").val(args.rowData.ValidDate);
+                            $("#ValidDate").val(formatDateToDefault(args.rowData.ValidDate));
                         }
                     }
                 });

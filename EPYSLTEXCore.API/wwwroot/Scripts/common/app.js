@@ -601,6 +601,12 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
     }).catch(showResponseError);
 }
 
+function gotoReport() {  
+
+    const url = reportRootPath + '/reports/GetReport?param=' + localStorage.getItem("token");
+    window.open(url, "_blank"); 
+}
+
 function GetMenus(applicationId) {
 
     axios.get("/api/MenuAPI/GetAllMenu/" + applicationId)
@@ -640,8 +646,8 @@ function generateMenu(menuList) {
                 template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a href="#!" class="nav-link" data-navurl-name="' + updatednavigateUrl + '" data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '" data-page-type="CI"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else if (item.PageName == 'ReportViewer') {
-                var path = reportRootPath + '/reports/index';
-                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="' + path + '" target="_blank" data-page-type="Report"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
+              
+                template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" target="_blank" onclick="gotoReport()" data-page-type="Report"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';
             }
             else {
                 template += '<li menu-id=' + item.MenuId + ' class="menuLI"><a class="nav-link" href="#!" data-navurl-name="' + updatednavigateUrl + '"  data-controller-name="' + globalControllerName + '" data-action-name="' + globalActionName + '" data-table-id="' + navProperties[2] + '" data-page-name="' + item.PageName + '" data-menu-id="' + item.MenuId + '" data-menu-param = "' + item.MenuParam + '"><i class="nav-icon far fa-dot-circle"></i> <p>' + item.MenuCaption + '</p></a></li>';

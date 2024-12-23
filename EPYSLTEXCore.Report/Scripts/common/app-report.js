@@ -21,12 +21,18 @@ $(document).ready(function () {
     rootPath = window.location.protocol + '//' + window.location.host;
     apiRootPath = "https://localhost:7053/";
 
+  
+
+ 
     $.fn.editable.defaults.mode = 'inline';
     toastr.options.escapeHtml = true;
     axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-    //if (localStorage.getItem("token")) {
-    //    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-    //}
+
+    
+    if (localStorage.getItem("token")) {
+        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+        console.log(localStorage.getItem("token"));
+    }
 
     loadProgressBar();
 

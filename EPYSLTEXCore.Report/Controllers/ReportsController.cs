@@ -9,10 +9,13 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+
+using System.Web.Http.Cors;
 using System.Web.Mvc;
 
 namespace EPYSLTEXCore.Report.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*", SupportsCredentials = true)]
     public class ReportsController : Controller
     {
         private readonly IReportSuiteRepository _reportSuiteRepository;
@@ -30,12 +33,20 @@ namespace EPYSLTEXCore.Report.Controllers
             _reportDocument = reportDocument;
             _reportingService = reportingService;
         }
-    
-        public ActionResult Index()
+
+        public ActionResult GetReport(string param)
         {
+            TempData["paramToken"] = param;
+            return RedirectToAction("Index");
+        }
+
+        
+        public ActionResult Index()
+        {        
 
             ViewBag.ProfilePic = "/images/user.png";
             ViewBag.EmployeeName = "Nishadur Rahman";
+            ViewBag.paramToken = TempData["paramToken"];
             return View();
         }
 

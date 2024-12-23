@@ -496,13 +496,13 @@
             if (status == statusConstants.REJECT || status == statusConstants.COMPLETED) {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
                 ]
             }
             else if (status == statusConstants.APPROVED) {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
                     //{ type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-envelope-o' } }
                 ]
             }
@@ -511,7 +511,7 @@
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                     { type: 'Approve', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
                     { type: 'Reject', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-ban' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
             }
         }
@@ -520,14 +520,14 @@
             if (status == statusConstants.ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE) {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
             } else {
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                     { type: 'Acknowledge', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
                     { type: 'UnAcknowledge', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-times' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
             }
         }
@@ -537,12 +537,12 @@
                 if (status == statusConstants.COMPLETED) {
                     commands = [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 } else {
                     commands = [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 }
             }
@@ -550,12 +550,12 @@
                 if (status == statusConstants.COMPLETED || status == statusConstants.ALL_STATUS) {
                     commands = [
                         { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 } else {
                     commands = [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 }
             }
@@ -563,7 +563,7 @@
                 if (status == statusConstants.REJECT || status == statusConstants.ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE) {
                     commands = [
                         { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
 
                     ]
                 }
@@ -571,7 +571,7 @@
                     commands = [
                         { type: 'Addition', buttonOption: { cssClass: 'e-flat', iconCss: 'e-add e-icons' } },
                         { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
 
                     ]
                 }
@@ -583,7 +583,7 @@
                 else {
                     commands = [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 }
             }

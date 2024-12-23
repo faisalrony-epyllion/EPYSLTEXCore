@@ -79,7 +79,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {DbNames.EPYSL}..ItemSegmentValue ISV
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
                     LEFT JOIN YarnCountBasicSetup YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
-                    WHERE ISN.SegmentName In ('Yarn Count Live') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COUNT}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
 				)
                 --select * from(
                 Select * from YCO
@@ -629,7 +629,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
 				select 0 YarnTypeSVID,0 ManufacturingProcessSVID,0 SubProcessSVID,0 QualityParameterSVID,0 CountSVID,CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc]
                 from {DbNames.EPYSL}..ItemSegmentValue ISV
                 LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-                WHERE ISN.SegmentName In ('Yarn Count Live')  
+                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COUNT}')  
 				)
                 --select * from(
                 Select * from YCO

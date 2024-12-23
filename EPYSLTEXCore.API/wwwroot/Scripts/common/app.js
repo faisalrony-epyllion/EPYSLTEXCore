@@ -711,17 +711,36 @@ function initTitleMenuEvents() {
         if (status == "normal") {
             $(this).attr("status", "full");
             $(".main-sidebar,.main-header").hide(200);
-            $(".content-wrapper,.main-header").css({
+            $(".content-wrapper").css({
+                "margin-left": "0px"
+            });
+            //$(".sidebar-mini.sidebar-collapse").find(".content-wrapper").css({
+            //    "margin-left": "0px"
+            //});
+            $(".main-header").css({
                 "margin-left": "0px"
             });
 
         } else {
             $(this).attr("status", "normal");
             $(".main-sidebar,.main-header").show(200);
-            $(".content-wrapper,.main-header").css({
+           
+            $(".main-header").css({
                 "margin-left": "250px"
             });
-
+            var width = parseInt($(".main-sidebar").width());
+            if (width < 100) {
+                $(".content-wrapper").css({
+                    "margin-left": "4.6rem !important"
+                });
+                //$(".sidebar-mini.sidebar-collapse").find(".content-wrapper").css({
+                //    "margin-left": "4.6rem !important"
+                //});
+            } else {
+                $(".content-wrapper").css({
+                    "margin-left": "250px"
+                });
+            }
         }
     });
 }

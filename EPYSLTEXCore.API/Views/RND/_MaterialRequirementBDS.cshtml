@@ -19,8 +19,8 @@
 
 <div id="@pageId">
     <div class="row" id="@divTblId">
-        <div class="col-sm-12">
-            <div id="@toolbarId" class="master-toolbar">
+        <div class="col-sm-12 toolBar-parent-div">
+            <div id="@toolbarId">
                 <button id="btnList" class="btn btn-success text-white btn-sm">
                     <i class="fa fa-hourglass"></i>&nbsp;Available List
                 </button>
@@ -58,27 +58,58 @@
             <input type="hidden" id="FabricID" name="FabricID" />
             <input type="hidden" id="GroupConceptNo" name="GroupConceptNo" />
             <input type="hidden" id="YBookingNo" name="YBookingNo" />
-
-            <div class="card card-default" id="@divDetailsId" style="display:none">
-                <div class="card-body">
-                    <div class="card" style="border-color:transparent; border-style:none;">
-                        <div class="card-header">
-                            <h3 class="card-title"> General Information </h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
                         </div>
-
-                        <div class="card-body">
-                            <!-- Row 1 -->
-                            <div class="row">
+                        <div class="panel-body">
+                            <div class="form-horizontal">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="control-label col-sm-4 small">Booking No</label>
                                         <div class="col-sm-8">
                                             <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    @*<div class="form-group">
+                                            <label class="control-label col-sm-4 small">BookingID</label>
+                                            <div class="col-sm-8">
+                                                <input id="BookingID" name="BookingID" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>*@
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Type</label>
+                                        <div class="col-sm-8">
+                                            <input type="checkbox" style="margin:5px;" id="onlyFabric" name="onlyFabric" disabled />
+                                            <label for="onlyFabric">Fabric Item</label>
+
+                                            <input type="checkbox" style="margin:5px;" id="fabricOtherItem" name="fabricOtherItem" disabled />
+                                            <label for="fabricOtherItem">Collar Item</label>
+
+                                            <input type="checkbox" style="margin:5px;" id="onlyOtherItem" name="onlyOtherItem" disabled />
+                                            <label for="onlyOtherItem">Cuff Item</label>
+                                        </div>
+                                    </div>
+                                    <div id="divRetrial" class="d-none">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Trial/Re-Trial No</label>
+                                            <div class="col-sm-8">
+                                                <input id="TrialNo" name="TrialNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Trial/Re-Trial Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="TrialDate" name="TrialDate" class="form-control input-sm" readonly />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -90,20 +121,6 @@
                                             <input id="BookingDate" name="BookingDate" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Buyer</label>
-                                        <div class="col-sm-8">
-                                            <input id="BuyerName" name="BuyerName" class="form-control input-sm" readonly />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="control-label col-sm-4 small">Remarks</label>
                                         <div class="col-sm-8">
@@ -112,37 +129,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                         <label class="control-label col-sm-4 small">Type</label>
-                                         <div class="col-sm-8">
-                                             <input type="checkbox" style="margin:5px;" id="onlyFabric" name="onlyFabric" disabled />
-                                             <label for="onlyFabric">Fabric Item</label>
-
-                                             <input type="checkbox" style="margin:5px;" id="fabricOtherItem" name="fabricOtherItem" disabled />
-                                             <label for="fabricOtherItem">Collar Item</label>
-
-                                             <input type="checkbox" style="margin:5px;" id="onlyOtherItem" name="onlyOtherItem" disabled />
-                                             <label for="onlyOtherItem">Cuff Item</label>
-                                         </div>
-                                    </div>
-                                </div>
-                                <div id="divRetrial" class="d-none">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Trial/Re-Trial No</label>
-                                        <div class="col-sm-8">
-                                            <input id="TrialNo" name="TrialNo" class="form-control input-sm" readonly />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Trial/Re-Trial Date</label>
-                                        <div class="col-sm-8">
-                                            <input id="TrialDate" name="TrialDate" class="form-control input-sm" readonly />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>   
                         </div>
                     </div>
                 </div>
@@ -232,23 +218,23 @@
 
                 <div class="col-sm-12" id="divOtherItem">
                     <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading" style="background-color: #f5f5f5;">
+                        <div class="panel-heading">
                             <div class="row">
-                                <div class="col-sm-6 d-flex align-items-center" style="margin: 5px 0;">
-                                    <label style="font-weight: bold; font-size: 14px; margin: 0;">Collar Information</label>
+                                <div style="float: left; margin: 10px;">
+                                    <label>Collar Information</label>
+                                    @*<button type="button" id="btntblChildCollar" class="btn btn-success btn-xs btnHideShowPlus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" id="btnAddCollarItem" class="btn btn-primary btn-xs forAYB" title="Take Items" style="display:none;">
+                                        <i class="fa fa-search-plus"></i>
+                                    </button>*@
                                 </div>
-
-                                <div class="col-sm-6 d-flex justify-content-end align-items-center" style="gap: 10px;">
-                                    <label style="font-size: 12px; margin: 0;">Size:</label>
-                                    <select id="CollarSizeID" name="CollarSizeID" class="form-control"
-                                            style="height: 28px; width: 120px; padding: 0 5px;">
-                                    </select>
-
-                                    <label style="font-size: 12px; margin: 0;">Consumption(gm):</label>
-                                    <input type="number" id="CollarWeightInGm" name="CollarWeightInGm" class="form-control"
-                                           placeholder="0" style="height: 28px; width: 80px; padding: 0 5px;">
-
-                                    <button type="button" id="btnCollarApplyKG" class="btn btn-success btn-sm" style="height: 28px;">
+                                <div class="divForWeight" style="float: right; margin: 10px 10px 0 0; display: none;">
+                                    <label style="font-size: 12px;">Size : </label>
+                                    <select id="CollarSizeID" name="CollarSizeID" class="form-control SizeWithConsumption" style="margin-right: 5px; height: 24px; max-width:100px;"></select>
+                                    <label style="font-size: 12px;">Consumption(gm) : </label>
+                                    <input type="number" id="CollarWeightInGm" name="CollarWeightInGm" class="SizeWithConsumption" placeholder="Consumption(gm)" style="width: 70px; height: 24px;" />
+                                    <button type="button" id="btnCollarApplyKG" class="btn btn-success btn-xs SizeWithConsumption">
                                         Apply
                                     </button>
                                 </div>
@@ -268,29 +254,28 @@
 
                 <div class="col-sm-12" id="divCuffItem">
                     <div class="panel panel-success" style="border-color:transparent; border-style:none;">
-                        <div class="panel-heading" style="background-color: #f5f5f5;">
+                        <div class="panel-heading">
                             <div class="row">
-                                <div class="col-sm-6 d-flex align-items-center" style="margin: 5px 0;">
-                                    <label style="font-weight: bold; font-size: 14px; margin: 0;">Cuff Information</label>
+                                <div style="float: left; margin: 10px;">
+                                    <label>Cuff Information</label>
+                                    @*<button type="button" id="btntblChildCuff" class="btn btn-success btn-xs btnHideShowPlus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" id="btnAddCuffItem" class="btn btn-primary btn-xs forAYB" title="Take Items" style="display:none;">
+                                        <i class="fa fa-search-plus"></i>
+                                    </button>*@
                                 </div>
-
-                                <div class="col-sm-6 d-flex justify-content-end align-items-center" style="gap: 10px;">
-                                    <label style="font-size: 12px; margin: 0;">Size:</label>
-                                    <select id="CuffSizeID" name="CuffSizeID" class="form-control"
-                                            style="height: 28px; width: 120px; padding: 0 5px;">
-                                    </select>
-
-                                    <label style="font-size: 12px; margin: 0;">Consumption(gm):</label>
-                                    <input type="number" id="CuffWeightInGm" name="CuffWeightInGm" class="form-control"
-                                           placeholder="0" style="height: 28px; width: 80px; padding: 0 5px;">
-
-                                    <button type="button" id="btnCuffApplyKG" class="btn btn-success btn-sm" style="height: 28px;">
+                                <div class="divForWeight" style="float:right;margin:10px 10px 0 0;display:none;">
+                                    <label style="font-size: 12px;">Size : </label>
+                                    <select id="CuffSizeID" name="CuffSizeID" class="form-control SizeWithConsumption" style="margin-right: 5px; height: 24px; max-width: 100px;"></select>
+                                    <label style="font-size: 12px;">Consumption(gm) : </label>
+                                    <input type="number" id="CuffWeightInGm" name="CuffWeightInGm" class="SizeWithConsumption" placeholder="Consumption(gm)" style="width: 70px; height: 24px;" />
+                                    <button type="button" id="btnCuffApplyKG" class="btn btn-success btn-xs SizeWithConsumption">
                                         Apply
                                     </button>
                                 </div>
                             </div>
                         </div>
-
                         <div class="panel-body">
                             <div class="form-horizontal">
                                 <div class="col-sm-12">
@@ -302,8 +287,6 @@
                         </div>
                     </div>
                 </div>
-
-
                 <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
@@ -330,15 +313,13 @@
                     </div>
                 </div>
                 <div class="box-footer btn-e-float-margin" id="divFormButtons">
-                    <<div class="row">
-                        <div class="col-md-12 text-right">
-                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnSaveComplete"><i class="fa fa-save"></i>&nbsp;&nbsp;Save&Complete</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnAcknowledgeAutoPR"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge for Auto PR</button>
-                        </div>
+                    <div class="pull-right pull-right-mb">
+                        <button type="button" class="btn btn-default btn-sm w-150" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                        <button type="button" class="btn btn-primary btn-sm w-150" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        <button type="button" class="btn btn-primary btn-sm w-150" id="btnSaveComplete"><i class="fa fa-save"></i>&nbsp;&nbsp;Save&Complete</button>
+                        <button type="button" class="btn btn-primary btn-sm w-150" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                        <button type="button" class="btn btn-primary btn-sm w-150" id="btnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                        <button type="button" class="btn btn-primary btn-sm w-150" id="btnAcknowledgeAutoPR"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge for Auto PR</button>
                     </div>
                 </div>
             </div>

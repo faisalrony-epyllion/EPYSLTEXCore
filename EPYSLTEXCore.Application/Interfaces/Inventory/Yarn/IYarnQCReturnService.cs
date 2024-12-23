@@ -16,6 +16,7 @@ namespace EPYSLTEXCore.Application.Interfaces.Inventory.Yarn
         Task<YarnQCReturnMaster> GetAsync(int id);
         Task<YarnQCReturnMaster> GetDetailsByQCReturnChilds(string qcReceiveChildIds);
         Task SaveAsync(YarnQCReturnMaster entity);
+        Task ApproveAsync(YarnQCReturnMaster entity);
         Task<YarnQCReturnMaster> GetAllAsync(int id);
     }
 }

@@ -2,7 +2,9 @@
     var menuId, pageName;
     var toolbarId;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $formEl, tblMasterId, tblChildId;
-
+    var index;
+    var status;
+    var isYQCReturn = false, isYQCReturnApproval = false;
     var tableParams = {
         offset: 0,
         limit: 10,
@@ -12,7 +14,9 @@
     }
 
     var masterData;
-    var status = statusConstants.PENDING;
+    var dataset = new Array();
+    var status;
+    //var status = statusConstants.PENDING;
 
     $(function () {
         if (!menuId)
@@ -29,7 +33,10 @@
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
 
-        initMasterTable();
+        var menuParam = $("#" + pageId).find("#txtMenuParam").val();
+        if (menuParam == "YQCReturn") isYQCReturn = true;
+        else if (menuParam == "YQCReturnApproval") isYQCReturnApproval = true;
+
 
         $toolbarEl.find("#btnPending").on("click", function (e) {
             e.preventDefault();
@@ -51,11 +58,61 @@
 
         $formEl.find("#btnSave").click(function (e) {
             e.preventDefault();
-            save();
+            save(false);
         });
+
+        $formEl.find("#btnSaveAndSendForApproval").click(function (e) {
+            e.preventDefault();
+            save(true);
+        });
+
+        $formEl.find("#btnApprove").click(function (e) {
+            e.preventDefault();
+            approve(dataset, index);
+        });
+
         $toolbarEl.find("#btnCreate").click(function () {
             createNew();
         });
+
+        if (!isYQCReturn) {
+            $toolbarEl.find("#btnPendingListForApproval").show();
+            $toolbarEl.find("#btnApprovalList").show();
+            $formEl.find("#btnApprove").show();
+            $toolbarEl.find("#btnPending,#btnList,#btnCreate").hide();
+
+            $toolbarEl.find("#btnPendingListForApproval").on("click", function (e) {
+                e.preventDefault();
+                toggleActiveToolbarBtn(this, $toolbarEl);
+                resetTableParams();
+                status = statusConstants.PROPOSED_FOR_APPROVAL;
+                $formEl.find("#btnSave").hide();
+                $formEl.find("#btnApprove").show();
+                $formEl.find("#btnSaveAndSendForApproval").hide();
+                initMasterTable();
+            });
+
+            $toolbarEl.find("#btnApprovalList").on("click", function (e) {
+                e.preventDefault();
+                toggleActiveToolbarBtn(this, $toolbarEl);
+                resetTableParams();
+                status = statusConstants.APPROVED;
+                $formEl.find("#btnSave").hide();
+                $formEl.find("#btnApprove").hide();
+                $formEl.find("#btnCreate").hide();
+                initMasterTable();
+            });
+            $toolbarEl.find("#btnPendingListForApproval").click();
+        }
+        else {
+            $toolbarEl.find("#btnPending,#btnList").show();
+            $toolbarEl.find("#btnPendingListForApproval").hide();
+
+            $formEl.find("#btnApprove").hide();
+            $formEl.find("#btnSaveAndSendForApproval").show();
+            $toolbarEl.find("#btnApprovalList").hide();
+            $toolbarEl.find("#btnPending").click();
+        }
 
         $formEl.find("#btnCancel").on("click", backToList);
     });
@@ -175,7 +232,7 @@
             columns: [
                 {
                     headerText: 'Command', width: 100, commands: [
-                        { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
+                        { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit', visible: status !== statusConstants.PROPOSED_FOR_APPROVAL } },
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
                         { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
                         { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }
@@ -208,11 +265,12 @@
                 { field: 'ReceiveQty', headerText: 'Receive Qty', allowEditing: false },
                 { field: 'ReceiveQtyCone', headerText: 'Receive Qty(Cone)', allowEditing: false },
                 { field: 'ReceiveQtyCarton', headerText: 'Receive Qty(Carton)', allowEditing: false },
-                { field: 'ReturnQty', headerText: 'Return Qty' },
-                { field: 'ReturnQtyCone', headerText: 'Return Qty(Cone)' },
-                { field: 'ReturnQtyCarton', headerText: 'Return Qty(Carton)' },
+                { field: 'ReturnQty', headerText: 'Return Qty', allowEditing: isYQCReturn },
+                { field: 'ReturnQtyCone', headerText: 'Return Qty(Cone)', allowEditing: isYQCReturn },
+                { field: 'ReturnQtyCarton', headerText: 'Return Qty(Carton)', allowEditing: isYQCReturn },
                 { field: 'Remarks', headerText: 'Remarks' }
             ]
+
         });
 
     }
@@ -264,6 +322,7 @@
             .then(function (response) {
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
+                actionBtnHideShow();
 
                 masterData = response.data;
                 masterData.QCReturnDate = formatDateToDefault(masterData.QCReturnDate);
@@ -277,8 +336,28 @@
             });
     }
 
-    function save() {
+    function actionBtnHideShow() {
+        $formEl.find(".btnAction").hide();
+        switch (status) {
+            case statusConstants.PENDING:
+                $formEl.find("#btnSave").show();
+                break;
+            case statusConstants.PROPOSED_FOR_APPROVAL: 
+                $formEl.find("#btnApprove").show();
+                break;
+            case statusConstants.COMPLETED:
+                 $formEl.find("#btnSaveAndSendForApproval").show();
+               
+                break;
+            
+            default:
+            // code block
+        }
+    }
+
+    function save(isSendForApproval) {
         var data = formDataToJson($formEl.serializeArray());
+        data.IsSendForApproval = isSendForApproval;
         data.YarnQCReturnChilds = $tblChildEl.getCurrentViewRecords();
 
         var hasError = false;
@@ -313,6 +392,18 @@
                 toastr.error(error.response.data.Message);
             });
     }
+
+    function approve() {
+        var data = formDataToJson($formEl.serializeArray());
+        data.YarnQCReturnChilds = $tblChildEl.getCurrentViewRecords();
+        axios.post("/api/yarn-qc-return/approve", data)
+            .then(function (response) {
+                toastr.success("Approved successfully.");
+                backToList();
+            })
+            .catch(showResponseError);
+    }
+
     function createNew() {
         var selectedRows = $tblMasterEl.getSelectedRecords();
         if (selectedRows.length == 0) {

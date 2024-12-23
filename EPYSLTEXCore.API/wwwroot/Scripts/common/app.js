@@ -710,18 +710,37 @@ function initTitleMenuEvents() {
         var status = $(this).attr("status");
         if (status == "normal") {
             $(this).attr("status", "full");
-            $(".main-sidebar,.three-line").hide(200);
-            $(".content-wrapper,.main-header").css({
+            $(".main-sidebar,.main-header").hide(200);
+            $(".content-wrapper").css({
+                "margin-left": "0px"
+            });
+            //$(".sidebar-mini.sidebar-collapse").find(".content-wrapper").css({
+            //    "margin-left": "0px"
+            //});
+            $(".main-header").css({
                 "margin-left": "0px"
             });
 
         } else {
             $(this).attr("status", "normal");
-            $(".main-sidebar,.three-line").show(200);
-            $(".content-wrapper,.main-header").css({
+            $(".main-sidebar,.main-header").show(200);
+           
+            $(".main-header").css({
                 "margin-left": "250px"
             });
-
+            var width = parseInt($(".main-sidebar").width());
+            if (width < 100) {
+                $(".content-wrapper").css({
+                    "margin-left": "4.6rem !important"
+                });
+                //$(".sidebar-mini.sidebar-collapse").find(".content-wrapper").css({
+                //    "margin-left": "4.6rem !important"
+                //});
+            } else {
+                $(".content-wrapper").css({
+                    "margin-left": "250px"
+                });
+            }
         }
     });
 }

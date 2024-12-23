@@ -103,6 +103,9 @@
                 field: 'ValidDate',
                 headerText: 'Valid Date',
                 width: 120,
+                type: 'date',
+                format: _ch_date_format_1,
+                textAlign: 'Center'
             },
         ];
 
@@ -183,7 +186,8 @@
                 if (args.requestType === 'add') {
                     let itemNameID = getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val());
                     let companyID = getDefaultValueWhenInvalidN($formEl.find("#CompanyID").val());
-                    //$("#ValidDate").val(moment().format("mm/dd/yyyy"));
+                    let tdaysDate = formatGridPopupDate(new Date());
+                    $("#ValidDate").val(formatGridPopupDate(new Date()));
                     if (itemNameID == 0) {
                         toastr.error("Selecet Item!!!");
                         args.cancel = true;
@@ -208,7 +212,7 @@
                     $("#ItemMaster_Finder").val(itemName);
                     console.log(args);
                     args.dialog.header = 'Add Details';
-
+                    args.dialog.width = "60%";
                 }
                 if (args.requestType === 'beginEdit') {
                     _isEdit = true;
@@ -228,9 +232,9 @@
                     $("#MaximumPRQtyLP").val(args.rowData.MaximumPRQtyLP);
                     $("#MaximumPRQtyFP").val(args.rowData.MaximumPRQtyFP);
                     $("#MOQ").val(args.rowData.MOQ);
-                    $("#ValidDate").val(formatDateToDefault(args.rowData.ValidDate));
+                    $("#ValidDate").val(formatGridPopupDate(args.rowData.ValidDate));
+                    args.dialog.width = "60%";
                 }
-                //args.dialog.width = "60%";
             }
             //commandClick: handleCommands
         });

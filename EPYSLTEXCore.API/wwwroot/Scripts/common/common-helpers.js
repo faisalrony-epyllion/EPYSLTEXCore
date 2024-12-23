@@ -27,18 +27,18 @@ var dateFormats = Object.freeze({
 
 //Array Methods
 Array.prototype.multiIndexOfSameItem = function (el) {
-    
+
     if (!el) return;
     //var indexList = listC.multiIndexOfSameItem("TechnicalName");
 
     var idxs = [];
-    
-        for (var i = this.length - 1; i >= 0; i--) {
-            if (this[i] === el) {
-                idxs.unshift(i);
-            }
+
+    for (var i = this.length - 1; i >= 0; i--) {
+        if (this[i] === el) {
+            idxs.unshift(i);
         }
-    
+    }
+
     return idxs;
 };
 function findDuplicateValues(paramArray) {
@@ -5904,49 +5904,58 @@ function loadSelect2(select2Id, dataList, keyProp, valueProp, divAdvanceFilterId
 
 //=====================Template editing in EJ2 Drop Down Load & Set======================
 function ejDropDownLoad(ej, args, listP, gridFieldName, textFieldName, valueFieldName, placeHolder) {
-    let defaultValue =listP.length > 0 ? listP[0][valueFieldName] : 'Select';
+
+    let defaultValue = listP.length > 0 ? listP[0][valueFieldName] : 'Select';
+
     new ej.dropdowns.DropDownList({
         value: defaultValue, popupHeight: '200px', floatLabelType: 'Always',
         dataSource: listP, fields: { text: textFieldName, value: valueFieldName }, placeholder: placeHolder
-    }, args.form.elements.namedItem(gridFieldName)
-    );
+    }, args.form.elements.namedItem(gridFieldName));
+
+
+
+
     //$(args.form.elements.namedItem(gridFieldName)).select2({
     //    placeholder: placeHolder,
     //    width: '100%' // Ensure Select2 takes full width of the container
     //});
 }
-//function ejDropDownLoad(ej, args, listP, gridFieldName, textFieldName, valueFieldName, placeHolder, useSelect2 = true) {
-//    let defaultValue = listP.length > 0 ? listP[0][valueFieldName] : 'Select';
-//    let gridElement = args.form.elements.namedItem(gridFieldName);
+function ejDropDownLoad1(ej, args, listP, gridFieldName, textFieldName, valueFieldName, placeHolder, useSelect2 = true) {
+    let defaultValue = listP.length > 0 ? listP[0][valueFieldName] : 'Select';
 
-//    // Step 1: Destroy any existing Select2 instance to avoid duplication
-//    if ($(gridElement).hasClass('select2-hidden-accessible')) {
-//        $(gridElement).select2('destroy');
-//    }
+    /*
+    let gridElement = args.form.elements.namedItem(gridFieldName);
 
-//    // Step 2: If useSelect2 is true, initialize Select2 dropdown
-//    if (useSelect2) {
-//        // Initialize Select2 and bind data
-//        $(gridElement).select2({
-//            placeholder: placeHolder,
-//            width: '100%', // Ensure Select2 takes full width of the container
-//            data: listP.map(item => ({
-//                id: item[valueFieldName],
-//                text: item[textFieldName]
-//            }))
-//        });
-//    } else {
-//        // Step 3: If useSelect2 is false, initialize DropDownList (Syncfusion EJ2)
-//        new ej.dropdowns.DropDownList({
-//            value: defaultValue,
-//            popupHeight: '200px',
-//            floatLabelType: 'Always',
-//            dataSource: listP,
-//            fields: { text: textFieldName, value: valueFieldName },
-//            placeholder: placeHolder
-//        }, gridElement);
-//    }
-//}
+    // Step 1: Destroy any existing Select2 instance to avoid duplication
+    if ($(gridElement).hasClass('select2-hidden-accessible')) {
+        $(gridElement).select2('destroy');
+    }
+    */
+
+    // Step 2: If useSelect2 is true, initialize Select2 dropdown
+    if (useSelect2) {
+        // Initialize Select2 and bind data
+        $(args.form.elements.namedItem(gridFieldName)).select2({
+            placeholder: placeHolder,
+            //width: '100%', // Ensure Select2 takes full width of the container
+            data: listP.map(item => ({
+                id: item[valueFieldName],
+                text: item[textFieldName]
+            }))
+        });
+        $(args.form.elements.namedItem(gridFieldName)).val(defaultValue).trigger('change');
+    } else {
+        // Step 3: If useSelect2 is false, initialize DropDownList (Syncfusion EJ2)
+        new ej.dropdowns.DropDownList({
+            value: defaultValue,
+            popupHeight: '200px',
+            floatLabelType: 'Always',
+            dataSource: listP,
+            fields: { text: textFieldName, value: valueFieldName },
+            placeholder: placeHolder
+        }, args.form.elements.namedItem(gridFieldName));
+    }
+}
 function setDropDownValues(masterData, obj) {
     for (var pName in masterData) {
         if (pName.includes('List')) {

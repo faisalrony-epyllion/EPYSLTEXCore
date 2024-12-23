@@ -37,13 +37,13 @@ namespace EPYSLTEXCore.Application.Services.General
             sql += $@"WITH
                         FinalList AS
                         (
-					        select IMROL.ROSID,IMROL.ItemMasterID,IMROL.SubGroupID,IMROL.CompanyID,MonthlyAvgConsumption,
-							LeadTimeDays,SafetyStockDays,MonthlyWorkingDays,PackSize,MOQ,ReOrderQty,
-							IM.ItemName,ISG.SubGroupName,CE.ShortName CompanyName
-			                from {TableNames.ItemMasterReOrderStatus} IMROL
-			                INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID=IMROL.ItemMasterID
-							INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=IMROL.SubGroupID
-							LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID=IMROL.CompanyID
+					        SELECT IMROL.ROSID,IMROL.ItemMasterID,IMROL.SubGroupID,IMROL.CompanyID,MonthlyAvgConsumptionLP,MonthlyAvgConsumptionFP,
+                            ROLLocalPurchase,ROLForeignPurchase,ReOrderQty,MaximumPRQtyLP,MaximumPRQtyFP,MOQ,ValidDate,
+                            IM.ItemName,ISG.SubGroupName,CE.ShortName CompanyName
+                            FROM {TableNames.ItemMasterReOrderStatus} IMROL
+                            INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID=IMROL.ItemMasterID
+                            INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=IMROL.SubGroupID
+                            LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID=IMROL.CompanyID
 			            )
                         SELECT *, Count(*) Over() TotalRows FROM FinalList";
 

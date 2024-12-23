@@ -195,9 +195,8 @@ namespace EPYSLTEXCore.Application.Services.General
 	                    SELECT id = 0, text = 'Select', Sequence=1
 	                    UNION
 	                    SELECT distinct 
-	                    CAST(SV.QualityParameterSVID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
-	                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-	                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.QualityParameterSVID    
+	                    CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
+	                    from {DbNames.EPYSL}..ItemSegmentValue ISV    
 	                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
 	                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}')                  
                     )
@@ -235,8 +234,7 @@ namespace EPYSLTEXCore.Application.Services.General
 	                    SELECT distinct
 	                    id = ISV.SegmentValueID
 	                    ,text = ISV.SegmentValue, Sequence=2
-	                    from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-	                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.YarnTypeSVID    
+	                    from {DbNames.EPYSL}..ItemSegmentValue ISV   
 	                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
 	                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}') AND ISNULL(ISV.SegmentValue,'') <> ''                      
                     )
@@ -250,8 +248,7 @@ namespace EPYSLTEXCore.Application.Services.General
                         SELECT distinct
                          id = ISV.SegmentValueID
                         ,text = ISV.SegmentValue, Sequence=2
-                        from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-                        INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingProcessSVID    
+                        from {DbNames.EPYSL}..ItemSegmentValue ISV  
                         LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
                         WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> ''            
                     )
@@ -265,8 +262,7 @@ namespace EPYSLTEXCore.Application.Services.General
 	                SELECT distinct
 	                id = ISV.SegmentValueID
 	                ,text = ISV.SegmentValue, Sequence=2
-	                from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
-	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.SubProcessSVID    
+	                from {DbNames.EPYSL}..ItemSegmentValue ISV  
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
 	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> ''            
                 )

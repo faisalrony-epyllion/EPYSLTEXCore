@@ -187,6 +187,21 @@
             actionComplete: function (args) {
                 _isEdit = false;
                 if ((args.requestType === 'beginEdit' || args.requestType === 'add')) {
+
+                    setTimeout(function () {
+                        var dialog = args.form.closest('.e-dialog'); // Get the dialog element
+                        dialog.style.width = '70%'; // Set the width
+                        //dialog.style.height = '400px'; // Set the height
+                        //dialog.style.top = 'auto'; // Optional: Set dialog position (vertically centered)
+                        dialog.style.left = '40%'; // Optional: Center dialog horizontally
+                        dialog.style.transform = 'translateX(-45%)'; // Center horizontally by adjusting position
+
+                        // Set focus on a specific input field after dialog is opened
+                        document.getElementById('FiberType').focus();
+                    }, 100);
+
+
+
                     console.log(args);
 
                     //(args.form.elements.namedItem('FiberType')).focus();
@@ -206,13 +221,29 @@
                     ejDropDownLoad(ej, args, masterData.ColorGradeList, "ColorGrade", "text", "id", "Color Grade");
                     ejDropDownLoad(ej, args, masterData.YarnCountList, "YarnCount", "text", "id", "Yarn Count");
                     args.dialog.header = 'Add Yarn RM Properties';
+                    //args.dialog.width = "70%";
                 }
                 if (args.requestType === 'beginEdit') {
                     _isEdit = true;
                     args.dialog.header = 'Edit Yarn RM Properties';
                 }
                 //args.dialog.width = "60%";
-            }
+            },
+            //open: function (args) {
+            //    debugger;
+            //    // Example: Automatically focus the 'FiberType' input field when the dialog opens
+            //    args.dialog.width = '500px';
+            //    args.dialog.height = '400px'; 
+            //    setTimeout(function () {
+            //        document.getElementById('FiberType').focus();
+            //    }, 200);
+            //},
+            //dialog: {
+            //    width: '70%',   // Set width
+            //    height: '400px',  // Set height
+            //    position: { X: 200, Y: 100 },  // Custom position (Optional)
+            //    buttons: ['Save', 'Cancel']  // Customize buttons (Optional)
+            //}
             //commandClick: handleCommands
         });
     }

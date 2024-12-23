@@ -710,14 +710,14 @@ function initTitleMenuEvents() {
         var status = $(this).attr("status");
         if (status == "normal") {
             $(this).attr("status", "full");
-            $(".main-sidebar,.three-line").hide(200);
+            $(".main-sidebar,.main-header").hide(200);
             $(".content-wrapper,.main-header").css({
                 "margin-left": "0px"
             });
 
         } else {
             $(this).attr("status", "normal");
-            $(".main-sidebar,.three-line").show(200);
+            $(".main-sidebar,.main-header").show(200);
             $(".content-wrapper,.main-header").css({
                 "margin-left": "250px"
             });

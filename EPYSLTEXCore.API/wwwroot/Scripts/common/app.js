@@ -601,11 +601,41 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
     }).catch(showResponseError);
 }
 
-function gotoReport() {  
+function gotoReport() {
 
-    const url = reportRootPath + '/reports/GetReport?param=' + localStorage.getItem("token");
-    window.open(url, "_blank"); 
+
+    const url = reportRootPath + 'reports/GetReport';
+   
+
+    openFormInNewWindow(url);
 }
+
+
+function openFormInNewWindow(url) {
+ 
+    // Create a form dynamically
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+
+    // Create and append hidden input for token
+    var tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = 'token';
+    tokenInput.value = localStorage.getItem('token');
+    form.appendChild(tokenInput);
+
+    
+
+    // Open the new window and submit the form there
+    var newWindow = window.open(url, '_blank');
+    newWindow.document.body.appendChild(form);  // Append the form to the new window's body
+    form.submit();  // Submit the form
+}
+
+
+ 
+
 
 function GetMenus(applicationId) {
 

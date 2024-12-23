@@ -12,10 +12,10 @@ namespace EPYSLTEXCore.Report
         {
             // Web API configuration and services
             // Enable CORS
-            config.EnableCors(new EnableCorsAttribute("*", "*", "*")
-            {
-                SupportsCredentials = true
-            });
+            //config.EnableCors(new EnableCorsAttribute("*", "*", "*")
+            //{
+            //    SupportsCredentials = true
+            //});
             // Web API routes
             config.MapHttpAttributeRoutes();
 

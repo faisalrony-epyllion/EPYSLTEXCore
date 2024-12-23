@@ -34,13 +34,14 @@ namespace EPYSLTEXCore.Report.Controllers
             _reportingService = reportingService;
         }
 
-        public ActionResult GetReport(string param)
+        public ActionResult GetReport(string token)
         {
-            TempData["paramToken"] = param;
+            TempData["paramToken"] = token;
             return RedirectToAction("Index");
         }
 
-        
+
+
         public ActionResult Index()
         {        
 

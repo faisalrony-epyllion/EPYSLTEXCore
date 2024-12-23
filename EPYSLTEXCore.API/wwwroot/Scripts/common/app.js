@@ -375,11 +375,12 @@ function registerCloseEvent(menuId) {
         var tabIndex = $(this).closest('li').attr("tabIndex");
         var preTabIndex = tabIndex - 1;
         var isActive = $(this).closest('li').hasClass("active");
-        var tabContentId = $(this).parent().find("a").attr("href");
+        var tabContentId = $(this).closest('li').find("a").attr("href");
+
         //$(this).parent().parent().remove(); //remove li of tab
         $('#mainTab').find('a:last').tab('show'); // Select first tab
-        $(tabContentId).remove(); //remove respective tab content
         $("#mainTab").find("li[tabIndex=" + tabIndex + "]").remove();
+        $(tabContentId).remove(); //remove respective tab content
         if (isActive) {
             $("#mainTab").find("li").removeClass("bg-info").removeClass("active");
             $("#mainTab").find("li[tabIndex=" + preTabIndex + "]").addClass("bg-info").addClass("active");

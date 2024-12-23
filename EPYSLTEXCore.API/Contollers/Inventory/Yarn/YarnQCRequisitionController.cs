@@ -1,10 +1,8 @@
-﻿using Azure.Core;
-using EPYSLTEXCore.API.Contollers.APIBaseController;
+﻿using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +10,6 @@ using System.Data.Entity;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using Newtonsoft.Json;
 
 namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn

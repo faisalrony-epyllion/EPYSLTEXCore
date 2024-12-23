@@ -11,13 +11,231 @@
 
         pageId = pageName + "-" + menuId;
         toolbarId = pageConstants.TOOLBAR_ID_PREFIX + pageId;
-        //$tblMasterEl = $(pageConstants.MASTER_TBL_ID_PREFIX + pageId);
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         tblMasterId = pageConstants.MASTER_TBL_ID_PREFIX + pageId;
         $formEl.find("#btnAddItemMaster").on("click", addItemMaster);
         getInitData();
     });
     function initMasterTable() {
+        debugger;
+        var columns = [
+            {
+                field: 'ROSID',
+                headerText: 'ROSID',
+                textAlign: 'Right',
+                width: 100,
+                isPrimaryKey: true,
+                visible: false
+            },
+            {
+                field: 'ItemMasterID',
+                headerText: 'ItemMasterID',
+                width: 150,
+                visible: false
+            },
+            {
+                field: 'CompanyID',
+                headerText: 'CompanyID',
+                width: 150,
+                visible: false
+            },
+            {
+                field: 'SubGroupID',
+                headerText: 'SubGroupID',
+                width: 150,
+                visible: false
+            },
+            {
+                field: 'SubGroupName',
+                headerText: 'Item Category',
+                width: 150
+            },
+            {
+                field: 'ItemName',
+                headerText: 'Item Name',
+                width: 150
+            },
+            {
+                field: 'CompanyName',
+                headerText: 'Company Name',
+                width: 150
+            },
+            {
+                field: 'MonthlyAvgConsumptionLP',
+                headerText: 'Monthly Avg Consumption LP',
+            },
+            {
+                field: 'MonthlyAvgConsumptionFP',
+                headerText: 'Monthly Avg Consumption FP',
+                width: 120,
+            },
+            {
+                field: 'ROLLocalPurchase',
+                headerText: 'ROL Local Purchase',
+                width: 120,
+            },
+            {
+                field: 'ROLForeignPurchase',
+                headerText: 'ROL Foreign Purchase',
+                width: 120,
+            },
+            {
+                field: 'ReOrderQty',
+                headerText: 'Re-Order Qty',
+                width: 120,
+            },
+            {
+                field: 'MaximumPRQtyLP',
+                headerText: 'Maximum PR Qty LP',
+                width: 120,
+            },
+            {
+                field: 'MaximumPRQtyFP',
+                headerText: 'Maximum PR Qty FP',
+                width: 120,
+            },
+            {
+                field: 'MOQ',
+                headerText: 'MOQ',
+                width: 120,
+            },
+            {
+                field: 'ValidDate',
+                headerText: 'Valid Date',
+                width: 120,
+            },
+        ];
+
+        if ($tblMasterEl) $tblMasterEl.destroy();
+        $tblMasterEl = new initEJ2Grid({
+            tableId: tblMasterId,
+            autofitColumns: true,
+            apiEndPoint: `/api/item-wise-rol/list`,
+            columns: columns,
+            allowExcelExport: false,
+            allowPdfExport: false,
+            toolbar: ['Add', 'Edit'],
+            editSettings: {
+                allowEditing: true,
+                allowAdding: true,
+                allowDeleting: false,
+                mode: 'Dialog',
+                template: '#dialogtemplate'
+            },
+            actionBegin: function (args) {
+                if (args.requestType === 'save') {
+                    console.log(args.data);
+                    args.data.ROSID = getDefaultValueWhenInvalidN(args.data.ROSID);
+                    args.rowData = setValidPropsValue(args.data, args.rowData);
+                    //args.data = setDropDownValues(masterData, args.data, args.rowData);
+                    args.rowData = args.data;
+
+                    if (args.data.ROSID == 0) {
+                        args.data.ROSID = _maxROSID--;
+                    }
+                    var allData = $tblMasterEl.dataSource;
+                    console.log(allData);
+
+
+                    var isExist = false;
+                    var list = allData.filter(item => item.ItemName === args.data.ItemName);
+
+                    if (list.length > 0 && _isEdit) {
+                        list = list.filter(x => x.ROSID != args.data.ROSID);
+                    }
+
+                    if (list.length > 0) isExist = true;
+
+                    if (isExist) {
+                        toastr.error("Duplicate Item found!!!");
+                        args.cancel = true;
+                        return;
+                    }
+
+                    var dataObj = {
+                        ROSID: args.data.ROSID,
+                        ItemMasterID: getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val()),
+                        SubGroupID: getDefaultValueWhenInvalidN($formEl.find("#SubGroupID").val()),
+                        CompanyID: getDefaultValueWhenInvalidN($formEl.find("#CompanyID").val()),
+                        MonthlyAvgConsumptionLP: args.data.MonthlyAvgConsumptionLP,
+                        MonthlyAvgConsumptionFP: args.data.MonthlyAvgConsumptionFP,
+                        ROLLocalPurchase: args.data.ROLLocalPurchase,
+                        ROLForeignPurchase: args.data.ROLForeignPurchase,
+                        MaximumPRQtyLP: args.data.MaximumPRQtyLP,
+                        MaximumPRQtyFP: args.data.MaximumPRQtyFP,
+                        MOQ: args.data.MOQ,
+                        ValidDate: formatDateToDefault(args.data.ValidDate)
+                    };
+
+                    args.rowData = DeepClone(args.data);
+
+                    if (!save(dataObj)) {
+                        args.cancel = true;
+                        return;
+                    };
+                }
+                if (args.requestType === 'delete') {
+                }
+            },
+            actionComplete: function (args) {
+                debugger;
+                _isEdit = false;
+                if (args.requestType === 'add') {
+                    let itemNameID = getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val());
+                    let companyID = getDefaultValueWhenInvalidN($formEl.find("#CompanyID").val());
+                    //$("#ValidDate").val(moment().format("mm/dd/yyyy"));
+                    if (itemNameID == 0) {
+                        toastr.error("Selecet Item!!!");
+                        args.cancel = true;
+                        var closeButton = document.querySelector('.e-dialog .e-dlg-closeicon-btn');
+
+                        if (closeButton) {
+                            closeButton.click();
+                        }
+                        return;
+                    }
+                    if (companyID == 0) {
+                        toastr.error("Selecet Company!!!");
+                        args.cancel = true;
+                        var closeButton = document.querySelector('.e-dialog .e-dlg-closeicon-btn');
+
+                        if (closeButton) {
+                            closeButton.click();
+                        }
+                        return;
+                    }
+                    let itemName = $formEl.find("#ItemName").val();
+                    $("#ItemMaster_Finder").val(itemName);
+                    console.log(args);
+                    args.dialog.header = 'Add Details';
+
+                }
+                if (args.requestType === 'beginEdit') {
+                    _isEdit = true;
+                    args.dialog.header = 'Edit Details';
+                    $formEl.find("#ROSID").val(args.rowData.ROSID);
+                    $formEl.find("#ItemMasterID").val(args.rowData.ItemMasterID);
+                    $formEl.find("#SubGroupID").val(args.rowData.SubGroupID);
+                    $formEl.find("#CompanyID").val(args.rowData.CompanyID);
+                    $formEl.find("#ItemName").val(args.rowData.ItemName);
+
+                    let itemName = $formEl.find("#ItemName").val();
+                    $("#ItemMaster_Finder").val(itemName);
+                    $("#MonthlyAvgConsumptionLP").val(args.rowData.MonthlyAvgConsumptionLP);
+                    $("#MonthlyAvgConsumptionFP").val(args.rowData.MonthlyAvgConsumptionFP);
+                    $("#ROLLocalPurchase").val(args.rowData.ROLLocalPurchase);
+                    $("#ROLForeignPurchase").val(args.rowData.ROLForeignPurchase);
+                    $("#MaximumPRQtyLP").val(args.rowData.MaximumPRQtyLP);
+                    $("#MaximumPRQtyFP").val(args.rowData.MaximumPRQtyFP);
+                    $("#MOQ").val(args.rowData.MOQ);
+                    $("#ValidDate").val(formatDateToDefault(args.rowData.ValidDate));
+                }
+                //args.dialog.width = "60%";
+            }
+            //commandClick: handleCommands
+        });
+    }
+    function initMasterTable1() {
         var url = "/api/item-wise-rol/list";
         axios.get(url)
             .then(function (response) {
@@ -298,7 +516,7 @@
             .then(function () {
                 toastr.success("Saved successfully.");
                 reset();
-                initMasterTable();
+                $tblMasterEl.refresh();
             })
             .catch(showResponseError);
         

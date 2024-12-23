@@ -44,7 +44,7 @@
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
         tblCreateCompositionId = `#tblCreateComposition-${pageId}`;
-
+        
         isAcknowledgePage = false;
         isApprovePage = false;
         isPendingMnMPage = false;
@@ -87,89 +87,13 @@
         else {
             isPendingPYBPage = false;
         }
-
+        
         $formEl.find("#divRevisionNo").fadeOut();
         $formEl.find("#divRevisionDate").fadeOut();
         $formEl.find("#divRevisionReason").fadeOut();
 
         $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnPendingApprovalList,#btnApprovedList,#btnRejectdList,#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").hide();
         $formEl.find("#btnSave,#btnRevise,#btnReviseAndSendToApproval,#btnApproveYPR,#btnRejectYPR,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR,#btnSendYPR").fadeOut();
-        if (isAcknowledgePage) {
-            $toolbarEl.find("#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList").show();
-            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnPendingApprovalList,#btnAllList").hide();
-
-            $formEl.find("#btnAkgYPR,#btnUnAkgYPR").fadeIn();
-            $formEl.find("#btnSave,#btnRejectYPR,#btnApproveYPR,#btnRevise,#btnReviseAndSendToApproval,#btnSendYPR,#btnMnMAck").fadeOut();
-
-            status = statusConstants.PARTIALLY_COMPLETED;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingAcknowledgeList"), $toolbarEl);
-            isEditable = false;
-            isMarketingFlag = false;
-        }
-        else if (isApprovePage) {
-            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").hide();
-            $toolbarEl.find("#btnApprovedList,#btnRejectdList,#btnPendingApprovalList").show();
-
-            $formEl.find("#btnApproveYPR,#btnRejectYPR").fadeIn();
-            $formEl.find("#btnSave,#btnRevise,#btnReviseAndSendToApproval,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR,#btnSendYPR").fadeOut();
-
-            status = statusConstants.PROPOSED;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingApprovalList"), $toolbarEl);
-            isEditable = false;
-            isMarketingFlag = false;
-        }
-        else if (isPendingMnMPage) {
-            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").show();
-            $toolbarEl.find("#btnPendingApprovalList,#btnPendingAcknowledgeList").hide();
-
-            $formEl.find("#btnSave,#btnSendYPR").fadeIn();
-            $formEl.find("#btnRevise,#btnReviseAndSendToApproval,#btnApproveYPR,#btnRejectYPR,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR").fadeOut();
-
-            //status = statusConstants.PROPOSED;
-            status = statusConstants.ADDITIONAL;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingList"), $toolbarEl);
-            isEditable = true;
-            isMarketingFlag = true;
-        }
-        else if (isApproveMnMPage) {
-            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").hide();
-            $toolbarEl.find("#btnApprovedList,#btnRejectdList,#btnPendingApprovalList").show();
-
-            $formEl.find("#btnApproveYPR,#btnRejectYPR").fadeIn();
-            $formEl.find("#btnSave,#btnRevise,#btnReviseAndSendToApproval,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR,#btnSendYPR").fadeOut();
-
-            status = statusConstants.PROPOSED;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingApprovalList"), $toolbarEl);
-            isEditable = false;
-            isMarketingFlag = false;
-        }
-        else if (isAcknowledgeMnMPage) {
-            $toolbarEl.find("#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList").show();
-            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnPendingApprovalList,#btnAllList").hide();
-
-            $formEl.find("#btnMnMAck,#btnUnAkgYPR").fadeIn();
-            $formEl.find("#btnSave,#btnRejectYPR,#btnApproveYPR,#btnRevise,#btnReviseAndSendToApproval,#btnSendYPR,#btnAkgYPR").fadeOut();
-
-            status = statusConstants.PARTIALLY_COMPLETED;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingAcknowledgeList"), $toolbarEl);
-            isEditable = false;
-            isMarketingFlag = false;
-        }
-        else {
-            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").show();
-            $toolbarEl.find("#btnPendingApprovalList,#btnPendingAcknowledgeList").hide();
-
-            $formEl.find("#btnSave,#btnSendYPR").fadeIn();
-            $formEl.find("#btnRevise,#btnReviseAndSendToApproval,#btnApproveYPR,#btnRejectYPR,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR").fadeOut();
-
-            //status = statusConstants.PROPOSED;
-            status = statusConstants.ADDITIONAL;
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingList"), $toolbarEl);
-            isEditable = true;
-            isMarketingFlag = false;
-        }
-
-        initMasterTable();
 
         $formEl.find("#addYarnComposition").on("click", function (e) {
             showAddComposition();
@@ -186,6 +110,7 @@
 
         $toolbarEl.find("#btnPendingList").on("click", function (e) {
             e.preventDefault();
+            
             toggleActiveToolbarBtn(this, $toolbarEl);
             status = statusConstants.ADDITIONAL;
             $toolbarEl.find("#divAddPRForMR").fadeIn();
@@ -202,6 +127,7 @@
 
         $toolbarEl.find("#btnPendingApprovalList").on("click", function (e) {
             e.preventDefault();
+            
             //$formEl.find("#btnRevise").fadeOut();
             toggleActiveToolbarBtn(this, $toolbarEl);
             status = statusConstants.PROPOSED;
@@ -388,6 +314,88 @@
             initTblCreateComposition();
             return false;
         });
+
+        if (isAcknowledgePage) {
+            $toolbarEl.find("#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList").show();
+            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnPendingApprovalList,#btnAllList").hide();
+
+            $formEl.find("#btnAkgYPR,#btnUnAkgYPR").fadeIn();
+            $formEl.find("#btnSave,#btnRejectYPR,#btnApproveYPR,#btnRevise,#btnReviseAndSendToApproval,#btnSendYPR,#btnMnMAck").fadeOut();
+
+            status = statusConstants.PARTIALLY_COMPLETED;
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingAcknowledgeList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingAcknowledgeList").click();
+            isEditable = false;
+            isMarketingFlag = false;
+        }
+        else if (isApprovePage) {
+            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").hide();
+            $toolbarEl.find("#btnApprovedList,#btnRejectdList,#btnPendingApprovalList").show();
+
+            $formEl.find("#btnApproveYPR,#btnRejectYPR").fadeIn();
+            $formEl.find("#btnSave,#btnRevise,#btnReviseAndSendToApproval,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR,#btnSendYPR").fadeOut();
+
+            status = statusConstants.PROPOSED;
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingApprovalList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingApprovalList").click();
+            isEditable = false;
+            isMarketingFlag = false;
+        }
+        else if (isPendingMnMPage) {
+            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").show();
+            $toolbarEl.find("#btnPendingApprovalList,#btnPendingAcknowledgeList").hide();
+
+            $formEl.find("#btnSave,#btnSendYPR").fadeIn();
+            $formEl.find("#btnRevise,#btnReviseAndSendToApproval,#btnApproveYPR,#btnRejectYPR,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR").fadeOut();
+
+            //status = statusConstants.PROPOSED;
+            status = statusConstants.ADDITIONAL;
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingList").click();
+            isEditable = true;
+            isMarketingFlag = true;
+        }
+        else if (isApproveMnMPage) {
+            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").hide();
+            $toolbarEl.find("#btnApprovedList,#btnRejectdList,#btnPendingApprovalList").show();
+
+            $formEl.find("#btnApproveYPR,#btnRejectYPR").fadeIn();
+            $formEl.find("#btnSave,#btnRevise,#btnReviseAndSendToApproval,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR,#btnSendYPR").fadeOut();
+
+            status = statusConstants.PROPOSED;
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingApprovalList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingApprovalList").click();
+            isEditable = false;
+            isMarketingFlag = false;
+        }
+        else if (isAcknowledgeMnMPage) {
+            $toolbarEl.find("#btnPendingAcknowledgeList,#btnAcknowledgeList,#btnUnAcknowledgeList").show();
+            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnPendingApprovalList,#btnAllList").hide();
+
+            $formEl.find("#btnMnMAck,#btnUnAkgYPR").fadeIn();
+            $formEl.find("#btnSave,#btnRejectYPR,#btnApproveYPR,#btnRevise,#btnReviseAndSendToApproval,#btnSendYPR,#btnAkgYPR").fadeOut();
+
+            status = statusConstants.PARTIALLY_COMPLETED;
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingAcknowledgeList"), $toolbarEl);
+            $toolbarEl.find("#btnPendingAcknowledgeList").click();
+            isEditable = false;
+            isMarketingFlag = false;
+        }
+        else {
+            $toolbarEl.find("#btnNew,#btnPendingList,#btnSendList,#btnApprovedList,#btnRejectdList,#btnAcknowledgeList,#btnUnAcknowledgeList,#btnAllList").show();
+            $toolbarEl.find("#btnPendingApprovalList,#btnPendingAcknowledgeList").hide();
+
+            $formEl.find("#btnSave,#btnSendYPR").fadeIn();
+            $formEl.find("#btnRevise,#btnReviseAndSendToApproval,#btnApproveYPR,#btnRejectYPR,#btnAkgYPR,#btnMnMAck,#btnUnAkgYPR").fadeOut();
+
+            //status = statusConstants.PROPOSED;
+            status = statusConstants.ADDITIONAL;
+            $toolbarEl.find("#btnPendingList").click();
+            isEditable = true;
+            isMarketingFlag = false;
+        }
+
+        initMasterTable();
 
         getSegments();
     });
@@ -1408,7 +1416,7 @@
         return false;
     }
     function save(SendToApprover) {
-        debugger;
+        
         $formEl.find("#BuyerIDsList").val($formEl.find("#BuyerIDs").val().map(function (el) {
             return el
         }).toString());
@@ -1563,7 +1571,7 @@
         if (hasError) return false;
 
         //Validation
-        debugger;
+        
         if (isPendingMnMPage) {
             initializeValidation($formEl, validationConstraints);
             if (!isValidForm($formEl, validationConstraints)) return toastr.error("Please correct all validation errors!");

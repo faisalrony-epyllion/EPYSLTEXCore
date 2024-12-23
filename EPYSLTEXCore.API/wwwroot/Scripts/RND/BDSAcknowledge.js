@@ -2790,38 +2790,38 @@
             widthValue = 20;
             commandList = [
                 { type: 'AddBulk', title: 'Add', buttonOption: { cssClass: 'e-flat', iconCss: 'e-add e-icons' } },
-                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
             ];
         }
         else if (status == statusConstants.DRAFT || status == statusConstants.ACTIVE || status == statusConstants.CHECK || status == statusConstants.APPROVED_DONE || status == statusConstants.CHECK_REJECT || status == statusConstants.REJECT_REVIEW || status == statusConstants.APPROVED_Allowance || status == statusConstants.REJECT_Allowance || status == statusConstants.APPROVED_PMC || status == statusConstants.REJECT_PMC || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.APPROVED2 || status == statusConstants.ADDITIONAL || status == statusConstants.PENDING_CONFIRMATION || status == statusConstants.CONFIRM || status == statusConstants.PROPOSED_FOR_APPROVAL || status == statusConstants.INTERNAL_REJECTION) {
             widthValue = 50;
             commandList = [
                 { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
             ];
         }
         else if (menuType == _paramType.YarnBookingAcknowledge) {
             widthValue = 50;
             commandList = [
                 { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Yarn Booking Summary Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Yarn Booking Summary Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } }
             ];
         }
         else if (status == statusConstants.ALL) {
             widthValue = 50;
             commandList = [
                 { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
             ];
         }
         else if (status == statusConstants.PENDING_EXPORT_DATA || status == statusConstants.EXPORT_DATA) {
@@ -2835,10 +2835,10 @@
             widthValue = 50;
             commandList = [
                 { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                { type: 'Bulk Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Bulk Booking Yarn Info', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
             ];
         }
         var columns = [
@@ -3015,29 +3015,29 @@
             {
                 headerText: 'Command', width: 100, textAlign: 'Left', visible: status == statusConstants.ACTIVE, commands: [
                     { type: 'Add', title: 'Add', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
-                headerText: 'Command', width: 100, textAlign: 'Left', visible: (status == statusConstants.PENDING || status == statusConstants.REJECT), commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth_N(3), textAlign: 'Left', visible: (status == statusConstants.PENDING || status == statusConstants.REJECT), commands: [
                     { type: 'Edit', title: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
                 headerText: 'Command', width: 100, textAlign: 'Left', visible: (status == statusConstants.COMPLETED || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.OTHERS), commands: [
                     { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
                 headerText: 'Command', width: 100, textAlign: 'Left', visible: (status == statusConstants.APPROVED), commands: [
                     { type: 'ViewRecive', title: 'ViewRecive', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
@@ -3105,22 +3105,22 @@
             {
                 headerText: 'Command', width: 100, textAlign: 'center', visible: status == statusConstants.PENDING && _isLabDipAck, commands: [
                     { type: 'Edit', title: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
                 headerText: 'Command', width: 100, textAlign: 'center', visible: (status == statusConstants.ACKNOWLEDGE || status == statusConstants.REVISE || status == statusConstants.REVISE_FOR_ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.REJECT) && _isLabDipAck, commands: [
                     { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
                 headerText: 'Command', width: 100, textAlign: 'center', visible: (status == statusConstants.ACKNOWLEDGE || status == statusConstants.REVISE || status == statusConstants.REVISE_FOR_ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.REJECT) && _isLabDipAck_RnD, commands: [
                     { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {

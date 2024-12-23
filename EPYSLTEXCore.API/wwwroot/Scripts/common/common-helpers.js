@@ -5579,8 +5579,13 @@ function ch_GenerateBasicModal($formEl, isNeedOkBtn, btnOkId) {
     };
 }
 function ch_setActionCommandCellWidth(commands) {
-    var columnsWidth = commands.length * 10;
+    var columnsWidth = commands.length * 40;
     if (commands.length == 0 || commands.length == 1) columnsWidth = 100;
+    return columnsWidth;
+}
+function ch_setActionCommandCellWidth_N(totalCommands) {
+    var columnsWidth = totalCommands * 40;
+    if (totalCommands == 0 || totalCommands == 1) columnsWidth = 100;
     return columnsWidth;
 }
 

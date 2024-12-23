@@ -559,7 +559,7 @@ form, .box-body {
 }
 
 .panel-body {
-    padding: 5px 0 10px 0;
+    padding: 10px 0 10px 0;
     font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
     background-color: #ffffff !important;

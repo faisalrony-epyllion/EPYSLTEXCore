@@ -709,7 +709,7 @@
         var columns = [
             {
                 headerText: '', textAlign: 'Center', visible: status != statusConstants.PENDING, commands: commands,
-                textAlign: 'Center', width: 100, minWidth: 100, maxWidth: 100
+                textAlign: 'Center', width: ch_setActionCommandCellWidth(commands)
             },
             {
                 field: 'PRNO', headerText: 'PR No', visible: status == statusConstants.PENDING

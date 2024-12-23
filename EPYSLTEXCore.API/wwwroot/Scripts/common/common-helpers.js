@@ -5996,3 +5996,10 @@ function findMismatchProps(obj1, obj2) {
     return mismatchedProps;
 }
 //=====================End Template editing in EJ2 Drop Down Load & Set===================
+
+function formatGridPopupDate(date) {
+    var day = ("0" + date.getDate()).slice(-2);  // Adds leading zero if needed
+    var month = ("0" + (date.getMonth() + 1)).slice(-2);  // Adds leading zero for months
+    var year = date.getFullYear();
+    return year + "-" + month + "-" + day;
+}

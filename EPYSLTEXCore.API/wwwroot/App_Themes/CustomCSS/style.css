@@ -599,12 +599,14 @@ form, .box-body {
 .form-group {
     clear: both;
     margin-bottom: 5px !important;
+}
+
+.form-horizontal .form-group {
     margin-left: 4px !important;
 }
 /*.small {
     margin-left: 20px !important;
 }*/
-
 .btn-file, .file-caption, .file-input, .file-loading:before, .file-preview, .file-zoom-dialog .modal-dialog, .krajee-default .file-thumbnail-footer, .krajee-default.file-preview-frame {
     position: relative;
 }

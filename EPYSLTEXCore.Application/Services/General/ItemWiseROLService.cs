@@ -191,5 +191,28 @@ namespace EPYSLTEXCore.Application.Services.General
 
             return await _service.GetDataAsync<ItemMasterReOrderStatus>(query);
         }
+        public async Task<bool> CheckDuplicateValue(ItemMasterReOrderStatus model)
+        {
+            var condition = model.ROSID > 0 ? $" AND ROSID!={model.ROSID}" : "";
+            var sql = $@"SELECT *
+			                FROM {TableNames.ItemMasterReOrderStatus} 
+							WHERE ItemMasterID = {model.ItemMasterID} AND CompanyID = {model.CompanyID}"+ condition;
+
+            try
+            {
+                await _connection.OpenAsync();
+                var records = await _connection.QueryMultipleAsync(sql);
+                ItemMasterReOrderStatus data = records.Read<ItemMasterReOrderStatus>().FirstOrDefault();
+                return data == null ? false : true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
+            }
+        }
     }
 }

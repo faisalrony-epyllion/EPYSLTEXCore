@@ -15,5 +15,6 @@ namespace EPYSLTEXCore.Application.Interfaces
         Task SaveAsync(ItemMasterReOrderStatus entitie);
         Task<ItemMasterReOrderStatus> GetMaster();
         Task<List<ItemMasterReOrderStatus>> GetItemMasterDataAsync(PaginationInfo paginationInfo);
+        Task<bool> CheckDuplicateValue(ItemMasterReOrderStatus model);
     }
 }

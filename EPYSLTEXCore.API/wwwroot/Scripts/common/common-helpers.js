@@ -5578,14 +5578,17 @@ function ch_GenerateBasicModal($formEl, isNeedOkBtn, btnOkId) {
         modalId: modalId
     };
 }
-function ch_setActionCommandCellWidth(commands) {
-    var columnsWidth = commands.length * 40;
-    if (commands.length == 0 || commands.length == 1) columnsWidth = 100;
-    return columnsWidth;
-}
-function ch_setActionCommandCellWidth_N(totalCommands) {
-    var columnsWidth = totalCommands * 40;
-    if (totalCommands == 0 || totalCommands == 1) columnsWidth = 100;
+function ch_setActionCommandCellWidth(commandParam) {
+    var isNumber = $.isNumeric(commandParam);
+    var value = 0;
+    if (!isNumber) {
+        value = commandParam.length;
+    } else {
+        value = commandParam;
+    }
+
+    var columnsWidth = value * 40;
+    if (value == 0 || value == 1) columnsWidth = 100;
     return columnsWidth;
 }
 

@@ -1,10 +1,12 @@
 ﻿<script type="text/javascript">
     localStorage.setItem("pageName", "@ViewBag.PageName");
     localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
 </script>
 
 @{
     var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var menuParam = ViewBag.MenuParam;
     var divTblId = "divtbl" + pageId;
     var toolbarId = "toolbar" + pageId;
     var tblMasterId = "tbl" + pageId;
@@ -14,6 +16,7 @@
 }
 
 <div id="@pageId">
+    <input id="txtMenuParam" value="@menuParam" type="hidden" />
     <div class="row" id="@divTblId">
         <div class="col-sm-12 toolBar-parent-div">
             <div id="@toolbarId">
@@ -24,6 +27,14 @@
                     <button id="btnList" class="btn btn-default text-grey btn-sm">
                         <i class="fa fa-list"></i>&nbsp;Return Lists
                     </button>
+
+                    <button id="btnPendingListForApproval" class="btn btn-default text-grey btn-sm">
+                        <i class="fa fa-list"></i>&nbsp;Pending List For Approval
+                    </button>
+                    <button id="btnApprovalList" class="btn btn-default text-grey btn-sm">
+                        <i class="fa fa-list"></i>&nbsp;Approved List
+                    </button>
+
                 </div>
                 <div style="margin:10px 0 10px 0;" class="divCreate btnTootBar">
                     <button id="btnCreate" class="btn btn-primary btn-sm btnExtra">
@@ -42,68 +53,59 @@
             <input type="hidden" name="QCRemarksMasterID" id="QCRemarksMasterID" />
             <input type="hidden" name="QCReqMasterID" id="QCReqMasterID" />
 
-            <div class="card card-default" id="@divDetailsId" style="display:none">
-                
-                <div class="card-body">
-                    <div class="card" style="border-color:transparent; border-style:none;">
-                        <div class="card-header">
-                            <h3 class="card-title"> General/Commercial Information </h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
                         </div>
-
-                        <div class="card-body">
-                            <!-- Row 1 -->
-                            <div class="row">
+                        <div class="panel-body">
+                            <div class="form-horizontal">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label>Return No</label>
-                                        <input id="QCReturnNo" name="QCReturnNo" class="form-control input-sm" readonly />
+                                        <label class="control-label col-sm-4 small">Return No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReturnNo" name="QCReturnNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Return Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReturnDate" name="QCReturnDate" class="form-control input-sm" readonly />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label>Requisition No</label>
-                                        <input id="QCReqNo" name="QCReqNo" class="form-control input-sm" value="" readonly />
+                                        <label class="control-label col-sm-4 small">Requisition No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqNo" name="QCReqNo" class="form-control input-sm" value="" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqDate" name="QCReqDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Received No</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReceiveNo" name="QCReceiveNo" class="form-control input-sm" value="" readonly />
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Requisition For</label>
+                                        <div class="col-sm-8">
+                                            <input id="QCReqFor" name="QCReqFor" class="form-control input-sm" value="" readonly />
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
-
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Return Date</label>
-                                        <input id="QCReturnDate" name="QCReturnDate" class="form-control input-sm" readonly />
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Requisition Date</label>
-                                         <input id="QCReqDate" name="QCReqDate" class="form-control input-sm" readonly />
-                                    </div>
-
-                                     <div class="form-group">
-                                         <label>Received No</label>
-                                         <input id="QCReceiveNo" name="QCReceiveNo" class="form-control input-sm" value="" readonly />
-                                     </div>
-
-                                     <div class="form-group">
-                                         <label>Received Date</label>
-                                         <input id="QCReceiveDate" name="QCReceiveDate" class="form-control input-sm" readonly />
-                                     </div>
-
-                                     <div class="form-group">
-                                         <label>Requisition For</label>
-                                         <input id="QCReqFor" name="QCReqFor" class="form-control input-sm" value="" readonly />
-                                     </div>
-                                </div>
-                            </div>    
                         </div>
                     </div>
                 </div>
@@ -127,12 +129,10 @@
                 <div class="box-footer btn-e-float-margin" id="divFormButtons">
                     <div class="row">
                         <div class="col-md-12 text-right">
-                            <button type="button" class="btn btn-default m-w-120" id="btnCancel">
-                                <i class="fa fa-angle-double-left"></i>&nbsp;Back to List
-                            </button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnSave">
-                                <i class="fa fa-save"></i>&nbsp;&nbsp;Save
-                            </button>
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120 btnAction" id="btnSaveAndSendForApproval"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send For Approval</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnApprove"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
                         </div>
                     </div>
                 </div>

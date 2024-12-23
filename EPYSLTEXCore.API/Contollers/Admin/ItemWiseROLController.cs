@@ -1,26 +1,12 @@
-﻿using AutoMapper;
-using Azure.Core;
-using EPYSLTEX.Core.Interfaces;
-using EPYSLTEX.Core.Interfaces.Services;
+﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.Admin;
-using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Admin;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
-using EPYSLTEXCore.Infrastructure.Static;
-using EPYSLTEXCore.Infrastructure.Statics;
-using Microsoft.AspNetCore.Authorization;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.SqlServer.Server;
 using Newtonsoft.Json;
-using NLog;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.API.Contollers.Admin
@@ -55,19 +41,29 @@ namespace EPYSLTEXCore.API.Contollers.Admin
         [ValidateModel]
         public async Task<IActionResult> Save(dynamic jsonString)
         {
-            ItemMasterReOrderStatus model = JsonConvert.DeserializeObject<ItemMasterReOrderStatus>(Convert.ToString(jsonString));
+            //ItemMasterReOrderStatus model = JsonConvert.DeserializeObject<ItemMasterReOrderStatus>(Convert.ToString(jsonString));
+            ItemMasterReOrderStatus model = JsonConvert.DeserializeObject<ItemMasterReOrderStatus>
+                                            (
+                                                Convert.ToString(jsonString),
+                                                new JsonSerializerSettings
+                                                {
+                                                    DateTimeZoneHandling = DateTimeZoneHandling.Local
+                                                }
+                                            );
             ItemMasterReOrderStatus entity = new ItemMasterReOrderStatus();
-
             if (model.ROSID > 0)
             {
                 entity = await _service.GetAsync(model.ROSID);
                 entity.EntityState = EntityState.Modified;
-                entity.MonthlyAvgConsumption = model.MonthlyAvgConsumption;
-                entity.LeadTimeDays = model.LeadTimeDays;
-                entity.SafetyStockDays = model.SafetyStockDays;
-                entity.MonthlyWorkingDays = model.MonthlyWorkingDays;
-                entity.PackSize = model.PackSize;
-                entity.MOQ = model.MOQ;
+                entity.MonthlyAvgConsumptionLP = model.MonthlyAvgConsumptionLP;
+                entity.MonthlyAvgConsumptionFP = model.MonthlyAvgConsumptionFP;
+                entity.ROLLocalPurchase = model.ROLLocalPurchase;
+                entity.ROLForeignPurchase = model.ROLForeignPurchase;
+                entity.ReOrderQty = model.ROLLocalPurchase + model.ROLForeignPurchase;
+                entity.MaximumPRQtyLP = model.MaximumPRQtyLP;
+                entity.MaximumPRQtyFP = model.MaximumPRQtyFP;
+                entity.MOQ = model.MaximumPRQtyLP + model.MaximumPRQtyFP;
+                entity.ValidDate = model.ValidDate;
             }
             else
             {
@@ -76,13 +72,8 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                 entity.EntityState = EntityState.Added;
                 entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
-                //entity.ProposeDate = null;
-                //entity.AcknowledgeDate = null;
-                //entity.ApproveDate = null;
-                //entity.UnApproveDate = null;
-                //entity.LeadTimeProposeDate = null;
-                //entity.LeadTimeApproveDate = null;
-                //entity.LeadTimeUnApproveDate = null;
+                entity.ReOrderQty = entity.ROLLocalPurchase + entity.ROLForeignPurchase;
+                entity.MOQ = entity.MaximumPRQtyLP + entity.MaximumPRQtyFP;
             }
             await _service.SaveAsync(entity);
             return Ok();

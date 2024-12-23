@@ -141,14 +141,14 @@
             },
             actionBegin: function (args) {
                 if (args.requestType === 'save') {
-
+                    debugger;
                     args.data.YRMPID = getDefaultValueWhenInvalidN(args.data.YRMPID);
-                    args.data.YarnCountID = getDefaultValueWhenInvalidN(args.data.YarnCountID);
-                    //if (args.data.YarnCountID == 0) {
-                    //    toastr.error('Select Yarn Count!!!');
-                    //    args.cancel = true;
-                    //    return;
-                    //}
+                    args.data.YarnCount = getDefaultValueWhenInvalidN(args.data.YarnCount);
+                    if (args.data.YarnCount == 0) {
+                        toastr.error('Select Yarn Count!!!');
+                        args.cancel = true;
+                        return;
+                    }
 
                     args.rowData = setValidPropsValue(args.data, args.rowData);
                     args.data = setDropDownValues(masterData, args.data, args.rowData);

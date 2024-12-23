@@ -76,8 +76,10 @@
     });
     function resetForm() {
         $formEl.trigger("reset");
+      
         $.each($formEl.find('select'), function (i, el) {
-            $(el).select2('');
+            $(el).val(null).trigger('change');
+           // $(el).select2('').trigger('change');
         });
         initChildGrid([]);
     }

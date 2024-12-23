@@ -75,6 +75,10 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         public int DayDuration { get; set; } = 0;
         [Write(false)]
         public string DayValidDurationName { get; set; } = "";
+        [Write(false)]
+        public decimal MOQ { get; set; } = 0;
+        [Write(false)]
+        public decimal StockQty { get; set; } = 0;
         #endregion Additional Property
     }
 }

@@ -71,6 +71,17 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 entity.DateUpdated = DateTime.Now;
                 entity.EntityState = EntityState.Modified;
 
+                if (model.IsSendForApproval)
+                {
+                    entity.IsSendForApproval = true;
+                    entity.SendForApprovalBy = AppUser.UserCode;
+                    entity.SendForApprovalDate = DateTime.Now;
+
+                    entity.IsApprove = false;
+                    entity.ApproveBy = 0;
+                    entity.ApproveDate = null;
+                }
+
                 entity.YarnQCReturnChilds.SetUnchanged();
 
                 foreach (YarnQCReturnChild item in model.YarnQCReturnChilds)
@@ -107,6 +118,26 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             await _service.SaveAsync(entity);
 
             return Ok();
+        }
+
+        [Route("approve")]
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> ApproveYarnQCReturn(dynamic jsonString)
+        {
+            YarnQCReturnMaster model = JsonConvert.DeserializeObject<YarnQCReturnMaster>(Convert.ToString(jsonString));
+
+            YarnQCReturnMaster entity = await _service.GetAllAsync(model.QCReturnMasterID);
+            entity.IsApprove = true;
+            entity.ApproveBy = AppUser.UserCode;
+            entity.ApproveDate = DateTime.Now;
+            entity.EntityState = EntityState.Modified;
+            entity.YarnQCReturnChilds.SetUnchanged();
+
+            
+            await _service.ApproveAsync(entity);
+
+            return Ok(entity.QCReturnMasterID);
         }
     }
 }

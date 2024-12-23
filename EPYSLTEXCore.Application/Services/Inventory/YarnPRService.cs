@@ -1312,8 +1312,10 @@ namespace EPYSLTEX.Infrastructure.Services
 					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID
 	                , ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc
 	                , ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, BaseTypeId = 0,
-                    'ROL Base Booking' As [Source]
+                    ' ROL Base Booking' As [Source], ROL.MOQ
+                    , StockQty = SUM(ISNULL(YSM.PipelineStockQty,0) + ISNULL(YSM.QuarantineStockQty,0) + ISNULL(YSM.AdvanceStockQty,0) + ISNULL(YSM.SampleStockQty,0) + ISNULL(YSM.LeftoverStockQty,0) + ISNULL(YSM.LiabilitiesStockQty,0))
                 FROM {TableNames.ItemMasterReOrderStatus} ROL
+                LEFT JOIN {TableNames.YarnStockMaster_New} YSM ON YSM.ItemMasterID = ROL.ItemMasterID AND YSM.CompanyID = ROL.CompanyID
 				INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = ROL.ItemMasterID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV1 On IM.Segment1ValueID = ISV1.SegmentValueID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV2 On IM.Segment2ValueID = ISV2.SegmentValueID
@@ -1323,7 +1325,11 @@ namespace EPYSLTEX.Infrastructure.Services
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV6 On IM.Segment6ValueID = ISV6.SegmentValueID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV7 On IM.Segment7ValueID = ISV7.SegmentValueID
                 Left Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = ROL.CompanyID 
-				Where ROL.ROSID IN ({iDs});";
+				Where ROL.ROSID IN ({iDs})
+                GROUP BY  IM.ItemMasterID, ROL.CompanyID, CE.ShortName
+					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID
+	                , ISV1.SegmentValue, ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue
+	                , ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, ROL.MOQ;";
             }
             else if (source == PRFromName.CONCEPT && revisionstatus == "Revision Pending")
             {

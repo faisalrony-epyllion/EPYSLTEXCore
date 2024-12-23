@@ -497,10 +497,6 @@
         }
 }
 
-#mainTabContent .tab-pane {
-    padding: 4px 12px 0 12px;
-}
-
 form, .box-body {
     width: 100% !important;
 }
@@ -511,11 +507,17 @@ form, .box-body {
 
 .row {
     width: 100% !important;
+    margin: 0px !important;
 }
 /*.content, .container-fluid {
     padding: 0px !important;
 }
 */
+.container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
 .content-wrapper {
     background-color: #eef2e9 !important;
 }
@@ -530,6 +532,7 @@ form, .box-body {
 
 .pull-right-mb {
     margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .pull-right-mt {
@@ -556,7 +559,7 @@ form, .box-body {
 }
 
 .panel-body {
-    padding: 5px;
+    padding: 5px 0 0 0;
     font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12px;
 }
@@ -594,7 +597,11 @@ form, .box-body {
 .form-group {
     clear: both;
     margin-bottom: 5px !important;
+    margin-left: 4px !important;
 }
+/*.small {
+    margin-left: 20px !important;
+}*/
 
 .btn-file, .file-caption, .file-input, .file-loading:before, .file-preview, .file-zoom-dialog .modal-dialog, .krajee-default .file-thumbnail-footer, .krajee-default.file-preview-frame {
     position: relative;
@@ -657,31 +664,9 @@ button.close {
 }
 
 @media (min-width: 768px) {
-    .col-sm-1,
-    .col-sm-2,
-    .col-sm-3,
-    .col-sm-4,
-    .col-sm-5,
-    .col-sm-6,
-    .col-sm-7,
-    .col-sm-8,
-    .col-sm-9,
-    .col-sm-10,
-    .col-sm-11,
-    .col-sm-12,
-    .col-md-1,
-    .col-md-2,
-    .col-md-3,
-    .col-md-4,
-    .col-md-5,
-    .col-md-6,
-    .col-md-7,
-    .col-md-8,
-    .col-md-9,
-    .col-md-10,
-    .col-md-11,
-    .col-md-12 {
+    .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
         float: left;
+        padding: 0px;
     }
 }
 
@@ -703,8 +688,10 @@ button.close {
 .text-white {
     color: #ffffff !important;
 }
+
 .toolBar-parent-div {
-    margin-bottom:4px !important;
+    margin-bottom: 4px !important;
+    margin-top: 6px !important;
 }
 
 /*Select2 CSS*/

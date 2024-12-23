@@ -92,6 +92,8 @@ $(document).ready(function () {
     $("#btnLeftMenu").click(function () {
         setAnimate(true);
     });
+
+    initTitleMenuEvents();
 });
 
 function logout() {
@@ -370,7 +372,6 @@ function removeCurrentTab() {
 
 function registerCloseEvent(menuId) {
     $(".closeTab" + menuId).click(function () {
-
         var tabIndex = $(this).closest('li').attr("tabIndex");
         var preTabIndex = tabIndex - 1;
         var isActive = $(this).closest('li').hasClass("active");
@@ -669,6 +670,54 @@ function generateMenu(menuList) {
         template += '</ul></li>';
 
 
+    });
+}
+
+function initTitleMenuEvents() {
+    $("#btnCloseAllTabs").click(function () {
+        $('#mainTab').find('li').each(function () {
+            var tabIndex = $(this).attr("tabIndex");
+            if (tabIndex > 0) {
+                var tabContentId = $(this).find("a").attr("href");
+                $(tabContentId).remove();
+                $(this).remove();
+                resetTabIndex();
+                setAnimate(true);
+            }
+        });
+    });
+    $("#btnCloseAllOtherTabs").click(function () {
+        $('#mainTab').find('li').each(function () {
+            var tabIndex = $(this).attr("tabIndex");
+            var isActive = $(this).hasClass("active");
+
+            if (tabIndex > 0 && !isActive) {
+                var tabContentId = $(this).find("a").attr("href");
+                $(tabContentId).remove();
+                $(this).remove();
+            }
+            resetTabIndex();
+            setAnimate(true);
+        });
+    });
+    $("#btnSetScreenSize").click(function () {
+        var status = $(this).attr("status");
+        if (status == "normal") {
+            $(this).attr("status", "full");
+            $(".main-sidebar").hide();
+            $(".content-wrapper,.main-header").css({
+                "margin-left": "0px"
+            });
+
+        } else {
+            $(this).attr("status", "normal");
+
+            $(".main-sidebar").show();
+            $(".content-wrapper,.main-header").css({
+                "margin-left": "250px"
+            });
+
+        }
     });
 }
 

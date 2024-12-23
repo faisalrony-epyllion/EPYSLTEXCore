@@ -710,7 +710,7 @@ function initTitleMenuEvents() {
         var status = $(this).attr("status");
         if (status == "normal") {
             $(this).attr("status", "full");
-            $(".main-sidebar").hide();
+            $(".main-sidebar").hide(200);
             $(".content-wrapper,.main-header").css({
                 "margin-left": "0px"
             });
@@ -718,7 +718,7 @@ function initTitleMenuEvents() {
         } else {
             $(this).attr("status", "normal");
 
-            $(".main-sidebar").show();
+            $(".main-sidebar").show(200);
             $(".content-wrapper,.main-header").css({
                 "margin-left": "250px"
             });

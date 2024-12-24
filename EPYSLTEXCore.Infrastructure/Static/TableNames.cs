@@ -854,6 +854,8 @@
         #endregion
 
         public const string BDS_TNA_EVENT_HK = "T_BDSTNAEvent_HK";
+        public const string CONTAINER_SIZE = "ContainerSize_HK";
+        public const string CONTAINER_SIZE_CAPACITY_MASTER = "ContainerSizeCapacityMaster";
         public const string FABRIC_WASTAGE_GRID = "T_FabricWastageGrid";
         public const string CONCEPT_PENDING_STATUS_HK = "T_ConceptPendingStatus_HK";
 

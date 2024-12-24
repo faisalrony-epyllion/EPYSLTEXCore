@@ -9,6 +9,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 
 namespace EPYSLTEXCore.Application.Services.General
 {
@@ -128,7 +129,7 @@ namespace EPYSLTEXCore.Application.Services.General
 
                     --Blend Type
 
-                    SELECT id = 0, text = 'Select Blend Type'
+                    SELECT id = 0, text = 'Select'
                     UNION
                     SELECT id=1, text='Blended'
                     UNION
@@ -385,6 +386,42 @@ namespace EPYSLTEXCore.Application.Services.General
 
             return entity;
         }
-        
+        public async Task<bool> CheckDuplicateValue(YarnRMProperties model)
+        {
+            var condition = model.YRMPID > 0 ? $" AND YRMPID!={model.YRMPID}" : "";
+            var sql = $@"SELECT *
+			                FROM {TableNames.YarnRMProperties} 
+							WHERE FiberTypeID = {model.FiberTypeID} 
+                            AND BlendTypeID = {model.BlendTypeID}
+                            AND YarnTypeID = {model.YarnTypeID} 
+                            AND ProgramID = {model.ProgramID} 
+                            AND SubProgramID = {model.SubProgramID} 
+                            AND CertificationID = {model.CertificationID} 
+                            AND TechnicalParameterID = {model.TechnicalParameterID} 
+                            AND YarnCompositionID = {model.YarnCompositionID} 
+                            AND ShadeReferenceID = {model.ShadeReferenceID} 
+                            AND ManufacturingLineID = {model.ManufacturingLineID} 
+                            AND ManufacturingProcessID = {model.ManufacturingProcessID} 
+                            AND ManufacturingSubProcessID = {model.ManufacturingSubProcessID} 
+                            AND ColorID = {model.ColorID} 
+                            AND ColorGradeID = {model.ColorGradeID} 
+                            AND YarnCountID = {model.YarnCountID} 
+                            " + condition;
+            try
+            {
+                await _connection.OpenAsync();
+                var records = await _connection.QueryMultipleAsync(sql);
+                YarnRMProperties data = records.Read<YarnRMProperties>().FirstOrDefault();
+                return data == null ? false : true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
+            }
+        }
     }
 }

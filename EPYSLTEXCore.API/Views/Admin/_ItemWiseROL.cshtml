@@ -10,13 +10,25 @@
 	var tblMasterId = "tbl" + pageId;
 	var formId = "form" + pageId;
 	var divDetailsId = "divDetails" + pageId;
+	var dialogtemplate = "dialogtemplate" + pageId;
 }
 <style type="text/css">
-	.form-row {
-		margin-bottom: 15px;
-	}
 	.form-group {
-		margin-bottom: 15px;
+		margin-bottom: 20px !important;
+	}
+	/* For Webkit browsers (Chrome, Safari) */
+	input[type="number"]::-webkit-outer-spin-button,
+	input[type="number"]::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	/* For Firefox */
+	input[type="number"] {
+		-moz-appearance: textfield;
+	}
+	/* For Edge */
+	input[type="number"]::-ms-clear {
+		display: none;
 	}
 </style>
 <div id="@pageId">
@@ -75,78 +87,74 @@
 					</div>
 				</div>
 			</div>
-
-			<script id='dialogtemplate' type="text/x-template">
-				<div>
-					<div class="form-row">
-						<div class="form-group col-md-12">
+		</form>
+		<div id='dialogtemplateROL' style="display:none;" class="@dialogtemplate">
+			<div class="modal-form-default">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
 							<div class="e-float-input e-control-wrapper">
-								<input id="ItemMaster_Finder" name="ItemMaster_Finder" type="text" readonly/>
+								<input id="ItemMaster_Finder" name="ItemMaster_Finder" class="ItemMaster_Finder" type="text" readonly />
 								<span class="e-float-line"></span>
 								<label class="e-float-text e-label-top" for="Cone">Item Name</label>
 							</div>
 						</div>
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-6">
+						<div class="form-group">
 							<div class="e-float-input e-control-wrapper">
-								<input id="MonthlyAvgConsumptionLP" name="MonthlyAvgConsumptionLP" type="number" value=""/>
+								<input id="MonthlyAvgConsumptionLP" name="MonthlyAvgConsumptionLP" class="MonthlyAvgConsumptionLP"  />
 								<span class="e-float-line"></span>
 								<label class="e-float-text e-label-top" for="Cone">Monthly Avg Consumption Local Purchase</label>
 							</div>
 						</div>
-						<div class="form-group col-md-6">
-						<div class="e-float-input e-control-wrapper">
-								<input id="MonthlyAvgConsumptionFP" name="MonthlyAvgConsumptionFP" type="number" value=""/>
+						<div class="form-group">
+							<div class="e-float-input e-control-wrapper">
+								<input id="MonthlyAvgConsumptionFP" name="MonthlyAvgConsumptionFP" class="MonthlyAvgConsumptionFP" type="number" />
 								<span class="e-float-line"></span>
 								<label class="e-float-text e-label-top" for="Cone">Monthly Avg Consumption Foreign Purchase</label>
 							</div>
 						</div>
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-6">
+						<div class="form-group">
 							<div class="e-float-input e-control-wrapper">
-								<input id="ROLLocalPurchase" name="ROLLocalPurchase" type="number" value=""/>
+								<input id="ROLLocalPurchase" name="ROLLocalPurchase" class="ROLLocalPurchase" type="number" />
 								<span class="e-float-line"></span>
 								<label class="e-float-text e-label-top" for="Cone">ROL Local Purchase</label>
 							</div>
 						</div>
-						<div class="form-group col-md-6">
-						<div class="e-float-input e-control-wrapper">
-								<input id="ROLForeignPurchase" name="ROLForeignPurchase" type="number" value=""/>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<div class="e-float-input e-control-wrapper">
+								<input id="ROLForeignPurchase" name="ROLForeignPurchase" class="ROLForeignPurchase" type="number" />
 								<span class="e-float-line"></span>
 								<label class="e-float-text e-label-top" for="ROLForeignPurchase">ROL Foreign Purchase</label>
 							</div>
 						</div>
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-6">
+						<div class="form-group">
 							<div class="e-float-input e-control-wrapper">
-								<input id="MaximumPRQtyLP" name="MaximumPRQtyLP" type="number" value=""/>
+								<input id="MaximumPRQtyLP" name="MaximumPRQtyLP" class="MaximumPRQtyLP" type="number" />
 								<span class="e-float-line"></span>
-								<label class="e-float-text e-label-top" for="Cone">Maximum PR Qty  Local Purchase</label>
+								<label class="e-float-text e-label-top" for="Cone">Maximum PR Qty Local Purchase</label>
 							</div>
 						</div>
-						<div class="form-group col-md-6">
+						<div class="form-group">
 							<div class="e-float-input e-control-wrapper">
-								<input id="MaximumPRQtyFP" name="MaximumPRQtyFP" type="number" value=""/>
+								<input id="MaximumPRQtyFP" name="MaximumPRQtyFP" class="MaximumPRQtyFP" type="number" />
 								<span class="e-float-line"></span>
 								<label class="e-float-text e-label-top" for="MaximumPRQtyFP">Maximum PR Qty Foreign Purchase</label>
 							</div>
 						</div>
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-6">
-								<div class="e-float-input e-control-wrapper">
-									<input id="ValidDate" name="ValidDate" class="form-control-sm" type='date' />
-									<span class="e-float-line"></span>
-									<label class="e-float-text e-label-top" for="ValidDate">Valid Date</label>
-								</div>
+						<div class="form-group">
+							<div class="e-float-input e-control-wrapper">
+								<input id="ValidDate" name="ValidDate" class="form-control-sm ValidDate" type='date' />
+								<span class="e-float-line"></span>
+								<label class="e-float-text e-label-top" for="ValidDate">Valid Date</label>
 							</div>
+						</div>
 					</div>
 				</div>
-			</script>
-		</form>
+			</div>
+		</div>
+
 	</div>
 
 </div>

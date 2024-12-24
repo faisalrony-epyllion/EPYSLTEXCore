@@ -49,8 +49,16 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                 entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
             }
-            await _service.SaveAsync(entity);
-            return Ok();
+            var checkDuplicate = await _service.CheckDuplicateValue(entity);
+            if (!checkDuplicate)
+            {
+                await _service.SaveAsync(entity);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Duplicate data found!!!");
+            }
         }
         [HttpGet]
         [Route("GetMaster")]

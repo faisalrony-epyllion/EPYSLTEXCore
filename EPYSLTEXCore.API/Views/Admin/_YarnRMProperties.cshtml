@@ -10,16 +10,14 @@
 	var tblMasterId = "tbl" + pageId;
 	var formId = "form" + pageId;
 	var divDetailsId = "divDetails" + pageId;
+	var dialogtemplate = "dialogtemplate" + pageId;
 }
 <style type="text/css">
 	.cbo {
 		font-size: 16px !important;
 	}
-	.form-row {
-		margin-bottom: 15px;
-	}
 	.form-group {
-		margin-bottom: 15px;
+		margin-bottom: 15px !important;
 	}
 </style>
 <div id="@pageId">
@@ -46,81 +44,80 @@
 				</div>
 
 			</div>
-
-			<script id='dialogtemplate' type="text/x-template">
-				<div>
-					<div class="form-row">
-						<div class="form-group col-md-4">
-							<input id="FiberType" name="FiberType" type="text" value=""/>
+		</form>
+		@* <script id='dialogtemplate' type="text/x-template"> *@
+		<div id='dialogtemplateRMP' style="display:none;" class="@dialogtemplate">
+			<div class="modal-form-default">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<input id="FiberType" name="FiberType" class="FiberType" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="Certification" name="Certification" type="text" value=""/>
+						<div class="form-group">
+							<input id="BlendType" name="BlendType" class="BlendType" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="ManufacturingProcess" name="ManufacturingProcess" type="text" value=""/>
+						<div class="form-group">
+							<input id="YarnType" name="YarnType" class="YarnType" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-4">
-							<input id="BlendType" name="BlendType" type="text" value=""/>
+						<div class="form-group">
+							<input id="Program" name="Program" class="Program" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="TechnicalParameter" name="TechnicalParameter" type="text" value=""/>
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group col-md-4">
-							<input id="ManufacturingSubProcess" name="ManufacturingSubProcess" type="text" value=""/>
+						<div class="form-group">
+							<input id="SubProgram" name="SubProgram" class="SubProgram" type="text" />
 							<span class="e-float-line"></span>
 						</div>
 					</div>
-					<div class="form-row">
-						<div class="form-group col-md-4">
-							<input id="YarnType" name="YarnType" type="text" value=""/>
+					<div class="col-md-4">
+						<div class="form-group">
+							<input id="Certification" name="Certification" class="Certification" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="YarnComposition" name="YarnComposition" type="text" value=""/>
+						<div class="form-group">
+							<input id="TechnicalParameter" name="TechnicalParameter" class="TechnicalParameter" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="Color" name="Color" type="text" value=""/>
+						<div class="form-group">
+							<input id="YarnComposition" name="YarnComposition" class="YarnComposition" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-					</div>
-					<div class="form-row">
-						<div class="form-group col-md-4">
-							<input id="Program" name="Program" type="text" value=""/>
+						<div class="form-group">
+							<input id="ShadeReference" name="ShadeReference" class="ShadeReference" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="ShadeReference" name="ShadeReference" type="text" value=""/>
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group col-md-4">
-							<input id="ColorGrade" name="ColorGrade" type="text" value=""/>
+						<div class="form-group">
+							<input id="ManufacturingLine" name="ManufacturingLine" class="ManufacturingLine" type="text" />
 							<span class="e-float-line"></span>
 						</div>
 					</div>
-					<div class="form-row">
-						<div class="form-group col-md-4">
-							<input id="SubProgram" name="SubProgram" type="text" value=""/>
+					<div class="col-md-4">
+						<div class="form-group">
+							<input id="ManufacturingProcess" name="ManufacturingProcess" class="ManufacturingProcess" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="ManufacturingLine" name="ManufacturingLine" type="text" value=""/>
+						<div class="form-group">
+							<input id="ManufacturingSubProcess" name="ManufacturingSubProcess" class="ManufacturingSubProcess" type="text" />
 							<span class="e-float-line"></span>
 						</div>
-						<div class="form-group col-md-4">
-							<input id="YarnCount" name="YarnCount" type="text" value=""/>
+						<div class="form-group">
+							<input id="Color" name="Color" class="Color" type="text" />
+							<span class="e-float-line"></span>
+						</div>
+						<div class="form-group">
+							<input id="ColorGrade" name="ColorGrade" class="ColorGrade" type="text" />
+							<span class="e-float-line"></span>
+						</div>
+						<div class="form-group">
+							<input id="YarnCount" name="YarnCount" class="YarnCount" type="text" />
 							<span class="e-float-line"></span>
 						</div>
 					</div>
 				</div>
-				@* <div class="form-horizontal">
+			</div>
+			@* <div class="form-horizontal">
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label class="control-label col-sm-4 small">Fiber Type</label>
@@ -150,8 +147,8 @@
 					</div>
 				</div> *@
 
-			</script>
-		</form>
+		</div>
+		@* </script> *@
 	</div>
 
 </div>

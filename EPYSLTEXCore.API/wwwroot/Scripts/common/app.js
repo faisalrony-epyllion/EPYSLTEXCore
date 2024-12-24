@@ -23,10 +23,10 @@ var globalControllerName = 'home';
 var globalActionName = 'index';
 
 $(document).ready(function () {
-
-    rootPath = window.location.protocol + '//' + window.location.host;
+ 
+    rootPath = window.location.protocol + '//' + window.location.hostname;
   
-    reportRootPath = window.location.protocol == "localhost" ? "https://localhost:44311/" : rootPath;
+    reportRootPath = window.location.hostname == "localhost" ? "https://localhost:44311/" : rootPath +":8062";
     toastr.options.escapeHtml = true;
 
     $.fn.editable.defaults.mode = 'inline';
@@ -608,7 +608,7 @@ function gotoReport() {
 }
 
 function openFormInNewWindow(url) {
-   
+ 
     // Create a form dynamically
     var form = document.createElement('form');
     form.method = 'POST';

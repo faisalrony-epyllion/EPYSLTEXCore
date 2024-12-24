@@ -25,8 +25,8 @@ var globalActionName = 'index';
 $(document).ready(function () {
 
     rootPath = window.location.protocol + '//' + window.location.host;
-
-    reportRootPath = "https://localhost:44311/";
+  
+    reportRootPath = window.location.protocol == "localhost" ? "https://localhost:44311/" : rootPath;
     toastr.options.escapeHtml = true;
 
     $.fn.editable.defaults.mode = 'inline';
@@ -603,17 +603,12 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
 }
 
 function gotoReport() {
-
-
     const url = reportRootPath + 'reports/GetReport';
-   
-
     openFormInNewWindow(url);
 }
 
-
 function openFormInNewWindow(url) {
- 
+   
     // Create a form dynamically
     var form = document.createElement('form');
     form.method = 'POST';
@@ -626,6 +621,12 @@ function openFormInNewWindow(url) {
     tokenInput.value = localStorage.getItem('token');
     form.appendChild(tokenInput);
 
+    // Get CSRF token from the cookie
+    //var csrfTokenInput = document.createElement('input');
+    //csrfTokenInput.type = 'hidden';
+    //csrfTokenInput.name = '__RequestVerificationToken'; // This should match the name expected by the server
+    //csrfTokenInput.value = $("input[name='__RequestVerificationToken']").val();
+    //form.appendChild(csrfTokenInput);
     
 
     // Open the new window and submit the form there

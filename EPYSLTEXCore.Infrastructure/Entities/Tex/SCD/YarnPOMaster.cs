@@ -394,6 +394,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public IEnumerable<Select2OptionModel> ShadeList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
+        public IEnumerable<Select2OptionModel> ContainerList { get; set; } = Enumerable.Empty<Select2OptionModel>();
+        [Write(false)]
         public IEnumerable<Select2OptionModel> BaseTypes { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]
         public IEnumerable<Select2OptionModel> DayValidDurations { get; set; } = Enumerable.Empty<Select2OptionModel>();

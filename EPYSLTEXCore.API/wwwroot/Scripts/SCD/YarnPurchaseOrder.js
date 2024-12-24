@@ -1119,6 +1119,16 @@
             { field: 'DisplayUnitDesc', headerText: 'Unit', allowEditing: false },
             { field: 'Rate', headerText: 'Rate', editType: "numericedit", edit: { params: { showSpinButton: false, decimals: 2 } } },
             { field: 'PIValue', headerText: 'Total Value', allowEditing: false },
+            {
+                field: 'ContainerID',
+                headerText: 'Container',           
+                valueAccessor: ej2GridDisplayFormatter,
+                dataSource: masterData.ContainerList,
+                displayField: "text",
+                width: 300,
+                edit: ej2GridDropDownObj({
+                })
+            },
             { field: 'HSCode', headerText: 'HS Code' },
             { field: 'QuotationRefNo', headerText: 'Quotation Ref. No' },
             { field: 'QuotationRefDate', headerText: 'Quotation Ref. Date', type: 'date', format: _ch_date_format_1, editType: 'datepickeredit', width: 40, textAlign: 'Center' },

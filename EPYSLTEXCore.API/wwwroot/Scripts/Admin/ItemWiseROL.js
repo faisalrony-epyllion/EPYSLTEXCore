@@ -17,7 +17,6 @@
         getInitData();
     });
     function initMasterTable() {
-        debugger;
         var columns = [
             {
                 field: 'ROSID',
@@ -127,7 +126,6 @@
             },
             actionBegin: function (args) {
                 if (args.requestType === 'save') {
-                    console.log(args.data);
                     args.data.ROSID = getDefaultValueWhenInvalidN(args.data.ROSID);
                     args.rowData = setValidPropsValue(args.data, args.rowData);
                     //args.data = setDropDownValues(masterData, args.data, args.rowData);
@@ -137,23 +135,21 @@
                         args.data.ROSID = _maxROSID--;
                     }
                     var allData = $tblMasterEl.dataSource;
-                    console.log(allData);
 
+                    //var isExist = false;
+                    //var list = allData.filter(item => item.ItemName === args.data.ItemName);
 
-                    var isExist = false;
-                    var list = allData.filter(item => item.ItemName === args.data.ItemName);
+                    //if (list.length > 0 && _isEdit) {
+                    //    list = list.filter(x => x.ROSID != args.data.ROSID);
+                    //}
 
-                    if (list.length > 0 && _isEdit) {
-                        list = list.filter(x => x.ROSID != args.data.ROSID);
-                    }
+                    //if (list.length > 0) isExist = true;
 
-                    if (list.length > 0) isExist = true;
-
-                    if (isExist) {
-                        toastr.error("Duplicate Item found!!!");
-                        args.cancel = true;
-                        return;
-                    }
+                    //if (isExist) {
+                    //    toastr.error("Duplicate Item found!!!");
+                    //    args.cancel = true;
+                    //    return;
+                    //}
 
                     var dataObj = {
                         ROSID: args.data.ROSID,
@@ -171,18 +167,32 @@
                     };
 
                     args.rowData = DeepClone(args.data);
-
-                    if (!save(dataObj)) {
-                        args.cancel = true;
-                        return;
-                    };
+                    save(dataObj, args);
+                    //if (!save(dataObj)) {
+                    //    args.cancel = true;
+                    //    return;
+                    //};
                 }
                 if (args.requestType === 'delete') {
                 }
             },
             actionComplete: function (args) {
-                debugger;
                 _isEdit = false;
+                if (args.requestType === 'add' || args.requestType === 'beginEdit') {
+                    setTimeout(function () {
+                        var dialog = args.form.closest('.e-dialog'); // Get the dialog element
+                        dialog.style.width = '60%'; // Set the width
+                        //dialog.style.height = '400px'; // Set the height
+                        //dialog.style.top = 'auto'; // Optional: Set dialog position (vertically centered)
+                        dialog.style.left = '40%'; // Optional: Center dialog horizontally
+                        dialog.style.transform = 'translateX(-55%)'; // Center horizontally by adjusting position
+
+                        var ejDialogInstance = dialog.ej2_instances[0]; // Access the EJ2 Dialog instance
+                        ejDialogInstance.dragging = false;
+                        // Set focus on a specific input field after dialog is opened
+                        document.getElementById('MonthlyAvgConsumptionLP').focus();
+                    }, 100);
+                }
                 if (args.requestType === 'add') {
                     let itemNameID = getDefaultValueWhenInvalidN($formEl.find("#ItemMasterID").val());
                     let companyID = getDefaultValueWhenInvalidN($formEl.find("#CompanyID").val());
@@ -210,9 +220,7 @@
                     }
                     let itemName = $formEl.find("#ItemName").val();
                     $("#ItemMaster_Finder").val(itemName);
-                    console.log(args);
                     args.dialog.header = 'Add Details';
-                    args.dialog.width = "60%";
                 }
                 if (args.requestType === 'beginEdit') {
                     _isEdit = true;
@@ -233,7 +241,6 @@
                     $("#MaximumPRQtyFP").val(args.rowData.MaximumPRQtyFP);
                     $("#MOQ").val(args.rowData.MOQ);
                     $("#ValidDate").val(formatGridPopupDate(args.rowData.ValidDate));
-                    args.dialog.width = "60%";
                 }
             }
             //commandClick: handleCommands
@@ -361,7 +368,6 @@
                             //    // cast string to integer value.
                             //    args.data['NetWeight'] =
                             //        parseFloat(args.form.querySelector("#NetWeight").value);
-                            console.log(args.data);
 
                             args.data.ROSID = getDefaultValueWhenInvalidN(args.data.ROSID);
                             args.rowData = setValidPropsValue(args.data, args.rowData);
@@ -372,9 +378,7 @@
                                 args.data.ROSID = _maxROSID--;
                             }
                             var allData = $tblMasterEl.dataSource;
-                            console.log(allData);
-
-                            
+                       
                             var isExist = false;
                             var list = allData.filter(item => item.ItemName === args.data.ItemName);
 
@@ -446,7 +450,6 @@
                             }
                             let itemName = $formEl.find("#ItemName").val();
                             $("#ItemMaster_Finder").val(itemName);
-                            console.log(args);
                             args.dialog.header = 'Add Details';
 
                         }
@@ -498,33 +501,40 @@
             })
             .catch(showResponseError)
     }
-    function save(dataObj) {
-        let returnFlag = false;
+    function save(dataObj, args) {
+        //let returnFlag = false;
         
         //e.preventDefault();
         var data = formElToJson($formEl);
         data.SetupID = 0;
-        data.ROSID = dataObj.ROSID;
-        data.ItemMasterID = dataObj.ItemMasterID;
-        data.SubGroupID = dataObj.SubGroupID;
-        data.CompanyID = dataObj.CompanyID;
-        data.MonthlyAvgConsumptionLP = dataObj.MonthlyAvgConsumptionLP;
-        data.MonthlyAvgConsumptionFP = dataObj.MonthlyAvgConsumptionFP;
-        data.ROLLocalPurchase = dataObj.ROLLocalPurchase;
-        data.ROLForeignPurchase = dataObj.ROLForeignPurchase;
-        data.MaximumPRQtyLP = dataObj.MaximumPRQtyLP;
-        data.MaximumPRQtyFP = dataObj.MaximumPRQtyFP;
+        data.ROSID = getDefaultValueWhenInvalidN(dataObj.ROSID);
+        data.ItemMasterID = getDefaultValueWhenInvalidN(dataObj.ItemMasterID);
+        data.SubGroupID = getDefaultValueWhenInvalidN(dataObj.SubGroupID);
+        data.CompanyID = getDefaultValueWhenInvalidN(dataObj.CompanyID);
+        data.MonthlyAvgConsumptionLP = getDefaultValueWhenInvalidN(dataObj.MonthlyAvgConsumptionLP);
+        data.MonthlyAvgConsumptionFP = getDefaultValueWhenInvalidN(dataObj.MonthlyAvgConsumptionFP);
+        data.ROLLocalPurchase = getDefaultValueWhenInvalidN(dataObj.ROLLocalPurchase);
+        data.ROLForeignPurchase = getDefaultValueWhenInvalidN(dataObj.ROLForeignPurchase);
+        data.MaximumPRQtyLP = getDefaultValueWhenInvalidN(dataObj.MaximumPRQtyLP);
+        data.MaximumPRQtyFP = getDefaultValueWhenInvalidN(dataObj.MaximumPRQtyFP);
         data.ValidDate = formatDateToDefault(dataObj.ValidDate);
-        console.log(data);
         axios.post("/api/item-wise-rol/save", data)
             .then(function () {
                 toastr.success("Saved successfully.");
-                reset();
                 $tblMasterEl.refresh();
+                reset();
             })
-            .catch(showResponseError);
+            .catch(error => {
+                if (error.response) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+                args.cancel = true;
+            });
+            //.catch(showResponseError);
         
-        returnFlag = false;
+        //returnFlag = false;
     }
     function addItemMaster(e) {
         e.preventDefault();
@@ -556,11 +566,12 @@
         $formEl.find("#ItemMasterID").val(0);
         $formEl.find("#SubGroupID").val(0);
         $("#ItemMaster_Finder").val("");
-        $("#MonthlyAvgConsumption").val(0);
-        $("#LeadTimeDays").val(0);
-        $("#SafetyStockDays").val(0);
-        $("#MonthlyWorkingDays").val(0);
-        $("#PackSize").val(0);
-        $("#MOQ").val(0);
+        $("#MonthlyAvgConsumptionLP").val(0);
+        $("#MonthlyAvgConsumptionFP").val(0);
+        $("#ROLLocalPurchase").val(0);
+        $("#ROLForeignPurchase").val(0);
+        $("#MaximumPRQtyLP").val(0);
+        $("#MaximumPRQtyFP").val(0);
+        $("#ValidDate").val(formatGridPopupDate(new Date()));
     }
 })();

@@ -75,8 +75,17 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                 entity.ReOrderQty = entity.ROLLocalPurchase + entity.ROLForeignPurchase;
                 entity.MOQ = entity.MaximumPRQtyLP + entity.MaximumPRQtyFP;
             }
-            await _service.SaveAsync(entity);
-            return Ok();
+            var checkDuplicate = await _service.CheckDuplicateValue(entity);
+            if (!checkDuplicate)
+            {
+                await _service.SaveAsync(entity);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Duplicate data found!!!");
+            }
+            
         }
         [HttpGet]
         [Route("GetMaster")]

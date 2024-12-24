@@ -2843,7 +2843,7 @@
         }
         var columns = [
             {
-                headerText: 'Command', width: widthValue, textAlign: 'center', commands: commandList
+                headerText: 'Command', width: ch_setActionCommandCellWidth(commandList), textAlign: 'center', commands: commandList
             },
             //{
             //    field: 'BBStatus', headerText: 'Status', width: 60, visible: menuType == _paramType.BulkBookingFinalApprove && status == statusConstants.APPROVED_DONE
@@ -3013,28 +3013,28 @@
     function initMasterTable() {
         var columns = [
             {
-                headerText: 'Command', width: 100, textAlign: 'Left', visible: status == statusConstants.ACTIVE, commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(3), textAlign: 'Left', visible: status == statusConstants.ACTIVE, commands: [
                     { type: 'Add', title: 'Add', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
                     { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
                     { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
-                headerText: 'Command', width: ch_setActionCommandCellWidth_N(3), textAlign: 'Left', visible: (status == statusConstants.PENDING || status == statusConstants.REJECT), commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(3), textAlign: 'Left', visible: (status == statusConstants.PENDING || status == statusConstants.REJECT), commands: [
                     { type: 'Edit', title: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
                     { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
                     { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
-                headerText: 'Command', width: 100, textAlign: 'Left', visible: (status == statusConstants.COMPLETED || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.OTHERS), commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(3), textAlign: 'Left', visible: (status == statusConstants.COMPLETED || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.OTHERS), commands: [
                     { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                     { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
                     { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
-                headerText: 'Command', width: 100, textAlign: 'Left', visible: (status == statusConstants.APPROVED), commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(3), textAlign: 'Left', visible: (status == statusConstants.APPROVED), commands: [
                     { type: 'ViewRecive', title: 'ViewRecive', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                     { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
                     { type: 'View Attachment', buttonOption: { cssClass: 'e-flat', iconCss: 'e-image e-icons' } }

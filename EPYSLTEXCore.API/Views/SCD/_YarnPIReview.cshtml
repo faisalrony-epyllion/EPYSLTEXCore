@@ -50,38 +50,44 @@
                             General Information
                         </div>
                         <div class="panel-body">
-                            <div class="form-horizontal">
+                            <div class="col-sm-12">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="control-label col-sm-4 small">PI No</label>
                                         <div class="col-sm-8">
-                                            <input id="YPINo" name="YPINo" class="form-control form-control-sm" readonly />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">PI Date</label>
-                                        <div class="col-sm-8">
-                                            <input id="PIDate" name="PIDate" class="form-control form-control-sm" readonly />
+                                            <input id="YPINo" name="YPINo" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-
                                     <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Supplier</label>
+                                        <label class="control-label col-sm-4 small">PI Date</label>
                                         <div class="col-sm-8">
-                                            <input id="SupplierName" name="SupplierName" class="form-control form-control-sm" readonly />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Yarn PO (for PI)</label>
-                                        <div class="col-sm-8">
-                                            <input id="PONo" name="PONo" class="form-control form-control-sm" readonly />
+                                            <input id="PIDate" name="PIDate" class="form-control input-sm" readonly />
                                         </div>
                                     </div>
                                 </div>
+
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Supplier</label>
+                                        <div class="col-sm-8">
+                                            <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn PO (for PI)</label>
+                                        <div class="col-sm-8">
+                                            <input id="PONo" name="PONo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -90,7 +96,7 @@
                 @* <div class="panel panel-success" style="border-color:transparent; border-style:none">
                     <div class="panel-body"> *@
                         <div class="form-horizontal">
-                             <div class="col-sm-6">
+                             <div class="col-sm-4">
                                  <div class="panel panel-success">
                                      <div class="panel-heading">
                                          Summary PI Values
@@ -102,7 +108,7 @@
                                                  <div class="col-sm-7">
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="PIQty" name="PIQty" class="form-control" value="0" style="text-align:right" />
+                                                          <input id="PIQty" name="PIQty" class="form-control form-control-sm" value="0" style="text-align:right" />
                                                      </div>
                                                  </div>
                                              </div>
@@ -112,7 +118,7 @@
                                                  <div class="col-sm-7">
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="PIValue" name="PIValue" class="form-control" value="0" style="text-align:right" />
+                                                <input id="PIValue" name="PIValue" class="form-control form-control-sm" value="0" style="text-align:right" />
                                                      </div>
                                                  </div>
                                              </div>
@@ -122,7 +128,7 @@
                                                   <div class="col-sm-7">
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="TotalAddValue" name="TotalAddValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="TotalAddValue" name="TotalAddValue" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                      </div>
                                                   </div>
                                               </div>
@@ -132,7 +138,7 @@
                                                   <div class="col-sm-7">
                                                       <div class="input-group">
                                                           <div class="input-group-addon">$</div>
-                                                          <input id="TotalDeductionValue" name="TotalDeductionValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="TotalDeductionValue" name="TotalDeductionValue" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -142,7 +148,7 @@
                                                   <div class="col-sm-7">
                                                       <div class="input-group">
                                                           <div class="input-group-addon">$</div>
-                                                          <input id="NetPIValue" name="NetPIValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="NetPIValue" name="NetPIValue" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -152,7 +158,7 @@
                                                   <div class="col-sm-7">
                                                       <div class="input-group">
                                                           <div class="input-group-addon"> </div>
-                                                          <input id="TypeOfLc" name="TypeOfLc" class="form-control" value="0" readonly style="text-align:left" />
+                                                <input id="TypeOfLc" name="TypeOfLc" class="form-control form-control-sm" value="0" readonly style="text-align:left" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -162,7 +168,7 @@
                                                   <div class="col-sm-7">
                                                       <div class="input-group">
                                                           <div class="input-group-addon"> </div>
-                                                          <input id="CreditDays" name="CreditDays" class="form-control" value="0" readonly style="text-align:left" />
+                                                <input id="CreditDays" name="CreditDays" class="form-control form-control-sm" value="0" readonly style="text-align:left" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -172,7 +178,7 @@
                                                   <div class="col-sm-7">
                                                       <div class="input-group">
                                                              <div class="input-group-addon"> </div>
-                                                          <input id="ShippingTolerance" name="ShippingTolerance" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="ShippingTolerance" name="ShippingTolerance" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -183,7 +189,7 @@
                                  </div>
                              </div>
 
-                             <div class="col-md-6">
+                             <div class="col-md-4">
                                  <div class="panel panel-success">
                                      <div class="panel-heading">
                                          Summary PO Values
@@ -196,7 +202,7 @@
                                                  <div class="col-sm-7">
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="TotalQty" name="TotalQty" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="TotalQty" name="TotalQty" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                      </div>
                                                  </div>
                                              </div>
@@ -206,7 +212,7 @@
                                                  <div class="col-sm-7">
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="TotalValue" name="TotalValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="TotalValue" name="TotalValue" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                      </div>
                                                  </div>
                                              </div>
@@ -217,7 +223,7 @@
 
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="TotalAddValuePO" name="TotalAddValuePO" class="form-control" value="0" style="text-align:right" />
+                                                         <input id="TotalAddValuePO" name="TotalAddValuePO" class="form-control form-control-sm" value="0" style="text-align:right" />
                                                      </div>
                                                  </div>
                                              </div>
@@ -227,7 +233,7 @@
 
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="TotalDeductionValuePO" name="TotalDeductionValuePO" class="form-control" value="0" style="text-align:right" />
+                                                <input id="TotalDeductionValuePO" name="TotalDeductionValuePO" class="form-control form-control-sm" value="0" style="text-align:right" />
                                                      </div>
                                                  </div>
                                              </div>
@@ -237,7 +243,7 @@
 
                                                      <div class="input-group">
                                                          <div class="input-group-addon">$</div>
-                                                         <input id="NetPOValue" name="NetPOValue" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="NetPOValue" name="NetPOValue" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                      </div>
                                                  </div>
                                              </div>
@@ -246,7 +252,7 @@
                                                   <label class="control-label col-sm-5 small">LC Type</label>
                                                   <div class="col-sm-7">
                                                       <div class="input-group">
-                                                          <input id="TypeOfLcPO" name="TypeOfLcPO" class="form-control" value="0" readonly style="text-align:left" />
+                                                <input id="TypeOfLcPO" name="TypeOfLcPO" class="form-control form-control-sm" value="0" readonly style="text-align:left" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -256,7 +262,7 @@
                                                      <label class="control-label col-sm-5 small">Credit Days</label>
                                                      <div class="col-sm-7">
                                                          <div class="input-group">
-                                                             <input id="CreditDaysPO" name="CreditDaysPO" class="form-control" value="0" readonly style="text-align:left" />
+                                                    <input id="CreditDaysPO" name="CreditDaysPO" class="form-control form-control-sm" value="0" readonly style="text-align:left" />
                                                          </div>
                                                      </div>
                                                  </div>
@@ -266,7 +272,7 @@
                                                      <label class="control-label col-sm-5 small">Tolerance (%)</label>
                                                      <div class="col-sm-7">
                                                          <div class="input-group">
-                                                             <input id="ShippingTolerancePO" name="ShippingTolerancePO" class="form-control" value="0" readonly style="text-align:right" />
+                                                <input id="ShippingTolerancePO" name="ShippingTolerancePO" class="form-control form-control-sm" value="0" readonly style="text-align:right" />
                                                          </div>
                                                      </div>
                                                </div>
@@ -296,8 +302,8 @@
                    @*  </div>
                 </div> *@
 
-                    </div>
-                    <div class="card-footer btn-e-float-margin">
+                <div class="col-sm-12">
+                    <div class="box-footer btn-e-float-margin" id="divFormButtons">
                         <div class="pull-right pull-right-mb">
                             <button type="button" class="btn btn-default btn-sm m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
                             <button type="button" class="btn btn-success btn-sm  m-w-120" id="btnAccept"><i class="fa fa-check"></i>&nbsp;&nbsp;Accept</button>
@@ -305,8 +311,7 @@
                         </div>
                     </div>
                 </div>
-
-
+                
 
             </div>
         </form>

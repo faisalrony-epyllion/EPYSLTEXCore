@@ -603,7 +603,7 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
 }
 
 function gotoReport() {
-    const url = reportRootPath + 'reports/GetReport';
+    const url = reportRootPath + '/reports/GetReport';
     openFormInNewWindow(url);
 }
 

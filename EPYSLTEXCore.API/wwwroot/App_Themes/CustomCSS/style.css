@@ -522,6 +522,10 @@ form, .box-body {
     background-color: #eef2e9 !important;
 }
 
+    .content-wrapper > .content {
+        padding:0;
+    }
+
 .content {
     background-color: #ffffff !important;
 }

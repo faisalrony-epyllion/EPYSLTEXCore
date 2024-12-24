@@ -152,12 +152,12 @@
         if (status === statusConstants.PENDING) {
             commands = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-add e-icons' } },
-                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
             ]
         } else {
             commands = [
                 { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
             ]
         }
 

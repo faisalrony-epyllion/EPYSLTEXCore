@@ -294,7 +294,7 @@
 
         for (var i = 0; i < childs.length; i++) {
             data.Childs[i].UnitID = getDefaultValueWhenInvalidN(data.Childs[i].UnitID);
-             
+            //data.Childs[i].ChildItems = data.Childs[i].ChildItems.filter(x => x.EntitlementQty > 0);
 
             var child = DeepClone(childs[i]);
             var entitlementQty = getDefaultValueWhenInvalidN_Float(child.EntitlementQty);

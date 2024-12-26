@@ -128,5 +128,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<bool> ExistsAsync(string tableName, string columnName1, object value1, string columnName2, object value2);
         Task AddAsync<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false);
         void Add<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false);
+        string GetInsertQuery<T>(T entity, string tableName, SqlTransaction transaction = null, SqlConnection connectionGmt = null);
     }
 }

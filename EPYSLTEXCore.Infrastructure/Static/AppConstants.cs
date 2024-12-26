@@ -9,7 +9,7 @@
         public const string SPECIAL_CHARACTER_TO_REMOVE_IN_UPLOAD = "['<>&]|[\n]{2}";
         public const string GMT_CONNECTION = "GmtConnection";
         public const string TEXTILE_CONNECTION = "TexConnection";
-        public const int ITEM_SUB_GROUP_YARN_NEW = 102;
+        public const int ITEM_SUB_GROUP_YARN_LIVE = 106;
         public const int ITEM_SUB_GROUP_YARN = 39;
         public const int APPLICATION_ID=11;
         

@@ -1279,6 +1279,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             else
             {
                 signature.LastNumber += increment;
+                signature.EntityState = EntityState.Modified;
                 await connectionGmt.UpdateAsync(signature, transaction);
             }
             return Convert.ToInt32(signature.LastNumber - increment + 1);
@@ -1301,11 +1302,36 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
             else
             {
+                signature.EntityState = EntityState.Modified;
                 signature.LastNumber += increment;
                 connectionGmt.UpdateAsync(signature, transaction);
             }
 
             return Convert.ToInt32(signature.LastNumber - increment + 1);
+        }
+        public int GetMaxId(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
+        {
+            var signature = GetSignature(field, 1, 1, repeatAfter);
+            //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
+
+            if (signature == null)
+            {
+                signature = new Signatures
+                {
+                    Field = field,
+                    Dates = DateTime.Today,
+                    LastNumber = 1
+                };
+                connectionGmt.InsertAsync(signature, transaction);
+            }
+            else
+            {
+                signature.LastNumber++;
+                signature.EntityState = EntityState.Modified;
+                connectionGmt.UpdateAsync(signature, transaction);
+            }
+
+            return Convert.ToInt32(signature.LastNumber);
         }
         private Signatures GetSignature(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
         {
@@ -1525,9 +1551,21 @@ namespace EPYSLTEXCore.Infrastructure.Data
             SELECT COLUMN_NAME 
             FROM INFORMATION_SCHEMA.COLUMNS 
             WHERE TABLE_NAME = @TableName;";
-            return (await connection.QueryAsync<string>(sql, new { TableName = tableName }, transaction)).ToList();
+            var result = (await connection.QueryAsync<string>(sql, new { TableName = tableName }, transaction)).ToList();
+            return result;
         }
 
+        private List<string> GetColumnNames(string tableName, SqlConnection connection, IDbTransaction transaction = null)
+        {
+            var sql = @"
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = @TableName;";
+
+            // Synchronous execution
+            var result = connection.Query<string>(sql, new { TableName = tableName }, transaction).ToList();
+            return result;
+        }
 
 
 
@@ -1989,7 +2027,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 return result.HasValue;
             }
         }
-        public async Task AddAsync<T>(T entity, string tableName)
+        public async Task AddAsync<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false)
         {
             //var query = GenerateInsertQuery(entity, tableName);
 
@@ -2013,25 +2051,28 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                 // Generate insert query
 
-                
+
                 var properties = typeof(T).GetProperties()
-                          .Where(p => columns.Contains(p.Name));
+                          .Where(p => columns.Select(c => c.ToLower())
+                                             .Contains(p.Name.ToLower()));
                 //var properties = typeof(T).GetProperties().Where(p => p.CanRead && p.CanWrite);
                 var columnNames = string.Join(",", properties.Select(p => p.Name));
                 var parameterNames = string.Join(",", properties.Select(p => "@" + p.Name));
 
                 var insertQuery = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameterNames})";
 
-                // Assign new ID
-                //var idProperty = typeof(T).GetProperty("Id");
-                var idProperty = typeof(T).GetProperties()
-                          .FirstOrDefault(p => Attribute.IsDefined(p, typeof(ExplicitKeyAttribute)));
-
-                if (idProperty != null)
+                if (isPrimaryKeyUpdated == false)
                 {
-                    idProperty.SetValue(entity, ++maxId);
-                }
+                    // Assign new ID
+                    //var idProperty = typeof(T).GetProperty("Id");
+                    var idProperty = typeof(T).GetProperties()
+                              .FirstOrDefault(p => Attribute.IsDefined(p, typeof(ExplicitKeyAttribute)));
 
+                    if (idProperty != null)
+                    {
+                        idProperty.SetValue(entity, ++maxId);
+                    }
+                }
                 // Execute insert query
                 await connection.ExecuteAsync(insertQuery, entity, transaction: transaction);
 
@@ -2050,6 +2091,57 @@ namespace EPYSLTEXCore.Infrastructure.Data
             //    connection.Close();
             //}
         }
+
+        public void Add<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false)
+        {
+            using var connection = GetConnection(AppConstants.GMT_CONNECTION);
+            connection.Open();
+
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                // Retrieve the maximum ID (synchronous)
+                var maxId = GetMaxId(tableName, RepeatAfterEnum.NoRepeat, transaction, connection);
+
+                // Retrieve column names (synchronous)
+                var columns = GetColumnNames(tableName, connection, transaction);
+
+                // Generate insert query
+                var properties = typeof(T).GetProperties()
+                              .Where(p => columns.Select(c => c.ToLower())
+                                                 .Contains(p.Name.ToLower()));
+
+                var columnNames = string.Join(",", properties.Select(p => p.Name));
+                var parameterNames = string.Join(",", properties.Select(p => "@" + p.Name));
+
+                var insertQuery = $"INSERT INTO {tableName} ({columnNames}) VALUES ({parameterNames})";
+
+                if (!isPrimaryKeyUpdated)
+                {
+                    // Assign new ID
+                    var idProperty = typeof(T).GetProperties()
+                                  .FirstOrDefault(p => Attribute.IsDefined(p, typeof(ExplicitKeyAttribute)));
+
+                    if (idProperty != null)
+                    {
+                        idProperty.SetValue(entity, ++maxId);
+                    }
+                }
+
+                // Execute insert query (synchronous)
+                connection.Execute(insertQuery, entity, transaction: transaction);
+
+                // Commit transaction
+                transaction.Commit();
+            }
+            catch
+            {
+                // Rollback transaction on error
+                transaction.Rollback();
+                throw; // Propagate the exception
+            }
+        }
+
         private string GenerateInsertQuery<T>(T entity, string tableName)
         {
             var properties = typeof(T).GetProperties().Where(p => p.CanRead && p.GetValue(entity) != null).ToList();

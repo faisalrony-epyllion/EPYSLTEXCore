@@ -163,11 +163,12 @@ namespace EPYSLTEXCore.Application.Services
                 {
                     objItemSubGroup.MaxDisplayID = objItemSubGroup.MaxDisplayID + 1;
                     item.Id = maxItemMasterId++;
+                    item.ItemMasterID = item.Id;
                     item.DisplayItemId = objItemSubGroup.ItemPrefix + objItemSubGroup.MaxDisplayID.ToString();
 
+                    _sqlQueryService.Add(item, TableNames.ItemMasterBOMTemp,true);
                     //_dbContext.ItemMasterBomTempSet.Add(item);// have to fix
                 }
-
                 //_dbContext.SaveChanges();// have to fix
 
                 #endregion 2. Save All Item In Temp Table

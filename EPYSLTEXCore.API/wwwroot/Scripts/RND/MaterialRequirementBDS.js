@@ -870,7 +870,7 @@
             { field: 'YarnStockSetId', headerText: 'YarnStockSetId', width: 10, allowEditing: false, visible: false }
         ];
         childColumns.push.apply(childColumns, additionalColumns);
-        childColumns = setMandatoryFieldsCSS(childColumns, "Segment1ValueId, Segment6ValueId, Distribution, Allowance, ReqQty, ReqCone");
+        childColumns = setMandatoryFieldsCSS(childColumns, "Segment1ValueId, Segment8ValueId, Distribution, Allowance, ReqQty, ReqCone");
 
         data.map(x => {
             x.GetYarnFromStock = 0;
@@ -1399,7 +1399,7 @@
             { field: 'YarnStockSetId', headerText: 'YarnStockSetId', width: 10, allowEditing: false, visible: false }
         ];
         childColumns.push.apply(childColumns, additionalColumns);
-        childColumns = setMandatoryFieldsCSS(childColumns, "Segment1ValueId, Segment6ValueId, Distribution, Allowance, ReqQty, ReqCone");
+        childColumns = setMandatoryFieldsCSS(childColumns, "Segment1ValueId, Segment8ValueId, Distribution, Allowance, ReqQty, ReqCone");
 
         data.map(x => {
             x.GetYarnFromStock = 0;
@@ -1678,7 +1678,7 @@
             { field: 'YarnStockSetId', headerText: 'YarnStockSetId', width: 10, allowEditing: false, visible: false }
         ];
         childColumns.push.apply(childColumns, additionalColumns);
-        childColumns = setMandatoryFieldsCSS(childColumns, "Segment1ValueId, Segment6ValueId, Distribution, Allowance, ReqQty, ReqCone");
+        childColumns = setMandatoryFieldsCSS(childColumns, "Segment1ValueId, Segment8ValueId, Distribution, Allowance, ReqQty, ReqCone");
 
         data.map(x => {
             x.GetYarnFromStock = 0;

@@ -1,14 +1,18 @@
-﻿using System.Data.Entity;
+﻿using Dapper.Contrib.Extensions;
+using EPYSLTEXCore.Infrastructure.Data;
+using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
 {
-    public class ItemMasterBomTemp : IBaseEntity
+    public class ItemMasterBomTemp : DapperBaseEntity
     {
         ///<summary>
         /// ItemMasterID (Primary key)
         ///</summary>
+        [Write(false)]
         public int Id { get; set; }
-
+        [ExplicitKey]
+        public int ItemMasterID { get; set; } = 0;
         ///<summary>
         /// DisplayItemID (length: 20)
         ///</summary>
@@ -125,7 +129,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         public int Segment15ValueId { get; set; }
 
         public EntityState EntityState { get; set; }
-
+        [Write(false)]
+        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified;
         public ItemMasterBomTemp()
         {
             EntityState = EntityState.Added;

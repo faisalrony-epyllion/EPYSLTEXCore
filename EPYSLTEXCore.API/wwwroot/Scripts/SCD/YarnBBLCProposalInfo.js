@@ -642,7 +642,7 @@
         $tblChildEl.bootstrapTable({
             //showRefresh: true,
             showExport: true,
-  
+
            // showColumns: true,
            // toolbar: $toolbarEl,
             exportTypes: "['csv', 'excel']",
@@ -651,7 +651,7 @@
                 {
                     title: "",
                     align: "center", 
-                    cellStyle: function () { return { classes: 'm-w-10' } },
+                   
                     formatter: function (value, row, index, field) { 
                         return [
                             '<span class="btn-group">',

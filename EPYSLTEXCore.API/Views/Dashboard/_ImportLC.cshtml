@@ -15,10 +15,10 @@
 
 <div id="@pageId">
     <input type="hidden" id="CDAPage" value="@ViewBag.CDAPage" />
-    <div class="card card-default" id="@divTblId">
-        <div class="col-sm-12 toolBar-parent-div">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
             <div id="@toolbarId">
-                <button id="btnPendingList" class="btn btn-success btn-sm">
+                <button id="btnPendingList" class="btn btn-success text-white btn-sm">
                     <i class="fa fa-plus"></i>&nbsp;Pending L/C Proposal
                 </button>
                 <button id="btnLCPendingforApproval" class="btn btn-default text-grey btn-sm">
@@ -43,6 +43,7 @@
         <form class="form-horizontal" id="@formId">
             <input type="hidden" id="LCID" name="LCID" value="-1111" />
             <input type="hidden" name="ProposalID" id="ProposalID" />
+            @*<input type="hidden" name="SupplierID" id="SupplierID" />*@
             <input type="hidden" id="IsCDA" name="IsCDA" />
 
             <div class="box-body" id="@divDetailsId" style="display:none">
@@ -63,13 +64,13 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Beneficiary(Supplier)</label>
                                         <div class="col-sm-7">
-                                            <select id="SupplierID" name="SupplierID" class="form-control" style="width:100%" disabled="disabled"></select>
+                                            <select id="SupplierID" name="SupplierID" class="form-control form-control-sm" style="width:100%" disabled="disabled"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Applicant</label>
                                         <div class="col-sm-7">
-                                            <select id="CompanyID" name="CompanyID" class="form-control" style="width:100%"></select>
+                                            <select id="CompanyID" name="CompanyID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -82,7 +83,7 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">D.C. Opening Bank</label>
                                         <div class="col-sm-7">
-                                            <select id="IssueBankID" name="IssueBankID" class="form-control" style="width:100%"></select>
+                                            <select id="IssueBankID" name="IssueBankID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
@@ -99,6 +100,12 @@
                                             <input id="AccountNo" name="AccountNo" class="form-control input-sm" />
                                         </div>
                                     </div>
+                                    @*<div class="form-group">
+            <label class="control-label col-sm-5 small">Form of D.C.</label>
+            <div class="col-sm-7">
+                <input id="FormOfDC" name="FormOfDC" class="form-control input-sm" />
+            </div>
+        </div>*@
 
                                     <div class="form-group" id="pnlLCNO">
                                         <label class="control-label col-sm-5 small">L/C No</label>
@@ -144,13 +151,13 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Type of L/C</label>
                                         <div class="col-sm-7">
-                                            <select id="PaymentModeID" name="PaymentModeID" class="form-control" style="width:100%"></select>
+                                            <select id="PaymentModeID" name="PaymentModeID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group" id="pnlTenureofLCId">
                                         <label class="control-label col-sm-5 small">Tenure of L/C</label>
                                         <div class="col-sm-7">
-                                            <select id="TenureofLCID" name="TenureofLCID" class="form-control" style="width:100%"></select>
+                                            <select id="TenureofLCID" name="TenureofLCID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -169,27 +176,27 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Qty Unit</label>
                                         <div class="col-sm-7">
-                                            <select id="LCUnit" name="LCUnit" class="form-control" style="width:100%"></select>
+                                            <select id="LCUnit" name="LCUnit" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Currency</label>
                                         <div class="col-sm-7">
-                                            <select id="CurrencyID" name="CurrencyID" class="form-control" style="width:100%"></select>
+                                            <select id="CurrencyID" name="CurrencyID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
                                     <div class="form-group" style="display:none">
                                         <label class="control-label col-sm-5 small">Lien Bank</label>
                                         <div class="col-sm-7">
-                                            <select id="LienBankID" name="LienBankID" class="form-control" style="width:100%"></select>
+                                            <select id="LienBankID" name="LienBankID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
                                     <div class="form-group" style="display:none">
                                         <label class="control-label col-sm-5 small">Advising Bank</label>
                                         <div class="col-sm-7">
-                                            <select id="PaymentBankID" name="PaymentBankID" class="form-control" style="width:100%"></select>
+                                            <select id="PaymentBankID" name="PaymentBankID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
@@ -213,14 +220,14 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Bank Acceptance From</label>
                                         <div class="col-sm-7">
-                                            <select id="BankAcceptanceFrom" name="BankAcceptanceFrom" class="form-control" style="width:100%"></select>
+                                            <select id="BankAcceptanceFrom" name="BankAcceptanceFrom" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">FTT/FDD</label>
                                         <div class="col-sm-7">
-                                            <select id="TTTypeID" name="TTTypeID" class="form-control" style="width:100%"></select>
+                                            <select id="TTTypeID" name="TTTypeID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                 </div>
@@ -229,7 +236,7 @@
                                     <div class="form-group" style="display:none">
                                         <label class="control-label col-sm-5 small">Maturity Calc.</label>
                                         <div class="col-sm-7">
-                                            <select id="MaturityCalculationID" name="MaturityCalculationID" class="form-control" style="width:100%"></select>
+                                            <select id="MaturityCalculationID" name="MaturityCalculationID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
@@ -250,21 +257,21 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Inco Terms</label>
                                         <div class="col-sm-7">
-                                            <select id="IncoTermsID" name="IncoTermsID" class="form-control" style="width:100%"></select>
+                                            <select id="IncoTermsID" name="IncoTermsID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
                                     <div class="form-group" style="display:none">
                                         <label class="control-label col-sm-5 small">CI Declaration</label>
                                         <div class="col-sm-7">
-                                            <select id="CIDecID" name="CIDecID" class="form-control" style="width:100%"></select>
+                                            <select id="CIDecID" name="CIDecID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
                                     <div class="form-group" style="display:none">
                                         <label class="control-label col-sm-5 small">BI Declaration</label>
                                         <div class="col-sm-7">
-                                            <select id="BCDecID" name="BCDecID" class="form-control" style="width:100%"></select>
+                                            <select id="BCDecID" name="BCDecID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
 
@@ -277,37 +284,37 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Available With</label>
                                         <div class="col-sm-7">
-                                            <select id="AvailableWithID" name="AvailableWithID" class="form-control" style="width:100%"></select>
+                                            <select id="AvailableWithID" name="AvailableWithID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Calculation Of Tenure</label>
                                         <div class="col-sm-7">
-                                            <select id="CalculationOfTenorID" name="CalculationOfTenorID" class="form-control" style="width:100%"></select>
+                                            <select id="CalculationOfTenorID" name="CalculationOfTenorID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Partial Shipment</label>
                                         <div class="col-sm-7">
-                                            <select id="PartialShipmentID" name="PartialShipmentID" class="form-control" style="width:100%"></select>
+                                            <select id="PartialShipmentID" name="PartialShipmentID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Transshipment</label>
                                         <div class="col-sm-7">
-                                            <select id="TransshipmentID" name="TransshipmentID" class="form-control" style="width:100%"></select>
+                                            <select id="TransshipmentID" name="TransshipmentID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Port of Loading</label>
                                         <div class="col-sm-7">
-                                            <select id="LoadingPortID" name="LoadingPortID" class="form-control" style="width:100%"></select>
+                                            <select id="LoadingPortID" name="LoadingPortID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-5 small">Port of Discharge</label>
                                         <div class="col-sm-7">
-                                            <select id="DischargePortID" name="DischargePortID" class="form-control" style="width:100%"></select>
+                                            <select id="DischargePortID" name="DischargePortID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -328,6 +335,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-3">
                     <div class="panel panel-success" style="border-color:transparent; border-style:none;">
                         <div class="panel-heading">
@@ -378,8 +386,19 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-sm-12">
+                    <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                        <div class="pull-right pull-right-mb">
+                            <button type="button" class="btn btn-default btn-sm w-150" id="btnLCEditCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnSaveLC"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success btn-sm w-150" id="btnApprovedLC" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Update</button>
+                            <button type="button" class="btn btn-success btn-sm w-150" id="btnProposeLC" style="display:none"><i class="fa fa-angle-double-right"></i>&nbsp;Forwarding Letter</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </form>
     </div>
 </div>
-

@@ -795,8 +795,8 @@ namespace EPYSLTEXCore.Application.Services.RND
                     FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCC
 					INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} FCM ON FCM.FCMRMasterID = FCC.FCMRMasterID
 					INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = FCM.ConceptID
-                    LEFT Join YDBookingMaster YBM ON YBM.ConceptID = FCM.ConceptID And YBM.ConceptID = CM.ConceptID
-	                LEFT Join YDProductionMaster YPM ON YPM.YDBookingMasterID = YBM.YDBookingMasterID
+                    LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.ConceptID = FCM.ConceptID And YBM.ConceptID = CM.ConceptID
+	                LEFT JOIN {TableNames.YD_PRODUCTION_MASTER} YPM ON YPM.YDBookingMasterID = YBM.YDBookingMasterID
 					WHERE CM.GroupConceptNo = '{grpConceptNo}'
                 )
                 Select FCC.FCMRChildID, FCC.FCMRMasterID, FCC.ItemMasterID, FCC.YarnCategory, FCC.YD, FCC.YDItem, FCC.IsPR, FCC.UnitID, U.DisplayUnitDesc,
@@ -804,7 +804,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID,
                 IM.Segment8ValueID, ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc,
                 ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc,
-                ISV8.SegmentValue Segment8ValueDesc, YDProductionMasterID, FCC.YarnStockSetId, YSS.PhysicalCount, YSS.YarnLotNo, SpinnerName = SP.ShortName, YSM.SampleStockQty, YSM.AdvanceStockQty
+                ISV8.SegmentValue Segment8ValueDesc, YDProductionMasterID, FCC.YarnStockSetId, YSM.PhysicalCount, YSM.YarnLotNo, SpinnerName = '', YSM.SampleStockQty, YSM.AdvanceStockQty
                 ,FCC.DayValidDurationId
                 from FCC
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FCC.ItemMasterID
@@ -816,9 +816,16 @@ namespace EPYSLTEXCore.Application.Services.RND
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 On ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV8 ON ISV8.SegmentValueID = IM.Segment8ValueID
-                LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = FCC.YarnStockSetId
-                LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
-                LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YSS.SpinnerId
+                LEFT JOIN {TableNames.YarnStockMaster_New} YSM ON YSM.ItemMasterID = FCC.ItemMasterID 
+														--AND YSM.SupplierID = YDRC.SupplierID 
+														--AND YSM.SpinnerID = YDBC.SpinnerID 
+														--AND ISNULL(YSM.YarnLotNo,'') = ISNULL(YDBC.LotNo,'')
+														--AND ISNULL(YSM.PhysicalCount,'') = ISNULL(YDBC.PhysicalCount,'')
+														--AND ISNULL(YSM.ShadeCode,'') = ISNULL(FCC.ShadeCode,'')
+														--AND YSM.BookingID = YDRC.BookingID
+														--AND YSM.LocationID = YDRC.LocationID
+														--AND YSM.CompanyID = YDRC.CompanyID
+                --LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YSS.SpinnerId
                 LEFT JOIN {DbNames.EPYSL}..Unit U ON U.UnitID = FCC.UnitID;
 
                 -- Item Segments
@@ -2139,7 +2146,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                         break;
 
                     case EntityState.Modified:
-                        entities = UpdateMany(entities, freeConceptStatusList);
+                        entities = await UpdateManyAsync(entities, freeConceptStatusList);
                         break;
 
                     default:
@@ -2243,10 +2250,10 @@ namespace EPYSLTEXCore.Application.Services.RND
             return entities;
         }
 
-        private List<FreeConceptMRMaster> UpdateMany(List<FreeConceptMRMaster> entities, List<ConceptStatus> freeConceptStatusList)
+        private async Task<List<FreeConceptMRMaster>> UpdateManyAsync(List<FreeConceptMRMaster> entities, List<ConceptStatus> freeConceptStatusList)
         {
-            int fcMRMasterID = _service.GetMaxId(TableNames.RND_FREE_CONCEPT_MR_MASTER, entities.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
-            int maxChildId = _service.GetMaxId(TableNames.RND_FREE_CONCEPT_MR_CHILD, entities.Sum(x => x.Childs.Where(y => y.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int fcMRMasterID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, entities.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, entities.Sum(x => x.Childs.Where(y => y.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             entities.ToList().ForEach(entity =>
             {
@@ -2331,7 +2338,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 var conceptIds = string.Join(",", entities.Select(x => x.ConceptID).Distinct());
                 var freeConceptStatusList = await _conceptStatusService.GetByCPSIDs("1,2", conceptIds);
 
-                entities = UpdateMany(entities, freeConceptStatusList);
+                entities = await UpdateManyAsync(entities, freeConceptStatusList);
 
 
                 List<FreeConceptMRChild> childs = new List<FreeConceptMRChild>();

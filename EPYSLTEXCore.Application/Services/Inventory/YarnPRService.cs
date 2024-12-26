@@ -1618,7 +1618,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;With BFL As (
 	                Select BondFinancialYearID, ImportLimit - Consumption As AvailableLimit
 	                From {DbNames.EPYSL}..BondFinancialYearImportLimit
-	                Where SubGroupID = {AppConstants.ITEM_SUB_GROUP_YARN_NEW}
+	                Where SubGroupID = {AppConstants.ITEM_SUB_GROUP_YARN_LIVE}
                 )
                 , Al As (
 	                Select BFY.CompanyID, AvailableLimit
@@ -1783,7 +1783,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 ;With BFL As (
 	                Select BondFinancialYearID, ImportLimit - Consumption As AvailableLimit
 	                From {DbNames.EPYSL}..BondFinancialYearImportLimit
-	                Where SubGroupID = {AppConstants.ITEM_SUB_GROUP_YARN_NEW}
+	                Where SubGroupID = {AppConstants.ITEM_SUB_GROUP_YARN_LIVE}
                 )
                 , Al As (
 	                Select BFY.CompanyID, AvailableLimit

@@ -252,7 +252,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
                 childRecords.AddRange(mr.Childs);
             });
             // Set Item master Id.
-            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);
 
             List<FreeConceptMRMaster> entities = new List<FreeConceptMRMaster>();
             List<FreeConceptMRMaster> entitiesTemp = new List<FreeConceptMRMaster>();
@@ -656,7 +656,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
                 childRecords.AddRange(mr.Childs);
             });
             // Set Item master Id.
-            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);
 
             List<FreeConceptMRMaster> entities = new List<FreeConceptMRMaster>();
             List<FreeConceptMRMaster> entitiesTemp = new List<FreeConceptMRMaster>();

@@ -62,6 +62,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         public DateTime? ReceivedDate { get; set; }
         public int YarnStockSetId { get; set; } = 0;
         public int DayValidDurationId { get; set; } = 0;
+        public int ContainerID { get; set; } = 0;
 
         #region Additional Property
         [Write(false)]

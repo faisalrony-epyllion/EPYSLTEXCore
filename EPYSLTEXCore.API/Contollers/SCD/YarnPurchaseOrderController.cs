@@ -231,7 +231,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             YarnPOMaster model = JsonConvert.DeserializeObject<YarnPOMaster>(Convert.ToString(jsnString));
             string conceptNo = string.Join(",", model.YarnPOChilds.Select(x => x.ConceptNo).Distinct());
             List<YarnPOChild> childRecords = model.YarnPOChilds;
-            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);
 
             YarnPOMaster entity;
             if (model.YPOMasterID > 0)
@@ -342,6 +342,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                         existingYarnPOChild.ItemMasterID = item.ItemMasterID;
                         existingYarnPOChild.YarnPRNo = item.YarnPRNo;
                         existingYarnPOChild.ConceptID = item.ConceptID;
+                        existingYarnPOChild.ContainerID = item.ContainerID;
                         existingYarnPOChild.ConceptNo = item.ConceptNo;
                         existingYarnPOChild.DayValidDurationId = item.DayValidDurationId;
                         existingYarnPOChild.BaseTypeId = item.BaseTypeId;
@@ -485,7 +486,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
         public async Task<IActionResult> RevisionYarnPOList(YarnPOMaster model)
         {
             List<YarnPOChild> childRecords = model.YarnPOChilds;
-            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);
 
             string conceptNo = string.Join(",", model.YarnPOChilds.Select(x => x.ConceptNo).Distinct());
             YarnPOMaster entity = await _yarnPOService.GetAllByIDAsync(model.YPOMasterID);

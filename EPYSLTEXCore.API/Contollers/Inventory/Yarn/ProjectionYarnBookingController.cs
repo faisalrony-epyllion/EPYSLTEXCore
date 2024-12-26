@@ -121,7 +121,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
                 });
             List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();
             childRecords = model.ProjectionYarnBookingItemChilds;
-            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);
             ProjectionYarnBookingMaster entity;
             if (model.PYBookingID > 0)
             {
@@ -683,7 +683,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
             {
                 List<ProjectionYarnBookingItemChild> childRecords = new List<ProjectionYarnBookingItemChild>();
                 childRecords = model.ProjectionYarnBookingItemChilds;
-                _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+                _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);
 
                 ProjectionYarnBookingMaster entity;
 

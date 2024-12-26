@@ -1,86 +1,86 @@
 ﻿<script type="text/javascript">
-	localStorage.setItem("pageName", "@ViewBag.PageName");
-	localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
 </script>
 
 @{
-	var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
-	var divTblId = "divtbl" + pageId;
-	var toolbarId = "toolbar" + pageId;
-	var tblMasterId = "tbl" + pageId;
-	var tblChildId = "tblChild" + pageId;
-	var tblOtherItemId = "tblOtherItem" + pageId;
-	var tblFabricItemId = "tblFabricItem" + pageId;
-	var tblChildSetId = "tblChildSet" + pageId;
-	var tblChildSetDetailsId = "tblChildSetDetails" + pageId;
-	var formId = "form" + pageId;
-	var divDetailsId = "divDetails" + pageId;
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblOtherItemId = "tblOtherItem" + pageId;
+    var tblFabricItemId = "tblFabricItem" + pageId;
+    var tblChildSetId = "tblChildSet" + pageId;
+    var tblChildSetDetailsId = "tblChildSetDetails" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
 }
 @*Main*@
 
 <div id="@pageId">
-	<div class="row" id="@divTblId">
-		<div class="col-sm-12">
-			<div id="@toolbarId" class="master-toolbar">
-				<div class="row">
-					<div class="col-md-12">
-						<button id="btnNew" class="btn btn-default btn-sm btn-list btn-list-left">
-							<i class="fa fa-plus"></i>&nbsp;New
-						</button>
-						@*<button id="btnList" class="btn btn-success text-white btn-sm btn-list">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button id="btnNew" class="btn btn-default btn-sm btn-list btn-list-left">
+                            <i class="fa fa-plus"></i>&nbsp;New
+                        </button>
+                        @*<button id="btnList" class="btn btn-success text-white btn-sm btn-list">
                                 <i class="fa fa-list"></i>&nbsp;Concept List
                             </button>*@
-						<button id="btnAllList" class="btn btn-success btn-sm btn-list btn-list-left">
-							<i class="fa fa-list"></i>&nbsp;All
-						</button>
+                        <button id="btnAllList" class="btn btn-success btn-sm btn-list btn-list-left">
+                            <i class="fa fa-list"></i>&nbsp;All
+                        </button>
 
-						<button id="btnPendingList" class="btn btn-default btn-sm btn-list btn-list-left">
-							<i class="fa fa-list"></i>&nbsp;Pending
-						</button>
-						<button id="btnLiveList" class="btn btn-default btn-sm btn-list btn-list-left">
-							<i class="fa fa-list"></i>&nbsp;Live
-						</button>
-						<button id="btnPreservedList" class="btn btn-default btn-sm btn-list btn-list-left">
-							<i class="fa fa-list"></i>&nbsp;Preserved
-						</button>
-						<button id="btnDroppedList" class="btn btn-default btn-sm btn-list btn-list-left">
-							<i class="fa fa-list"></i>&nbsp;Dropped
-						</button>
-					</div>
-				</div>
-				<div class="row" style="margin-top:4px;">
-					<div class="col-md-12" id="divPendingButtons" style="display:none;">
-						<button id="btnSourcingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;Sourcing Pending
-						</button>
-						<button id="btnYDPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;YD Pending
-						</button>
-						<button id="btnKnitPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;Knit Pending
-						</button>
-						<button id="btnBatchPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;Batch Pending
-						</button>
-						<button id="btnDyeingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;Dyeing Pending
-						</button>
-						<button id="btnFinishPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;Finish Pending
-						</button>
-						<button id="btnTestPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;Test Pending
-						</button>
-						<button id="btnWaitingForLiveList" class="btn btn-default btn-sm btn-list btn-list-right">
-							<i class="fa fa-list"></i>&nbsp;Waiting for Live
-						</button>
-					</div>
-				</div>
-			</div>
-			<table id="@tblMasterId"></table>
-		</div>
-	</div>
-	<div class="row">
+                        <button id="btnPendingList" class="btn btn-default btn-sm btn-list btn-list-left">
+                            <i class="fa fa-list"></i>&nbsp;Pending
+                        </button>
+                        <button id="btnLiveList" class="btn btn-default btn-sm btn-list btn-list-left">
+                            <i class="fa fa-list"></i>&nbsp;Live
+                        </button>
+                        <button id="btnPreservedList" class="btn btn-default btn-sm btn-list btn-list-left">
+                            <i class="fa fa-list"></i>&nbsp;Preserved
+                        </button>
+                        <button id="btnDroppedList" class="btn btn-default btn-sm btn-list btn-list-left">
+                            <i class="fa fa-list"></i>&nbsp;Dropped
+                        </button>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:4px;">
+                    <div class="col-md-12" id="divPendingButtons" style="display:none;">
+                        <button id="btnSourcingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;Sourcing Pending
+                        </button>
+                        <button id="btnYDPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;YD Pending
+                        </button>
+                        <button id="btnKnitPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;Knit Pending
+                        </button>
+                        <button id="btnBatchPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;Batch Pending
+                        </button>
+                        <button id="btnDyeingPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;Dyeing Pending
+                        </button>
+                        <button id="btnFinishPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;Finish Pending
+                        </button>
+                        <button id="btnTestPendingList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;Test Pending
+                        </button>
+                        <button id="btnWaitingForLiveList" class="btn btn-default btn-sm btn-list btn-list-right">
+                            <i class="fa fa-list"></i>&nbsp;Waiting for Live
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
         <form class="form-horizontal" id="@formId">
             <input type="hidden" id="ConceptID" name="ConceptID" value="-1111" />
             <input type="hidden" name="RevisionPending" id="RevisionPending" />
@@ -232,34 +232,35 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="box-footer btn-e-float-margin" id="divFormButtons">
-                    <div class="pull-right pull-right-mb">
-                        <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                        <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
-                        <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                <div class="col-sm-12">
+                    <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                        <div class="pull-right pull-right-mb">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </form>
 
-	</div>
+    </div>
 
-	<div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Create New Composition</h4>
-				</div>
-				<div class="modal-body" style="padding: 0 15px">
-					<table id="tblCreateComposition-@pageId"></table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-composition-@pageId" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Create New Composition</h4>
+                </div>
+                <div class="modal-body" style="padding: 0 15px">
+                    <table id="tblCreateComposition-@pageId"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary m-w-100" id="btnAddComposition">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

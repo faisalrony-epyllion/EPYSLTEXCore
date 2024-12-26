@@ -694,7 +694,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
 
                 -- Shade book
                 {CommonQueries.GetYarnShadeBooks()};
-
+      
                 --Base Types
                 SELECT id=ValueID,text=ValueName FROM {DbNames.EPYSL}..EntityTypeValue WHERE ValueID IN (2161,2162,2163,2164);
 
@@ -735,6 +735,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 data.YarnColorList = itmeSegments.Where(x => x.desc == ItemSegmentConstants.YARN_COLOR.ToString()).ToList();
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
                 data.ShadeList = await records.ReadAsync<Select2OptionModel>();
+              
                 data.BaseTypes = await records.ReadAsync<Select2OptionModel>();
 
                 data.DayValidDurations = await records.ReadAsync<Select2OptionModel>();
@@ -838,6 +839,8 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 -- Shade book
                 {CommonQueries.GetYarnShadeBooks()};
 
+                -- Container List
+                {CommonQueries.GetContainerList(supplierId)};
                 --Base Types
                 SELECT id=ValueID,text=ValueName FROM {DbNames.EPYSL}..EntityTypeValue WHERE ValueID IN (2161,2162,2163,2164);
 
@@ -866,6 +869,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
                 data.ExportOrderList = await records.ReadAsync<Select2OptionModel>();
                 data.ShadeList = await records.ReadAsync<Select2OptionModel>();
+                data.ContainerList = await records.ReadAsync<Select2OptionModel>();
                 data.BaseTypes = await records.ReadAsync<Select2OptionModel>();
 
                 data.DayValidDurations = await records.ReadAsync<Select2OptionModel>();

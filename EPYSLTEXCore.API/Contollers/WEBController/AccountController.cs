@@ -36,6 +36,8 @@ namespace EPYSLTEXCore.API.Contollers
 
    
         [HttpPost]
+        [ValidateAntiForgeryToken]
+
         public async Task<ActionResult> Login(LoginBindingModel model)
         {
             AppUser = null;

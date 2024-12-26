@@ -10,5 +10,6 @@ namespace EPYSLTEXCore.Application.Interfaces.Admin
         Task<YarnRMProperties> GetAsync(int setupID);
         Task SaveAsync(YarnRMProperties entitie);
         Task<YarnRMProperties> GetMaster();
+        Task<bool> CheckDuplicateValue(YarnRMProperties model);
     }
 }

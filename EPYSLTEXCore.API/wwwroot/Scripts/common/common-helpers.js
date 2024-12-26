@@ -5642,13 +5642,7 @@ function ch_GenerateBasicModal($formEl, isNeedOkBtn, btnOkId) {
 }
 function ch_setActionCommandCellWidth(commandParam) {
     var isNumber = $.isNumeric(commandParam);
-    var value = 0;
-    if (!isNumber) {
-        value = commandParam.length;
-    } else {
-        value = commandParam;
-    }
-
+    var value = !isNumber ? commandParam.length : commandParam;
     var columnsWidth = value * 40;
     if (value == 0 || value == 1) columnsWidth = 100;
     return columnsWidth;

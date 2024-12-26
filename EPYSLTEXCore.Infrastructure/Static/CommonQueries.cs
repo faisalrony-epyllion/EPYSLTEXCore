@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Azure.Core.HttpHeader;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EPYSLTEXCore.Infrastructure.Static
 {
@@ -313,9 +314,16 @@ namespace EPYSLTEXCore.Infrastructure.Static
         }
         public static string GetYarnShadeBooks()
         {
-            return $@"SELECT ShadeCode [id], ShadeCode [text], ContactID [additionalValue] FROM {TableNames.YARN_SHADE_BOOK}";
+            return $@"SELECT ShadeCode [id], ShadeCode [text], ContactID [additionalValue]   FROM {TableNames.YARN_SHADE_BOOK}";
         }
+        public static string GetContainerList(int supplierID)
+        {
+            return $@"SELECT csm.ContainerSizeID[id], SizeName[text] FROM {TableNames.CONTAINER_SIZE} cs inner join 
+                            {TableNames.CONTAINER_SIZE_CAPACITY_MASTER} csm on cs.ContainerSizeID = csm.ContainerSizeID
+                        where supplierid = {supplierID} ";            
+ 
 
+        }
         public static string GetNewYarnSuppliersForProductSetup(int categoryId)
         {
             return $@"SELECT CAST(C.ContactID AS VARCHAR) AS id, C.Name AS text

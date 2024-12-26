@@ -23,10 +23,10 @@ var globalControllerName = 'home';
 var globalActionName = 'index';
 
 $(document).ready(function () {
-
-    rootPath = window.location.protocol + '//' + window.location.host;
-
-    reportRootPath = "https://localhost:44311/";
+ 
+    rootPath = window.location.protocol + '//' + window.location.hostname;
+  
+    reportRootPath = window.location.hostname == "localhost" ? "https://localhost:44311/" : rootPath +":8062";
     toastr.options.escapeHtml = true;
 
     $.fn.editable.defaults.mode = 'inline';
@@ -375,11 +375,12 @@ function registerCloseEvent(menuId) {
         var tabIndex = $(this).closest('li').attr("tabIndex");
         var preTabIndex = tabIndex - 1;
         var isActive = $(this).closest('li').hasClass("active");
-        var tabContentId = $(this).parent().find("a").attr("href");
+        var tabContentId = $(this).closest('li').find("a").attr("href");
+
         //$(this).parent().parent().remove(); //remove li of tab
         $('#mainTab').find('a:last').tab('show'); // Select first tab
-        $(tabContentId).remove(); //remove respective tab content
         $("#mainTab").find("li[tabIndex=" + tabIndex + "]").remove();
+        $(tabContentId).remove(); //remove respective tab content
         if (isActive) {
             $("#mainTab").find("li").removeClass("bg-info").removeClass("active");
             $("#mainTab").find("li[tabIndex=" + preTabIndex + "]").addClass("bg-info").addClass("active");
@@ -602,14 +603,9 @@ function getCommonInterfaceMarkup(controllerName, actionName, menuId, pageName, 
 }
 
 function gotoReport() {
-
-
-    const url = reportRootPath + 'reports/GetReport';
-   
-
+    const url = reportRootPath + '/reports/GetReport';
     openFormInNewWindow(url);
 }
-
 
 function openFormInNewWindow(url) {
  
@@ -625,6 +621,12 @@ function openFormInNewWindow(url) {
     tokenInput.value = localStorage.getItem('token');
     form.appendChild(tokenInput);
 
+    // Get CSRF token from the cookie
+    //var csrfTokenInput = document.createElement('input');
+    //csrfTokenInput.type = 'hidden';
+    //csrfTokenInput.name = '__RequestVerificationToken'; // This should match the name expected by the server
+    //csrfTokenInput.value = $("input[name='__RequestVerificationToken']").val();
+    //form.appendChild(csrfTokenInput);
     
 
     // Open the new window and submit the form there

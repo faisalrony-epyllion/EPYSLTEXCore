@@ -363,7 +363,7 @@
                 {
                     headerText: 'Command', width: 120, textAlign: 'center', visible: (menuType == _paramType.YarnMRIR && (status == statusConstants.PENDING || status == statusConstants.PENDING2 || status == statusConstants.PENDING3)), commands: [
                         /*{ type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },*/
-                        { type: 'Test Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                        { type: 'Test Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
                         /* { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }*/
                     ]
                 },
@@ -451,18 +451,18 @@
                 {
                     headerText: 'Command', textAlign: 'center', visible: (menuType == _paramType.GRNSignIn && status == statusConstants.PENDING_CONFIRMATION) || (menuType == _paramType.YarnMRIRSCD && (status == statusConstants.COMPLETED)), commands: [
                         { type: 'Edit', title: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                        { type: 'GRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                        { type: 'MRIR Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                        { type: 'MRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                        { type: 'GRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                        { type: 'MRIR Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                        { type: 'MRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
                         /*{ type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }*/
                     ]
                 },
                 {
                     headerText: 'Command', textAlign: 'center', visible: (menuType == _paramType.YarnMRIR && (status == statusConstants.COMPLETED || status == statusConstants.COMPLETED2 || status == statusConstants.COMPLETED3 || status == statusConstants.ALL)) || (menuType == _paramType.GRNSignIn && status == statusConstants.YDP_COMPLETE) || (menuType == _paramType.YarnMRIRSCD && (status == statusConstants.COMPLETED2 || status == statusConstants.COMPLETED3 || status == statusConstants.ALL || status == statusConstants.RETURN || status == statusConstants.ReTest)), commands: [
                         { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        { type: 'GRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                        { type: 'MRIR Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                        { type: 'MRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                        { type: 'GRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                        { type: 'MRIR Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                        { type: 'MRN Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
                         /* { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }*/
                     ]
                 },
@@ -653,7 +653,7 @@
             columns: [
                 {
                     headerText: 'Commands', width: 120, textAlign: 'Center', commands: [
-                        { type: 'Test Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                        { type: 'Test Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
                         //{ type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
                         //{ type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
                         //{ type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },

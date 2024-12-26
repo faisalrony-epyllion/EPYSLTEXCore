@@ -369,7 +369,7 @@
                     type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' }
                 },
                 {
-                    type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' }
+                    type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-btn-icon fas fa-file-pdf' }
                 }
             ];
         }
@@ -384,7 +384,7 @@
                     type: 'ReTest', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-recycle' }
                 },
                 {
-                    type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' }
+                    type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-btn-icon fas fa-file-pdf' }
                 }
             ];
         }
@@ -395,7 +395,7 @@
                     type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' }
                 },
                 {
-                    type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' }
+                    type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-btn-icon fas fa-file-pdf' }
                 }
             ];
         }

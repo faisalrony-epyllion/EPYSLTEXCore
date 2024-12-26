@@ -1125,7 +1125,7 @@
                 valueAccessor: ej2GridDisplayFormatter,
                 dataSource: masterData.ContainerList,
                 displayField: "text",
-                width: 300,
+
                 edit: ej2GridDropDownObj({
                 })
             },
@@ -1150,14 +1150,14 @@
                 valueAccessor: ej2GridDisplayFormatter,
                 dataSource: masterData.BuyerList,
                 displayField: "text",
-                width: 80,
+          
                 edit: ej2GridDropDownObj({
                 })
             },
             { field: 'YarnChildPoExportIds', headerText: 'EWO', visible: false },
-            { field: 'YarnChildPoEWOs', headerText: 'EWO', width: 120, minWidth: 120, maxWidth: 120, allowEditing: false },
+            { field: 'YarnChildPoEWOs', headerText: 'EWO',  allowEditing: false },
             {
-                headerText: '', textAlign: 'Center', width: 40, commands: [
+                headerText: '', textAlign: 'Center', commands: [
                     {
                         buttonOption: {
                             type: 'AddEWO', content: '', cssClass: 'btn btn-success btn-xs',

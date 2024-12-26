@@ -691,6 +691,10 @@ button.close {
         padding: 10px;
     }
 
+.box {
+    border-top: 0px solid #d2d6de;
+}
+
 .panel-success > .panel-heading {
     color: #151515;
     background-color: #f3fae3;

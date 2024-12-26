@@ -60,6 +60,7 @@
   <ItemGroup>
     <Folder Include="Contollers\Select2\" />
     <Folder Include="Service\" />
+    <Folder Include="wwwroot\Bundle\css\" />
     <Folder Include="wwwroot\Bundle\js\" />
   </ItemGroup>
 

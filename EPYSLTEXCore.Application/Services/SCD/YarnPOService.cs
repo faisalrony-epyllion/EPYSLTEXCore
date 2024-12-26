@@ -8,6 +8,7 @@ using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Data.SqlClient;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Entity;
 
@@ -2552,7 +2553,7 @@ namespace EPYSLTEXCore.Infrastructure.Services
                     POCone = item.POCone,
                     Segment5ValueDesc = item.Segment5ValueDesc,
                     Segment5ValueId = item.Segment5ValueId,
-
+                    ContainerID= item.ContainerID,
                     DayValidDurationId = item.DayValidDurationId,
                     EntityState = EntityState.Added
                 };

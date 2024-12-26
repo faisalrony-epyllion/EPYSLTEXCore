@@ -2731,7 +2731,16 @@
                 //masterData.CompositionList.unshift({ id: response.data.Id, text: response.data.SegmentValue });
                 // initChildTable(masterData.Childs);
             })
-            .catch(showResponseError)
+            .catch(error => {
+                if (error.response) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+                args.cancel = true;
+            });
+
+            //.catch(showResponseError)
     }
     /*
     function saveComposition() {

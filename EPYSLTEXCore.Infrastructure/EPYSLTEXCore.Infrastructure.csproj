@@ -14,11 +14,7 @@
 
   <ItemGroup>
     <Compile Remove="Entities\Gmt\General\GroupUser.cs" />
-    <Compile Remove="Entities\Tex\General\FinishingMachineConfigurationChild.cs" />
     <Compile Remove="Entities\Tex\General\FinishingMachineConfigurationMaster.cs" />
-    <Compile Remove="Entities\Tex\RND\FinishingProcessChild.cs" />
-    <Compile Remove="Entities\Tex\RND\FinishingProcessChildItem.cs" />
-    <Compile Remove="Entities\Tex\RND\FinishingProcessMaster.cs" />
     <Compile Remove="Entities\Tex\RND\LabTestRequisitionBuyer.cs" />
     <Compile Remove="Entities\Tex\RND\LabTestRequisitionBuyerParameter.cs" />
     <Compile Remove="Entities\Tex\RND\LabTestRequisitionCareLabel.cs" />

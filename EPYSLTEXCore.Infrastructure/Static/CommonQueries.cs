@@ -327,10 +327,14 @@ namespace EPYSLTEXCore.Infrastructure.Static
         }
         public static string GetContainerList(int supplierID)
         {
-            return $@"SELECT csm.ContainerSizeID[id], SizeName[text] FROM {TableNames.CONTAINER_SIZE} cs inner join 
+            if (supplierID > 0)
+                return $@"SELECT csm.ContainerSizeID[id], SizeName[text] FROM {TableNames.CONTAINER_SIZE} cs inner join 
                             {TableNames.CONTAINER_SIZE_CAPACITY_MASTER} csm on cs.ContainerSizeID = csm.ContainerSizeID
-                        where supplierid = {supplierID} ";            
- 
+                        where supplierid = {supplierID} ";
+            else
+                return $@"SELECT csm.ContainerSizeID[id], SizeName[text] FROM {TableNames.CONTAINER_SIZE} cs inner join 
+                            {TableNames.CONTAINER_SIZE_CAPACITY_MASTER} csm on cs.ContainerSizeID = csm.ContainerSizeID";
+            
 
         }
         public static string GetNewYarnSuppliersForProductSetup(int categoryId)
@@ -1215,7 +1219,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
         {
             return $@"With
                 S As (
-	                Select SupplierId From YarnPOMaster Where YPOMasterID = {ypoMasterId}
+	                Select SupplierId From  {TableNames.YarnPOMaster} Where YPOMasterID = {ypoMasterId}
                 )
 
                 SELECT CAST(PM.PaymentMethodID AS VARCHAR) AS id, PM.PaymentMethodName AS text
@@ -1238,7 +1242,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
         {
             return $@";With
                 S As (
-	                Select SupplierId From YarnPOMaster Where YPOMasterID = {ypoMasterId}
+	                Select SupplierId From {TableNames.YarnPOMaster} Where YPOMasterID = {ypoMasterId}
                 )
 
                 SELECT CAST(CIT.IncoTermsID AS VARCHAR) AS id, IT.IncoTermsName AS text
@@ -1260,7 +1264,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
         {
             return $@";With
                 S As (
-	                Select SupplierId From YarnPOMaster Where YPOMasterID = {ypoMasterId}
+	                Select SupplierId From  {TableNames.YarnPOMaster}  Where YPOMasterID = {ypoMasterId}
                 )
 
                 SELECT CAST(CPT.PaymentTermsID AS VARCHAR) AS id, PT.PaymentTermsName AS text

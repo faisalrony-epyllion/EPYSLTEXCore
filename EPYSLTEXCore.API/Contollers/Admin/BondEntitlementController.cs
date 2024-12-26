@@ -76,7 +76,6 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                 entity.EBINNo = model.EBINNo;
                 entity.FromDate = model.FromDate;
                 entity.ToDate = model.ToDate;
-                entity.CurrencyID = model.CurrencyID;
 
                 foreach (var item in entity.Childs)
                 {

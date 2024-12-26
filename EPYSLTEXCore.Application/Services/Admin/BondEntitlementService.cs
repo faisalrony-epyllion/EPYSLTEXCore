@@ -46,11 +46,8 @@ namespace EPYSLTEXCore.Application.Services.Admin
 	                ,EBINNo = ISNULL(BEM.EBINNo,'')
 	                ,BEM.FromDate
 	                ,BEM.ToDate
-	                ,CurrencyID = ISNULL(BEM.CurrencyID,0)
-	                ,CurrencyName = ISNULL(CU.CurrencyCode,'')
 	                FROM BondEntitlementMaster BEM
 	                INNER JOIN {DbNames.EPYSL}..CompanyEntity C ON C.CompanyID = BEM.CompanyID 
-	                LEFT JOIN {DbNames.EPYSL}..Currency CU ON CU.CurrencyID = BEM.CurrencyID
 	                WHERE C.CompanyID IN(8,6)
                 )
                 SELECT *, Count(*) Over() TotalRows FROM FinalList";
@@ -96,9 +93,6 @@ namespace EPYSLTEXCore.Application.Services.Admin
                 WHERE ISG.SubGroupName = '{SubGroupNames.CHEMICALS}' 
                 GROUP BY ISV2.SegmentValue,ISV2.SegmentValueID
                 ORDER BY ISV2.SegmentValue;
-
-                --Currency
-                SELECT id = CurrencyID, text = CurrencyCode FROM {DbNames.EPYSL}..Currency;
                 
                 --Unit
                 SELECT id = UnitID, text = DisplayUnitDesc FROM {DbNames.EPYSL}..Unit;
@@ -115,7 +109,6 @@ namespace EPYSLTEXCore.Application.Services.Admin
                 data.CompanyList = await records.ReadAsync<Select2OptionModel>();
                 data.Dyes = await records.ReadAsync<Select2OptionModel>();
                 data.Chemicals = await records.ReadAsync<Select2OptionModel>();
-                data.CurrencyList = await records.ReadAsync<Select2OptionModel>();
                 data.UnitList = await records.ReadAsync<Select2OptionModel>();
 
                 return data;
@@ -175,9 +168,6 @@ namespace EPYSLTEXCore.Application.Services.Admin
             WHERE ISG.SubGroupName = '{SubGroupNames.CHEMICALS}' 
             GROUP BY ISV2.SegmentValue,ISV2.SegmentValueID
             ORDER BY ISV2.SegmentValue;
-
-            --Currency
-            SELECT id = CurrencyID, text = CurrencyCode FROM {DbNames.EPYSL}..Currency;
                 
             --Unit
             SELECT id = UnitID, text = DisplayUnitDesc FROM {DbNames.EPYSL}..Unit;
@@ -198,7 +188,6 @@ namespace EPYSLTEXCore.Application.Services.Admin
                 data.Dyes = await records.ReadAsync<Select2OptionModel>();
                 data.Chemicals = await records.ReadAsync<Select2OptionModel>();
 
-                data.CurrencyList = await records.ReadAsync<Select2OptionModel>();
                 data.UnitList = await records.ReadAsync<Select2OptionModel>();
 
                 int childId = 999;

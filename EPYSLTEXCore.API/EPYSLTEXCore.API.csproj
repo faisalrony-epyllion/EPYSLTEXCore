@@ -32,6 +32,9 @@
   <ItemGroup>
     <Compile Remove="Contollers\APIBaseController\ApiBaseController.cs" />
     <Compile Remove="Contollers\HomeController.cs" />
+    <Compile Remove="Contollers\RND\LabTestRequisitionController.cs" />
+    <Compile Remove="Contollers\RND\LabTestResultController.cs" />
+    <Compile Remove="Contollers\RND\RollFinishingController.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +63,7 @@
   <ItemGroup>
     <Folder Include="Contollers\Select2\" />
     <Folder Include="Service\" />
+    <Folder Include="wwwroot\Bundle\css\" />
     <Folder Include="wwwroot\Bundle\js\" />
   </ItemGroup>
 

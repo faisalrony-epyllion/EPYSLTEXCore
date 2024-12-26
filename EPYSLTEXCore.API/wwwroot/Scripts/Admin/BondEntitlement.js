@@ -124,9 +124,6 @@
             },
             {
                 field: 'ToDate', headerText: 'To Date', textAlign: 'Center', type: 'date', format: _ch_date_format_1
-            },
-            {
-                field: 'CurrencyName', headerText: 'Currency'
             }
         ];
 
@@ -286,14 +283,9 @@
         var data = formDataToJson($formEl.serializeArray());
 
         data.CompanyID = getDefaultValueWhenInvalidN($formEl.find('#CompanyID').val());
-        data.CurrencyID = getDefaultValueWhenInvalidN($formEl.find('#CurrencyID').val());
 
         if (data.CompanyID == 0) {
             toastr.error('Select company');
-            return false;
-        }
-        if (data.CurrencyID == 0) {
-            toastr.error('Select currency');
             return false;
         }
 
@@ -302,7 +294,7 @@
 
         for (var i = 0; i < childs.length; i++) {
             data.Childs[i].UnitID = getDefaultValueWhenInvalidN(data.Childs[i].UnitID);
-             
+            //data.Childs[i].ChildItems = data.Childs[i].ChildItems.filter(x => x.EntitlementQty > 0);
 
             var child = DeepClone(childs[i]);
             var entitlementQty = getDefaultValueWhenInvalidN_Float(child.EntitlementQty);

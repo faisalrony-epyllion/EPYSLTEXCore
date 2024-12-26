@@ -701,11 +701,13 @@ button.close {
     margin-bottom: 4px !important;
     margin-top: 6px !important;
 }
-
-/*Select2 CSS*/
-.select2-container .select2-selection--single .select2-selection__rendered {
-    padding-right: 10px;
-}
+    .toolBar-parent-div button {
+        margin: 2px 2px 2px 0;
+    }
+    /*Select2 CSS*/
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        padding-right: 10px;
+    }
 
 .select2-container .select2-selection--single .select2-selection__rendered {
     padding-left: 0;

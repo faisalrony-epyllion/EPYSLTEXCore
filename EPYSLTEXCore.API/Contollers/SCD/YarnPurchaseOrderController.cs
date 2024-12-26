@@ -342,6 +342,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                         existingYarnPOChild.ItemMasterID = item.ItemMasterID;
                         existingYarnPOChild.YarnPRNo = item.YarnPRNo;
                         existingYarnPOChild.ConceptID = item.ConceptID;
+                        existingYarnPOChild.ContainerID = item.ContainerID;
                         existingYarnPOChild.ConceptNo = item.ConceptNo;
                         existingYarnPOChild.DayValidDurationId = item.DayValidDurationId;
                         existingYarnPOChild.BaseTypeId = item.BaseTypeId;

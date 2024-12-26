@@ -784,7 +784,11 @@
                         allowClear: true,
                         data: data
                     });
-                    el.val(null).trigger('change');
+
+                    let result = data.find(item => item.text === value.defaultValue);
+
+                    // Set the value to null if result is undefined, otherwise set result.id
+                    el.val(result?.id ?? null).trigger('change');
                 },
                 error: function () { console.log("Error in loading selection options") }
             });

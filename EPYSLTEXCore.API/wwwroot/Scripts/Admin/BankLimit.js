@@ -16,7 +16,7 @@
         if (!menuParam)
             menuParam = localStorage.getItem("menuParam");
 
-   
+
         pageId = pageName + "-" + menuId;
         $pageEl = $(`#${pageId}`);
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -121,13 +121,13 @@
                 field: 'MaxLimit', headerText: 'Max Limit'
             },
             {
-                field: 'LCOpened', headerText: 'LC Opened'
+                field: 'LCOpened', headerText: 'LC Opened', visible: false
             },
             {
-                field: 'LCAcceptenceGiven', headerText: 'LC Acceptence Given'
+                field: 'LCAcceptenceGiven', headerText: 'LC Acceptence Given', visible: false
             },
             {
-                field: 'PaymentOnMaturity', headerText: 'Payment On Maturity'
+                field: 'PaymentOnMaturity', headerText: 'Payment On Maturity', visible: false
             }
         ];
 
@@ -191,15 +191,15 @@
                 edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
             },
             {
-                field: 'LCOpened', headerText: 'LC Opened', width: 150,
+                field: 'LCOpened', headerText: 'LC Opened', width: 150, visible: false,
                 edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
             },
             {
-                field: 'LCAcceptenceGiven', headerText: 'LC Acceptence Given', width: 150,
+                field: 'LCAcceptenceGiven', headerText: 'LC Acceptence Given', width: 150, visible: false,
                 edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
             },
             {
-                field: 'PaymentOnMaturity', headerText: 'Payment On Maturity', width: 150,
+                field: 'PaymentOnMaturity', headerText: 'Payment On Maturity', width: 150, visible: false,
                 edit: { params: { showSpinButton: false, decimals: 2, format: "N2" } }
             }
         ];

@@ -9,8 +9,6 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Admin;
 
 namespace EPYSLTEXCore.Application.Services.General
 {

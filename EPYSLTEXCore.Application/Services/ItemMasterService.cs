@@ -6,7 +6,10 @@ using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Data.SqlClient;
+using System.Data.Common;
+using System.Transactions;
 
 namespace EPYSLTEXCore.Application.Services
 {
@@ -15,6 +18,7 @@ namespace EPYSLTEXCore.Application.Services
         private readonly IDapperCRUDService<DapperBaseEntity> _sqlQueryService;
         private readonly IDapperCRUDService<ItemSegmentValue> _itemSegmentService;
         private readonly SqlConnection _connection;
+        private SqlTransaction transaction;
         private readonly SqlConnection _connectionTex;
         public ItemMasterService(IDapperCRUDService<DapperBaseEntity> sqlQueryService, IDapperCRUDService<ItemSegmentValue> itemSegmentService)
         {
@@ -149,6 +153,8 @@ namespace EPYSLTEXCore.Application.Services
         {
             try
             {
+                _connection.Open();
+                transaction = _connection.BeginTransaction();
                 #region 1. Clear Item Temp Table
 
                 _sqlQueryService.RunSqlCommand("Delete ItemMasterBOMTemp", false);
@@ -157,17 +163,20 @@ namespace EPYSLTEXCore.Application.Services
 
                 #region 2. Save All Item In Temp Table
 
-                var maxId = _itemSegmentService.GetMaxId(TableNames.ITEMMASTER, newItemMasters.Count);
+                var maxId = _itemSegmentService.GetMaxId(TableNames.ITEMMASTER, newItemMasters.Count, RepeatAfterEnum.NoRepeat, transaction, _connection);
                 int maxItemMasterId = Convert.ToInt32(Convert.ToInt32(maxId));
                 foreach (var item in newItemMasters)
                 {
                     objItemSubGroup.MaxDisplayID = objItemSubGroup.MaxDisplayID + 1;
                     item.Id = maxItemMasterId++;
+                    item.ItemMasterID = item.Id;
                     item.DisplayItemId = objItemSubGroup.ItemPrefix + objItemSubGroup.MaxDisplayID.ToString();
 
+                    var insertsql = _sqlQueryService.GetInsertQuery(item, TableNames.ItemMasterBOMTemp, transaction, _connection);
+                    _sqlQueryService.RunSqlCommand(insertsql, false);
+                    //_sqlQueryService.Add(item, TableNames.ItemMasterBOMTemp,true);
                     //_dbContext.ItemMasterBomTempSet.Add(item);// have to fix
                 }
-
                 //_dbContext.SaveChanges();// have to fix
 
                 #endregion 2. Save All Item In Temp Table
@@ -181,11 +190,19 @@ namespace EPYSLTEXCore.Application.Services
 
                 #endregion 3. Insert Newly Add Item To ItemMaster Table From Temp Table
 
+                transaction.Commit();
+
                 return true;
             }
             catch (Exception ex)
             {
+                if (transaction != null) transaction.Rollback();
                 throw ex;
+            }
+            finally
+            {
+                if (transaction != null) transaction.Dispose();
+                _connection.Close();
             }
         }
 

@@ -19,6 +19,7 @@
         public IEnumerable<Select2MappingOptionModel> Segment14ValueList { get; set; }
         public IEnumerable<Select2MappingOptionModel> Segment15ValueList { get; set; }
         public IEnumerable<Select2MappingOptionModel> YarnCountMaster { get; set; }
+        public IEnumerable<Select2MappingOptionModel> ShadeReferenceList { get; set; }
         public IEnumerable<Select2MappingOptionModel> FiberList { get; set; }
         public IEnumerable<Select2MappingOptionModel> SubProgramList { get; set; }
         public IEnumerable<Select2MappingOptionModel> CertificationsList { get; set; }

@@ -1,24 +1,19 @@
 ﻿(function () {
     var menuId, pageName;
     var pageId;
-    var toolbarId, _oRow, _index, _modalFrom, _oRowCollar, _indexCollar, _oRowCuff, _indexCuff;
-    var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $tblChildElDI, $tblChildYarnEl, $formEl, tblMasterId, tblChildId, tblChildIdDI, tblChildYarnId, tblChildCollarId, tblChildCollarIdDI,
+    var toolbarId, _oRow, _modalFrom, _oRowCuff;
+    var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $tblChildElDI, $tblChildYarnEl, $formEl, tblMasterId, tblChildId, tblChildIdDI, tblChildCollarId, tblChildCollarIdDI,
         $tblChildCollarIdEl, $tblChildCollarIdElDI
-        , tblChildCuffId, tblChildCuffIdDI, $tblChildCuffIdEl, $tblChildCuffIdElDI, tblFabricChildId, tblCollarChildId, tblCuffChildId, tblPlanningId, $tblPlanningEl, $modalPlanningEl
-        , tblCriteriaId, $tblCriteriaIdEl, $modalCriteriaEl, _indexc, _oRowc, ids;
-    var menuType = 0;
-    var idsList = [];
+        , tblChildCuffId, tblChildCuffIdDI, $tblChildCuffIdEl, $tblChildCuffIdElDI, tblPlanningId, $tblPlanningEl, $modalPlanningEl
+        , tblCriteriaId, $tblCriteriaIdEl, $modalCriteriaEl, _indexc, _oRowc;
     var status = statusConstants.NEW;
     var CriteriaName;
-    var _machineTypeId = 0;
     var _isBDS = 1;
     var masterData;
     var bmtArray = [];
-    var itemTNAInfo = null, itemTNAInfoCollar = null; //itemTNAInfoCuff = null;
     var _yarnLiabilitiesItem = null;
     var _yarnLiabilitiesChildID = 99999;
     var _previousBUChilds = [];
-    var _selectedSubGroupId = -1;
     var _liabilitiesType = {
         DyedYarn: "Dyed Yarn",
         FinishedQty: "Finished Qty",
@@ -57,239 +52,125 @@
         tblCriteriaId = "#tblCriteria" + pageId;
         $modalCriteriaEl = $("#modalCriteria" + pageId);
         itemDetailsId = $("#itemDetailsId" + pageId);
-        menuType = localStorage.getItem("bulkBookingAckPage");
+        menuType = 0;
 
+        $formEl.find("#lblTableTitle").text("Fabric Booking Consumption");
+        _isBDS = 1;
+        $toolbarEl.find("#btnPendingList,#btnBookingList").hide();
 
-        if (menuType == 2) {
-            status = statusConstants.PENDING;
-        }
-        //var isBulkBookingAckPage = bulkBookingAckPage == 1 ? true : false;
+        $toolbarEl.find("#btnList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.NEW;
+            initMasterTable();
+            $formEl.find("#divYarnInfo").hide();
+        });
+        $toolbarEl.find("#btnRevisionAckList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.REVISE;
+            initMasterTable();
+            $formEl.find("#divYarnInfo").show();
+        });
+        $toolbarEl.find("#btnMktAckList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.PROPOSED_FOR_ACKNOWLEDGE;
+            initMasterTable();
+            $formEl.find("#divYarnInfo").show();
+        });
+        $toolbarEl.find("#btnUnAcknowledgedList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.UN_ACKNOWLEDGE;
+            initMasterTable();
+            $formEl.find("#divYarnInfo").show();
+        });
+        $toolbarEl.find("#btnCancelList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.REJECT;
+            initMasterTable();
+        });
+        $toolbarEl.find("#btnAllList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.ALL;
+            initMasterTable();
+        });
+        $toolbarEl.find("#btnAcknowledgedList").on("click", function (e) {
+            e.preventDefault();
+            toggleActiveToolbarBtn(this, $toolbarEl);
+            status = statusConstants.COMPLETED;
+            initMasterTable();
+        });
 
-        if (menuType == 1) {
-            $formEl.find("#lblTableTitle").text("Booking Consumption");
+        $formEl.find("#btnCancel").on("click", backToList);
 
-            _isBDS = 2;
-            $toolbarEl.find("#btnRcvList,#btnList,#btnCancelList,#btnAcknowledgedList,#btnDeliveredList,#btnUnAcknowledgedList").hide();
-            $toolbarEl.find("#btnReceive,#btnUnAcknowledge,#btnReceived").hide();
-            $toolbarEl.find("#btnReceive,#btnUnAcknowledge,#btnReceived").hide();
+        $formEl.find("#btnReceive").click(function (e) {
+            alert(10);
 
-            $toolbarEl.find("#btnPendingList").click(function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.PENDING;
-                initBulkAckList();
-            });
-            $toolbarEl.find("#btnBookingList").click(function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.ACTIVE;
-                initBulkAckList();
-            });
+            e.preventDefault();
+            Receive(this);
+        });
+        $formEl.find("#btnReceived").click(function (e) {
+            alert(11);
 
-            $formEl.find("#btnCancel").on("click", backToListBulk);
+            e.preventDefault();
+            Received(this);
+        });
+        $formEl.find("#btnUnAcknowledge").click(function (e) {
+            alert(12);
 
-            status = statusConstants.PENDING;
-            initBulkAckList();
-            $toolbarEl.find("#btnList").click();
-        } else if (menuType == 0) {
+            bootbox.prompt("Enter your UnAcknowledge reason:", function (result) {
+                if (!result) {
+                    return toastr.error("UnAcknowledge reason is required.");
+                }
+                saveWithConfirm(result, true);
+            });
+        });
 
-            $formEl.find("#lblTableTitle").text("Fabric Booking Consumption");
-            _isBDS = 1;
-            $toolbarEl.find("#btnPendingList,#btnBookingList").hide();
+        $formEl.find("#btnCancelAcknowledge").click(function (e) {
+            alert(13);
 
-            $toolbarEl.find("#btnList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.NEW;
-                initMasterTable();
-                $formEl.find("#divYarnInfo").hide();
-            });
-            $toolbarEl.find("#btnRevisionAckList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.REVISE;
-                initMasterTable();
-                $formEl.find("#divYarnInfo").show();
-            });
-            $toolbarEl.find("#btnMktAckList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.PROPOSED_FOR_ACKNOWLEDGE;
-                initMasterTable();
-                $formEl.find("#divYarnInfo").show();
-            });
-            $toolbarEl.find("#btnUnAcknowledgedList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.UN_ACKNOWLEDGE;
-                initMasterTable();
-                $formEl.find("#divYarnInfo").show();
-            });
-            $toolbarEl.find("#btnCancelList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.REJECT;
-                initMasterTable();
-            });
-            $toolbarEl.find("#btnAllList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.ALL;
-                initMasterTable();
-            });
-            $toolbarEl.find("#btnRcvList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.ACTIVE;
-                initMasterTable();
-            });
-            $toolbarEl.find("#btnAcknowledgedList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.COMPLETED;
-                initMasterTable();
-            });
+            e.preventDefault();
+            cancelSave();
+        });
 
-            $toolbarEl.find("#btnDeliveredList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.APPROVED;
-                initMasterTable();
-            });
+        $formEl.find("#btnCancelUnAcknowledge").click(function (e) {
+            alert(14);
 
-            $formEl.find("#btnCancel").on("click", backToList);
-
-            $formEl.find("#btnReceive").click(function (e) {
-                e.preventDefault();
-                Receive(this);
+            bootbox.prompt("Enter your UnAcknowledge reason:", function (result) {
+                if (!result) {
+                    return toastr.error("UnAcknowledge reason is required.");
+                }
+                cancelSave(result);
             });
-            $formEl.find("#btnReceived").click(function (e) {
-                e.preventDefault();
-                Received(this);
-            });
-            $formEl.find("#btnUnAcknowledge").click(function (e) {
-                bootbox.prompt("Enter your UnAcknowledge reason:", function (result) {
-                    if (!result) {
-                        return toastr.error("UnAcknowledge reason is required.");
-                    }
-                    saveWithConfirm(result, true);
-                });
-            });
-
-            $formEl.find("#btnCancelAcknowledge").click(function (e) {
-                e.preventDefault();
-                cancelSave();
-            });
-
-            $formEl.find("#btnCancelUnAcknowledge").click(function (e) {
-                bootbox.prompt("Enter your UnAcknowledge reason:", function (result) {
-                    if (!result) {
-                        return toastr.error("UnAcknowledge reason is required.");
-                    }
-                    cancelSave(result);
-                });
-            });
-            $toolbarEl.find("#btnList").click();
-        } else if (menuType == 2) {
-            $toolbarEl.find("#btnRcvList").fadeOut();
-            status = statusConstants.PENDING;
-
-            $formEl.find("#lblTableTitle").text("Sample Booking Consumption");
-            _isBDS = 3;
-            $toolbarEl.find("#btnPendingList,#btnBookingList").hide();
-
-            $toolbarEl.find("#btnList").on("click", function (e) {
-
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.PENDING;
-                initMasterTable();
-            });
-            $toolbarEl.find("#btnRevisionAckList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.REVISE;
-                initMasterTable();
-            });
-            $toolbarEl.find("#btnCancelList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.REJECT;
-                initMasterTable();
-            });
-            $toolbarEl.find("#btnAcknowledgedList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.COMPLETED;
-                initMasterTable();
-            });
-            $toolbarEl.find("#btnUnAcknowledgedList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.UN_ACKNOWLEDGE;
-                initMasterTable();
-            });
-
-            $toolbarEl.find("#btnDeliveredList").on("click", function (e) {
-                e.preventDefault();
-                toggleActiveToolbarBtn(this, $toolbarEl);
-                status = statusConstants.APPROVED;
-                initMasterTable();
-            });
-
-            $formEl.find("#btnCancel").on("click", backToList);
-
-            $formEl.find("#btnReceive").click(function (e) {
-                e.preventDefault();
-                Receive(this);
-            });
-            $formEl.find("#btnReceived").click(function (e) {
-                e.preventDefault();
-                Received(this);
-            });
-            $formEl.find("#btnUnAcknowledge").click(function (e) {
-                bootbox.prompt("Enter your UnAcknowledge reason:", function (result) {
-                    if (!result) {
-                        return toastr.error("UnAcknowledge reason is required.");
-                    }
-                    saveWithConfirm(result, true);
-                });
-            });
-
-            $formEl.find("#btnCancelAcknowledge").click(function (e) {
-                e.preventDefault();
-                cancelSave();
-            });
-
-            $formEl.find("#btnCancelUnAcknowledge").click(function (e) {
-                bootbox.prompt("Enter your UnAcknowledge reason:", function (result) {
-                    if (!result) {
-                        return toastr.error("UnAcknowledge reason is required.");
-                    }
-                    cancelSave(result);
-                });
-            });
-
-            $toolbarEl.find("#btnList").click();
-        }
+        });
+        $toolbarEl.find("#btnList").click();
 
         $toolbarEl.find("#btnRefreshList").on("click", function (e) {
+            alert(15);
+
             e.preventDefault();
             $tblMasterEl.refresh();
         });
 
         $formEl.find("#btnSave").click(function (e) {
-            debugger;
             e.preventDefault();
             saveWithConfirm("", false);
         });
 
         $formEl.find("#btnOk").click(function (e) {
+            alert(17);
+
             e.preventDefault();
             setLiabilitiesData(_oRow, $tblPlanningEl, _indexc);
         });
 
         $formEl.find("#btnOkk").click(function (e) {
+            alert(18);
+
             e.preventDefault();
 
             var selectedRows = $tblCriteriaIdEl.getCurrentViewRecords();
@@ -298,14 +179,6 @@
                     toastr.error("Please enter criteria for Material, Dyeing, Finishing, Testing!");
                     return;
                 }
-            }
-
-            if (_modalFrom == subGroupNames.FABRIC) {
-                setPlanningCriteriaData(_oRow, $tblChildEl, _index);
-            } else if (_modalFrom == subGroupNames.COLLAR) {
-                setPlanningCriteriaData(_oRowCollar, $tblChildCollarIdEl, _indexCollar);
-            } else if (_modalFrom == subGroupNames.CUFF) {
-                setPlanningCriteriaData(_oRowCuff, $tblChildCuffIdEl, _indexCuff);
             }
         });
 
@@ -317,13 +190,6 @@
             .catch(function (err) {
                 toastr.error(err.response.data.Message);
             });
-/*
-        loadListCountMethod({
-            ToolbarId: toolbarId,
-            URL: `/api/fab-acknowledge/bulk/fabric-booking-acknowledge/get-list-count`,
-            CountTagProps: `NewCount,Revision,Pending2,Acknowledged,UnAcknowledged,Cancel,AllCount`,
-            IsDefaultAllCount: false
-        });*/
     });
 
     function getValidFinishQty(selectedRow) {
@@ -376,7 +242,6 @@
             TillLiabilityQty: liabilityQty - consumedQty
         };
     }
-
     function setLiabilitiesData(oRowc, $tblElq, ind) {
         var selectedRows = $tblPlanningEl.getCurrentViewRecords();
         var selectedYarnRows = $tblChildYarnEl.getCurrentViewRecords();
@@ -458,257 +323,48 @@
 
         $modalPlanningEl.modal('toggle');
     }
-    function setPlanningData(oRowc, $tblElq, ind) {
-        //console.log(oRowc);
-        var selectedRows = $tblPlanningEl.getSelectedRecords();
-
-        if (selectedRows.length == 0 && (oRowc.CriteriaName == "Material" || oRowc.CriteriaName == "Dyeing" || oRowc.CriteriaName == "Finishing" || oRowc.CriteriaName == "Testing")) {
-            toastr.warning("Please select item(s)!");
-            return;
-        }
-        ids = oRowc.CriteriaIDs = selectedRows.map(function (el) { return el.CriteriaID }).toString();
-        idsList.push(oRowc.CriteriaIDs);
-        let TotalTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        let FinishingTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        let DyeingTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        let KnittingTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        let MaterialTime = 0;
-        let TestReportDaysTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        let PreprocessTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        let batchPreparationTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        let TestingTime = oRowc.TechnicalTime + (oRowc.IsSubContact ? 14 : 0);
-        selectedRows.forEach(function (row) {
-            //console.log(row);
-            if (row.CriteriaName == "Dyeing") {
-                DyeingTime += row.ProcessTime;
-            }
-            else if (row.CriteriaName == "Finishing") {
-                FinishingTime += row.ProcessTime;
-            }
-            else if (row.CriteriaName == "Material") {
-                MaterialTime += row.ProcessTime;
-            }
-            else if (row.CriteriaName == "Preprocess") {
-                PreprocessTime += row.ProcessTime;
-            }
-            else if (row.CriteriaName == "Testing") {
-                TestingTime += row.ProcessTime;
-            }
-            TotalTime += row.ProcessTime;
-        });
-        //selectedRows.CriteriaName(function (row) {
-        //    console.log(row);
-        //    TotalTime += row.ProcessTime;
-        //});
-        oRowc.TotalTime = TotalTime;
-        oRowc.FinishingTime = parseInt(FinishingTime + MaterialTime + oRowc.StructureDays + PreprocessTime + DyeingTime);
-        oRowc.DyeingTime = parseInt(DyeingTime + MaterialTime + oRowc.StructureDays + PreprocessTime);
-        oRowc.batchPreparationTime = parseInt(MaterialTime + oRowc.StructureDays + PreprocessTime);
-        //oRowc.KnittingDays = TotalTime;
-        oRowc.MaterialTime = MaterialTime;
-        oRowc.PreprocessTime = PreprocessTime;
-        oRowc.TestingTime = TestingTime;
-        oRowc.KnittingTime = parseInt(MaterialTime + oRowc.StructureDays);
-        oRowc.TestReportTime = parseInt(oRowc.StructureDays + MaterialTime + PreprocessTime + DyeingTime + FinishingTime + TestingTime);
-        $tblElq.updateRow(ind, oRowc);
-        $modalPlanningEl.modal('toggle');
-    }
-
-    function setPlanningCriteriaData(oRow, $tblEl, ind) {
-        ids = idsList.join(",");
-        var selectedRows = $tblCriteriaIdEl.getCurrentViewRecords();
-        oRow.CriteriaIDs = ids;
-
-        oRow.TechnicalTime = setTechnicalTime(oRow);
-        oRow = setArgDataValues(oRow);
-
-        /*
-          var totalCriteriaDays = 0, subcontactDays = 0;
-        var materialDays = 0, preProcessDays = 0, batchPreparationDays = 0, dyeingDays = 0, finishDays = 0, testingDays = 0, qcDays = 0;
-        for (var i = 0; i < argsRowData.CriteriaNames.length; i++) {
-            totalCriteriaDays += argsRowData.CriteriaNames[i].TotalTime;
-            if (argsRowData.CriteriaNames[i].CriteriaName === "Material") materialDays = argsRowData.CriteriaNames[i].TotalTime;
-            else if (argsRowData.CriteriaNames[i].CriteriaName === "Preprocess") preProcessDays = argsRowData.CriteriaNames[i].TotalTime;
-            else if (argsRowData.CriteriaNames[i].CriteriaName === "Batch Preparation") batchPreparationDays = argsRowData.CriteriaNames[i].TotalTime;
-            else if (argsRowData.CriteriaNames[i].CriteriaName === "Finishing") finishDays = argsRowData.CriteriaNames[i].TotalTime;
-            else if (argsRowData.CriteriaNames[i].CriteriaName === "Quality Check") qcDays = argsRowData.CriteriaNames[i].TotalTime;
-            else if (argsRowData.CriteriaNames[i].CriteriaName === "Testing") testingDays = argsRowData.CriteriaNames[i].TotalTime;
-            else if (argsRowData.CriteriaNames[i].CriteriaName === "Dyeing") dyeingDays = argsRowData.CriteriaNames[i].TotalTime;
-        }
-        //if (argsRowData.IsSubContact) subcontactDays = 14;
-        if (argsData.IsSubContact) subcontactDays = 14;
-
-        argsData.StructureDays = parseInt(argsRowData.TechnicalTime);
-        argsData.MaterialDays = materialDays;
-        argsData.KnittingDays = argsData.StructureDays + materialDays;
-        argsData.BatchPreparationDays = argsData.StructureDays + materialDays + preProcessDays + batchPreparationDays;
-        argsData.DyeingDays = argsData.StructureDays + materialDays + preProcessDays + batchPreparationDays + dyeingDays;
-        argsData.FinishingDays = argsData.StructureDays + materialDays + preProcessDays + batchPreparationDays + dyeingDays + finishDays;
-        argsData.TestReportDays = argsData.StructureDays + materialDays + preProcessDays + batchPreparationDays + dyeingDays + finishDays + testingDays;
-        argsData.TotalDays = argsData.StructureDays + subcontactDays + totalCriteriaDays;
-
-        var dt = new Date();
-        dt.setDate(dt.getDate() + argsData.TotalDays);
-        argsData.DeliveryDate = dt;
-
-        argsData.MachineTypeId = argsRowData.MachineTypeId;
-        argsData.MachineType = argsRowData.MachineType;
-        argsData.KTypeId = argsRowData.KTypeId;
-        argsData.TechnicalNameId = argsRowData.TechnicalNameId;
-        argsData.TechnicalName = argsRowData.TechnicalName;
-        argsData.TechnicalTime = argsRowData.TechnicalTime;
-        argsData.YarnSourceID = argsRowData.YarnSourceID;
-        argsData.BrandID = argsRowData.BrandID;
-        argsData.Brand = argsRowData.Brand;
-         */
-
-        $tblEl.updateRow(ind, oRow);
-        $modalCriteriaEl.modal('toggle');
-    }
-    /*
-     function setPlanningCriteriaData(oRow, $tblEl, ind) {
-        ids = idsList.join(",");
-        var selectedRows = $tblCriteriaIdEl.getCurrentViewRecords();
-        oRow.CriteriaIDs = ids;
-
-        let totalDays = 0;//oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        let finishingDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        let dyeingDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        let batchPreparationDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        //let knittingDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        let materialDays = 0;
-        let KnittingDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        let testReportDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        // let testReportDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        let QualityDays = oRow.TechnicalTime + (oRow.IsSubContact ? 14 : 0);
-        selectedRows.forEach(function (row) {
-            totalDays += row.TotalTime;
-            finishingDays += row.FinishingTime;
-            dyeingDays += row.DyeingTime;
-            batchPreparationDays += row.batchPreparationTime;
-            //batchPreparationDays += row.batchPreparationTime;
-            KnittingDays += row.KnittingTime;
-            materialDays += row.MaterialTime;
-            testReportDays += row.TestReportTime;
-            // QualityDays += 1;
-        });
-        var currentData = setTotalDaysAndDeliveryDate(oRow, []);
-
-        oRow.TotalDays = totalDays + currentData.TotalDays;
-        oRow.FinishingDays = finishingDays + 1;
-        //alert(oRow.FinishingDays);
-        oRow.DyeingDays = dyeingDays + 1
-        oRow.BatchPreparationDays = batchPreparationDays + 1;
-        oRow.KnittingDays = KnittingDays;
-        oRow.TestReportDays = testReportDays + 1;
-        //alert(oRow.KnittingDays);
-        //alert(oRow.TestReportDays);
-        //oRow.KnittingDays = KnittingDays;
-        oRow.MaterialDays = materialDays;
-        oRow.QualityDays = 1;
-        // alert(oRow.MaterialDays);
-        var dt = new Date();
-        dt.setDate(dt.getDate() + oRow.TotalDays);
-        oRow.DeliveryDate = dt;
-
-        $tblEl.updateRow(ind, oRow);
-        $modalCriteriaEl.modal('toggle');
-    }
-     */
-    function initBulkAckList() {
-        var columns = [
-            {
-                headerText: 'Command', width: 100, textAlign: 'Left', visible: (status == statusConstants.PENDING || status == statusConstants.REJECT), commands: [
-                    { type: 'AddBulk', title: 'Add', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } }
-                ]
-            },
-            {
-                headerText: 'Command', width: 100, textAlign: 'Left', visible: status == statusConstants.ACTIVE || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.PROPOSED_FOR_ACKNOWLEDGE, commands: [
-                    { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } }
-                ]
-            },
-            {
-                field: 'BookingNo', headerText: 'Booking No'
-            },
-            {
-                field: 'SLNo', headerText: 'SL No', visible: false
-            },
-            {
-                field: 'BookingDate', headerText: 'Booking Date', type: 'date', format: _ch_date_format_7
-            },
-            {
-                field: 'BuyerName', headerText: 'Buyer'
-            },
-            {
-                field: 'BuyerTeamName', headerText: 'Buyer Team'
-            },
-            {
-                field: 'CompanyName', headerText: 'Company'
-            },
-            {
-                field: 'StyleNo', headerText: 'Style No', visible: status == statusConstants.ACTIVE
-            },
-            {
-                field: 'SupplierName', headerText: 'Supplier Name', visible: status == statusConstants.ACTIVE
-            },
-            {
-                field: 'SeasonName', headerText: 'Season Name', visible: status == statusConstants.ACTIVE
-            },
-            {
-                field: 'Remarks', headerText: 'Remarks'
-            }
-        ];
-        if ($tblMasterEl) $tblMasterEl.destroy();
-        $tblMasterEl = new initEJ2Grid({
-            tableId: tblMasterId,
-            apiEndPoint: `/api/bds-acknowledge/bulk/list?status=${status}`,
-            columns: columns,
-            commandClick: handleCommands,
-            queryCellInfo: cellModifyForBDSAck
-        });
-    }
     function initMasterTable() {
         var columns = [
             {
-                headerText: 'Command', width: 150, textAlign: 'Left', visible: status == statusConstants.NEW, commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(4), textAlign: 'Left', visible: status == statusConstants.NEW, commands: [
                     { type: 'Add', title: 'Add', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
-                headerText: 'Command', width: 150, textAlign: 'Left', visible: (status == statusConstants.REVISE || status == statusConstants.PENDING || status == statusConstants.REJECT), commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(4), textAlign: 'Left', visible: (status == statusConstants.REVISE || status == statusConstants.PENDING || status == statusConstants.REJECT), commands: [
                     { type: 'Edit', title: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
-                headerText: 'Command', width: 180, textAlign: 'Left', visible: (status == statusConstants.COMPLETED || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.ALL), commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(5), textAlign: 'Left', visible: (status == statusConstants.COMPLETED || status == statusConstants.UN_ACKNOWLEDGE || status == statusConstants.ALL), commands: [
                     { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-envelope-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'e-email e-icons' } }
                 ]
             },
             {
-                headerText: 'Command', width: 180, textAlign: 'Left', visible: status == statusConstants.PROPOSED_FOR_ACKNOWLEDGE, commands: [
+                headerText: 'Command', width: ch_setActionCommandCellWidth(5), textAlign: 'Left', visible: status == statusConstants.PROPOSED_FOR_ACKNOWLEDGE, commands: [
                     { type: 'View', title: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-envelope-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'e-email e-icons' } }
                 ]
             },
             {
                 headerText: 'Command', width: 150, textAlign: 'Left', visible: (status == statusConstants.APPROVED), commands: [
                     { type: 'ViewRecive', title: 'ViewRecive', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                    { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
+                    { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
+                    { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } }
                 ]
             },
             {
@@ -885,7 +541,6 @@
 
         //$formEl.find("#btnSave").fadeIn();
     }
-
     function cellModifyForBDSAck(args) {
         if (args.data.ImagePath == '') {
             if (args.cell.childNodes.length > 0) {
@@ -915,8 +570,9 @@
     var technicalNameObj;
     var brandElem;
     var brandObj;
-    async function initChild(data) {
 
+
+    async function initChild(data) {
         data = data.filter(x => x.BookingQty > 0);
         var totalBookingQty = 0;
         data.map(x => {
@@ -1108,7 +764,6 @@
             args.row.style.color = "#000000";
         }
     }
-
     async function initChildCollar(data) {
         data = data.filter(x => x.BookingQty > 0);
         data.map(x => {
@@ -1220,7 +875,6 @@
         $tblChildCollarIdEl.refreshColumns;
         $tblChildCollarIdEl.appendTo(tblChildCollarId);
     }
-
     async function initChildCuff(data) {
         data = data.filter(x => x.BookingQty > 0);
         data.map(x => {
@@ -1335,7 +989,6 @@
         $tblChildCuffIdEl.refreshColumns;
         $tblChildCuffIdEl.appendTo(tblChildCuffId);
     }
-
     async function initYarnChildTableAsync(data) {
         data.map(x => {
             x.TotalValue = x.LiabilityQty * x.Rate;
@@ -1524,7 +1177,6 @@
 
         return argsData;
     }
-
     async function updateCriteriaIDTable(_oRow, sourceData) {
         for (var i = 0; i < _oRow.CriteriaNames.length; i++) {
             var obj = sourceData.CriteriaNames.find(function (el) { return el.CriteriaName == _oRow.CriteriaNames[i].CriteriaName });
@@ -1543,11 +1195,9 @@
             }
         }
     }
-
     function loadYarnBookingChildItems() {
         this.dataSource = (status == statusConstants.PENDING || status == statusConstants.REJECT) ? this.parentDetails.parentRowData.ChildItems : this.parentDetails.parentRowData.ChildDetails;
     }
-
     function diplayPlanningCriteria(field, data, column) {
         column.disableHtmlEncode = false;
         return `<a class="btn btn-xs btn-default" href="javascript:void(0)" title="Liabilities Qty">
@@ -1567,418 +1217,11 @@
                                      ${data[field] ? data[field] : 0}
                                 </a>`;
     }
-
-    async function initChildCollar1(data) {
-        data = setCalculatedValues(data);
-        if ($tblChildCollarIdEl) $tblChildCollarIdEl.destroy();
-        var columns = [
-            { field: 'ConsumptionID', isPrimaryKey: true, visible: false },
-            { field: 'BookingID', visible: false },
-            { field: 'ItemMasterID', visible: false },
-            { field: 'SubGroupID', visible: false },
-            { field: 'ConceptTypeID', visible: false },
-            {
-                field: 'MachineType', headerText: 'Machine Type ', visible: status != statusConstants.ACTIVE || _isBDS == 2, edit: {
-                    create: function () {
-                        machineTypeElem = document.createElement('input');
-                        return machineTypeElem;
-                    },
-                    read: function () {
-                        return machineTypeObj.text;
-                    },
-                    destroy: function () {
-                        machineTypeObj.destroy();
-                    },
-                    write: function (e) {
-                        machineTypeObj = new ej.dropdowns.DropDownList({
-                            dataSource: masterData.MCTypeForOtherList,
-                            fields: { value: 'id', text: 'text' },
-                            change: function (f) {
-                                //
-                                technicalNameObj.enabled = true;
-                                var tempQuery = new ej.data.Query().where('additionalValue', 'equal', machineTypeObj.value);
-                                technicalNameObj.query = tempQuery;
-                                technicalNameObj.text = null;
-                                technicalNameObj.dataBind();
-
-                                e.rowData.MachineTypeId = f.itemData.id;
-                                e.rowData.MachineType = f.itemData.text;
-                                e.rowData.KTypeId = f.itemData.desc;
-                                e.rowData = setTotalDaysAndDeliveryDate(e.rowData, e.rowData.CriteriaNames);
-                            },
-                            placeholder: 'Select M/C Type',
-                            floatLabelType: 'Never'
-                        });
-                        machineTypeObj.appendTo(machineTypeElem);
-                    }
-                }
-            },
-            {
-                field: 'TechnicalName', headerText: 'Technical Name', visible: status != statusConstants.ACTIVE || _isBDS == 2, edit: {
-                    create: function () {
-                        technicalNameElem = document.createElement('input');
-                        return technicalNameElem;
-                    },
-                    read: function () {
-                        return technicalNameObj.text;
-                    },
-                    destroy: function () {
-                        technicalNameObj.destroy();
-                    },
-                    write: function (e) {
-                        technicalNameObj = new ej.dropdowns.DropDownList({
-                            dataSource: masterData.TechnicalNameList,
-                            fields: { value: 'id', text: 'text' },
-                            enabled: false,
-                            placeholder: 'Select Technical Name',
-                            floatLabelType: 'Never',
-                            change: function (f) {
-                                if (!f.isInteracted || !f.itemData) return false;
-                                e.rowData.TechnicalTime = parseInt(f.itemData.desc);
-                                e.rowData.TechnicalNameId = f.itemData.id;
-                                e.rowData.TechnicalName = f.itemData.text;
-                                e.rowData = setTotalDaysAndDeliveryDate(e.rowData, e.rowData.CriteriaNames);
-                                //$tblChildCollarIdEl.updateRow(e.row.rowIndex, e.rowData);
-                            }
-                        });
-                        technicalNameObj.appendTo(technicalNameElem);
-                    }
-                }
-            },
-            {
-                field: 'MachineGauge', headerText: 'Gauge', visible: _isBDS == 2, width: 80, allowEditing: true, editType: "numericedit", params: { decimals: 0, format: "N", min: 0, validateDecimalOnType: true }
-            },
-            {
-                field: 'Brand', headerText: 'Brand', visible: _isBDS == 2, edit: {
-                    create: function () {
-                        brandElem = document.createElement('input');
-                        return brandElem;
-                    },
-                    read: function () {
-                        return brandObj.text;
-                    },
-                    destroy: function () {
-                        brandObj.destroy();
-                    },
-                    write: function (e) {
-                        brandObj = new ej.dropdowns.DropDownList({
-                            dataSource: masterData.KnittingMachines,
-                            fields: { value: 'id', text: 'text' },
-                            change: function (f) {
-                                e.rowData.BrandID = f.itemData.id;
-                                e.rowData.Brand = f.itemData.text;
-                            },
-                            placeholder: 'Select Brand',
-                            floatLabelType: 'Never'
-                        });
-                        brandObj.appendTo(brandElem);
-                    }
-                }
-            },
-            {
-                field: 'IsSubContact', headerText: 'Sub-Contact?', visible: status != statusConstants.ACTIVE && _isBDS == 1, displayAsCheckBox: true, editType: "booleanedit", width: 85, textAlign: 'Center'
-            },
-            {
-                field: 'TotalDays', headerText: 'Total Days', visible: status != statusConstants.ACTIVE && _isBDS == 1, allowEditing: false, textAlign: 'center', width: 85, valueAccessor: diplayPlanningCriteria
-            },
-            {
-                field: 'StructureDays', headerText: 'Structure Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'FinishingDays', headerText: 'Finishing Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'DyeingDays', headerText: 'Dyeing Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'BatchPreparationDays', headerText: 'Batch Preparation Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'KnittingDays', headerText: 'Knitting Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'TestReportDays', headerText: 'Test Report Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'MaterialDays', headerText: 'Material Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'QualityDays', headerText: 'Quality Days', visible: false, width: 85, valueAccessor: diplayPlanningCriteriaTime
-            },
-            {
-                field: 'DeliveryDate', headerText: 'Delivery Date', visible: status != statusConstants.ACTIVE && _isBDS == 1, textAlign: 'Center', type: 'date', format: _ch_date_format_1, allowEditing: false
-            },
-            {
-                field: 'Color', headerText: 'Color', width: 85, allowEditing: false
-            },
-            {
-                field: 'YarnType', headerText: 'Yarn Type', width: 85, allowEditing: false
-            },
-            {
-                field: 'YarnProgram', headerText: 'Yarn Program', width: 85, allowEditing: false
-            },
-            {
-                field: 'ReferenceSourceName', headerText: 'Reference Source', visible: _isBDS == 1 ? true : false, width: 85, allowEditing: false
-            },
-            {
-                field: 'ReferenceNo', headerText: 'Reference No', visible: _isBDS == 1 ? true : false, width: 85, allowEditing: false
-            },
-            {
-                field: 'ColorReferenceNo', headerText: 'ColorReference No', visible: _isBDS == 1 ? true : false, allowEditing: false
-            },
-            {
-                field: 'ValueName', headerText: 'Yarn Source', visible: false/* status != statusConstants.ACTIVE*/, edit: {
-                    create: function () {
-                        YarnSourceNameElem = document.createElement('input');
-                        return YarnSourceNameElem;
-                    },
-                    read: function () {
-                        return YarnSourceNameobj.text;
-                    },
-                    destroy: function () {
-                        YarnSourceNameobj.destroy();
-                    },
-                    write: function (e) {
-                        YarnSourceNameobj = new ej.dropdowns.DropDownList({
-                            dataSource: masterData.YarnSourceNameList,
-                            fields: { value: 'id', text: 'text' },
-                            change: function (f) {
-                                //
-                                technicalNameObj.enabled = true;
-                                //var tempQuery = new ej.data.Query().where('additionalValue', 'equal', machineTypeObj.value);
-                                //technicalNameObj.query = tempQuery;
-                                technicalNameObj.text = null;
-                                technicalNameObj.dataBind();
-
-                                e.rowData.YarnSourceID = f.itemData.id;
-                                e.rowData.ValueName = f.itemData.text;
-                            },
-                            placeholder: 'Select one',
-                            floatLabelType: 'Never'
-                        });
-                        YarnSourceNameobj.appendTo(YarnSourceNameElem);
-                    }
-                }
-            },
-            //{
-            //    field: 'LengthYds', headerText: 'Length (Yds)', width: 85, allowEditing: false
-            //},
-            //{
-            //    field: 'LengthInch', headerText: 'Length (Inch)', width: 85, allowEditing: false
-            //},
-            {
-                field: 'DyeingType', headerText: 'Dyeing Type', width: 85, allowEditing: false
-            },
-            {
-                field: 'Instruction', headerText: 'Instruction', allowEditing: false
-            },
-            {
-                field: 'LabDipNo', headerText: 'Lab Dip No', allowEditing: false
-            },
-            //{
-            //    field: 'ForBDSStyleNo', headerText: 'Style No', allowEditing: false
-            //},
-            {
-                field: 'BookingQty', headerText: 'Booking Qty', width: 85, allowEditing: false
-            },
-            {
-                field: 'TotalQty', headerText: 'Total Qty', width: 85, allowEditing: false, visible: status == statusConstants.COMPLETED
-            }
-            //{
-            //    field: 'ConsumptionQty', headerText: 'Consumption Qty', width: 85, allowEditing: false
-            //},
-            //{
-            //    field: 'Height', headerText: 'Height', width: 85, allowEditing: false
-            //},
-            //{
-            //    field: 'Description', headerText: 'Description', width: 85, allowEditing: false
-            //},
-        ];
-        var additionalColumns = [
-            {
-                field: 'DeliveredQty', headerText: 'Delivered Qty(kg/pcs)', width: 85, allowEditing: false, visible: status == statusConstants.APPROVED
-            },
-            {
-                field: 'DelivereyComplete', headerText: 'Is Delivered?', displayAsCheckBox: true, textAlign: 'Center', visible: status == statusConstants.APPROVED
-            }
-        ]
-        columns.push.apply(columns, additionalColumns);
-        var childColumns = [
-            { field: 'YBChildItemID', isPrimaryKey: true, visible: false },
-            { field: 'ShadeCode', headerText: 'Shade Code', textAlign: 'Center', width: 40, allowEditing: false },
-            { field: 'Distribution', headerText: 'Distribution', textAlign: 'Center', width: 40, allowEditing: false },
-            { field: 'BookingQty', headerText: 'Booking Qty', textAlign: 'Center', width: 40, allowEditing: false },
-            { field: 'Allowance', headerText: 'Allowance', textAlign: 'Center', width: 40, allowEditing: false },
-            { field: 'StitchLength', headerText: 'Stitch Length', width: 40, allowEditing: true, editType: "numericedit", params: { decimals: 0, format: "N", min: 0, validateDecimalOnType: true } },
-            { field: 'Specification', headerText: 'Specification', textAlign: 'Center', width: 40, allowEditing: false },
-            { field: 'Remarks', headerText: 'Remarks', textAlign: 'Center', width: 40, allowEditing: false },
-        ];
-
-        ej.base.enableRipple(true);
-        if (_isBDS == 2) {
-            $tblChildCollarIdEl = new ej.grids.Grid({
-                dataSource: data,
-                allowResizing: true,
-                columns: columns,
-                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true },
-                recordClick: function (args) {
-                    if (args.column && args.column.field == "TotalDays") {
-                        _oRowCollar = args.rowData;
-                        _indexCollar = args.rowIndex;
-                        _modalFrom = subGroupNames.COLLAR;
-                        // initPlanningTable(_oRowCollar.FBAChildPlannings, _oRowCollar.CriteriaIDs);
-                        initCriteriaIDTable(_oRowCollar.CriteriaNames, _oRowCollar.FBAChildPlannings, _oRowCollar.FBAChildPlanningsWithIds, _oRowCollar.BookingChildID);
-                        $modalCriteriaEl.modal('show');
-                    }
-                },
-                actionBegin: function (args) {
-                    if (args.requestType === "save") {
-                        args.data = setArgDataValues(args.data, args.rowData);
-                    }
-                },
-                childGrid: {
-                    queryString: (status == statusConstants.PENDING || status == statusConstants.REJECT) ? 'YBChildID' : 'BookingChildID',
-                    allowResizing: true,
-                    autofitColumns: false,
-                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: false },
-                    columns: childColumns,
-                    load: loadYarnBookingChildItems
-                }
-            });
-        } else {
-            $tblChildCollarIdEl = new ej.grids.Grid({
-                dataSource: data,
-                allowResizing: true,
-                columns: columns,
-                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true },
-                recordClick: function (args) {
-                    if (args.column && args.column.field == "TotalDays") {
-                        _oRowCollar = args.rowData;
-                        _indexCollar = args.rowIndex;
-                        _modalFrom = subGroupNames.COLLAR;
-                        // initPlanningTable(_oRowCollar.FBAChildPlannings, _oRowCollar.CriteriaIDs);
-                        initCriteriaIDTable(_oRowCollar.CriteriaNames, _oRowCollar.FBAChildPlannings, _oRowCollar.FBAChildPlanningsWithIds, _oRowCollar.BookingChildID);
-                        $modalCriteriaEl.modal('show');
-                    }
-                },
-                actionBegin: function (args) {
-                    if (args.requestType === "save") {
-                        args.data = setArgDataValues(args.data, args.rowData);
-                    }
-                },
-                enableContextMenu: true,
-                contextMenuItems: [
-                    { text: 'Copy TNA', target: '.e-content', id: 'copy' },
-                    { text: 'Paste TNA', target: '.e-content', id: 'paste' },
-                    { text: 'Paste TNA To All', target: '.e-content', id: 'pasteAll' }
-                ],
-                contextMenuClick: function (args) {
-                    if (args.item.id === 'copy') {
-                        itemTNAInfoCollar = objectCopy(args.rowInfo.rowData);
-                        if (itemTNAInfoCollar.length == 0) {
-                            toastr.error("No TNA information found to copy!!");
-                            return;
-                        }
-                    }
-                    else if (args.item.id === 'paste') {
-                        var rowIndex = args.rowInfo.rowIndex;
-                        if (itemTNAInfoCollar == null || itemTNAInfoCollar.length == 0) {
-                            toastr.error("Please copy first!!");
-                            return;
-                        } else {
-                            var pasteObject = objectCopy(itemTNAInfoCollar);
-                            var preSubContactDays = 0,
-                                subContactDays = 0;
-                            //if (pasteObject.IsSubContact) preSubContactDays = 14;
-                            //if (args.rowInfo.rowData.IsSubContact) subContactDays = 14;
-                            //args.rowInfo.rowData.TotalDays = pasteObject.TotalDays - pasteObject.StructureDays + args.rowInfo.rowData.StructureDays - preSubContactDays + subContactDays;
-
-                            args.rowInfo.rowData.MachineTypeId = pasteObject.MachineTypeId;
-                            args.rowInfo.rowData.MachineType = pasteObject.MachineType;
-                            args.rowInfo.rowData.KTypeId = pasteObject.KTypeId;
-                            args.rowInfo.rowData.TechnicalNameId = pasteObject.TechnicalNameId;
-                            args.rowInfo.rowData.TechnicalName = pasteObject.TechnicalName;
-                            args.rowInfo.rowData.TechnicalTime = pasteObject.TechnicalTime;
-                            args.rowInfo.rowData.IsSubContact = pasteObject.IsSubContact;
-
-                            //args.rowInfo.rowData = setTotalDaysAndDeliveryDate(args.rowInfo.rowData, args.rowInfo.rowData.CriteriaNames);
-                            //var techTypeDesc = 0;
-                            //var techType = masterData.TechnicalNameList.find(y => y.id == pasteObject.TechnicalNameId);
-                            //if (typeof techType !== "undefined" && techType != null) techTypeDesc = parseInt(techType.desc) + parseInt(pasteObject.IsSubContact ? 14 : 0);
-                            //args.rowInfo.rowData.TotalDays += parseInt(techTypeDesc);
-
-                            args.rowInfo.rowData.TotalDays = pasteObject.TotalDays;
-
-                            var dt = new Date();
-                            dt.setDate(dt.getDate() + args.rowInfo.rowData.TotalDays);
-                            args.rowInfo.rowData.DeliveryDate = dt;
-                            args.rowInfo.rowData.CriteriaIDs = pasteObject.CriteriaIDs;
-
-                            _oRow = args.rowInfo.rowData;
-                            updateCriteriaIDTable(_oRow, pasteObject);
-                            //$tblChildCollarIdEl.refresh();
-                            $tblChildCollarIdEl.updateRow(args.rowInfo.rowIndex, _oRow);
-                        }
-                    }
-                    else if (args.item.id === 'pasteAll') {
-                        var rowIndex = args.rowInfo.rowIndex;
-                        if (itemTNAInfoCollar == null || itemTNAInfoCollar.length == 0) {
-                            toastr.error("Please copy first!!");
-                            return;
-                        } else {
-                            var rows = $tblChildCollarIdEl.getCurrentViewRecords();
-                            for (var i = 0; i < rows.length; i++) {
-
-                                var pasteObject = objectCopy(itemTNAInfoCollar);
-                                //var preSubContactDays = 0,
-                                //    subContactDays = 0;
-                                //if (pasteObject.IsSubContact) preSubContactDays = 14;
-                                //if (rows[i].IsSubContact) subContactDays = 14;
-                                //rows[i].TotalDays = pasteObject.TotalDays - pasteObject.StructureDays + rows[i].StructureDays - preSubContactDays + subContactDays;
-
-                                rows[i].MachineTypeId = pasteObject.MachineTypeId;
-                                rows[i].MachineType = pasteObject.MachineType;
-                                rows[i].KTypeId = pasteObject.KTypeId;
-                                rows[i].TechnicalNameId = pasteObject.TechnicalNameId;
-                                rows[i].TechnicalName = pasteObject.TechnicalName;
-                                rows[i].TechnicalTime = pasteObject.TechnicalTime;
-                                rows[i].IsSubContact = pasteObject.IsSubContact;
-
-                                //rows[i] = setTotalDaysAndDeliveryDate(rows[i], rows[i].CriteriaNames);
-                                //var techTypeDesc = 0;
-                                //var techType = masterData.TechnicalNameList.find(y => y.id == pasteObject.TechnicalNameId);
-                                //if (typeof techType !== "undefined" && techType != null) techTypeDesc = parseInt(techType.desc) + parseInt(pasteObject.IsSubContact ? 14 : 0);
-                                //rows[i].TotalDays += parseInt(techTypeDesc);
-
-                                rows[i].TotalDays = pasteObject.TotalDays;
-
-                                var dt = new Date();
-                                dt.setDate(dt.getDate() + rows[i].TotalDays);
-                                rows[i].DeliveryDate = dt;
-                                rows[i].CriteriaIDs = pasteObject.CriteriaIDs;
-
-                                updateCriteriaIDTable(rows[i], pasteObject);
-
-
-                            }
-                            initChildCollar(rows);
-
-                        }
-                    }
-                }
-            });
-        }
-        $tblChildCollarIdEl.refreshColumns;
-        $tblChildCollarIdEl.appendTo(tblChildCollarId);
-        //$tblChildCollarIdEl.autoFitColumns();
-    }
-
     function addDays(date, days) {
         var result = new Date(date);
         result.setDate(result.getDate() + days);
         return result;
     }
-
     function setTotalDaysAndDeliveryDate(currentData, criteriaNames) {
         var techTypeDesc = 0;
         var totalDays = 0;
@@ -1991,7 +1234,6 @@
         currentData.DeliveryDate = currentData.TotalDays > 0 ? addDays(new Date(), currentData.TotalDays) : "";
         return currentData;
     }
-
     async function initChildCuff1(data) {
         data = setCalculatedValues(data);
         if ($tblChildCuffIdEl) $tblChildCuffIdEl.destroy();
@@ -2394,7 +1636,6 @@
         $tblChildCuffIdEl.appendTo(tblChildCuffId);
         //$tblChildCuffIdEl.autoFitColumns();
     }
-
     async function initPlanningTable(data) {
         var unitNameKG = "kg";
         var unitNamePCS = "Pcs";
@@ -2452,7 +1693,6 @@
         $tblPlanningEl.refreshColumns;
         $tblPlanningEl.appendTo(tblPlanningId);
     }
-
     function getLiabilityQtys(obj, previousData, selectedYarnRow) {
 
         if (isYarnType(obj.LiabilitiesName)) {
@@ -2525,7 +1765,6 @@
 
         return obj;
     }
-
     async function initCriteriaIDTable(data, criteriaData, savedData, childId) {
         if (childId) {
             data.forEach(function (d) {
@@ -2564,21 +1803,18 @@
         $tblCriteriaIdEl.refreshColumns;
         $tblCriteriaIdEl.appendTo(tblCriteriaId);
     }
-
     function backToListBulk() {
         //initMasterTable();
         $divDetailsEl.fadeOut();
         resetForm();
         $divTblEl.fadeIn();
     }
-
     function backToList() {
         //initMasterTable();
         $divDetailsEl.fadeOut();
         resetForm();
         $divTblEl.fadeIn();
     }
-
     function resetForm() {
         $formEl.trigger("reset");
         $.each($formEl.find('select'), function (i, el) {
@@ -2587,7 +1823,6 @@
         $formEl.find("#FBAckID").val(-1111);
         $formEl.find("#EntityState").val(4);
     }
-
     function getNew(bookingNo) {
         $formEl.find(".divUnAcknowledgeReason").hide();
         var url = `/api/fab-acknowledge/bulk/new/${bookingNo}`;
@@ -2655,7 +1890,6 @@
                 toastr.error(err.response.data.Message);
             });
     }
-
     function getNewBulk(bookingNo) {
         $formEl.find(".divUnAcknowledgeReason").hide();
         axios.get(`/api/yarn-booking/forBulk/${bookingNo}`)
@@ -2688,7 +1922,6 @@
             })
             .catch(showResponseError);
     }
-
     function isValidValue(value) {
         if (typeof value === "undefined" || value == null) return false;
         return true;
@@ -2705,7 +1938,6 @@
         }
         return list;
     }
-
     function getView(bookingNo, withoutOB) {
         $formEl.find(".divUnAcknowledgeReason").hide();
         _previousBUChilds = [];
@@ -2791,7 +2023,6 @@
                 toastr.error(err.response.data.Message);
             });
     }
-
     function displayDeletedItems() {
         $formEl.find(".deletedItemTable").hide();
         if (status == statusConstants.REVISE) {
@@ -2949,7 +2180,6 @@
             args.row.style.color = "#000000";
         }
     }
-
     async function initChildCollarDI(data) {
         data = data.filter(x => x.Status == "Child Deleted");
         data.map(x => {
@@ -3069,7 +2299,6 @@
         $tblChildCollarIdElDI.refreshColumns;
         $tblChildCollarIdElDI.appendTo(tblChildCollarIdDI);
     }
-
     async function initChildCuffDI(data) {
         data = data.filter(x => x.Status == "Child Deleted");
         data.map(x => {
@@ -3176,7 +2405,6 @@
         $tblChildCuffIdElDI.refreshColumns;
         $tblChildCuffIdElDI.appendTo(tblChildCuffIdDI);
     }
-
     function sendMail(bookingNo, withoutOB) {
         var SaveType = 'S';
         if (status == statusConstants.UN_ACKNOWLEDGE)
@@ -3200,7 +2428,6 @@
                 toastr.error(err.response.data.Message);
             });
     }
-
     function checkRevisionStatus(bookingNo, ExportOrderNo, SubGroupID) {
         var url = "/api/fab-acknowledge/bulk/list/" + ExportOrderNo + "/" + SubGroupID;
         axios.get(url)
@@ -3257,8 +2484,6 @@
         if (isNaN(obj.TotalDays)) obj.TotalDays = 0;
         return obj;
     }
-
-
     function saveWithConfirm(result = "", isUnAcknowledge) {
         if (!isUnAcknowledge) {
             showBootboxConfirm("Confirm Acknowledge", "Are you sure you want to acknowledge?", function (yes) {
@@ -3270,7 +2495,6 @@
             save(result, isUnAcknowledge);
         }
     }
-
     function save(result = "", isUnAcknowledge) {
 
         var acknowledgeList = [];
@@ -3509,7 +2733,6 @@
                 toastr.error(error.response.data.Message);
             });
     }
-
     function Received() {
         var data = formElToJson($formEl);
 
@@ -3523,19 +2746,12 @@
                 toastr.error(error.response.data.Message);
             });
     }
-
-    function CheckNull(value) {
-        if (value == null || value == "") return 0;
-        return value;
-    }
-
     function setTechnicalTime(data) {
         var obj = masterData.TechnicalNameList.find(x => x.additionalValue == data.MachineTypeId
             && x.id == data.TechnicalNameId);
         if (obj != null) return obj.desc;
         return 0;
     }
-
     function setCalculatedValues(dataList) {
         if (dataList != null && dataList.length > 0 && (status == statusConstants.PENDING || status == statusConstants.REJECT)) {
             dataList.map(x => {
@@ -3545,7 +2761,6 @@
         }
         return dataList;
     }
-
     function cancelSave(result = "") {
         var acknowledgeList = [];
         var data = formElToJson($formEl);
@@ -3671,28 +2886,7 @@
             });
     }
     function getIntegerFromdecimal(value) {
-        // Check if the value is a number
-        if (!isNaN(value)) {
-            // Convert to integer and format without decimal places
-            return parseInt(value).toFixed(0);
-        } else {
-            // Return the original value if it's not a number
-            return value.toFixed(0);
-        }
-    }
-    function getFinishedQtyLiability(stockQty, deliveryQty, currentBookingQty, previousBookingQty) {
-
-        stockQty = getDefaultValueWhenInvalidN_Float(stockQty);
-        deliveryQty = getDefaultValueWhenInvalidN_Float(deliveryQty);
-        currentBookingQty = getDefaultValueWhenInvalidN_Float(currentBookingQty);
-        previousBookingQty = getDefaultValueWhenInvalidN_Float(previousBookingQty);
-
-        var finishedQty = 0;
-
-        if (currentBookingQty > previousBookingQty) finishedQty = 0;
-        if (stockQty + deliveredQty > previousBookingQty) finishedQty = previousBookingQty - currentBookingQty;
-        if (stockQty + deliveredQty > currentBookingQty) finishedQty = (stockQty + deliveredQty) - currentBookingQty;
-
-        return getDefaultValueWhenInvalidN_Float(finishedQty);
+        if (!isNaN(value)) return parseInt(value).toFixed(0);
+        return value.toFixed(0);
     }
 })();

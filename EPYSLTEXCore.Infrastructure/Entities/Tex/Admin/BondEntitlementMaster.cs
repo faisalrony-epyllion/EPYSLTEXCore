@@ -19,7 +19,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Admin
         public string EBINNo { get; set; } = "";
         public DateTime FromDate { get; set; } = DateTime.Now;
         public DateTime ToDate { get; set; } = DateTime.Now;
-        public int CurrencyID { get; set; } = 0;
         public int AddedBy { get; set; } = 0;
         public DateTime DateAdded { get; set; } = DateTime.Now;
         public int UpdatedBy { get; set; } = 0;
@@ -33,8 +32,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Admin
         public List<BondEntitlementChild> Childs { get; set; } = new List<BondEntitlementChild>();
         [Write(false)]
         public string CompanyName { get; set; } = "";
-        [Write(false)]
-        public string CurrencyName { get; set; } = "";
         [Write(false)]
         public IEnumerable<Select2OptionModel> CompanyList { get; set; } = Enumerable.Empty<Select2OptionModel>();
         [Write(false)]

@@ -639,7 +639,7 @@
                 commands = [
                     { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
                     { type: 'Propose', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
                 break;
             case statusConstants.PROPOSED:
@@ -648,36 +648,36 @@
                         { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                         { type: 'Approve', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
                         { type: 'Reject', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-ban' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 } else {
                     commands = [
                         { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 }
                 break;
             case statusConstants.APPROVED:
                 commands = [
                     { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
                 break;
             case statusConstants.ALL:
                 commands = [
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
                 break;
             case statusConstants.UN_APPROVE:
                 if (pageName == "YarnPOApprovalV2" || pageName == "YarnPOV2") {
                     commands = [
                         { type: 'Revision', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 } else {
                     commands = [
                         { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 }
                 break;
@@ -686,12 +686,12 @@
                     commands = [
                         //{ type: 'Revision', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
                         { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        //{ type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        //{ type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 } else {
                     commands = [
                         { type: 'View', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                        //{ type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                        //{ type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                     ]
                 }
                 break;
@@ -699,7 +699,7 @@
                 commands = [
                     { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
                     { type: 'Propose', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-check' } },
-                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
                 ]
                 break;
             default:
@@ -1125,7 +1125,7 @@
                 valueAccessor: ej2GridDisplayFormatter,
                 dataSource: masterData.ContainerList,
                 displayField: "text",
-                width: 300,
+
                 edit: ej2GridDropDownObj({
                 })
             },
@@ -1150,14 +1150,14 @@
                 valueAccessor: ej2GridDisplayFormatter,
                 dataSource: masterData.BuyerList,
                 displayField: "text",
-                width: 80,
+          
                 edit: ej2GridDropDownObj({
                 })
             },
             { field: 'YarnChildPoExportIds', headerText: 'EWO', visible: false },
-            { field: 'YarnChildPoEWOs', headerText: 'EWO', width: 120, minWidth: 120, maxWidth: 120, allowEditing: false },
+            { field: 'YarnChildPoEWOs', headerText: 'EWO',  allowEditing: false },
             {
-                headerText: '', textAlign: 'Center', width: 40, commands: [
+                headerText: '', textAlign: 'Center', commands: [
                     {
                         buttonOption: {
                             type: 'AddEWO', content: '', cssClass: 'btn btn-success btn-xs',
@@ -1508,6 +1508,11 @@
 
     function addNewItem(e) {
         e.preventDefault();
+        var contactID = $formEl.find("#SupplierId").val();
+
+        if (!contactID) {
+            return toastr.error("Select Supplier First !!!");;
+        }
         if (_poForList.length > 0) {
             masterData.YarnPOChilds.map(x => {
                 if (x.POFor == null || x.POFor == "") {

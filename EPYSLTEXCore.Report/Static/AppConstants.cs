@@ -9,7 +9,7 @@
         public const decimal KD_VALUE = 0.00255m;
         public const int PARTIAL_SHIPMENT_ALLOW = 20;
         public const int ITEM_SUB_GROUP_YARN = 39;
-        public const int ITEM_SUB_GROUP_YARN_NEW = 102;
+        public const int ITEM_SUB_GROUP_YARN_LIVE = 106;
         public const string YARN_PI_FILE_PATH = "/Uploads/YarnPI";
         public const string KNITTING_PROGRAM_PATH = "/Uploads/KnittingProgram";
         public const string LC_FILE_PATH = "/Uploads/LC";

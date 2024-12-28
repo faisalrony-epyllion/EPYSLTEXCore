@@ -3,17 +3,23 @@
     public class Select2MappingOptionModel
     {
         public int SegmentValueMappingID { get; set; }
-        public int YarnTypeSVID { get; set; }
-        public int ManufacturingProcessSVID { get; set; }
-        public int SubProcessSVID { get; set; }
-        public int QualityParameterSVID { get; set; }
-        public int CountSVID { get; set; }
+        public int YarnCompositionID { get; set; }
+        public int ManufacturingLineID { get; set; }
+        public int ManufacturingProcessID { get; set; }
+        public int ManufacturingSubProcessID { get; set; }
+        public int TechnicalParameterID { get; set; }
+        public int ColorID { get; set; }
+        public int ColorGradeID { get; set; }
+        public int YarnCountID { get; set; }
+        public int ShadeReferenceID { get; set; }
         public bool IsInactive { get; set; }
-        public string YarnType { get; set; }
+        public string ManufacturingLine { get; set; }
         public string ManufacturingProcess { get; set; }
-        public string SubProcess { get; set; }
-        public string QualityParameter { get; set; }
+        public string ManufacturingSubProcess { get; set; }
+        public string TechnicalParameter { get; set; }
         public string Count { get; set; }
+        public string Color { get; set; }
+        public string ColorGrade { get; set; }
         public int FiberID { get; set; }
         public int SubProgramID { get; set; }
         public int CertificationsID { get; set; }

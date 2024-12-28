@@ -2411,7 +2411,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 });
 
                 List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
 
                 entity.FBookingChild.ForEach(item =>
@@ -2449,7 +2449,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                         List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                         childItemRecords = obj.ChildItems;
-                        _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                        _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                         obj.ChildItems.ForEach(x =>
                         {
@@ -2678,7 +2678,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                         List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                         childItemRecords = obj.ChildItems;
-                        _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                        _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                         obj.ChildItems.ForEach(x =>
                         {
@@ -3025,7 +3025,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             });
 
             List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-            ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+            ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
             /*
             if (isAddition)
             {
@@ -3080,7 +3080,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                     List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                     childItemRecords = obj.ChildItems;
-                    _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                    _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                     obj.ChildItems.ForEach(x =>
                     {
@@ -3834,7 +3834,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 tempYarnBookingChilds.AddRange(yb.Childs);
             });
             List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-            ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+            ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
             entity.FBookingChild.ForEach(item =>
             {
@@ -3872,7 +3872,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                     List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                     childItemRecords = obj.ChildItems;
-                    _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                    _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                     obj.ChildItems.ForEach(x =>
                     {
@@ -4509,7 +4509,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 tempYarnBookingChilds.AddRange(yb.Childs);
             });
             List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-            ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+            ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
             entity.FBookingChild.ForEach(item =>
             {
@@ -4547,7 +4547,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                     List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                     childItemRecords = obj.ChildItems;
-                    _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                    _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                     obj.ChildItems.ForEach(x =>
                     {
@@ -5187,7 +5187,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 });
 
                 List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
                 model.YChilds.ForEach(c =>
                 {
@@ -5289,7 +5289,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                                 List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                                 childItemRecords = bookingChildItems;
-                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                                 bookingChildItems.ForEach(x =>
                                 {
@@ -6304,7 +6304,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 }
 
                 List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
                 model.YChilds.ForEach(c =>
                 {
@@ -6405,7 +6405,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 });
                                 List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                                 childItemRecords = bookingChildItems;
-                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                                 bookingChildItems.ForEach(x =>
                                 {
@@ -6708,7 +6708,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 }
 
                 List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
                 model.YChilds.ForEach(c =>
                 {
@@ -6809,7 +6809,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 });
                                 List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                                 childItemRecords = bookingChildItems;
-                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                                 bookingChildItems.ForEach(x =>
                                 {
@@ -7258,7 +7258,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 });
 
                 List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
                 entity.FBookingChild.ForEach(item =>
                 {
@@ -7301,7 +7301,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                         List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                         childItemRecords = obj.ChildItems;
-                        _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                        _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                         obj.ChildItems.ForEach(x =>
                         {
@@ -7744,7 +7744,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     });
                 });
                 List<ItemMasterBomTemp> ItemList = new List<ItemMasterBomTemp>();
-                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_NEW);
+                ItemList = _yarnChildItemMasterRepository.GetItemMasterList(AppConstants.ITEM_SUB_GROUP_YARN_LIVE);
 
                 model.YChilds.ForEach(c =>
                 {
@@ -7844,7 +7844,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
                                 List<YarnBookingChildItem> childItemRecords = new List<YarnBookingChildItem>();
                                 childItemRecords = bookingChildItems;
-                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref ItemList, ref childItemRecords);
+                                _yarnChildItemMasterRepository.GenerateItemWithYItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref ItemList, ref childItemRecords);
 
                                 bookingChildItems.ForEach(x =>
                                 {

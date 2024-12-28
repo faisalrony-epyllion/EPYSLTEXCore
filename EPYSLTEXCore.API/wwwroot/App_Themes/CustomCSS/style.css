@@ -681,7 +681,22 @@ button.close {
     }
 }
 
+.box-body {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    /*padding: 10px;*/
+    padding: 0px;
+}
 
+    .box-body .ci {
+        padding: 10px;
+    }
+
+.box {
+    border-top: 0px solid #d2d6de;
+}
 
 .panel-success > .panel-heading {
     color: #151515;
@@ -704,11 +719,13 @@ button.close {
     margin-bottom: 4px !important;
     margin-top: 6px !important;
 }
-
-/*Select2 CSS*/
-.select2-container .select2-selection--single .select2-selection__rendered {
-    padding-right: 10px;
-}
+    .toolBar-parent-div button {
+        margin: 2px 2px 2px 0;
+    }
+    /*Select2 CSS*/
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        padding-right: 10px;
+    }
 
 .select2-container .select2-selection--single .select2-selection__rendered {
     padding-left: 0;

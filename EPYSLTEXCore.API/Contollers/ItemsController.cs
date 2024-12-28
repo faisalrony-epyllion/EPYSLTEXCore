@@ -200,9 +200,12 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                     Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                     Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),
-                    Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
-                    YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
-                 
+                    Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR),
+                    Segment7ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR_GRADE),
+                    Segment8ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
+                    ShadeReferenceList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.SHADE)
+                    //YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
+
                 };
          
                   
@@ -237,16 +240,16 @@ namespace EPYSLTEX.Web.Controllers.Apis
                                       .ToList();
                 if (countList.Count > 0)
                 {
-                    itemSegmenValuesFinal.Segment6ValueList = itemSegmenValuesFinal.Segment6ValueList.Where(n => countList.Contains(Convert.ToInt32(n.id)) || n.IsInactive == false).ToList();
+                    itemSegmenValuesFinal.Segment8ValueList = itemSegmenValuesFinal.Segment8ValueList.Where(n => countList.Contains(Convert.ToInt32(n.id)) || n.IsInactive == false).ToList();
                 }
                 else
                 {
-                    itemSegmenValuesFinal.Segment6ValueList = itemSegmenValuesFinal.Segment6ValueList.Where(n => n.IsInactive == false).ToList();
+                    itemSegmenValuesFinal.Segment8ValueList = itemSegmenValuesFinal.Segment8ValueList.Where(n => n.IsInactive == false).ToList();
                 }
             }
             else
             {
-                itemSegmenValuesFinal.Segment6ValueList = itemSegmenValuesFinal.Segment6ValueList.Where(n => n.IsInactive == false).ToList();
+                itemSegmenValuesFinal.Segment8ValueList = itemSegmenValuesFinal.Segment8ValueList.Where(n => n.IsInactive == false).ToList();
             }
 
             return Ok(itemSegmenValuesFinal);
@@ -269,9 +272,12 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                     Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                     Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),
-                    Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
-                    YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
-                    
+                    Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR),
+                    Segment7ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR_GRADE),
+                    Segment8ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
+                    ShadeReferenceList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.SHADE)
+                    //YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
+
                 };
             
        

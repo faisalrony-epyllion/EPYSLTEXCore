@@ -170,7 +170,8 @@
         public const string YARN_RECEIVE_CHILD_BUYER = "T_YarnReceiveChildBuyer";
         public const string YARN_RECEIVE_CHILD_SUB_PROGRAM = "T_YarnReceiveChildSubProgram";
         public const string YarnReceiveChildRoll = "T_YarnReceiveChildRoll";
-
+        public const string FreeConceptMRMaster = "T_FreeConceptMRMaster";
+        //----------------
         //public const string YarnReceiveQCChild = "YarnReceiveQCChild";
         //public const string YarnReceiveQCMaster = "YarnReceiveQCMaster";
         public const string YarnRequisitionChild = "T_YarnRequisitionChild";
@@ -184,6 +185,7 @@
         public const string YarnBookingChildItem_New_Revision = "T_YarnBookingChildItem_New_Revision";
         public const string YarnBookingChildItemYarnSubBrand_New = "T_YarnBookingChildItemYarnSubBrand_New";
         public const string YarnBookingChildYarnSubBrand_New = "T_YarnBookingChildYarnSubBrand_New";
+        public const string TotalKPDone = "T_TotalKPDone";
         public const string RollAdjustChild = "T_RollAdjustChild";
         public const string RollAdjustChildRoll = "T_RollAdjustChildRoll";
         public const string RollAdjustMaster = "T_RollAdjustMaster";
@@ -446,6 +448,8 @@
         public const string FinishFabricStockForm = "T_FinishFabricStockForm";
         public const string FinishFabricStockFormRoll = "T_FinishFabricStockFormRoll";
 
+        public const string YarnRNDReqBuyerTeam = "T_YarnRNDReqBuyerTeam";
+
         public const string Labdip_Fabric_DeliveryNo = "LabdipFabricDeliveryNo";
         public const string MRIR_No = "MRIRNo";
         public const string GRN_No = "GRNNo";
@@ -618,6 +622,7 @@
         public const string KY_Req_Child_SubProgram = "T_KYReqChildSubProgram";
         public const string KY_Issue_Master = "T_KYIssueMaster";
         public const string KY_Issue_Child = "T_KYIssueChild";
+        public const string KYReqBuyerTeam = "T_KYReqBuyerTeam";
         public const string KY_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING = "T_KYIssueChildRackBinMapping";
         public const string KY_Issue_Child_SubProgram = "T_KYIssueChildSubProgram";
         public const string KY_Receive_Master = "T_KYReceiveMaster";
@@ -648,8 +653,8 @@
         public const string YARN_QC_RECEIVE_NO = "YarnQCReceiveNo";
         public const string YARN_QC_REMARKS_NO = "YarnQCRemarksNo";
         public static string YARN_RnD_REQ_NO = "YarnRnDReqNo";
-        public static string YARN_RnD_REQ_MASTER = "T_YarnRnDReqMaster";
-        public static string YARN_RnD_REQ_CHILD = "T_YarnRnDReqChild";
+        public const string YARN_RnD_REQ_MASTER = "T_YarnRnDReqMaster";
+        public const string YARN_RnD_REQ_CHILD = "T_YarnRnDReqChild";
         //public static string YARN_RnD_REQ_CHILD_SUBPROGRAM = "YarnRNDReqChildSubProgram";
         public const string YARN_RECEIVE_CHILD_RACK_BIN = "T_YarnReceiveChildRackBin";
         public static string YARN_RnD_REQ_RECEIVE_MASTER = "T_YarnRNDReqReceiveMaster";
@@ -872,7 +877,8 @@
         public const string BOOKING_MASTER = "BookingMaster";//Garments Table
         public const string BOOKING_CHILD = "BookingChild";//Garments Table
         public const string BOOKING_ITEM_ACKNOWLEDGE = "BookingItemAcknowledge";//Garments Table 
-        public const string ItemSegmentName = "ItemSegmentName";
+        public const string ItemSegmentName = "ItemSegmentName"; 
+        public const string ItemMasterBOMTemp = "ItemMasterBOMTemp";
         #endregion
 
         public const string YD_BOOKING_MASTER = "T_YDBookingMaster";
@@ -927,6 +933,8 @@
         public const string YarnRMPropertiesChild = "YarnRMPropertiesChild";
 
         public const string CompositionBlendType = "T_CompositionBlendType";
+        public const string YarnCompositionBasicSetup = "YarnCompositionBasicSetup";
+        public const string YarnCountBasicSetup = "YarnCountBasicSetup";
     }
 
 }

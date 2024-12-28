@@ -7,7 +7,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities
         public YarnItemMaster()
         {
             UnitID = 28;
-            SubGroupId = AppConstants.ITEM_SUB_GROUP_YARN_NEW;
+            SubGroupId = AppConstants.ITEM_SUB_GROUP_YARN_LIVE;
         }
     }
 }

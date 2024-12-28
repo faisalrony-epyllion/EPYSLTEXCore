@@ -90,7 +90,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory
         {
             YarnReceiveMaster entity = new YarnReceiveMaster();
             List<YarnReceiveChild> childRecords = model.YarnReceiveChilds;
-            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);
 
             if (model.ReceiveID > 0)
             {

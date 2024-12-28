@@ -126,6 +126,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task<int> AddUpDateDeleteDynamicObjectAsync(string tableName, object dataObject, List<string> primaryKeyColumns, SqlConnection connection, IDbTransaction transaction = null);
         Task<T> FindAsync<T>(string tableName, string columnName, object value);
         Task<bool> ExistsAsync(string tableName, string columnName1, object value1, string columnName2, object value2);
-        Task AddAsync<T>(T entity, string tableName);
+        Task AddAsync<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false);
+        void Add<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false);
+        string GetInsertQuery<T>(T entity, string tableName, SqlTransaction transaction = null, SqlConnection connectionGmt = null);
     }
 }

@@ -3,6 +3,7 @@
     public class Select2MappingOptionModel
     {
         public int SegmentValueMappingID { get; set; }
+        public int YarnCompositionID { get; set; }
         public int ManufacturingLineID { get; set; }
         public int ManufacturingProcessID { get; set; }
         public int ManufacturingSubProcessID { get; set; }
@@ -10,6 +11,7 @@
         public int ColorID { get; set; }
         public int ColorGradeID { get; set; }
         public int YarnCountID { get; set; }
+        public int ShadeReferenceID { get; set; }
         public bool IsInactive { get; set; }
         public string ManufacturingLine { get; set; }
         public string ManufacturingProcess { get; set; }

@@ -1287,7 +1287,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             if (increment == 0) return 0;
-            var signature = GetSignature(field, 1, 1, repeatAfter);
+            var signature = GetSignature(field, 1, 1, repeatAfter, transaction, connectionGmt);
             //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
             if (signature == null)
@@ -1302,7 +1302,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
             else
             {
-                signature.EntityState = EntityState.Modified;
                 signature.LastNumber += increment;
                 connectionGmt.UpdateAsync(signature, transaction);
             }
@@ -1311,7 +1310,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
         public int GetMaxId(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
-            var signature = GetSignature(field, 1, 1, repeatAfter);
+            var signature = GetSignature(field, 1, 1, repeatAfter, transaction, connectionGmt);
             //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
             if (signature == null)
@@ -1327,13 +1326,12 @@ namespace EPYSLTEXCore.Infrastructure.Data
             else
             {
                 signature.LastNumber++;
-                signature.EntityState = EntityState.Modified;
                 connectionGmt.UpdateAsync(signature, transaction);
             }
 
             return Convert.ToInt32(signature.LastNumber);
         }
-        private Signatures GetSignature(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter)
+        private Signatures GetSignature(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             string query = $@"SELECT TOP 1 * FROM {DbNames.EPYSL}..Signature WHERE Field = @Field AND CompanyId = @CompanyId AND SiteId = @SiteId";
             var parameters = new
@@ -1359,11 +1357,11 @@ namespace EPYSLTEXCore.Infrastructure.Data
             try
             {
 
-                if (Connection.State == System.Data.ConnectionState.Closed)
+                if (connectionGmt.State == System.Data.ConnectionState.Closed)
                 {
-                    Connection.Open();
+                    connectionGmt.Open();
                 }
-                var records = Connection.QueryFirstOrDefault(query, parameters);
+                var records = connectionGmt.QueryFirstOrDefault(query, parameters, transaction);
                 string jsonString = JsonConvert.SerializeObject(records);
                 Signatures signature = JsonConvert.DeserializeObject<Signatures>(jsonString);
                 //return records.ToList();
@@ -1375,7 +1373,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             }
             finally
             {
-                Connection.Close();
+                //Connection.Close();
             }
         }
         private async Task<Signatures> GetSignatureAsync(string field, int companyId, int siteId, RepeatAfterEnum repeatAfter, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
@@ -2085,26 +2083,26 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 transaction.Rollback();
                 throw; // Propagate the exception
             }
-            //finally
-            //{
-            //    // Ensure transaction and connection are disposed
-            //    connection.Close();
-            //}
+            finally
+            {
+                // Ensure transaction and connection are disposed
+                connection.Close();
+            }
         }
 
         public void Add<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false)
         {
-            using var connection = GetConnection(AppConstants.GMT_CONNECTION);
-            connection.Open();
+            using var connectionT = GetConnection(AppConstants.GMT_CONNECTION);
+            connectionT.Open();
 
-            using var transaction = connection.BeginTransaction();
+            using var transactionT = connectionT.BeginTransaction();
             try
             {
                 // Retrieve the maximum ID (synchronous)
-                var maxId = GetMaxId(tableName, RepeatAfterEnum.NoRepeat, transaction, connection);
+                var maxId = GetMaxId(tableName, RepeatAfterEnum.NoRepeat, transactionT, connectionT);
 
                 // Retrieve column names (synchronous)
-                var columns = GetColumnNames(tableName, connection, transaction);
+                var columns = GetColumnNames(tableName, connectionT, transactionT);
 
                 // Generate insert query
                 var properties = typeof(T).GetProperties()
@@ -2129,19 +2127,58 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 }
 
                 // Execute insert query (synchronous)
-                connection.Execute(insertQuery, entity, transaction: transaction);
+                connectionT.Execute(insertQuery, entity, transaction: transactionT);
 
                 // Commit transaction
-                transaction.Commit();
+                transactionT.Commit();
             }
             catch
             {
                 // Rollback transaction on error
-                transaction.Rollback();
+                transactionT.Rollback();
+                throw; // Propagate the exception
+            }
+            finally
+            {
+                // Ensure transaction and connection are disposed
+                connectionT.Close();
+            }
+        }
+        public string GetInsertQuery<T>(T entity, string tableName, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
+        {
+            try
+            {
+                // Retrieve column names (synchronous)
+                var columns = GetColumnNames(tableName, connectionGmt, transaction);
+
+                // Generate insert query
+                var properties = typeof(T).GetProperties()
+                              .Where(p => columns.Select(c => c.ToLower())
+                                                 .Contains(p.Name.ToLower()));
+
+                var columnNames = string.Join(",", properties.Select(p => p.Name));
+                // Get the property values
+                var values = properties
+                    .Select(p => {
+                        var value = p.GetValue(entity);
+                        return value == null ? "NULL" :
+                               value is string || value is DateTime ? $"'{value.ToString().Replace("'", "''")}'" :
+                               value.ToString();
+                    });
+
+                var valueString = string.Join(",", values);
+
+                // Generate the query
+                var insertQuery = $"INSERT INTO {tableName} ({columnNames}) VALUES ({valueString})";
+
+
+                return insertQuery; // Return the generated query
+            }
+            catch
+            {
                 throw; // Propagate the exception
             }
         }
-
         private string GenerateInsertQuery<T>(T entity, string tableName)
         {
             var properties = typeof(T).GetProperties().Where(p => p.CanRead && p.GetValue(entity) != null).ToList();

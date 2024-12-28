@@ -14,7 +14,6 @@
         public const int ITEM_SUB_GROUP_YARN_NEW = 102;
         public const int ITEM_SUB_GROUP_YARN = 39;
         public const int APPLICATION_ID=11;
-        public const int ITEM_SUB_GROUP_YARN_NEW = 102;
 
         public const string ITEM_SUB_GROUP_FABRIC = "Fabric";
     }

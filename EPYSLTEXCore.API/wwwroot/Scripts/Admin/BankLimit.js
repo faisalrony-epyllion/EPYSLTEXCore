@@ -213,7 +213,10 @@
             toolbar: ['Add'],
             editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true },
             actionBegin: function (args) {
-
+                if (args.requestType === 'add') {
+                    args.data.BankLimitChildID = _bankLimitChildID++;
+                    args.rowData.BankLimitChildID = args.data.BankLimitChildID;
+                }
             },
             columns: columns,
 

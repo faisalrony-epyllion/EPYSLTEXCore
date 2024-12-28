@@ -34,6 +34,16 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || YRMPID > 0;
         [Write(false)]
+        public int YRMPChildID { get; set; } = 0; 
+        [Write(false)]
+        public int SupplierID { get; set; } = 0; 
+        [Write(false)]
+        public int SpinnerID { get; set; } = 0; 
+        [Write(false)]
+        public string Supplier { get; set; } = ""; 
+        [Write(false)]
+        public string Spinner { get; set; } = ""; 
+        [Write(false)]
         public string FiberType { get; set; } = "";
         [Write(false)]
         public string BlendType { get; set; } = "";
@@ -45,8 +55,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         public string SubProgram { get; set; } = "";
         [Write(false)]
         public string Certification { get; set; } = "";
-        [Write(false)]
-        public string Certifications { get; set; } = "";
+        //[Write(false)]
+        //public string Certifications { get; set; } = "";
         [Write(false)]
         public string TechnicalParameter { get; set; } = "";
         [Write(false)]
@@ -65,6 +75,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         public string ColorGrade { get; set; } = "";
         [Write(false)]
         public string YarnCount { get; set; } = "";
+        [Write(false)]
+        public List<YarnRMPropertiesChild> Childs { get; set; } = new List<YarnRMPropertiesChild>();
 
         [Write(false)]
         public List<Select2OptionModel> FiberTypeList { get; set; } = new List<Select2OptionModel>();
@@ -96,7 +108,10 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         public List<Select2OptionModel> ColorGradeList { get; set; } = new List<Select2OptionModel>();
         [Write(false)]
         public List<Select2OptionModel> YarnCountList { get; set; } = new List<Select2OptionModel>();
-
+        [Write(false)]
+        public List<Select2OptionModel> SupplierList { get; set; } = new List<Select2OptionModel>();
+        [Write(false)]
+        public List<Select2OptionModel> SpinnerList { get; set; } = new List<Select2OptionModel>();
         #endregion
     }
 }

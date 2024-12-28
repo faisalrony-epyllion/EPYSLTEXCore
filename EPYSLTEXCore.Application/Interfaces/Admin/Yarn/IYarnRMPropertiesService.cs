@@ -7,9 +7,10 @@ namespace EPYSLTEXCore.Application.Interfaces.Admin
     {
         Task<List<YarnRMProperties>> GetPagedAsync(PaginationInfo paginationInfo);
         Task<List<YarnRMProperties>> GetAsync(YarnRMProperties entitie);
-        Task<YarnRMProperties> GetAsync(int setupID);
+        Task<YarnRMProperties> GetById(int id);
         Task SaveAsync(YarnRMProperties entitie);
-        Task<YarnRMProperties> GetMaster();
+        Task<YarnRMProperties> GetNewAsync();
+        Task<YarnRMProperties> GetDetails(int yrmpID);
         Task<bool> CheckDuplicateValue(YarnRMProperties model);
     }
 }

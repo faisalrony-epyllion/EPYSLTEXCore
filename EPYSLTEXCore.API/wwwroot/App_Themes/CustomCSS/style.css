@@ -215,6 +215,9 @@
 .skin-grey .wrapper, .skin-grey .main-sidebar, .skin-grey .left-side {
     background-color: #222d32
 }
+.main-sidebar, .main-header {
+    z-index: 900 !important;
+}
 
 .skin-grey .user-panel > .info, .skin-grey .user-panel > .info > a {
     color: #fff

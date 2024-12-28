@@ -10,6 +10,8 @@
         public const string GMT_CONNECTION = "GmtConnection";
         public const string TEXTILE_CONNECTION = "TexConnection";
         public const int ITEM_SUB_GROUP_YARN_LIVE = 106;
+
+        public const int ITEM_SUB_GROUP_YARN_NEW = 102;
         public const int ITEM_SUB_GROUP_YARN = 39;
         public const int APPLICATION_ID=11;
         
@@ -20,7 +22,19 @@
         public const string EPYSL = "EPYSL";
         public const string EPYSLTEX = "EPYSLTEX";
     }
-
+    public static class EnumStockType
+    {
+        public const int None = 0;
+        public const int PipelineStock = 1;
+        public const int QuarantineStock = 2;
+        public const int AdvanceStock = 3;
+        public const int AllocatedStock = 4;
+        public const int SampleStock = 5;
+        public const int LeftoverStock = 6;
+        public const int LiabilitiesStock = 7;
+        public const int UnusableStock = 8;
+        public const int BlockUnBlockStock = 9;
+    }
     public static class UploadLocations {
         public const string YARN_CI_FILE_PATH = "/Uploads/YarnCI";
         public const string YARN_PI_FILE_PATH = "/Uploads/YarnPI";

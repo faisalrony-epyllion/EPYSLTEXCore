@@ -24,18 +24,22 @@ namespace EPYSLTEXCore.Application.Services.Booking
     public class FBookingAcknowledgeService : IFBookingAcknowledgeService
     {
         private readonly IDapperCRUDService<FBookingAcknowledge> _service;
-        private readonly SqlConnection _connection;
         private readonly IDapperCRUDService<SampleBookingMaster> _gmtservice;
         string _startingDate = "17-Feb-2024";
+
+        private readonly SqlConnection _connection;
+        private readonly SqlConnection _connectionGmt;
         //
         public FBookingAcknowledgeService(IDapperCRUDService<SampleBookingMaster> gmtservice
             , IDapperCRUDService<FBookingAcknowledge> service)
         {
             _service = service;
+            _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
+            _connectionGmt = service.Connection;
+
             _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
-            _gmtservice = gmtservice;
-            _gmtservice.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
+
 
 #if DEBUG
             _startingDate = "17-Feb-2023";
@@ -8568,10 +8572,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
-                await _gmtservice.Connection.OpenAsync();
-                transaction = _service.Connection.BeginTransaction();
-                transaction1 = _gmtservice.Connection.BeginTransaction();
+                await _connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
+                transaction = _connection.BeginTransaction();
+                transaction1 = _connectionGmt.BeginTransaction();
 
                 if (isRevise)
                 {
@@ -8666,7 +8670,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //if (entityBIA.Count > 0 && entityFBA.Count > 0)
                 if (entityBIA.Count > 0)
                 {
-                    String strSql = String.Format(@"Update EPYSLTEX.."+TableNames.FBBOOKING_ACKNOWLEDGE_CHILD+" Set IstxtUnack=1 Where BookingID in ({0})", selectedbookingID == "" ? "0" : selectedbookingID);
+                    String strSql = String.Format(@"Update EPYSLTEX.." + TableNames.FBBOOKING_ACKNOWLEDGE_CHILD + " Set IstxtUnack=1 Where BookingID in ({0})", selectedbookingID == "" ? "0" : selectedbookingID);
                     var records = _service.ExecuteWithTransactionAsync(strSql, ref transaction);
                     bool WithoutOBBool = WithoutOB == "0" ? false : true;
                     RollBackFabricBookingData(entityBM[0].BookingNo, WithoutOBBool, ref transaction1);
@@ -8682,7 +8686,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _service.Connection.Close(); _gmtservice.Connection.Close();
+                _connection.Close(); _connectionGmt.Close();
             }
         }
         public async Task SaveAsync(int userId, List<BookingItemAcknowledge> entityBIA = null, List<FabricBookingAcknowledge> entityFBA = null, List<FBookingAcknowledge> entityFBookingA = null, List<SampleBookingMaster> entityBM = null, bool isRevise = false, string SaveType = null)
@@ -8691,10 +8695,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
             SqlTransaction transaction1 = null;
             try
             {
-                await _service.Connection.OpenAsync();
-                await _gmtservice.Connection.OpenAsync();
-                transaction = _service.Connection.BeginTransaction();
-                transaction1 = _gmtservice.Connection.BeginTransaction();
+                await _connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
+                transaction = _connection.BeginTransaction();
+                transaction1 = _connectionGmt.BeginTransaction();
 
                 if (isRevise)
                 {
@@ -8803,12 +8807,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //if (entityBIA.Count > 0 && entityFBA.Count > 0)
                 if (entityFBA.Count > 0)
                 {
-                    String strSql = String.Format(@"Update EPYSLTEX.."+TableNames.FBBOOKING_ACKNOWLEDGE_CHILD+" Set IstxtUnack=1 Where BookingID in ({0})", selectedbookingID == "" ? "0" : selectedbookingID);
+                    String strSql = String.Format(@"Update EPYSLTEX.." + TableNames.FBBOOKING_ACKNOWLEDGE_CHILD + " Set IstxtUnack=1 Where BookingID in ({0})", selectedbookingID == "" ? "0" : selectedbookingID);
                     var records = _service.ExecuteWithTransactionAsync(strSql, ref transaction);
 
                     if (isRevise)
                     {
-                        strSql = String.Format(@"Update EPYSLTEX.."+TableNames.FBBOOKING_ACKNOWLEDGE+" Set PreRevisionNo={0} Where BookingID in ({0})", entityFBA.First().RevisionNo, selectedbookingID == "" ? "0" : selectedbookingID);
+                        strSql = String.Format(@"Update EPYSLTEX.." + TableNames.FBBOOKING_ACKNOWLEDGE + " Set PreRevisionNo={0} Where BookingID in ({0})", entityFBA.First().RevisionNo, selectedbookingID == "" ? "0" : selectedbookingID);
                         _service.ExecuteWithTransactionAsync(strSql, ref transaction);
                     }
                     RollBackFabricBookingData(entityBM[0].BookingNo, true, ref transaction1);
@@ -8824,7 +8828,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _service.Connection.Close(); _gmtservice.Connection.Close();
+                _connection.Close(); _connectionGmt.Close();
             }
         }
         public async Task SaveAsync(int userId, List<FabricBookingAcknowledge> entityFBA = null)
@@ -8832,8 +8836,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
             SqlTransaction transaction = null;
             try
             {
-                await _service.Connection.OpenAsync();
-                transaction = _service.Connection.BeginTransaction();
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
 
                 foreach (FabricBookingAcknowledge item in entityFBA)
                 {
@@ -8864,7 +8868,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _service.Connection.Close();
+                _connection.Close();
             }
         }
         public async Task SaveAsync(int userId, List<FBookingAcknowledge> entityFBA = null)
@@ -8874,8 +8878,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
             SqlTransaction transaction = null;
             try
             {
-                await _service.Connection.OpenAsync();
-                transaction = _service.Connection.BeginTransaction();
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
                 bool IsNew = false;
                 foreach (FBookingAcknowledge item in entityFBA)
                 {
@@ -8937,7 +8941,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _service.Connection.Close();
+                _connection.Close();
             }
         }
 
@@ -8945,12 +8949,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             bool hasError = false;
             int userCode = UserCode;
+
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
 
-                await _service.Connection.OpenAsync();
-                transaction = _service.Connection.BeginTransaction();
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
 
                 if (isRevised)
@@ -8965,17 +8975,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     }
                 }
 
-                /*if (isRevised)
-                {
-                    await _connection.ExecuteAsync("spBackupFabricBookingAcknowledge_Full", new { BookingID = entityFBA.FirstOrDefault().BookingID }, transaction, 30, CommandType.StoredProcedure);
-                }*/
                 bool IsNew = false;
 
                 #region Get Unique ID
                 int maxFBId = 0, maxFBAId = 0, maxFBCId = 0, maxLDId = 0, maxYLDId = 0;
 
                 #endregion
-                maxFBId = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge, entityFB.Count(x => x.AcknowledgeID == 0));
+                maxFBId = await _service.GetMaxIdAsync(TableNames.FabricBookingAcknowledge, entityFB.Count(x => x.AcknowledgeID == 0), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                 entityFB.ForEach(item =>
                 {
                     if (item.AcknowledgeID == 0)
@@ -8992,7 +8998,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     }
                 });
 
-                maxFBAId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBA.Count(x => x.EntityState == EntityState.Added));
+                maxFBAId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE, entityFBA.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                 for (int i = 0; i < entityFBA.Count(); i++)
                 {
                     var item = entityFBA[i];
@@ -9009,21 +9015,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                     if (item.IsSample) break;
                 }
-                //entityFBA.ForEach(item =>
-                //{
-                //    if (item.EntityState == EntityState.Added && item.FBAckID == 0)
-                //    {
-                //        item.FBAckID = maxFBAId++;
-                //        item.EntityState = EntityState.Added;
-                //        IsNew = true;
-                //    }
-                //    else
-                //    {
-                //        item.EntityState = EntityState.Modified;
-                //    }
-                //});
 
-                maxFBCId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityFBC.Count(x => x.EntityState == EntityState.Added));
+                maxFBCId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entityFBC.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                 entityFBC.Where(x => x.EntityState != EntityState.Deleted).ToList().ForEach(item =>
                 {
                     if (item.EntityState == EntityState.Added)
@@ -9039,7 +9032,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     item.AcknowledgeID = objItem.IsNotNull() ? objItem.FBAckID : entityFBA[0].FBAckID;
                 });
 
-                maxLDId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityLD.Count(x => x.LChildID == 0));
+                maxLDId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_LIABILITIES_DISTRIBUTION, entityLD.Count(x => x.LChildID == 0), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                 entityLD.Where(x => (x.BookingChildID > 0 || x.ConsumptionID > 0) && x.LChildID == 0).ToList().ForEach(item =>
                 {
                     item.LChildID = maxLDId;
@@ -9049,7 +9042,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     maxLDId++;
                 });
 
-                maxYLDId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityYLD.Count(x => x.YLChildID == 0));
+                maxYLDId = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_YARN_LIABILITIES, entityYLD.Count(x => x.YLChildID == 0), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                 entityYLD.Where(x => (x.BookingChildID > 0 || x.ConsumptionID > 0) && x.YLChildID == 0).ToList().ForEach(item =>
                 {
                     item.YLChildID = maxYLDId;
@@ -9120,11 +9113,21 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(entityFBA, transaction);
                 foreach (FBookingAcknowledge item in entityFBA)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_1", item.EntityState, userId, item.FBAckID); //OFF FOR CORE
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Add_RevisionWiseAcknowledge", item.EntityState, userId, item.FBAckID); //OFF FOR CORE
+                    _service.ExecuteWithTransactionAsync(SPNames.sp_Validation_FBookingAcknowledge_1, ref transaction, new
+                    {
+                        EntityState = item.EntityState,
+                        UserId = userId,
+                        PrimaryKeyId = item.FBAckID
 
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
-                    await _connection.ExecuteAsync("sp_Add_RevisionWiseAcknowledge", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                    }, 30, CommandType.StoredProcedure);
+
+                    _service.ExecuteWithTransactionAsync(SPNames.sp_Add_RevisionWiseAcknowledge, ref transaction, new
+                    {
+                        EntityState = item.EntityState,
+                        UserId = userId,
+                        PrimaryKeyId = item.FBAckID
+
+                    }, 30, CommandType.StoredProcedure);
                 }
 
                 var aaa = entityFBC.Where(x => x.SubGroupID == 11).ToList();
@@ -9133,48 +9136,73 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 string sql = "";
                 foreach (FBookingAcknowledgeChild item in entityFBC)
                 {
-                    sql = $"exec sp_Validation_FBookingAcknowledgeChild_1 {item.EntityState}, {userId},{item.BookingChildID}, {item.ConsumptionID}, {item.BookingID}, {item.ItemMasterID}, {item.AcknowledgeID}";
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID); //OFF FOR CORE
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValu = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
+                    sql = $"exec {SPNames.sp_Validation_FBookingAcknowledgeChild_1} {item.EntityState}, {userId},{item.BookingChildID}, {item.ConsumptionID}, {item.BookingID}, {item.ItemMasterID}, {item.AcknowledgeID}";
+
+                    _service.ExecuteWithTransactionAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, ref transaction, new
+                    {
+                        EntityState = item.EntityState,
+                        UserId = userId,
+                        PrimaryKeyId = item.BookingChildID,
+                        SecondParamValue = item.ConsumptionID,
+                        ThirdParamValu = item.BookingID,
+                        ForthParamValue = item.ItemMasterID,
+                        FifthParamValue = item.AcknowledgeID
+
+                    }, 30, CommandType.StoredProcedure);
                 }
                 foreach (FBookingAcknowledge item in entityFBA)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_FBA", item.EntityState, userId, item.FBAckID); //OFF FOR CORE
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_FBA", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+
+                    _service.ExecuteWithTransactionAsync(SPNames.sp_Validation_FBookingAcknowledge_FBA, ref transaction, new
+                    {
+                        EntityState = item.EntityState,
+                        UserId = userId,
+                        PrimaryKeyId = item.FBAckID
+
+                    }, 30, CommandType.StoredProcedure);
                 }
 
                 await _service.SaveAsync(entityLD, transaction);
                 foreach (FBookingAcknowledgementLiabilityDistribution item in entityLD)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgementLiabilityDistribution_1", item.EntityState, userId, item.LChildID); //OFF FOR CORE
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgementLiabilityDistribution_1", new { PrimaryKeyId = item.LChildID, UserId = userId, EntityState = item.EntityState }, transaction, 30, CommandType.StoredProcedure);
+                    _service.ExecuteWithTransactionAsync(SPNames.sp_Validation_FBookingAcknowledgementLiabilityDistribution_1, ref transaction, new
+                    {
+                        EntityState = item.EntityState,
+                        UserId = userId,
+                        PrimaryKeyId = item.LChildID
+
+                    }, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(entityYLD, transaction);
                 foreach (FBookingAcknowledgementYarnLiability item in entityYLD)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgementYarnLiability_1", item.EntityState, userId, item.YLChildID); //OFF FOR CORE
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgementYarnLiability_1", new { PrimaryKeyId = item.YLChildID, UserId = userId, EntityState = item.EntityState }, transaction, 30, CommandType.StoredProcedure);
+                    _service.ExecuteWithTransactionAsync(SPNames.sp_Validation_FBookingAcknowledgementYarnLiability_1, ref transaction, new
+                    {
+                        EntityState = item.EntityState,
+                        UserId = userId,
+                        PrimaryKeyId = item.YLChildID
+
+                    }, 30, CommandType.StoredProcedure);
                 }
 
-                if (entityYLD.Count() > 0)
-                {
-                    int userId1 = entityFB.First().EntityState == EntityState.Added ? entityFB.First().AddedBy : entityFB.First().UpdatedBy;
-                    if (userId1.IsNull()) userId1 = 0;
-                    await _connection.ExecuteAsync("spYarnStockOperation", new { MasterID = entityFB.First().BookingID, FromMenuType = EnumFromMenuType.FBookingAcknowledgementYarnLiability, UserId = userId1 }, transaction, 30, CommandType.StoredProcedure);
-                }
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 hasError = true;
-                if (transaction != null) transaction.Rollback();
+
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 if (ex.Message.Contains('~')) throw new Exception(ex.Message.Split('~')[0]);
                 throw ex;
             }
             finally
             {
-                _service.Connection.Close();
+                _connection.Close();
+                _connectionGmt.Close();
 
                 if (!hasError)
                 {
@@ -9226,7 +9254,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingMaster> obj = records.Read<BookingMaster>().ToList();
                 return obj;
@@ -9255,7 +9283,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<SampleBookingMaster> obj = records.Read<SampleBookingMaster>().ToList();
                 return obj;
@@ -9284,7 +9312,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingMaster> obj = records.Read<BookingMaster>().ToList();
                 return obj;
@@ -9312,7 +9340,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingMaster> obj = records.Read<BookingMaster>().ToList();
                 return obj;
@@ -9334,7 +9362,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<MessageQueue> obj = records.Read<MessageQueue>().ToList();
                 return obj;
@@ -9355,7 +9383,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<MessageQueue> obj = records.Read<MessageQueue>().ToList();
                 return obj;
@@ -9379,7 +9407,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<LoginHistory> obj = records.Read<LoginHistory>().ToList();
                 return obj;
@@ -9570,7 +9598,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                if (_gmtservice.Connection.State == System.Data.ConnectionState.Open) _gmtservice.Connection.Close();
+                if (_connectionGmt.State == System.Data.ConnectionState.Open) _connectionGmt.Close();
             }
 
 
@@ -9630,8 +9658,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
             //SqlTransaction transaction = null;
             try
             {
-                //await _gmtservice.Connection.OpenAsync();
-                //transaction = _gmtservice.Connection.BeginTransaction();
+                //await _connectionGmt.OpenAsync();
+                //transaction = _connectionGmt.BeginTransaction();
 
                 var bomMasters = await this.GetBOMMasterByID(bomMasterId);
                 if (bomMasters.IsNotNull() && bomMasters.Count() > 0 && WithoutOB == "0")
@@ -9652,7 +9680,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             await _gmtservice.ExecuteAsync(strEvent, AppConstants.GMT_CONNECTION);
                         }
 
-                        //await _gmtservice.Connection.ExecuteAsync("spUpdateOrderEventCalanderStatus", new
+                        //await _connectionGmt.ExecuteAsync("spUpdateOrderEventCalanderStatus", new
                         //{
                         //    OrderBankMasterID = objOrderBankMaster.First().OrderBankMasterID.ToString(),
                         //    EventName = EventName,
@@ -9676,7 +9704,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                                 await _gmtservice.ExecuteAsync(strEvent, AppConstants.GMT_CONNECTION);
                             }
 
-                            //await _gmtservice.Connection.ExecuteAsync("spUpdateOrderEventCalanderStatus", new
+                            //await _connectionGmt.ExecuteAsync("spUpdateOrderEventCalanderStatus", new
                             //{
                             //    OrderBankMasterID = objOrderBankMaster.First().OrderBankMasterID.ToString(),
                             //    EventName = EventName,
@@ -9708,7 +9736,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                                 {
                                     await _gmtservice.ExecuteAsync(str, AppConstants.GMT_CONNECTION);
                                 }
-                                //await _gmtservice.Connection.ExecuteAsync("spExportOrderLifeCycleMasterUpdate", new
+                                //await _connectionGmt.ExecuteAsync("spExportOrderLifeCycleMasterUpdate", new
                                 //{
                                 //    ExportOrderID = bomMasters.First().ExportOrderID,
                                 //    SubGroupName = objBookingChild.LabDipNo,
@@ -9737,7 +9765,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         }
 
 
-                        //await _gmtservice.Connection.ExecuteAsync("spExportOrderLifeCycleMasterUpdate", new
+                        //await _connectionGmt.ExecuteAsync("spExportOrderLifeCycleMasterUpdate", new
                         //{
                         //    ExportOrderID = bomMasters.First().ExportOrderID,
                         //    SubGroupName = "Fabric",
@@ -9759,7 +9787,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                if (_gmtservice.Connection.State == System.Data.ConnectionState.Open) _gmtservice.Connection.Close();
+                if (_connectionGmt.State == System.Data.ConnectionState.Open) _connectionGmt.Close();
             }
         }
         private async Task<List<FBookingAcknowledge>> GetBOMMasterByID(int BOMMasterID)
@@ -9773,7 +9801,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<FBookingAcknowledge> obj = records.Read<FBookingAcknowledge>().ToList();
                 return obj;
@@ -9784,7 +9812,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _service.Connection.Close();
+                _connection.Close();
             }
         }
         private async Task<List<FBookingAcknowledge>> GetOrderBankMasterByStyleMasterID(int styleMasterId)
@@ -9795,7 +9823,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<FBookingAcknowledge> obj = records.Read<FBookingAcknowledge>().ToList();
                 return obj;
@@ -9820,7 +9848,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingChild> obj = records.Read<BookingChild>().ToList();
                 return obj.First();
@@ -9849,7 +9877,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<SampleBookingMaster> obj = records.Read<SampleBookingMaster>().ToList();
                 return obj.First();
@@ -9860,7 +9888,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _service.Connection.Close();
+                _connection.Close();
             }
         }
         /*
@@ -9924,7 +9952,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 SampleBookingMaster data = await records.ReadFirstOrDefaultAsync<SampleBookingMaster>();
                 Guard.Against.NullObject(data);
@@ -9936,7 +9964,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -9977,7 +10005,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             try
             {
 
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 BookingMaster data = await records.ReadFirstOrDefaultAsync<BookingMaster>();
                 Guard.Against.NullObject(data);
@@ -9990,7 +10018,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -10001,7 +10029,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<SampleBookingMaster> obj = records.Read<SampleBookingMaster>().ToList();
                 Guard.Against.NullObject(obj);
@@ -10013,7 +10041,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -10023,7 +10051,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingMaster> obj = records.Read<BookingMaster>().ToList();
                 Guard.Against.NullObject(obj);
@@ -10037,7 +10065,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -10061,7 +10089,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingChild> obj = records.Read<BookingChild>().ToList();
                 return obj;
@@ -10072,7 +10100,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<List<BookingMaster>> GetBookingMasterByNo(string bookingno)
@@ -10083,7 +10111,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingMaster> obj = records.Read<BookingMaster>().ToList();
                 return obj;
@@ -10094,7 +10122,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<List<SampleBookingMaster>> GetBookingMasterByNoSample(string bookingno)
@@ -10110,7 +10138,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<SampleBookingMaster> obj = records.Read<SampleBookingMaster>().ToList();
                 List<SampleBookingConsumption> childs = records.Read<SampleBookingConsumption>().ToList();
@@ -10120,6 +10148,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     {
                         var childObj = childs.Where(y => y.BookingID == x.BookingID).OrderBy(y => y.SubGroupID);
                         x.SubGroupID = childObj.IsNotNull() ? childObj.First().SubGroupID : x.SubGroupID;
+                        x.Childs = childs.Where(y => y.BookingID == x.BookingID).ToList();
                     });
                 }
                 return obj;
@@ -10130,7 +10159,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -10167,7 +10196,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingChild> obj = records.Read<BookingChild>().ToList();
                 return obj;
@@ -10178,7 +10207,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -10194,7 +10223,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<FabricBookingAcknowledge> obj = records.Read<FabricBookingAcknowledge>().ToList();
                 return obj;
@@ -10205,7 +10234,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<List<FabricBookingAcknowledge>> GetAllSampleFabricBookingAcknowledgeByBookingNoAndGroupName(string bookingno, string subgroupname)
@@ -10220,7 +10249,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<FabricBookingAcknowledge> obj = records.Read<FabricBookingAcknowledge>().ToList();
                 return obj;
@@ -10231,7 +10260,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -10250,7 +10279,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingItemAcknowledge> obj = records.Read<BookingItemAcknowledge>().ToList();
                 return obj;
@@ -10261,7 +10290,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<List<BookingItemAcknowledge>> GetAllBookingItemAcknowledgeByBookingIDAndWithOutOB(string bookingID)
@@ -10277,7 +10306,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<BookingItemAcknowledge> obj = records.Read<BookingItemAcknowledge>().ToList();
                 return obj;
@@ -10288,7 +10317,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<FreeConceptMaster> GetAllAsyncR(int id)
@@ -10325,7 +10354,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _gmtservice.Connection.OpenAsync();
+                await _connectionGmt.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<FBookingAcknowledgeChildColor> obj = records.Read<FBookingAcknowledgeChildColor>().ToList();
                 return obj;
@@ -10336,7 +10365,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<int> CheckIsBookingApprovedAsync(string bookingNo)
@@ -10344,8 +10373,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
             SqlTransaction transaction = null;
             try
             {
-                await _service.Connection.OpenAsync();
-                transaction = _service.Connection.BeginTransaction();
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
 
                 YarnAllocationChild data = new YarnAllocationChild();
                 //await _service.ExecuteAsync("sp_CheckIsBookingApproved", new { bookingNo = bookingNo }, 30, CommandType.StoredProcedure, transaction);
@@ -10363,7 +10392,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _service.Connection.Close();
+                _connection.Close();
             }
 
         }
@@ -10372,8 +10401,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
             SqlTransaction transaction = null;
             try
             {
-                await _gmtservice.Connection.OpenAsync();
-                transaction = _gmtservice.Connection.BeginTransaction();
+                await _connectionGmt.OpenAsync();
+                transaction = _connectionGmt.BeginTransaction();
 
                 await _gmtservice.SaveSingleAsync(entity, transaction);
 
@@ -10386,7 +10415,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             finally
             {
-                _gmtservice.Connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -11236,7 +11265,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             try
             {
-                await _service.Connection.OpenAsync();
+                await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 List<FBookingAcknowledge> obj = records.Read<FBookingAcknowledge>().ToList();
                 return obj;

@@ -86,8 +86,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory
         }
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(YarnReceiveMaster model)
+        public async Task<IActionResult> Save(YarnReceiveMaster modelParam)
         {
+            YarnReceiveMaster model = JsonConvert.DeserializeObject<YarnReceiveMaster>(Convert.ToString(modelParam));
+
             YarnReceiveMaster entity = new YarnReceiveMaster();
             List<YarnReceiveChild> childRecords = model.YarnReceiveChilds;
             _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);

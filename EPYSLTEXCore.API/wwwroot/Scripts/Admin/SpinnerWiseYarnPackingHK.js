@@ -46,6 +46,7 @@
             { field: 'PackNo', headerText: 'Pack No', width: 35 },
             { field: 'Cone', headerText: 'Cone', width: 35 },
             { field: 'NetWeight', headerText: 'Net Weight', width: 35 },
+            { field: 'GrossWeightPC', headerText: 'Gross Weight Per Carton', width: 50 },
         ];
         if ($tblMasterEl) $tblMasterEl.destroy();
 
@@ -66,7 +67,7 @@
 
             actionBegin: function (args) {
                 if (args.requestType === "save") {
-                   
+
                 }
             },
             actionComplete: function (args) {
@@ -99,17 +100,54 @@
 
 
     function save(e) {
+        var spinnerID = getDefaultValueWhenInvalidN($formEl.find('#SpinnerID').val());
+        var packNo = getDefaultValueWhenInvalidS($formEl.find('#PackNo').val());
+        var cone = getDefaultValueWhenInvalidN($formEl.find('#Cone').val());
+        var netWeight = getDefaultValueWhenInvalidN_Float($formEl.find('#NetWeight').val());
+        var grossWeightPC = getDefaultValueWhenInvalidN_Float($formEl.find('#GrossWeightPC').val());
+        if (spinnerID == 0) {
+            toastr.error("Select Spinner !!!");
+            return;
+        }
+        if (packNo.length == 0) {
+            toastr.error("Give Pack No !!!");
+            return;
+        }
+        if (cone == 0) {
+            toastr.error("Give Cone !!!");
+            return;
+        }
+        if (netWeight == 0) {
+            toastr.error("Give Net Weight!!!");
+            return;
+        }
+        if (grossWeightPC == 0) {
+            toastr.error("Give Gross Weight Per Carton!!!");
+            return;
+        }
         e.preventDefault();
         var data = formElToJson($formEl);
         data.SetupID = 0;
-
         axios.post("/api/spinner-wise-yarn-packing-hk/save", data)
             .then(function () {
-                toastr.success("Saved successfully!");
+                toastr.success("Successfully saved!");
                 //getInitData();
+                $formEl.find('#SpinnerID').val("").trigger('change');
+                $formEl.find('#PackNo').val("");
+                $formEl.find('#Cone').val(0);
+                $formEl.find('#NetWeight').val(0);
+                $formEl.find('#GrossWeightPC').val(0);
                 initMasterTable();
             })
-            .catch(showResponseError);
+            .catch(error => {
+                if (error.response.data.Message === undefined) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+                args.cancel = true;
+            });
+            //.catch(showResponseError);
     }
 
 })();

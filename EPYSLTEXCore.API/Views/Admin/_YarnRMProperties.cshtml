@@ -1,4 +1,181 @@
 ﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+<style type="text/css">
+    .cbo {
+        font-size: 16px !important;
+    }
+</style>
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12 toolBar-parent-div">
+            <div id="@toolbarId">
+                <button id="btnNew" class="btn btn-default text-grey btn-sm btnToolBar">
+                    <i class="fa fa-plus"></i>&nbsp;Create New
+                </button>
+                <button id="btnList" class="btn btn-success btn-sm btnToolBar">
+                    <i class="fa fa-list"></i>&nbsp;List
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YRMPID" name="YRMPID" value="-1111" />
+            <div class="box-body" id="@divDetailsId" style="display:none;">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fiber Type</label>
+                                        <div class="col-sm-8">
+                                            <select id="FiberTypeID" name="FiberTypeID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Blend Type</label>
+                                        <div class="col-sm-8">
+                                            <select id="BlendTypeID" name="BlendTypeID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Type</label>
+                                        <div class="col-sm-8">
+                                            <select id="YarnTypeID" name="YarnTypeID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+									<div class="form-group">
+                                        <label class="control-label col-sm-4 small">Program</label>
+                                        <div class="col-sm-8">
+                                            <select id="ProgramID" name="ProgramID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+									<div class="form-group">
+                                        <label class="control-label col-sm-4 small">Sub-Program</label>
+                                        <div class="col-sm-8">
+                                            <select id="SubProgramID" name="SubProgramID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Certification</label>
+                                        <div class="col-sm-8">
+                                            <select id="CertificationID" name="CertificationID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Technical Parameter</label>
+                                        <div class="col-sm-8">
+                                            <select id="TechnicalParameterID" name="TechnicalParameterID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Composition</label>
+                                        <div class="col-sm-8">
+                                            <select id="YarnCompositionID" name="YarnCompositionID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+									<div class="form-group">
+                                        <label class="control-label col-sm-4 small">Shade Reference</label>
+                                        <div class="col-sm-8">
+                                            <select id="ShadeReferenceID" name="ShadeReferenceID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+									<div class="form-group">
+                                        <label class="control-label col-sm-4 small">Manufacturing Line</label>
+                                        <div class="col-sm-8">
+                                            <select id="ManufacturingLineID" name="ManufacturingLineID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Manufacturing Process</label>
+                                        <div class="col-sm-8">
+                                            <select id="ManufacturingProcessID" name="ManufacturingProcessID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Manufacturing Sub-Process</label>
+                                        <div class="col-sm-8">
+                                            <select id="ManufacturingSubProcessID" name="ManufacturingSubProcessID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Color</label>
+                                        <div class="col-sm-8">
+                                            <select id="ColorID" name="ColorID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+									<div class="form-group">
+                                        <label class="control-label col-sm-4 small">Color Grade</label>
+                                        <div class="col-sm-8">
+                                            <select id="ColorGradeID" name="ColorGradeID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+									<div class="form-group">
+                                        <label class="control-label col-sm-4 small">Yarn Count</label>
+                                        <div class="col-sm-8">
+                                            <select id="YarnCountID" name="YarnCountID" class="form-control form-control-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color: transparent; border-style: none;">
+                        <div class="panel-heading">
+                            Supplier Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                        <div class="pull-right pull-right-mb">
+                            <button type="button" class="btn btn-default btn-sm w-150" id="btnBackToList"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-success btn-sm w-150 btnAction" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* 
+ <script type="text/javascript">
 	localStorage.setItem("pageName", "@ViewBag.PageName");
 	localStorage.setItem("menuId", "@ViewBag.MenuId");
 </script>
@@ -11,13 +188,15 @@
 	var formId = "form" + pageId;
 	var divDetailsId = "divDetails" + pageId;
 	var dialogtemplate = "dialogtemplate" + pageId;
+	var tblChildId = "tblChild" + pageId;
 }
 <style type="text/css">
 	.cbo {
 		font-size: 16px !important;
 	}
+
 	.form-group {
-		margin-bottom: 15px !important;
+		margin-bottom: 15% !important;
 	}
 </style>
 <div id="@pageId">
@@ -36,7 +215,6 @@
 							<div class="form-row">
 								<div class="col-12">
 									<table id="@tblMasterId"></table>
-									@* <div id='Grid'></div> *@
 								</div>
 							</div>
 						</div>
@@ -45,110 +223,135 @@
 
 			</div>
 		</form>
-		@* <script id='dialogtemplate' type="text/x-template"> *@
 		<div id='dialogtemplateRMP' style="display:none;" class="@dialogtemplate">
 			<div class="modal-form-default">
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<input id="FiberType" name="FiberType" class="FiberType" type="text" />
-							<span class="e-float-line"></span>
+				<div class="col-sm-12">
+					<div class="panel panel-success" style="border-color:transparent; border-style:none;">
+						<div class="panel-heading">
+							General Information
 						</div>
-						<div class="form-group">
-							<input id="BlendType" name="BlendType" class="BlendType" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="YarnType" name="YarnType" class="YarnType" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="Program" name="Program" class="Program" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="SubProgram" name="SubProgram" class="SubProgram" type="text" />
-							<span class="e-float-line"></span>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Fiber Type</label>
+										<div class="col-sm-8">
+											<input id="FiberType" name="FiberType" class="FiberType" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Blend Type</label>
+										<div class="col-sm-8">
+											<input id="BlendType" name="BlendType" class="BlendType" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Yarn Type</label>
+										<div class="col-sm-8">
+											<input id="YarnType" name="YarnType" class="YarnType" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Program</label>
+										<div class="col-sm-8">
+											<input id="Program" name="Program" class="Program" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">SubProgram</label>
+										<div class="col-sm-8">
+											<input id="SubProgram" name="SubProgram" class="SubProgram" type="text" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Certification</label>
+										<div class="col-sm-8">
+											<input id="Certification" name="Certification" class="Certification" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Technical Parameter</label>
+										<div class="col-sm-8">
+											<input id="TechnicalParameter" name="TechnicalParameter" class="TechnicalParameter" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Yarn Composition</label>
+										<div class="col-sm-8">
+											<input id="YarnComposition" name="YarnComposition" class="YarnComposition" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Shade Reference</label>
+										<div class="col-sm-8">
+											<input id="ShadeReference" name="ShadeReference" class="ShadeReference" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Manufacturing Line</label>
+										<div class="col-sm-8">
+											<input id="ManufacturingLine" name="ManufacturingLine" class="ManufacturingLine" type="text" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Manufacturing Process</label>
+										<div class="col-sm-8">
+											<input id="ManufacturingProcess" name="ManufacturingProcess" class="ManufacturingProcess" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Manufacturing Sub-Process</label>
+										<div class="col-sm-8">
+											<input id="ManufacturingSubProcess" name="ManufacturingSubProcess" class="ManufacturingSubProcess" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Color</label>
+										<div class="col-sm-8">
+											<input id="Color" name="Color" class="Color" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Color Grade</label>
+										<div class="col-sm-8">
+											<input id="ColorGrade" name="ColorGrade" class="ColorGrade" type="text" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Yarn Count</label>
+										<div class="col-sm-8">
+											<input id="YarnCount" name="YarnCount" class="YarnCount" type="text" />
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<input id="Certification" name="Certification" class="Certification" type="text" />
-							<span class="e-float-line"></span>
+				</div>
+				<div class="col-sm-12">
+					<div class="panel panel-success" style="border-color: transparent; border-style: none;">
+						<div class="panel-heading">
+							Supplier Information
 						</div>
-						<div class="form-group">
-							<input id="TechnicalParameter" name="TechnicalParameter" class="TechnicalParameter" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="YarnComposition" name="YarnComposition" class="YarnComposition" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="ShadeReference" name="ShadeReference" class="ShadeReference" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="ManufacturingLine" name="ManufacturingLine" class="ManufacturingLine" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<input id="ManufacturingProcess" name="ManufacturingProcess" class="ManufacturingProcess" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="ManufacturingSubProcess" name="ManufacturingSubProcess" class="ManufacturingSubProcess" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="Color" name="Color" class="Color" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="ColorGrade" name="ColorGrade" class="ColorGrade" type="text" />
-							<span class="e-float-line"></span>
-						</div>
-						<div class="form-group">
-							<input id="YarnCount" name="YarnCount" class="YarnCount" type="text" />
-							<span class="e-float-line"></span>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<table id="@tblChildId"></table>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			@* <div class="form-horizontal">
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label class="control-label col-sm-4 small">Fiber Type</label>
-							<div class="col-sm-8">
-								<input id="FiberType" name="FiberType" type="text" value=""/>
-								<span class="e-float-line"></span>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label class="control-label col-sm-4 small">Blend Type</label>
-							<div class="col-sm-8">
-								<input id="BlendType" name="BlendType" type="text" value=""/>
-								<span class="e-float-line"></span>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label class="control-label col-sm-4 small">Yarn Type</label>
-							<div class="col-sm-8">
-								<input id="YarnType" name="YarnType" type="text" value=""/>
-								<span class="e-float-line"></span>
-							</div>
-						</div>
-					</div>
-				</div> *@
 
 		</div>
-		@* </script> *@
 	</div>
 
 </div>
+  *@

@@ -930,6 +930,7 @@
         public const string YarnPRFrom_HK = "YarnPRFrom_HK";
         public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
         public const string YarnRMProperties = "YarnRMProperties";
+        public const string YarnRMPropertiesChild = "YarnRMPropertiesChild";
 
         public const string CompositionBlendType = "T_CompositionBlendType";
         public const string YarnCompositionBasicSetup = "YarnCompositionBasicSetup";

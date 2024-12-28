@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.Entity;
 using System.Text.Json;
-
+using Newtonsoft.Json;
 
 
 namespace EPYSLTEXCore.API.Contollers.Booking
@@ -87,9 +87,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             else
             {
                 data = await _service.GetSavedBulkFabricAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                //data.FBookingChild = data.FBookingChild.Where(x => x.BookingQty > 0).ToList();
-                //data.FBookingChildCollor = data.FBookingChildCollor.Where(x => x.BookingQty > 0).ToList();
-                //data.FBookingChildCuff = data.FBookingChildCuff.Where(x => x.BookingQty > 0).ToList();
             }
             return Ok(data);
         }
@@ -139,7 +136,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         bmList.Add(bm);
                         unAckBy = bm.OrderBankMasterID;
                     }
-                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
                 }
             }
             else
@@ -153,7 +149,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         bmList.Add(bm);
                         unAckBy = bm.LabdipUnAcknowledgeBY;
                     }
-                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
                 }
             }
             return Ok(IsSendMail);
@@ -194,7 +189,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             fbMaster = await _service.GetFBAcknowledgeByBookingID(entity.BookingID);
             if (fbMaster.IsNull())
                 fbMaster = new FBookingAcknowledge();
-            //var BDSTNAEvent = await _service.GetAllAsyncBDSTNAEvent_HK();
 
             entity.IsSample = false;
             entity.AddedBy = AppUser.UserCode;
@@ -420,8 +414,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 fbaMaster.EntityState = EntityState.Modified;
             }
 
-
-
             List<FBookingAcknowledgeChild> newEntityChilds = new List<FBookingAcknowledgeChild>();
             List<FBookingAcknowledgeChildAddProcess> newEntityChildAddProcess = new List<FBookingAcknowledgeChildAddProcess>();
             List<FBookingAcknowledgeChildDetails> newEntityChildDetails = new List<FBookingAcknowledgeChildDetails>();
@@ -432,7 +424,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             List<FBookingAcknowledgeChildYarnSubBrand> newEntityChildsYarnSubBrand = new List<FBookingAcknowledgeChildYarnSubBrand>();
             List<FBAChildPlanning> newFBAChildPlanning = new List<FBAChildPlanning>();
             List<FBookingAcknowledgementLiabilityDistribution> entityChildAckLiabilityDetails = new List<FBookingAcknowledgementLiabilityDistribution>();
-
 
             if (fbMaster.IsNull())
                 fbMaster = new FBookingAcknowledge();
@@ -840,7 +831,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 }
                 newEntityChilds.Add(item);
 
-
                 fbMaster.FBookingChild.ForEach(x =>
                 {
                     FBookingAcknowledgeChild obj = newEntityChilds.Find(y => y.ItemMasterID == x.ItemMasterID && y.SubGroupID == x.SubGroupID && y.EntityState != EntityState.Deleted);
@@ -957,7 +947,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 entityChildsText = newEntityChildsText;
                 entityChildsDistribution = newEntityChildsDistribution;
                 entityChildsYarnSubBrand = newEntityChildsYarnSubBrand;
-                //entityChildAckLiabilityDetails = new;
                 fbMaster.FBookingAcknowledgeImage.ForEach(x => x.EntityState = EntityState.Modified);
                 entityChildsImage = fbMaster.FBookingAcknowledgeImage;
             }
@@ -965,8 +954,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             var fabricWastageGrids = await _service.GetFabricWastageGridAsync("BDS");
             foreach (FBookingAcknowledgeChild details in entityChilds.Where(x => x.EntityState != EntityState.Deleted))
             {
-
-
                 if (entity.FBAckID == 0)
                 {
                     List<FBAChildPlanning> planningList = new List<FBAChildPlanning>();
@@ -1060,8 +1047,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             List<FreeConceptMaster> entityFreeConcepts = new List<FreeConceptMaster>();
             List<FreeConceptMRMaster> entityFreeMR = new List<FreeConceptMRMaster>();
             await _service.SaveAsync(AppUser.UserCode, entity, entityChilds, entityChildAddProcess, entityChildDetails, entityChildsGpart, entityChildsProcess, entityChildsText, entityChildsDistribution, entityChildsYarnSubBrand, entityChildsImage, BDCalander, isBDS, entityFreeConcepts, entityFreeMR, entityChildsLiabilitiesDistribution, entityFBA, entityFBYL);
-
-            //await _commonService.UpdateFreeConceptStatus(InterfaceFrom.FBookingAcknowledge, 0, grpConceptNo, entity.BookingID);
             return Ok();
         }
 
@@ -1207,8 +1192,9 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         }
         [Route("acknowledge")]
         [HttpPost]
-        public async Task<IActionResult> Acknowledge(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> Acknowledge(dynamic modelDynamicParam)
         {
+            FBookingAcknowledge modelDynamic = JsonConvert.DeserializeObject<FBookingAcknowledge>(Convert.ToString(modelDynamicParam));
 
             await _service.CheckIsBookingApprovedAsync(modelDynamic.BookingNo);
 
@@ -1643,11 +1629,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingNo(BookingNo);
-                                    // OFF FOR CORE //IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
-                                }
-                                else
-                                {
-                                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1663,11 +1644,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingIDAndWithOutOB(selectedbookingID == "" ? "0" : selectedbookingID);
-                                    // OFF FOR CORE //IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
-                                }
-                                else
-                                {
-                                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1936,15 +1912,9 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 #region Delete Existing Data
                 foreach (FBookingAcknowledgeChild item in saveFBookingAcknowledgeChild)
                 {
-                    //if (item.BookingChildID == 774600)
-                    //{
-
-                    //}
-                    //List<FBookingAcknowledgeChild> objItem = modelDynamic.FBookingChild.FindAll(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.BookingChildID == item.BookingChildID);
                     List<FBookingAcknowledgeChild> objItem = modelDynamic.FBookingChild.FindAll(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.ConsumptionID == item.ConsumptionID);
                     if (objItem.IsNull())
                         item.EntityState = EntityState.Deleted;
-
                 }
 
                 #endregion
@@ -1954,12 +1924,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     int iBookingID = item.BookingID;
                     int iItemMasterID = item.ItemMasterID;
                     int iConsumptionID = item.ConsumptionID;
-                    //if (item.BookingChildID == 774600)
-                    //{
-
-                    //}
-
-                    //var aaa = saveFBookingAcknowledgeChild.Where(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.ConsumptionID == item.ConsumptionID);
 
                     FBookingAcknowledgeChild ObjEntityChild = saveFBookingAcknowledgeChild.Find(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.ConsumptionID == item.ConsumptionID && i.RevisionNoWhenDeleted == -1);
 
@@ -2034,7 +1998,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     }
                 }
 
-                if (saveFBookingAcknowledgeChild.Max(i => Convert.ToInt32(i.SendToMktAck)) == 1)
+                if (saveFBookingAcknowledgeChild.Count() > 0 && saveFBookingAcknowledgeChild.Max(i => Convert.ToInt32(i.SendToMktAck)) == 1)
                 {
                     foreach (FabricBookingAcknowledge item in saveFabricBookingItemAcknowledge)
                     {
@@ -2049,7 +2013,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         item.IsMktAck = false;
                     }
                 }
-                if (saveFBookingAcknowledgeChild.Min(i => Convert.ToInt32(i.SendToMktAck)) == 0)
+                if (saveFBookingAcknowledgeChild.Count() > 0 && saveFBookingAcknowledgeChild.Min(i => Convert.ToInt32(i.SendToMktAck)) == 0)
                 {
                     foreach (FabricBookingAcknowledge item in saveFabricBookingItemAcknowledge)
                     {
@@ -2065,12 +2029,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 }
                 saveFBookingAcknowledgeChild.Where(x => x.EntityState == EntityState.Unchanged).ToList().ForEach(x =>
                 {
-                    //if (x.BookingChildID == 774600)
-                    //{
-
-                    //}
-
-
                     x.IsDeleted = true;
                     x.EntityState = EntityState.Modified;
                 });
@@ -2187,12 +2145,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     {
                         saveFBookingAcknowledgeChild.Where(x => x.BookingQty == 0 && x.RevisionNoWhenDeleted == -1).ToList().ForEach(x =>
                         {
-                            //if (x.BookingChildID == 774600)
-                            //{
-
-                            //}
-
-
                             x.RevisionNoWhenDeleted = revisionNo;
                             x.RevisionByWhenDeleted = AppUser.UserCode;
                             x.RevisionDateWhenDeleted = currentDate;

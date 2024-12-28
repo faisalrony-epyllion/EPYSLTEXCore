@@ -14,6 +14,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
         public string PackNo { get; set; } = "";
         public int Cone { get; set; } = 0;
         public decimal NetWeight { get; set; } = 0;
+        public decimal GrossWeightPC { get; set; } = 0;
         public int AddedBy { get; set; } = 0;
         public DateTime DateAdded { get; set; }
         public int UpdatedBy { get; set; } = 0;

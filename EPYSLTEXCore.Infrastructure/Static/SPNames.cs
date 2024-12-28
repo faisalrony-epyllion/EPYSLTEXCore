@@ -35,6 +35,11 @@ namespace EPYSLTEX.Core.Statics
         public const string sp_Validation_FBookingAcknowledge = "T_sp_Validation_FBookingAcknowledge";
         public const string sp_Validation_FreeConceptMaster = "T_sp_Validation_FreeConceptMaster";
         public const string sp_Validation_FreeConceptMRChild = "T_sp_Validation_FreeConceptMRChild";
+        public const string spBackupYarnRndRequisition_Full = "T_spBackupYarnRndRequisition_Full";
+        public const string spYarnStockOperation = "T_spYarnStockOperation";
+        public const string sp_Validation_KYReqMaster = "T_sp_Validation_KYReqMaster";
+        public const string sp_Validation_KYReqChild = "T_sp_Validation_KYReqChild";
+        public const string sp_Validation_YarnRnDReqChild = "T_sp_Validation_YarnRnDReqChild";
         public const string spBackupYarnPR = "T_spBackupYarnPR";
 
         public const string sp_Validation_FBookingAcknowledge_1 = "T_sp_Validation_FBookingAcknowledge_1";
@@ -44,5 +49,6 @@ namespace EPYSLTEX.Core.Statics
         public const string sp_Validation_FBookingAcknowledgementLiabilityDistribution_1 = "T_sp_Validation_FBookingAcknowledgementLiabilityDistribution_1";
         public const string sp_Validation_FBookingAcknowledgementYarnLiability_1 = "T_sp_Validation_FBookingAcknowledgementYarnLiability_1";
     }
+    
 }
 

@@ -62,6 +62,7 @@ namespace EPYSLTEXCore.API.Contollers.Admin
             entity.PackNo = model.PackNo;
             entity.Cone = model.Cone;
             entity.NetWeight = model.NetWeight;
+            entity.GrossWeightPC = model.GrossWeightPC;
             entity.EntityState = EntityState.Modified;
 
             await _service.SaveAsync(entity);
@@ -102,7 +103,7 @@ namespace EPYSLTEXCore.API.Contollers.Admin
             }
             else
             {
-                return BadRequest("Duplicate Packing Setup!");
+                return BadRequest("Duplicate Spinner and Packing Setup Found!");
             }
 
             return Ok();

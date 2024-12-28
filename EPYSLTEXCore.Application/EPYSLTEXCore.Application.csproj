@@ -22,11 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Interfaces\RND\IFinishingProcessService.cs" />
-    <Compile Remove="Interfaces\RND\ILabTestRequisitionService.cs" />
     <Compile Remove="Services\Reporting\RDLReportDocument.cs" />
     <Compile Remove="Services\Reporting\ReportingService.cs" />
-    <Compile Remove="Services\RND\FinishingProcessService.cs" />
     <Compile Remove="Services\RND\LabTestRequisitionService.cs" />
     <Compile Remove="Services\User\LoginHistoryService.cs" />
   </ItemGroup>

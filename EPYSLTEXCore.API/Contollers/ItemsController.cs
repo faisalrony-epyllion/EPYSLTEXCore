@@ -202,9 +202,10 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),
                     Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR),
                     Segment7ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR_GRADE),
-                    Segment8ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT)
+                    Segment8ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
+                    ShadeReferenceList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.SHADE)
                     //YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
-                 
+
                 };
          
                   
@@ -271,9 +272,12 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                     Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                     Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),
-                    Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
-                    YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
-                    
+                    Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR),
+                    Segment7ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR_GRADE),
+                    Segment8ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
+                    ShadeReferenceList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.SHADE)
+                    //YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
+
                 };
             
        

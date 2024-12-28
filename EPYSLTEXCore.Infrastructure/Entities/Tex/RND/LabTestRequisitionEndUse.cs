@@ -1,13 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.DTOs;
 using EPYSLTEX.Core.Statics;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("LabTestRequisitionEndUse")]
+
+    [Table(TableNames.LAB_TEST_REQUISITION_END_USE)]
     public class LabTestRequisitionEndUse : DapperBaseEntity
     {
         public LabTestRequisitionEndUse()

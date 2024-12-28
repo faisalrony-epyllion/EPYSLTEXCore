@@ -1,4 +1,9 @@
-﻿namespace EPYSLTEX.Core.Interfaces.Services
+﻿using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.HouseKeeping;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Statics;
+
+namespace EPYSLTEX.Core.Interfaces.Services
 {
     public interface ILabTestRequisitionService
     {

@@ -1,7 +1,6 @@
 using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Static;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
@@ -202,12 +201,5 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         #endregion Additional Property
     }
 
-    public class LabTestRequisitionMasterValidator : AbstractValidator<LabTestRequisitionMaster>
-    {
-        public LabTestRequisitionMasterValidator()
-        {
-            //RuleFor(x => x.UnitID).NotEmpty();
-            //RuleFor(x => x.FabricQty).NotEmpty().WithMessage("");
-        }
-    }
+  
 }

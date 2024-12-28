@@ -1,13 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.DTOs;
 using EPYSLTEX.Core.Statics;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("LabTestRequisitionExportCountry")]
+
+    [Table(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY)]
     public class LabTestRequisitionExportCountry : DapperBaseEntity
     {
         public LabTestRequisitionExportCountry()
@@ -34,6 +32,8 @@ namespace EPYSLTEX.Core.Entities.Tex
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || LTRECountryID > 0;
+
+
         #endregion
     }
 }

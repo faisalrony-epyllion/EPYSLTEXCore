@@ -15,11 +15,6 @@
   <ItemGroup>
     <Compile Remove="Entities\Gmt\General\GroupUser.cs" />
     <Compile Remove="Entities\Tex\General\FinishingMachineConfigurationMaster.cs" />
-    <Compile Remove="Entities\Tex\RND\LabTestRequisitionBuyer.cs" />
-    <Compile Remove="Entities\Tex\RND\LabTestRequisitionBuyerParameter.cs" />
-    <Compile Remove="Entities\Tex\RND\LabTestRequisitionCareLabel.cs" />
-    <Compile Remove="Entities\Tex\RND\LabTestRequisitionImage.cs" />
-    <Compile Remove="Entities\Tex\RND\LabTestRequisitionMaster.cs" />
     <Compile Remove="Entities\Tex\RND\LaundryCareLableBuyerCode.cs" />
   </ItemGroup>
 

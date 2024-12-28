@@ -1,9 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("LabTestRequisitionCareLabel")]
+    
+    [Table(TableNames.LAB_TEST_REQUISITION_CARE_LABEL)]
     public class LabTestRequisitionCareLabel : DapperBaseEntity
     {
         #region Table Properties

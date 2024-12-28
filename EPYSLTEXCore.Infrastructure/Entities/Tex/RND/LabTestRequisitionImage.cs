@@ -1,6 +1,6 @@
 using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {

@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Interfaces\RND\ILabTestRequisitionService.cs" />
     <Compile Remove="Services\Reporting\RDLReportDocument.cs" />
     <Compile Remove="Services\Reporting\ReportingService.cs" />
     <Compile Remove="Services\RND\LabTestRequisitionService.cs" />

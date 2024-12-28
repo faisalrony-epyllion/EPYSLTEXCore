@@ -1,12 +1,13 @@
 using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.DTOs;
 using EPYSLTEX.Core.Statics;
-using System;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
+using EPYSLTEXCore.Infrastructure.Static;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("DyeingBatchMaster")]
+    
+    [Table(TableNames.DYEING_BATCH_MASTER)]
     public class DyeingBatchMaster : DapperBaseEntity
     {
         [ExplicitKey]

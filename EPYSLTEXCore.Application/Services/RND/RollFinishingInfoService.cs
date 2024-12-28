@@ -9,6 +9,8 @@ using Microsoft.Data.SqlClient;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Statics;
 using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
+using EPYSLTEXCore.Infrastructure.Exceptions;
 
 namespace EPYSLTEX.Infrastructure.Services
 {
@@ -454,7 +456,7 @@ namespace EPYSLTEX.Infrastructure.Services
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
-                var maxDBCFPID = await _signatureRepository.GetMaxIdAsync(TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS, finishingProcessList.Where(x=>x.EntityState == EntityState.Added).Count());
+                var maxDBCFPID = await _service.GetMaxIdAsync(TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS, finishingProcessList.Where(x=>x.EntityState == EntityState.Added).Count());
                 finishingProcessList.Where(x => x.EntityState == EntityState.Added).ToList().ForEach(process =>
                 {
                     process.DBCFPID = maxDBCFPID++;

@@ -1,8 +1,7 @@
 using Dapper.Contrib.Extensions;
-using FluentValidation;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
     [Table("RecipeDefinitionChild")]
     public class RecipeDefinitionChild : DapperBaseEntity
@@ -87,15 +86,5 @@ namespace EPYSLTEX.Core.Entities.Tex
 
     }
 
-    public class RecipeDefinitionChildValidator : AbstractValidator<RecipeDefinitionChild>
-    {
-        public RecipeDefinitionChildValidator()
-        {
-            RuleFor(x => x.ParticularsId).NotEmpty().WithMessage("Particulars must not be empty!"); 
-            //RuleFor(x => x.Qty).NotEmpty().When(x => x.ParticularsName != "Water").WithMessage("Qty must not be empty!");
-            //RuleFor(x => x.RawItemId).NotEmpty().When(x => x.ParticularsName != "Water").WithMessage("Please select item");
-            //RuleFor(x => x.UnitID).NotEmpty().When(x => x.IsPercentage == false).WithMessage("Please select unit");
-        }
-    }
 
 }

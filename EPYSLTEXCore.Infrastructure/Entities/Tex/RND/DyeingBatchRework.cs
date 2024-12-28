@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
+using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("DyeingBatchRework")]
+
+    [Table(TableNames.DYEING_BATCH_REWORK)]
+
     public class DyeingBatchRework : DapperBaseEntity
     {
         public DyeingBatchRework()

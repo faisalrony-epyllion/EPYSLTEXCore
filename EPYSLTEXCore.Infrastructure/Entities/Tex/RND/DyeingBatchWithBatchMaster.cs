@@ -1,8 +1,11 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("DyeingBatchWithBatchMaster")]
+    
+    [Table(TableNames.DYEING_BATCH_WITH_BATCH_MASTER)]
     public class DyeingBatchWithBatchMaster : DapperBaseEntity
     {
         [ExplicitKey]

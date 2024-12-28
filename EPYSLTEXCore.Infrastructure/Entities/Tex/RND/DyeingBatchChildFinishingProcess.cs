@@ -1,10 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
+using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    
+
     [Table(TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS)]
     public class DyeingBatchChildFinishingProcess : DapperBaseEntity
     {

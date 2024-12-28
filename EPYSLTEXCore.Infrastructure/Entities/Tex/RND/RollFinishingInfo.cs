@@ -1,10 +1,11 @@
 using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.DTOs;
-using System.Collections.Generic;
+using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("RollFinishingInfo")]
+    
+    [Table(TableNames.ROLL_FINISHING_INFO)]
     public class RollFinishingInfo : DapperBaseEntity
     {
         public RollFinishingInfo()

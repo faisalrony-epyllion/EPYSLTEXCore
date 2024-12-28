@@ -1,10 +1,11 @@
 using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
+using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("DyeingBatchItem")]
+
+    [Table(TableNames.DYEING_BATCH_ITEM)]
     public class DyeingBatchItem : DapperBaseEntity
     {
         [ExplicitKey]

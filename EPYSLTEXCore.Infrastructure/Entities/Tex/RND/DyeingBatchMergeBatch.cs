@@ -1,12 +1,11 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.DTOs;
 using EPYSLTEX.Core.Statics;
-using System;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("DyeingBatchMergeBatch")]
+    
+    [Table(TableNames.DYEING_BATCH_MERGE_BATCH)]
     public class DyeingBatchMergeBatch : DapperBaseEntity
     {
         public DyeingBatchMergeBatch()

@@ -543,13 +543,13 @@
         if ((isApprovePage) || (isReqApproveBulkPage)) {
             commands = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } }
             ];
 
         } else if ((isAcknowledgePage) || (isReqAckBulkPage)) {
             commands = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } }
             ];
         } else {
             if (status == statusConstants.PENDING) {
@@ -561,13 +561,13 @@
                 commands = [
                     { type: 'Retest', buttonOption: { cssClass: 'e-flat', iconCss: 'e-add e-icons' } },
                     { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } }
                 ];
             }
             else {
                 commands = [
                     { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                    { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'ViewReport', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } }
                 ];
             }
         }

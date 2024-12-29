@@ -432,22 +432,31 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task SaveBatchItemAsync(DyeingBatchItem entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 await _service.SaveSingleAsync(entity, transaction);
                 await _service.SaveAsync(entity.DyeingBatchChildFinishingProcesses, transaction);
+
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 

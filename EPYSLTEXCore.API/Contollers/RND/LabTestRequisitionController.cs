@@ -5,11 +5,13 @@ using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.HouseKeeping;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEX.Web.Controllers.Apis
@@ -147,8 +149,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Save(LabTestRequisitionMaster model)
+        public async Task<IActionResult> Save(dynamic JsonString  )
         {
+            LabTestRequisitionMaster model = JsonConvert.DeserializeObject<LabTestRequisitionMaster>(Convert.ToString(JsonString));
             LabTestRequisitionMaster entity;
             if (model.LTReqMasterID > 0)
             {

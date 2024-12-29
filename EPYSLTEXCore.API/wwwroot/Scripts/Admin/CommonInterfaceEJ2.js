@@ -80,7 +80,17 @@
         $formEl.trigger("reset");
 
         $.each($formEl.find('select'), function (i, el) {
-            $(el).val(null).trigger('change');
+
+         
+            var currentDDL = interfaceConfigs.Childs.find(p => p.EntryType === 'select' && p.ColumnName === el.id);
+            if (currentDDL != null && currentDDL.DefaultValue != null) {
+                var selectedOption = $(el).find('option').filter(function () {
+                    return $(this).text() === currentDDL.DefaultValue;
+                });
+
+                var optionId = selectedOption.length ? selectedOption.val() : currentDDL.DefaultValue;
+                $(el).val(optionId).trigger('change');
+            }
             // $(el).select2('').trigger('change');
         });
         initChildGrid([]);
@@ -755,7 +765,7 @@
         });
         finder.showModal();
     }
-    
+
     function initControls() {
         $formEl.find('.bootstrap-datepicker').datepicker({
             endDate: "0d",
@@ -767,7 +777,7 @@
 
             if (value.hasDependentColumn > 0) {
                 //$formEl.find("#" + value.dependentColumnName).on('select2:select', function (e) {
-                   
+
                 //   // loadDependentSelection(el, value.apiUrl);
                 //});
 
@@ -830,7 +840,7 @@
     */
 
     function loadDependentSelection(el, apiUrl, selectedValue) {
-      
+
         apiUrl = apiUrl.replace(commonAPiUrls.combo, commonAPiUrls.dependentCombo);
         el.empty();
         var url = apiUrl + "/" + selectedValue;

@@ -1,33 +1,28 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.Entities.Tex.RND;
-using EPYSLTEX.Core.GuardClauses;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Core.Interfaces.Services.RND;
 using EPYSLTEX.Core.Statics;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using EPYSLTEXCore.Application.Interfaces.RND;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Entities;
 
 namespace EPYSLTEX.Infrastructure.Services
 {
     internal class LabTestResultService : ILabTestResultService
     {
         private readonly IDapperCRUDService<LabTestRequisitionMaster> _service;
-        private readonly ISignatureRepository _signatureRepository;
+
         private readonly SqlConnection _connection;
 
-        public LabTestResultService(IDapperCRUDService<LabTestRequisitionMaster> service
-            , ISignatureRepository signatureRepository)
+        public LabTestResultService(IDapperCRUDService<LabTestRequisitionMaster> service)
         {
             _service = service;
-            _signatureRepository = signatureRepository;
+         
             _connection = service.Connection;
         }
 
@@ -479,8 +474,8 @@ namespace EPYSLTEX.Infrastructure.Services
 
         private async Task<LabTestRequisitionMaster> UpdateAsync(LabTestRequisitionMaster entity)
         {
-            var maxLabTestRequisitionBuyerId = await _signatureRepository.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count());
-            var maxLabTestRequisitionBuyerParamId = await _signatureRepository.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()));
+            var maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count());
+            var maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()));
 
             foreach (var item in entity.LabTestRequisitionBuyers.ToList())
             {
@@ -528,7 +523,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 }
             }
 
-            var maxLabTestRequisitionImageId = await _signatureRepository.GetMaxIdAsync(TableNames.LABTEST_REQUISITION_IMAGE, entity.LabTestRequisitionImages.Where(x => x.EntityState == EntityState.Added).Count());
+            var maxLabTestRequisitionImageId = await _service.GetMaxIdAsync(TableNames.LABTEST_REQUISITION_IMAGE, entity.LabTestRequisitionImages.Where(x => x.EntityState == EntityState.Added).Count());
             foreach (var item in entity.LabTestRequisitionImages.ToList())
             {
                 switch (item.EntityState)

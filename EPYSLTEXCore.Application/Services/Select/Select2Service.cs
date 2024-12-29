@@ -7,7 +7,6 @@ namespace EPYSLTEXCore.Application.Services.Select
 {
     public class Select2Service:ISelect2Service
     {
-        private readonly ISqlQueryRepository<Select2OptionModel> _sqlQueryRepository;
         
 
         private readonly IDapperCRUDService<LoginUser> _gmtService;

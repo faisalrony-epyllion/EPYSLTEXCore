@@ -20,8 +20,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
         #endregion Table Properties
 
         #region Additional Properties
-        public int GRollId { get; set; }
-        public int GQCParameterId { get; set; }
+        //public int GRollId { get; set; }
+        //public int GQCParameterId { get; set; }
         public string QCParameterName { get; set; }
         #endregion
 

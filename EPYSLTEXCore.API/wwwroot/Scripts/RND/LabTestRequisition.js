@@ -1361,7 +1361,7 @@
             .then(function (response) {
                 toastr.success("Saved successfully.");
                 var obj = response.data;
-                displayReport(obj.LabTestStatus, obj.LTReqMasterID, obj.BuyerID);
+                //displayReport(obj.LabTestStatus, obj.LTReqMasterID, obj.BuyerID);
                 backToList();
             })
             .catch(function (error) {

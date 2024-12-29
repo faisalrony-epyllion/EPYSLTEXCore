@@ -251,7 +251,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
         public static string GetUnit()
         {
             return $@"SELECT CAST(UnitID AS VARCHAR) AS id, DisplayUnitDesc AS text
-                  FROM Unit";
+                  FROM {DbNames.EPYSL}..Unit";
         }
         public static string GetAllFiberType()
         {

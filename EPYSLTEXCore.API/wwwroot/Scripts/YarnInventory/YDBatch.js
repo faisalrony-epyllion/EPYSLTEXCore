@@ -138,7 +138,7 @@
                     primaryKeyColumn: "ConceptID",
                     fields: "SubGroup,TechnicalName,FabricComposition,FabricGsm,Length,Width,ConceptOrSampleQty,Qty,ProdQty,ProdQtyPcs",
                     headerTexts: "Item,Technical Name,Fabric Composition,Fabric Gsm,Length,Width,Concept Qty,Qty,Production Qty,Pcs",
-                    widths: "100,80,150,80,80,80,80,80,80,80",
+                    //widths: "100,80,150,80,80,80,80,80,80,80",
                     apiEndPoint: `/api/yd-batch/get-other-items/${yDBookingChildIds}/${colorId}/${yDBookingMasterID}`,
                     autofitColumns: false,
                     onMultiselect: function (selectedRecords) {
@@ -496,6 +496,7 @@
         var url = `/api/yd-batch/list?gridType=bootstrap-table&status=${status}&${queryParams}`;
         axios.get(url)
             .then(function (response) {
+                debugger;
                 $tblMasterEl.bootstrapTable('load', response.data);
                 $tblMasterEl.bootstrapTable('hideLoading');
             })
@@ -519,7 +520,7 @@
                         return [
                             '<span class="btn-group">',
                             '<a class="btn btn-danger btn-xs remove" href="javascript:void(0)" title="Delete Item">',
-                            '<i class="fa fa-remove"></i>',
+                            '<i class="fa fa-times"></i>',
                             '</a>',
                             '</span>'
                         ].join('');
@@ -628,7 +629,7 @@
                         return [
                             '<span class="btn-group">',
                             '<a class="btn btn-danger btn-xs remove" href="javascript:void(0)" title="Delete Item">',
-                            '<i class="fa fa-remove"></i>',
+                            '<i class="fa fa-times"></i>',
                             '</a>',
                             '</span>'
                         ].join('');
@@ -800,7 +801,7 @@
                         return [
                             '<span class="btn-group">',
                             '<a class="btn btn-danger btn-xs remove" href="javascript:void(0)" title="Delete Item">',
-                            '<i class="fa fa-remove"></i>',
+                            '<i class="fa fa-times"></i>',
                             '</a>',
                             '</span>'
                         ].join('');
@@ -808,10 +809,10 @@
                     footerFormatter: function () {
                         return [
                             '<span class="btn-group">',
-                            '<button class="btn btn-success" onclick="showTblRequirementChild(' + conceptID + ',' + ind + ',' + subGroup + ')" title="Add Roll">',
+                            '<button class="btn btn-success btn-xs add" onclick="showTblRequirementChild(' + conceptID + ',' + ind + ',' + subGroup + ')" title="Add Roll">',
                             '<i class="fa fa-plus"></i>',
                             '</button>',
-                            '<button class="btn btn-success" onclick="showProductionRoll(' + conceptID + ',' + ind + ',' + subGroup + ')" title="Split Roll">',
+                            '<button class="btn btn-success btn-xs add" onclick="showProductionRoll(' + conceptID + ',' + ind + ',' + subGroup + ')" title="Split Roll">',
                             '<i class="fa fa-edit"></i>',
                             '</button>',
                             '</span>'

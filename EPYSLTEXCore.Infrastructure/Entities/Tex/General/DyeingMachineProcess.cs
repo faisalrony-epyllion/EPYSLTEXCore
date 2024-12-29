@@ -1,22 +1,40 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
 {
-    [Table("FabricColorShadeFactor")]
-    public class FabricColorShade : DapperBaseEntity
+    [Table(TableNames.DYEING_MACHINE_PROCESS)]
+    public class DyeingMachineProcess : IDapperBaseEntity
     {
+        public DyeingMachineProcess()
+        {
+            EntityState = EntityState.Added;
+        }
         [ExplicitKey]
-        public int FCSFID { get; set; }        
-        public int ShadeID { get; set; }
-        public int CountAdd { get; set; }
-        public string ShadeName { get; set; }
-        public decimal SLCount { get; set; }
-        //public EntityState EntityState { get; set; }
-        #region Additional Columns
+        public int DMProcessID { get; set; }
+        public int DMID { get; set; }
+
+        public int DyeProcessID { get; set; }
+
+        //public virtual DyeingMachine DyeingMachine { get; set; }
+
+        #region Additional Fields
         [Write(false)]
-        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || this.FCSFID > 0;
-        #endregion Additional Columns
+        public EntityState EntityState { get; set; }
+
+        [Write(false)]
+        public int TotalRows { get; set; }
+
+        [Write(false)]
+        public bool IsModified => EntityState == EntityState.Modified;
+
+        [Write(false)]
+        public bool IsNew => EntityState == EntityState.Added;
+        [Write(false)]
+        public string DyeProcess { get; set; }
+
+        #endregion Additional Fields
     }
 }

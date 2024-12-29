@@ -1,48 +1,64 @@
 ﻿using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 using System.Data.Entity;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General
 {
-    [Table("TextileProcessMaster")]
-    public class TextileProcessMaster : DapperBaseEntity
+    [Table(TableNames.DYEING_MACHINE)]
+    public class DyeingMachine : DapperBaseEntity
     {
         [ExplicitKey]
-        public int TProcessMasterID { get; set; }        
-        public string ProcessName { get; set; }
-        public string DisplayName { get; set; }
-        public string ShortName { get; set; }
-        public bool HasSubProcess { get; set; }
-        public int SeqNo { get; set; }
-        public int? AddedBy { get; set; }
-        public System.DateTime? DateAdded { get; set; }
-        public int? UpdatedBy { get; set; }
-        public System.DateTime? DateUpdated { get; set; }
+        public int DMID { get; set; }
+        public int DyeingMcNameId { get; set; }
+        public int CompanyId { get; set; }
+        public int DyeingMcslNo { get; set; }
+        public int DyeingMcStatusId { get; set; }
+        public int DyeingMcBrandId { get; set; }
+        public int DyeingMcCapacity { get; set; }
+        public int DyeingNozzleQty { get; set; }
+        public bool IsCC { get; set; }
+
+        //public virtual List<DyeingMachineProcess> DyeingMachineProcesses { get; set; }
         #region Additional Columns
+
         [Write(false)]
-        public string CompletionStatus { get; set; }
+        public virtual List<DyeingMachineProcess> DyeingMachineProcesses { get; set; }
+
         [Write(false)]
-        public string ProcessStatus { get; set; }
+        public string DyeingMcName { get; set; }
+
         [Write(false)]
-        public string ActionStatus { get; set; }
+        public string Company { get; set; }
         //[Write(false)]
-        //public virtual ICollection<BookingAnalysisProcess> BookingAnalysisProcesses { get; set; } // BookingAnalysisProcess.FK_BookingAnalysisProcess_TextileProcessMaster
-        //[Write(false)]
-        //public virtual ICollection<TextileProcessChild> TextileProcessChilds { get; set; } // TextileProcessChild.FK_TextileProcessChild_TextileProcessMaster
+        // public string UserId { get; set; }
+
         [Write(false)]
-        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || this.TProcessMasterID > 0;
+        public string DyeingMcStatus { get; set; }
+        [Write(false)]
+        public string DyeingMcBrand { get; set; }
+
+        [Write(false)]
+        public List<Select2OptionModel> DyeingMcNameList { get; set; }
+        [Write(false)]
+        public List<Select2OptionModel> CompanyList { get; set; }
+        [Write(false)]
+        public List<Select2OptionModel> DyeingMcStatusList { get; set; }
+        [Write(false)]
+        public List<Select2OptionModel> DyeingMcBrandList { get; set; }
+        [Write(false)]
+        public List<Select2OptionModel> DyeProcessList { get; set; }
+
+        [Write(false)]
+        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || this.DMID > 0;
+        [Write(false)]
+        public string Status { get; set; }
         #endregion Additional Columns
-      
-        public TextileProcessMaster()
+
+        public DyeingMachine()
         {
-            HasSubProcess = false;
-            SeqNo = 0;
-            EntityState = EntityState.Added;
-            //BookingAnalysisProcesses = new List<BookingAnalysisProcess>();
-            //TextileProcessChilds = new List<TextileProcessChild>();
-            //TextileProcessUsers = new List<TextileProcessUser>();
-            ProcessStatus = "Pending";
-            CompletionStatus = "Pending";
+            DyeingMachineProcesses = new List<DyeingMachineProcess>();
         }
+
     }
 }

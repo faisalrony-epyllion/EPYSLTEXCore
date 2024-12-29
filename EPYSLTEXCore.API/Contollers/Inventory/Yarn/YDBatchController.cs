@@ -6,6 +6,7 @@ using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
@@ -101,9 +102,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Save(YDBatchMaster model)
+        public async Task<IActionResult> Save(dynamic jsonString)
         {
             YDBatchMaster entity;
+            YDBatchMaster model = JsonConvert.DeserializeObject<YDBatchMaster>(Convert.ToString(jsonString));
             if (model.IsModified)
             {
                 entity = await _service.GetAllAsync(model.YDBatchID);
@@ -210,9 +212,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [Route("save-kProd")]
         [HttpPost]
-        public async Task<IActionResult> SaveKProd(List<KnittingProduction> models)
+        public async Task<IActionResult> SaveKProd(dynamic jsonString)
         {
             List<KnittingProduction> knittingProductions = new List<KnittingProduction>();
+            List<KnittingProduction> models = JsonConvert.DeserializeObject<List<KnittingProduction>>(Convert.ToString(jsonString));
 
             KnittingProduction entity = await _knittingProductionService.GetDetailsAsync(models.First().GRollID);
             entity.InActive = true;

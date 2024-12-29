@@ -573,7 +573,7 @@
         }
         var columns = [
             {
-                headerText: 'Actions', commands: commands, width: 100, textAlign: 'Center'
+                headerText: 'Actions', commands: commands, width: ch_setActionCommandCellWidth(commands), textAlign: 'Center'
             },
             {
                 field: 'LabTestStatus', headerText: 'Lab Test Status', width: 100, visible: status != statusConstants.PENDING

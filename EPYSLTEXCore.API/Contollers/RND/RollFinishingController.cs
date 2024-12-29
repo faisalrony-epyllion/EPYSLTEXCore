@@ -4,11 +4,13 @@ using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 namespace EPYSLTEX.Web.Controllers.Apis
 {
@@ -55,8 +57,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(DyeingBatchChildFinishingProcess model)
+        public async Task<IActionResult> Save(dynamic JsonString )
         {
+            DyeingBatchChildFinishingProcess model = JsonConvert.DeserializeObject<DyeingBatchChildFinishingProcess>(Convert.ToString(JsonString));
             DyeingBatchItem entity = new DyeingBatchItem();
             entity = await _RollFinishingInfoService.GetAllByBDIIDAsync(model.DBIID);
             entity.EntityState = EntityState.Modified;

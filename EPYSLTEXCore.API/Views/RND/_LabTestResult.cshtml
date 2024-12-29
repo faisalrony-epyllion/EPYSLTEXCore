@@ -1,0 +1,323 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+<style type="text/css">
+    .tblImage ::placeholder {
+        opacity: .2;
+    }
+
+    .tblImage thead tr th {
+        text-align: center;
+    }
+
+    .txtImg {
+        width: 100%;
+        border: none;
+        height: 60px;
+        padding-left: 10px;
+    }
+
+    .cellSelect {
+        max-width: 200px !important;
+    }
+
+        .cellSelect select {
+            font-size: 14px;
+        }
+
+    .cellImg {
+        min-width: 150px !important;
+    }
+
+    .trImg {
+        text-align: center;
+        height: 62px !important;
+    }
+
+        .trImg td {
+            padding: 0px !important;
+        }
+
+        .trImg .tdStatic {
+            vertical-align: middle;
+        }
+
+    .zoom {
+        transition: transform .2s; /* Animation */
+        margin: 0 auto;
+    }
+
+        .zoom:hover {
+            transform: scale(3.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+        }
+</style>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblImage = "tblImage" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="ApprovePage" value="@ViewBag.ApprovePage" />
+    <input type="hidden" id="AcknowledgePage" value="@ViewBag.AcknowledgePage" />
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnCompleteList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-bell"></i>&nbsp;Lab Test Result
+                </button>
+                <button id="btnSendCompleteList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-bell"></i>&nbsp;Send Lab Test Result
+                </button>
+                <button id="btnApproveList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-bell"></i>&nbsp;Approved Lab Test Result
+                </button>
+                <button id="btnAcknowledgeList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-bell"></i>&nbsp;Acknowledged Lab Test Result
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="LTReqMasterID" name="LTReqMasterID" value="-1111" />
+            <input type="hidden" name="DBatchID" id="DBatchID" />
+            <input type="hidden" name="ConceptID" id="ConceptID" />
+            <input type="hidden" name="BookingID" id="BookingID" />
+            <input type="hidden" name="ExportOrderID" id="ExportOrderID" />
+            <input type="hidden" name="BuyerID" id="BuyerID" />
+            <input type="hidden" name="BuyerTeamID" id="BuyerTeamID" />
+            <input type="hidden" name="ItemMasterID" id="ItemMasterID" />
+            <input type="hidden" name="ColorID" id="ColorID" />
+            <input type="hidden" name="UnitID" id="UnitID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Req. No</label>
+                                            <div class="col-sm-7">
+                                                <input id="ReqNo" name="ReqNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Req. Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="ReqDate" name="ReqDate" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">D. Batch No</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="DBatchNo" name="DBatchNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">D. Batch Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="DBatchDate" name="DBatchDate" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Contact Person</label>
+                                            <div class="col-sm-7">
+                                                <input id="ContactPersonName" name="ContactPersonName" class="form-control input-sm" type="text" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Concept No</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="ConceptNo" name="ConceptNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Buyer</label>
+                                            <div class="col-sm-7">
+                                                <input id="BuyerName" name="BuyerName" class="form-control input-sm" type="text" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Buyer Team</label>
+                                            <div class="col-sm-7">
+                                                <input id="BuyerTeamName" name="BuyerTeamName" class="form-control input-sm" type="text" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Performance Code</label>
+                                            <div class="col-sm-7">
+                                                <input id="PerformanceCode" name="PerformanceCode" class="form-control input-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @*<div class="form-group">
+                                                <label class="control-label col-sm-5 small">Booking No</label>
+                                                <div class="col-sm-7" style="text-align:right">
+                                                    <input id="BookingNo" name="BookingNo" class="form-control input-sm" readonly />
+                                                </div>
+                                            </div>*@
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Composition</label>
+                                            <div class="col-sm-7">
+                                                <input id="Composition" name="Composition" class="form-control input-sm" type="text" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Machine Type</label>
+                                            <div class="col-sm-7">
+                                                <input id="SubClassName" name="SubClassName" class="form-control input-sm" type="text" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Technical Name</label>
+                                            <div class="col-sm-7">
+                                                <input id="TechnicalName" name="TechnicalName" class="form-control input-sm" type="text" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Color</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="ColorName" name="ColorName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Fabric Qty</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="FabricQty" name="FabricQty" class="form-control input-sm" type="number" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    @*<input id="UploadFile" type="file" multiple="multiple" name="UploadFile" accept="image/*" />*@ @*accept=".xlsx,.xls,image/*,.doc,.docx,.pdf"*@
+                                                    <button type="button" class="btn btn-primary m-w-120" id="imageShow"><i class="fa fa-save"></i>&nbsp;&nbsp;Upload Image</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Images
+                        </div>
+                        <div class="panel-body btn-group-xs">
+                            @*<button type="button" class="btn btn-primary m-w-80" id="btnAddBuyer"><i class="fa fa-plus"></i>&nbsp;&nbsp;Buyer</button>*@
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblImage" class="table table-bordered table-striped tblImage">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>SL</th>
+                                                    <th class="cellSelect">Test Method</th>
+                                                    <th>Image Group</th>
+                                                    <th>Image Sub Group</th>
+                                                    <th class="cellImg">Image</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                        </div>
+                        <div class="panel-body btn-group-xs">
+                            @*<button type="button" class="btn btn-primary m-w-80" id="btnAddBuyer"><i class="fa fa-plus"></i>&nbsp;&nbsp;Buyer</button>*@
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnBack"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSaveAndSend" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnApprove" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnAcknowledage" style="display:none"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledage</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modal-child-Live-Product">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="childTitle">Images Upload</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                                            <div class="panel-body">
+                                                <input id="UploadFile" type="file" class="file" multiple name="UploadFile" accept="image/*">
+                                            </div>
+                                            <div id="ProductImagediv" style="height: 150px; width: 100%; overflow-y: auto;"></div>
+                                            <div id="ProductImagedivWithDelete" style="height: 150px; width: 100%; overflow-y: auto;" hidden></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" id="btnAddImages">Add</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

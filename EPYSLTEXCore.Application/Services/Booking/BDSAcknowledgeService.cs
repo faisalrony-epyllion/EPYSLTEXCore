@@ -3259,6 +3259,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     fBookingAcknowledges.ForEach(x =>
                     {
                         var obj = fbaListDates.Find(y => y.BookingNo == x.BookingNo);
+                        if (obj.IsNull()) obj = new FBookingAcknowledge();
 
                         if (x.StatusText == "Pending For Allowance") x.StartDate = obj.DateUpdated;
                         else if (x.StatusText == "Pending For Utilization Confirmation") x.StartDate = obj.ApprovedDateAllowance;

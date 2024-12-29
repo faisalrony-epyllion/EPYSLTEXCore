@@ -877,7 +877,7 @@
         public const string BOOKING_MASTER = "BookingMaster";//Garments Table
         public const string BOOKING_CHILD = "BookingChild";//Garments Table
         public const string BOOKING_ITEM_ACKNOWLEDGE = "BookingItemAcknowledge";//Garments Table 
-        public const string ItemSegmentName = "ItemSegmentName"; 
+        public const string ItemSegmentName = "ItemSegmentName";
         public const string ItemMasterBOMTemp = "ItemMasterBOMTemp";
         #endregion
 
@@ -935,6 +935,9 @@
         public const string CompositionBlendType = "T_CompositionBlendType";
         public const string YarnCompositionBasicSetup = "YarnCompositionBasicSetup";
         public const string YarnCountBasicSetup = "YarnCountBasicSetup";
+        public const string YDBookingChild = "T_YDBookingChild";
+        public const string JobCardStatus = "JobCardStatus";
+        public const string DyeingMCStatusSetup = "DyeingMCStatusSetup";
     }
 
 }

@@ -1,0 +1,356 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblRequirementId = "tblRequirement" + pageId;
+    var tblOthersRequirementId = "tblOthersRequirement" + pageId;
+    var tblRecipeId = "tblRecipe" + pageId;
+    var tblKProductionId = "tblKProduction" + pageId;
+    var tblRequirementsChildId = "tblRequirementsChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblRollId = "tblRoll" + pageId;
+    var divRollId = "divRoll" + pageId;
+}
+
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;Pending
+                </button>
+                <button id="btnList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Complete List
+                </button>
+                @*<button id="btnApproveList" class="btn btn-default text-grey btn-sm">
+                        <i class="fa fa-list"></i>&nbsp;Approve List
+                    </button>*@
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YDBatchID" name="YDBatchID" value="-1111" />
+            <input type="hidden" id="YDBookingMasterID" name="YDBookingMasterID" value="-1111" />
+            <input type="hidden" name="YDRecipeID" id="YDRecipeID" />
+            <input type="hidden" name="ConceptID" id="ConceptID" />
+            <input type="hidden" name="BookingID" id="BookingID" />
+            <input type="hidden" name="ExportOrderID" id="ExportOrderID" />
+            <input type="hidden" name="BuyerID" id="BuyerID" />
+            <input type="hidden" name="BuyerTeamID" id="BuyerTeamID" />
+            <input type="hidden" name="ItemMasterID" id="ItemMasterID" />
+            <input type="hidden" name="ColorID" id="ColorID" />
+            <input type="hidden" name="CCColorID" id="CCColorID" />
+            <input type="hidden" name="DMID" id="DMID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Batch No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDBatchNo" name="YDBatchNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Recipe Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDRecipeDate" name="YDRecipeDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Concept No</label>
+                                        <div class="col-sm-8">
+                                            <input id="ConceptNo" name="ConceptNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Batch Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDBatchDate" name="YDBatchDate" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Color Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="ColorName" name="ColorName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Fabric Qty</label>
+                                        <div class="col-sm-8">
+                                            <input id="FabricQty" name="FabricQty" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Recipe No</label>
+                                        <div class="col-sm-8">
+                                            <input id="RecipeNo" name="RecipeNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Batch Weight (KG)</label>
+                                        <div class="col-sm-8">
+                                            <input id="BatchWeightKG" name="BatchWeightKG" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Batch Weight (Pcs)</label>
+                                        <div class="col-sm-8">
+                                            <input id="BatchWeightPcs" name="BatchWeightPcs" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <input id="Remarks" name="Remarks" class="form-control input-sm" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Machine Information
+                            &nbsp;&nbsp;
+                            <button type="button" id="btnSelectMachine" class="btn btn-success btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;Select Machine
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">M/C No</label>
+                                        <div class="col-sm-8">
+                                            <input id="DMNo" name="DMNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Nozzle</label>
+                                        <div class="col-sm-8">
+                                            <input id="DyeingNozzleQty" name="DyeingNozzleQty" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Capacity</label>
+                                        <div class="col-sm-8">
+                                            <input id="DyeingMcCapacity" name="DyeingMcCapacity" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">M/C Loading(%)</label>
+                                        <div class="col-sm-8">
+                                            <input id="MachineLoading" name="MachineLoading" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divRequirement">
+                    <div class="panel panel-success col-sm-12" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Requirement
+                            &nbsp;&nbsp;
+                            <button type="button" id="btnAddItem" class="btn btn-success btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;Add Item
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblRequirementId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divOtherRequirement">
+                    <div class="panel panel-success col-sm-12" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Others Requirement
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblOthersRequirementId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success col-sm-12" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Recipe Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblRecipeId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            @*<button type="button" class="btn btn-primary m-w-120" id="btnApprove"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-item-req-child">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title" id="childTitle"></h4>
+                            Roll Information
+                        </div>
+                        <div class="modal-body">
+                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <table id="@tblRequirementsChildId"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnOk">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-splitted-roll">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title" id="childTitle"></h4>
+                            Roll Information
+                        </div>
+                        <div class="modal-body">
+                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="form-horizontal">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <table id="@tblKProductionId"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-child">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title" id="childTitle"></h4>
+                            Split Roll
+                        </div>
+                        <div class="modal-body">
+                            <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                <div class="panel-heading">
+                                    Roll Information
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-3" style="text-align:right;font-style:normal">No Of Split:</label>
+                                        <div class="col-sm-4">
+                                            <input id="NoOfSplit" name="NoOfSplit" class="input-sm col-sm-8" type="number" />
+                                            <button type="button" class="btn btn-default m-w-60 btn-xs" id="btnSplit"><i class="fa fa-check"></i>&nbsp;Split</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-horizontal">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <table id="@tblRollId"></table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btnSaveKProd">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

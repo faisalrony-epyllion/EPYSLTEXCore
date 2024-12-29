@@ -17,14 +17,15 @@ namespace EPYSLTEXCore.Application.Services.RND
     internal class LabTestRequisitionService : ILabTestRequisitionService
     {
         private readonly IDapperCRUDService<LabTestRequisitionMaster> _service;
-        
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
 
         public LabTestRequisitionService(IDapperCRUDService<LabTestRequisitionMaster> service)
         {
             _service = service;
-            
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<LabTestRequisitionMaster>> GetPagedAsync(int isBDS, Status status, PaginationInfo paginationInfo)
@@ -1184,19 +1185,24 @@ namespace EPYSLTEXCore.Application.Services.RND
         public async Task<LabTestRequisitionMaster> SaveAsync(LabTestRequisitionMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
+
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity =  await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:
@@ -1215,7 +1221,9 @@ namespace EPYSLTEXCore.Application.Services.RND
                 await _service.SaveAsync(entity.Countries, transaction);
                 await _service.SaveAsync(entity.EndUses, transaction);
                 await _service.SaveAsync(entity.FinishDyeMethods, transaction);
+
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 //LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END
 
@@ -1226,25 +1234,27 @@ namespace EPYSLTEXCore.Application.Services.RND
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 
-        private async Task<LabTestRequisitionMaster> AddAsync(LabTestRequisitionMaster entity)
+        private async Task<LabTestRequisitionMaster> AddAsync(LabTestRequisitionMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            entity.LTReqMasterID = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_MASTER);
-            entity.ReqNo = await _service.GetMaxNoAsync(TableNames.REQ_NO);
-            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Count());
-            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Count()));
+            entity.LTReqMasterID = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            entity.ReqNo = await _service.GetMaxNoAsync(TableNames.REQ_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
             int maxLabTestRequisitionCareLableId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_CARE_LABEL, entity.CareLabels.Count());
 
-            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Count());
-            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Count());
-            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Count());
+            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             int nLTReqBuyerID = 0;
 
@@ -1305,15 +1315,15 @@ namespace EPYSLTEXCore.Application.Services.RND
             return entity;
         }
 
-        private async Task<LabTestRequisitionMaster> UpdateAsync(LabTestRequisitionMaster entity)
+        private async Task<LabTestRequisitionMaster> UpdateAsync(LabTestRequisitionMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()));
-            int maxLabTestRequisitionCareLableId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_CARE_LABEL, entity.CareLabels.Where(x => x.EntityState == EntityState.Added).Count());
+            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionCareLableId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_CARE_LABEL, entity.CareLabels.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
-            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Where(x => x.EntityState == EntityState.Added).Count());
+            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             int nLTReqBuyerID = 0;
 
@@ -1505,10 +1515,14 @@ namespace EPYSLTEXCore.Application.Services.RND
         public async Task<LabTestRequisitionMaster> ReviseAsync(LabTestRequisitionMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
 
                 //only for revision after UnAcknowledge
                 await _connection.ExecuteAsync("spBackupLabTestRequisition_Full", new { LTReqMasterID = entity.LTReqMasterID }, transaction, 30, CommandType.StoredProcedure);
@@ -1517,11 +1531,11 @@ namespace EPYSLTEXCore.Application.Services.RND
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity = await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:

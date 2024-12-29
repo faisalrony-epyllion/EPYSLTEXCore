@@ -14,15 +14,17 @@ namespace EPYSLTEXCore.Application.Services.RND
     public class FinishingProcessProductionService : IFinishingProcessProductionService
     {
         private readonly IDapperCRUDService<FinishingProcessMaster> _service;
-
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
         private decimal _currentTime=0;
 
         public FinishingProcessProductionService(
             IDapperCRUDService<FinishingProcessMaster> service)
         {
             _service = service;
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<FinishingProcessMaster>> GetPagedAsync(Status status, PaginationInfo paginationInfo)
@@ -320,22 +322,31 @@ namespace EPYSLTEXCore.Application.Services.RND
         public async Task SaveAsync(FinishingProcessMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 await _service.SaveSingleAsync(entity, transaction);
                 await _service.SaveAsync(entity.FinishingProcessChilds, transaction);
+
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 

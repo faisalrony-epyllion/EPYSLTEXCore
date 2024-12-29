@@ -17,14 +17,16 @@ namespace EPYSLTEX.Infrastructure.Services
     public class RollFinishingInfoService : IRollFinishingInfoService
     {
         private readonly IDapperCRUDService<DyeingBatchMaster> _service;
-        
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
         private decimal _currentTime = 0;
 
         public RollFinishingInfoService(IDapperCRUDService<DyeingBatchMaster> service)
         {
             _service = service;
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<DyeingBatchMaster>> GetPagedAsync(Status status, PaginationInfo paginationInfo)
@@ -430,22 +432,31 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task SaveBatchItemAsync(DyeingBatchItem entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 await _service.SaveSingleAsync(entity, transaction);
                 await _service.SaveAsync(entity.DyeingBatchChildFinishingProcesses, transaction);
+
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 

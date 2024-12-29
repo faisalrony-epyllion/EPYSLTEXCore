@@ -648,19 +648,24 @@ namespace EPYSLTEX.Core.Interfaces.Services
         public async Task SaveAsync(FinishingProcessMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
+
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity =  await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:
@@ -696,24 +701,27 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 await _service.SaveAsync(preFinishingProcessChildItems, transaction);
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 
-        private async Task<FinishingProcessMaster> AddAsync(FinishingProcessMaster entity)
+        private async Task<FinishingProcessMaster> AddAsync(FinishingProcessMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
             entity.FPMasterID = _service.GetMaxId(TableNames.FINISHING_PROCESS_MASTER,0);
-            entity.PFBatchNo = await _service.GetMaxNoAsync(TableNames.FP_BATCH_NO);
-            var maxYRChildId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD, entity.FinishingProcessChilds.Count);
-            var maxChildItemId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD_ITEM, entity.FinishingProcessChilds.Sum(x => x.PreFinishingProcessChildItems.Count));
+            entity.PFBatchNo = await _service.GetMaxNoAsync(TableNames.FP_BATCH_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _gmtConnection);
+            var maxYRChildId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD, entity.FinishingProcessChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxChildItemId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD_ITEM, entity.FinishingProcessChilds.Sum(x => x.PreFinishingProcessChildItems.Count), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
             foreach (FinishingProcessChild item in entity.FinishingProcessChilds)
             {
                 item.FPChildID = maxYRChildId++;
@@ -731,10 +739,10 @@ namespace EPYSLTEX.Core.Interfaces.Services
             return entity;
         }
 
-        private async Task<FinishingProcessMaster> UpdateAsync(FinishingProcessMaster entity)
+        private async Task<FinishingProcessMaster> UpdateAsync(FinishingProcessMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            var maxYRChildId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD, entity.FinishingProcessChilds.Where(x => x.EntityState == EntityState.Added).Count());
-            var maxChildItemId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD_ITEM, entity.FinishingProcessChilds.Sum(x => x.PreFinishingProcessChildItems.Where(c => c.EntityState == EntityState.Added).Count()));
+            var maxYRChildId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD, entity.FinishingProcessChilds.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxChildItemId = await _service.GetMaxIdAsync(TableNames.FINISHING_PROCESS_CHILD_ITEM, entity.FinishingProcessChilds.Sum(x => x.PreFinishingProcessChildItems.Where(c => c.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             foreach (FinishingProcessChild item in entity.FinishingProcessChilds.ToList())
             {

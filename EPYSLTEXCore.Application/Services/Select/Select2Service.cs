@@ -8,16 +8,13 @@ namespace EPYSLTEXCore.Application.Services.Select
     public class Select2Service:ISelect2Service
     {
         private readonly ISqlQueryRepository<Select2OptionModel> _sqlQueryRepository;
-        private readonly IGmtSqlQueryRepository<Select2OptionModel> _gmtSqlQueryRepository;
+        
 
         private readonly IDapperCRUDService<LoginUser> _gmtService;
 
-        public   Select2Service(       
-        //ISqlQueryRepository<Select2OptionModel> sqlQueryRepository
+        public   Select2Service(      
           IDapperCRUDService<LoginUser> gmtService)
         {
-
-        //    _sqlQueryRepository = sqlQueryRepository;
             _gmtService = gmtService;      
             _gmtService.Connection = _gmtService.GetConnection(AppConstants.GMT_CONNECTION);
 

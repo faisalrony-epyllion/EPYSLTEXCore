@@ -16602,8 +16602,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     query = $@"Update {DbNames.EPYSL}..SampleBookingMaster Set UnAcknowledge = 1, UnAcknowledgeReason = '{entity.UnAcknowledgeReason}' Where BookingID = {entity.BookingID}";
                 else
                     query = $@"Update {DbNames.EPYSL}..SampleBookingMaster Set Acknowledge = 1 Where BookingID ={entity.BookingID}";
-                await _gmtservice.ExecuteAsync(query, AppConstants.GMT_CONNECTION);
-
+                _gmtservice.ExecuteWithTransactionAsync(query, ref transactionGmt);
+                //_gmtservice.RunSqlCommand(query, true);
                 #endregion Sample Booking Master
 
                 //query = $@"Insert into {DbNames.EPYSLTEX}..HostApplication Values( '{hostName}')";

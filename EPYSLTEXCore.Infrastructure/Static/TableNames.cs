@@ -935,6 +935,7 @@
         public const string CompositionBlendType = "T_CompositionBlendType";
         public const string YarnCompositionBasicSetup = "YarnCompositionBasicSetup";
         public const string YarnCountBasicSetup = "YarnCountBasicSetup";
+        public const string SizeWiseWeight_HK = "SizeWiseWeight_HK";
     }
 
 }

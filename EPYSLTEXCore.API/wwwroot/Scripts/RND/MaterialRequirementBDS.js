@@ -55,6 +55,7 @@
         }
 
         initMasterTable();
+
         $formEl.find("#addYarnComposition").on("click", function (e) {
             showAddComposition();
         });
@@ -421,7 +422,7 @@
         obj.Allowance = getDefaultValueWhenInvalidN(obj.Allowance);
         obj.Distribution = getDefaultValueWhenInvalidN(obj.Distribution);
 
-        parent.TotalQtyInKG = getDefaultValueWhenInvalidN(parent.TotalQtyInKG);
+        parent.TotalQtyInKG = getDefaultValueWhenInvalidN_Float(parent.TotalQtyInKG);
         //obj.BookingQty = (parent.TotalQtyInKG * (obj.Distribution / 100)) / (1 + (x.YarnAllowance / 100) - (0.5 / 100));
         obj.BookingQty = parent.TotalQtyInKG * (obj.Distribution / 100);
         //if (isDoCalculateFields) {
@@ -1923,6 +1924,11 @@
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
                 masterData = response.data;
+                debugger;
+                masterData.CollarSizeID = masterData.CollarSizeList[0].text;
+                masterData.CollarWeightInGm = masterData.CollarSizeList[0].desc;
+                masterData.CuffSizeID = masterData.CuffSizeList[0].text;
+                masterData.CuffWeightInGm = masterData.CuffSizeList[0].desc;
                 masterData.BookingNo = masterData.OtherItems.length > 0 ? masterData.OtherItems[0].BookingNo : "";
                 masterData.BookingDate = masterData.OtherItems.length > 0 ? formatDateToDefault(masterData.OtherItems[0].BookingDate) : "";
                 setFormData($formEl, masterData);
@@ -2379,6 +2385,7 @@
     }
     function save(IsComplete) {
         //Validation
+
         initializeValidation($formEl, validationConstraints);
         if (!isValidForm($formEl, validationConstraints)) return toastr.error("Please correct all validation errors!");
         else hideValidationErrors($formEl);

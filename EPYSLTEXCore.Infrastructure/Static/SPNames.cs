@@ -48,7 +48,9 @@ namespace EPYSLTEX.Core.Statics
         public const string sp_Validation_FBookingAcknowledge_FBA = "T_sp_Validation_FBookingAcknowledge_FBA";
         public const string sp_Validation_FBookingAcknowledgementLiabilityDistribution_1 = "T_sp_Validation_FBookingAcknowledgementLiabilityDistribution_1";
         public const string sp_Validation_FBookingAcknowledgementYarnLiability_1 = "T_sp_Validation_FBookingAcknowledgementYarnLiability_1";
+        public const string spUpdateBDSTNA_BatchPreparationPlan = "T_spUpdateBDSTNA_BatchPreparationPlan";
+        public const string spUpdateJobCardProductionQty = "T_spUpdateJobCardProductionQty";
+        public const string spUpdateBDSTNA_KnittingPlan = "T_spUpdateBDSTNA_KnittingPlan";
     }
-    
 }
 

@@ -22,9 +22,10 @@
     };
     const commonAPiUrls = {
         combo: "/api/common-interface/combodata/",
+        dependentCombo: "/api/common-interface/dependentCombodata/",
         comboChildGrid: "/api/common-interface/combodatachildgrid/",
         finder: "/api/common-interface/finderdata/",
-      
+
     };
     var selectColumnList = [];
     var childSelectColumnList = [];
@@ -46,8 +47,9 @@
         // Append the menuId to the baseKey
         localStorageKeys.baseKey = `${localStorageKeys.baseKey}${menuId}`;
         commonAPiUrls.combo = `${commonAPiUrls.combo}${menuId}`;
+        commonAPiUrls.dependentCombo = `${commonAPiUrls.dependentCombo}${menuId}`;
         commonAPiUrls.comboChildGrid = `${commonAPiUrls.comboChildGrid}${menuId}`;
-        commonAPiUrls.finder=`${commonAPiUrls.finder}${menuId}`;
+        commonAPiUrls.finder = `${commonAPiUrls.finder}${menuId}`;
         childForm = $("#form-ci-child-" + menuId);
         tblChildId = "#tabaleGridData-" + menuId;
         tblFinderId = "#tblSearchData-" + menuId;
@@ -59,13 +61,13 @@
             e.preventDefault();
             saveChild();
         });
-       
+
         $("#btnNewChildItem-" + menuId).click(function (e) {
 
             e.preventDefault();
 
             if (!validateMasterForm()) return;
-          
+
             var cObj = _.clone(childObject);
             cObj.Id = getMaxIdForArray(masterData.Childs, "Id");
             //cObj.EntityState = 4;
@@ -76,22 +78,22 @@
     });
     function resetForm() {
         $formEl.trigger("reset");
-      
+
         $.each($formEl.find('select'), function (i, el) {
             $(el).val(null).trigger('change');
-           // $(el).select2('').trigger('change');
+            // $(el).select2('').trigger('change');
         });
         initChildGrid([]);
     }
 
     // #region Genereting markup
     function getInterfaceChilds() {
-        
-        
+
+
         var url = '/api/common-interface/configs?menuId=' + menuId;
         axios.get(url)
             .then(function (response) {
-                
+
                 interfaceConfigs = response.data;
                 $("#title-form-ci-" + menuId).text(interfaceConfigs.InterfaceName);
                 $("#finderTitle-" + menuId).text(interfaceConfigs.InterfaceName + " List")
@@ -100,7 +102,7 @@
                 initControls();
 
                 if (interfaceConfigs.HasGrid) {
-                   
+
                     if (interfaceConfigs.ChildGrids.length == 0) {
                         //toastr.error("No child grid found.");
                         return;
@@ -113,14 +115,14 @@
             .catch(showResponseError);
     }
     async function initChildGrid(data) {
-      
+
         if (interfaceConfigs.HasGrid) {
-        
+
             if (interfaceConfigs.ApiUrl.length == 0) {
                 toastr.error("Api URL is missing.");
                 return;
             }
-            
+
             var allSelectListObj = await executeSelectApis();
             if ($tblChildEl) $tblChildEl.destroy();
             var columns = [];
@@ -133,7 +135,7 @@
                 columnFilters = childGrid.ColumnFilters.split(','),
                 columnTypes = childGrid.ColumnTypes.split(','),
                 columnSortings = childGrid.ColumnSortings.split(',');
- 
+
             for (var iColumnName = 0; iColumnName < columnNames.length; iColumnName++) {
                 var columnName = $.trim(columnNames[iColumnName]);
                 var columnObj = {
@@ -144,7 +146,7 @@
                     allowFiltering: convertToBoolean(columnFilters[iColumnName]),
                     visible: $.inArray(columnName, hiddenColumns) !== -1 ? false : true
                 };
-          
+
                 if (columnName == $.trim(childGrid.PrimaryKeyColumn)) columnObj.isPrimaryKey = true;
                 columnObj = setAdditionalProps(columnObj, columnTypes[iColumnName], columnName, allSelectListObj);
                 columns.push(columnObj);
@@ -152,7 +154,7 @@
             var commandsField = getCommandsFields();
             if (commandsField) columns.unshift(commandsField);
             ej.base.enableRipple(true);
-             
+
             $tblChildEl = new ej.grids.Grid({
                 dataSource: data,
                 columns: columns,
@@ -163,68 +165,68 @@
                 recordClick: function (args) {
 
                 },
-                
+
                 actionComplete: function (args) {
-                     
-                  var keyName='';
+
+                    var keyName = '';
                     var keyValue = '';
-                    
+
                     if (args.action == localStorageKeys.add) {
-                         keyValue = args.data;
-                         keyName=localStorageKeys.add;
-                         keyValue.Status=localStorageKeys.add;
-                       addUniqueObjectToLocalStorage(keyValue);
-                        
+                        keyValue = args.data;
+                        keyName = localStorageKeys.add;
+                        keyValue.Status = localStorageKeys.add;
+                        addUniqueObjectToLocalStorage(keyValue);
+
                     }
 
                     // Check if the action is 'edit'
-                    if (args.action == localStorageKeys.edit) { 
-                        
+                    if (args.action == localStorageKeys.edit) {
+
                         // Get the data to be edited from the arguments
-                        
+
                         keyValue = args.data;
-                         keyName=localStorageKeys.edit;
-                          keyValue.Status=localStorageKeys.edit;
-                         addUniqueObjectToLocalStorage(keyValue);
+                        keyName = localStorageKeys.edit;
+                        keyValue.Status = localStorageKeys.edit;
+                        addUniqueObjectToLocalStorage(keyValue);
                     }
-                    
+
                     if (args.requestType == localStorageKeys.delete) {
-                     
+
                         // Get the edited data
-                         keyValue = Array.isArray(args.data) && args.data.length>0 ? args.data[args.data.length-1]:args.data;
-                        keyName=localStorageKeys.delete;
-                         keyValue.Status=localStorageKeys.delete;
-                       addUniqueObjectToLocalStorage(keyValue);
- 
+                        keyValue = Array.isArray(args.data) && args.data.length > 0 ? args.data[args.data.length - 1] : args.data;
+                        keyName = localStorageKeys.delete;
+                        keyValue.Status = localStorageKeys.delete;
+                        addUniqueObjectToLocalStorage(keyValue);
+
                     }
-                    
-                   
+
+
                 },
                 actionBegin: function (args) {
                     if (args.requestType === "save") {
-                      
+
                         var selectColumns = interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select");
                         selectColumns.map(x => {
                             args.data[x.ValueColumnName] = args.rowData[x.ValueColumnName];
                             args.data[x.DisplayColumnName] = args.rowData[x.DisplayColumnName];
                         });
                     } else if (args.requestType === "add") {
-                      
-                      var  ParentColumn = interfaceConfigs.ChildGrids[0]['ParentColumn']
-                      var   PrimaryKeyColumn = interfaceConfigs.ChildGrids[0]['PrimaryKeyColumn'] 
-                       
+
+                        var ParentColumn = interfaceConfigs.ChildGrids[0]['ParentColumn']
+                        var PrimaryKeyColumn = interfaceConfigs.ChildGrids[0]['PrimaryKeyColumn']
+
                         var sysColName = getSysColumn();
-       
+
 
                         args.data[ParentColumn] = $formEl.find("#" + sysColName + "").val();
-                       /* for (var key in args.rowData) {
-                            var wd = key.slice(-2);
-                            if (wd.toLowerCase() == "id") {
-                                args.rowData[key] = 0;
-                                args.data[key] = 0;
-
-                            }
-                        }*/
+                        /* for (var key in args.rowData) {
+                             var wd = key.slice(-2);
+                             if (wd.toLowerCase() == "id") {
+                                 args.rowData[key] = 0;
+                                 args.data[key] = 0;
+ 
+                             }
+                         }*/
                     }
                 },
             });
@@ -233,67 +235,67 @@
 
             $tblChildEl.refreshColumns;
             $tblChildEl.appendTo(tblChildId);
- 
+
         }
     }
-  
-        // Common function to  remove  localStorage
+
+    // Common function to  remove  localStorage
     function removeLocalStorage(key) {
-        
-             // Remove the key if it exists
+
+        // Remove the key if it exists
         window.localStorage.removeItem(key);
     }
     function getLocalStorage(key) {
-        
-             // Remove the key if it exists
-       return localStorage.getItem(key) == null ? [] : JSON.parse(localStorage.getItem(key));
+
+        // Remove the key if it exists
+        return localStorage.getItem(key) == null ? [] : JSON.parse(localStorage.getItem(key));
     }
-    function setLocalStorage(key,jsonObj) {
-        
-             // Remove the key if it exists
-       window.localStorage.setItem(key, JSON.stringify(jsonObj));
+    function setLocalStorage(key, jsonObj) {
+
+        // Remove the key if it exists
+        window.localStorage.setItem(key, JSON.stringify(jsonObj));
     }
     // Function to check for duplicates and push the object if it's not a duplicate
     function addUniqueObjectToLocalStorage(obj) {
-  
-       const array = getLocalStorage(localStorageKeys.baseKey);
-       const firstChildGrid = interfaceConfigs.ChildGrids.at(0);
-       const primaryKeyColumn = firstChildGrid?.PrimaryKeyColumn;
+
+        const array = getLocalStorage(localStorageKeys.baseKey);
+        const firstChildGrid = interfaceConfigs.ChildGrids.at(0);
+        const primaryKeyColumn = firstChildGrid?.PrimaryKeyColumn;
 
         if (primaryKeyColumn) {
             const indexToRemove = array.findIndex(p => p[primaryKeyColumn] === obj[primaryKeyColumn]);
-    
+
             if (indexToRemove !== -1 && obj.Status != localStorageKeys.add) {
                 const itemToRemove = array[indexToRemove];
                 const isItemNew = itemToRemove.Status === localStorageKeys.add;
-                 obj.Status = isItemNew ? localStorageKeys.add : obj.Status;                
-                 array.splice(indexToRemove, 1); 
-                 
+                obj.Status = isItemNew ? localStorageKeys.add : obj.Status;
+                array.splice(indexToRemove, 1);
+
             }
 
             array.push(obj);  // Add the updated object to the array
             setLocalStorage(localStorageKeys.baseKey, array);
         }
 
-             
 
-      
-        
+
+
+
     }
 
     async function executeSelectApis() {
-  
+
         var objList = [],
             dependentColumnList = [],
             apiUrls = [];
-        
-        interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select" ).map(x => {
+
+        interfaceConfigs.ChildGridColumns.filter(x => x.EntryType == "select").map(x => {
             var dIndex = interfaceConfigs.ChildGridColumns.findIndex(d => d.DependentColumnName == x.ColumnName);
             if (!dependentColumnList.includes(x.ColumnName) || dIndex > -1) {
-               
+
                 var obj = {
                     ColumnName: x.ColumnName,
-                    ApiUrl: x.SelectSql ? commonAPiUrls.comboChildGrid + '/' + x.ChildGridColumnID : x.ApiUrl,                   
+                    ApiUrl: x.SelectSql ? commonAPiUrls.comboChildGrid + '/' + x.ChildGridColumnID : x.ApiUrl,
                     ValueColumnName: x.ValueColumnName,
                     DisplayColumnName: x.DisplayColumnName,
                     Label: x.Label,
@@ -301,7 +303,7 @@
                     ChildGridColumnID: x.ChildGridColumnID,
                     IsEnabled: x.IsEnabled
                 };
-               
+
                 apiUrls.push(obj);
                 if (x.HasDependentColumn) dependentColumnList.push(x.DependentColumnName);
             }
@@ -310,10 +312,10 @@
         await Promise.all(
             apiUrls.map(x =>
                 axios.get(x.ApiUrl).then(function (res) {
- 
+
                     var obj = {
                         ColumnName: x.ColumnName,
-                        List: res.data,                         
+                        List: res.data,
                         Label: x.Label,
                         DependentColumnName: x.DependentColumnName,
                         ChildGridColumnID: x.ChildGridColumnID,
@@ -325,7 +327,7 @@
         return objList;
     }
     function generateParams(columnName, dataObj) {
-      
+
         var paramArray = [];
         var obj = interfaceConfigs.Childs.find(x => x.ColumnName = columnName);
         if (obj) {
@@ -354,7 +356,7 @@
             });
     }
     function getSelectApiUrl(paramArray) {
-    
+
         var selectApiUrl = interfaceConfigs.Childs.find(x => x.ColumnName = paramArray[0].ColumnName).SelectApiUrl;
         paramArray.map(x => {
             selectApiUrl = selectApiUrl.replace("{" + x.ColumnName + "}", x.Value);
@@ -372,7 +374,7 @@
                 columnObj.displayAsCheckBox = true;
                 break;
             case "select":
-             
+
                 var gridColumnObj = interfaceConfigs.ChildGridColumns.find(x => x.ColumnName == columnName),
                     columnObjWithList = allSelectListObj.find(x => x.ColumnName == columnName);
                 if (gridColumnObj) {
@@ -400,12 +402,12 @@
                             IsEnabled: columnObjWithList.IsEnabled
                         });
                     }
-                    
+
                     columnObj.valueAccessor = ej2GridDisplayFormatter;
                     columnObj.dataSource = columnObjWithList.List;
-                    columnObj.displayField= columnObjWithList.List.length>0  && Object.keys(columnObjWithList.List[0]).length>2 ? Object.keys(columnObjWithList.List[0])[1]:'text';
+                    columnObj.displayField = columnObjWithList.List.length > 0 && Object.keys(columnObjWithList.List[0]).length > 2 ? Object.keys(columnObjWithList.List[0])[1] : 'text';
                     columnObj.field = columnObjWithList.ColumnName;
-                    columnObj.edit= ej2GridDropDownObj({
+                    columnObj.edit = ej2GridDropDownObj({
                     });
                     //columnObj.edit = {
                     //    create: function () {
@@ -491,7 +493,7 @@
         return null;
     }
     function getGridEditSettings() {
-    
+
         var obj = {
             allowAdding: interfaceConfigs.IsInsertAllow,
             allowEditing: interfaceConfigs.IsUpdateAllow,
@@ -513,14 +515,14 @@
             totalRow = setColWiseRowValue(interfaceConfigs.MasterColNum, interfaceConfigs.MasterRowNum);
 
         template += setColStartDiv(totalColumn);
- 
+
         var rowCount = 0,
             colCount = 1;
 
         $.each(interfaceConfigs.Childs, function (i, value) {
             var cssHidden = value.IsHidden ? "display:none;" : "",
                 cssEnable = !value.IsEnable ? "disabled" : "";
-        
+
             rowCount++;
             switch (value.EntryType) {
                 case "text":
@@ -567,9 +569,9 @@
                         </div>`;
                     break;
                 case "select":
-                    
+
                     template +=
-                    
+
                         `<div class="form-group" style='${cssHidden}'>
                                 <label class="col-sm-2 control-label ci d-flex justify-content-end">${value.Label}</label>
                                 <div class="col-sm-10">
@@ -580,7 +582,7 @@
                                     </div>
                                 </div>
                             </div>`;
-                      
+
                     var selectColumn = {};
                     selectColumn.id = value.ColumnName;
                     selectColumn.placeholder = value.Label;
@@ -633,18 +635,18 @@
             }
         });
         $formEl.append(template);
-        
+
         initAddNew();
         initFinder();
     }
     function getSysColumn() {
-       
-       var colName=  interfaceConfigs.Childs.find(x => x.IsSys === true).ColumnName;
+
+        var colName = interfaceConfigs.Childs.find(x => x.IsSys === true).ColumnName;
         return colName;
     }
 
     function adNew(IsAllowAddNew, menuId, childID, interfaceConfigs, ColumnName) {
-    
+
         if (IsAllowAddNew && interfaceConfigs.PrimaryKeyColumn.toLowerCase().trim() == ColumnName.toLowerCase().trim()) {
             return `<span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-sm ci-adnew-${menuId}-${childID}"><i class="fa fa-plus" aria-hidden="true"></i></button>
@@ -662,16 +664,16 @@
         return "";
     }
 
-    function initAddNew() {         
+    function initAddNew() {
 
         interfaceConfigs.Childs.map(child => {
             $formEl.find("." + `ci-adnew-${menuId}-${child.ChildID}`).click(function () {
-               
+
                 newId();
             });
 
         });
-                    
+
     }
     function initFinder() {
         interfaceConfigs.Childs.filter(x => x.HasFinder == true).map(child => {
@@ -682,13 +684,13 @@
         });
     }
     function openSingleSelectFinder() {
- 
+
         var finder = new commonFinder({
             title: "Select " + selectedChild.Label,
             pageId: "divCommonInterface-" + menuId,
             height: 220,
             modalSize: "modal-lg",
-            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder + '/'+selectedChild.ChildID : selectedChild.FinderApiUrl,
+            apiEndPoint: selectedChild.FinderSql ? commonAPiUrls.finder + '/' + selectedChild.ChildID : selectedChild.FinderApiUrl,
             fields: selectedChild.FinderHeaderColumns,
             widths: selectedChild.FinderColumnWidths,
             headerTexts: selectedChild.FinderDisplayColumns,
@@ -698,32 +700,32 @@
             lowFiltering: selectedChild.FinderFilterColumns,
             autofitColumns: true,
             onSelect: function (res) {
-                
+
                 finder.hideModal();
-                var data = res.rowData;                 
+                var data = res.rowData;
                 for (var p in data) {
 
                     $formEl.find("#" + p).is('select') ? $formEl.find("#" + p).val(data[p]).trigger("change") : $formEl.find("#" + p).val(data[p]);
                 }
                 //setFormData($formEl, data);
-               $formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
-               // $formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
-              //  $formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
-              removeLocalStorage(localStorageKeys.baseKey);
-          
+                $formEl.find("#" + selectedChild.ColumnName).val(data[selectedChild.ColumnName]);
+                // $formEl.find("#" + selectedChild.FinderHeaderColumns).val(data[selectedChild.FinderHeaderColumns]);
+                //  $formEl.find("#" + selectedChild.FinderValueColumn).val(data[selectedChild.FinderValueColumn]);
+                removeLocalStorage(localStorageKeys.baseKey);
+
                 var finderElement = interfaceConfigs.Childs.filter(a => (a.FinderSql?.length > 0) || (a.FinderApiUrl?.length > 0));
                 var currentFinderElement = finderElement.length > 0 ? finderElement.find(p => p.ChildID == selectedChild.ChildID) : null;
                 var selectApiUrl = currentFinderElement != null ? currentFinderElement.SelectApiUrl : "";
-                
+
                 var primaryKeyValue = data[currentFinderElement.ColumnName];
                 selectApiUrl = `${selectApiUrl}${selectedChild.ChildID}/${primaryKeyValue}`;
-               
+
                 axios.get(selectApiUrl)
                     .then(function (response) {
-                        
+
                         masterData = response.data;
                         if (masterData.length === 0) {
-                            
+
                             //initChildGrid([]);
                             // toastr.error("You must add an empty child item in your api.");
                             for (var p in masterData) {
@@ -732,19 +734,19 @@
                             }
                             return;
                         }
-                      
+
                         if (interfaceConfigs.ChildGrids.length > 0) {
                             childObject = masterData;
-                            
+
                             generateChildGrid();
                             initChildGrid(childObject);
-}
-                        
+                        }
+
                     })
                     .catch(showResponseError);
-               // initChildGrid(interfaceConfigs.Childs);
+                // initChildGrid(interfaceConfigs.Childs);
 
-              //  loadGrid(generateParams(selectedChild.ColumnName, data));
+                //  loadGrid(generateParams(selectedChild.ColumnName, data));
                 //if (data.Childs) {
                 //    initChildGrid(data.Childs);
                 //    $tblChildEl.bootstrapTable('load', data.Childs);
@@ -753,6 +755,7 @@
         });
         finder.showModal();
     }
+    
     function initControls() {
         $formEl.find('.bootstrap-datepicker').datepicker({
             endDate: "0d",
@@ -761,19 +764,24 @@
 
         $.each(selectColumnList, function (i, value) {
             var el = $formEl.find("#" + value.id);
-            
+
             if (value.hasDependentColumn > 0) {
-                $formEl.find("#" + value.dependentColumnName).on('select2:select', function (e) {
-                    loadDependentSelection(el, value.apiUrl);
-                });
+                //$formEl.find("#" + value.dependentColumnName).on('select2:select', function (e) {
+                   
+                //   // loadDependentSelection(el, value.apiUrl);
+                //});
 
                 el.on('select2:select', function (e) {
-                    
-                    alert('e.params.data.desc')
-                    setSelect2Combo($formEl.find("#" + dependentSegmentEl.Id), e.params.data.desc)
+
+                    var selectedValue = e.params.data.id;
+                    var element = selectColumnList.find(p => p.id == value.dependentColumnName)
+
+                    loadDependentSelection($formEl.find("#" + value.dependentColumnName), element.apiUrl, selectedValue);
+                    // setSelect2Combo($formEl.find("#" + value.dependentColumnName), e.params.data.text)
+                    //$formEl.find("#" + value.dependentColumnName).val(e.params.data.desc).trigger("change");
                 });
             }
-           
+
             $.ajax({
                 type: 'GET',
                 url: value.apiUrl,
@@ -821,8 +829,11 @@
     }
     */
 
-    function loadDependentSelection(el, apiUrl) {
-        var url = apiUrl + "/" + id;
+    function loadDependentSelection(el, apiUrl, selectedValue) {
+      
+        apiUrl = apiUrl.replace(commonAPiUrls.combo, commonAPiUrls.dependentCombo);
+        el.empty();
+        var url = apiUrl + "/" + selectedValue;
         axios.get(url)
             .then(function (response) {
                 el.select2({
@@ -911,7 +922,7 @@
             editSettings: { allowAdding: true, allowEditing: true, allowDeleting: true },
             columns: columnList
         });
-    
+
 
         $tblChildEl.appendTo(tblChildId);
     }
@@ -992,59 +1003,58 @@
         childForm.trigger("reset");
         updateSysID(-1111);
         removeLocalStorage(localStorageKeys.baseKey);
-       /// childForm.find("#EntityState").val(4);
+        /// childForm.find("#EntityState").val(4);
     }
-    function updateSysID(id)
-    {
-        var  sysColName = getSysColumn();
-       
-        $formEl.find("#" + sysColName +"").val(id);
+    function updateSysID(id) {
+        var sysColName = getSysColumn();
+
+        $formEl.find("#" + sysColName + "").val(id);
     }
     function newId() {
-    
+
         resetForm();
         updateSysID(-1111);
         removeLocalStorage(localStorageKeys.baseKey);
-  
+
     }
 
     // #region Save
     function saveMaster(e) {
- 
+
         e.preventDefault();
         if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {
             this.value = this.checked;
         });
         var sysColName = getSysColumn();
-       var sysColValue =  $formEl.find("#" + sysColName + "").val();
+        var sysColValue = $formEl.find("#" + sysColName + "").val();
         var data = formDataToJson($formEl.serializeArray());
         data.Status = sysColValue == "-1111" ? localStorageKeys.add : localStorageKeys.edit;
-         if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
-       // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
-     
-        
-        data["Childs"]= getLocalStorage(localStorageKeys.baseKey);
-    
-        
+        if (masterData && masterData.Childs) data["Childs"] = masterData.Childs;
+        // if ($tblChildEl) data["Childs"] = $tblChildEl.getCurrentViewRecords();
 
-           
-        
+
+        data["Childs"] = getLocalStorage(localStorageKeys.baseKey);
+
+
+
+
+
         var config = {
             headers: {
                 'Content-Type': 'application/json'
             }
         };
-  
+
         $formEl.find('input:disabled').each(function () {
             data[$(this).attr("id")] = $(this).val();
         });
-       
-      
+
+
         axios.post(interfaceConfigs.SaveApiUrl, data, config)
-            .then(function (response) {  
-             
-               updateSysID(response.data)
+            .then(function (response) {
+
+                updateSysID(response.data)
                 toastr.success(constants.SUCCESS_MESSAGE);
                 //resetForm();
             })
@@ -1056,9 +1066,9 @@
     }
 
     function validateMasterForm() {
-         
+
         initializeValidation($formEl, constraints);
-     
+
         if (!isValidForm($formEl, constraints)) {
             toastr.error("Please correct all validation ")
             return false;
@@ -1070,7 +1080,7 @@
     }
 
     function saveChild() {
-     
+
         if (!validateChildForm()) {
             return;
         }
@@ -1085,9 +1095,9 @@
             data[v.name] = v.value;
             data["Actions"] = "";
         });
-          var sysColName = getSysColumn();
-           
-       /// childForm.find("#EntityState").val(4);
+        var sysColName = getSysColumn();
+
+        /// childForm.find("#EntityState").val(4);
         data[interfaceConfigs.ChildGrids[0].ParentColumn] = $formEl.find("#" + sysColName + "").val();
 
         masterData.Childs.rows.push(data);
@@ -1161,9 +1171,9 @@
     function generateChildElements() {
         var template = "";
         $.each(interfaceConfigs.ChildGrids[0].Childs, function (i, value) {
-      
+
             switch (value.EntryType) {
-               
+
                 case "text":
                     if (value.IsSys) {
                         template += '<div class="form-group">'

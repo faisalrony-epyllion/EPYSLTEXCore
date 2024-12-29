@@ -17,14 +17,16 @@ namespace EPYSLTEX.Infrastructure.Services
     public class RollFinishingInfoService : IRollFinishingInfoService
     {
         private readonly IDapperCRUDService<DyeingBatchMaster> _service;
-        
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
         private decimal _currentTime = 0;
 
         public RollFinishingInfoService(IDapperCRUDService<DyeingBatchMaster> service)
         {
             _service = service;
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<DyeingBatchMaster>> GetPagedAsync(Status status, PaginationInfo paginationInfo)

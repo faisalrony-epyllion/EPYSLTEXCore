@@ -1,13 +1,14 @@
 using Dapper.Contrib.Extensions;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
+using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using System.Data.Entity;
 
 namespace EPYSLTEX.Core.Entities.Tex
 {
-	[Table("FinishingMachineSetup")]
-	public class FinishingMachineSetup : IDapperBaseEntity
+
+    [Table(TableNames.FINISHING_MACHINE_SETUP)]
+    public class FinishingMachineSetup : IDapperBaseEntity
 	{
 		
 		[ExplicitKey]
@@ -104,18 +105,5 @@ namespace EPYSLTEX.Core.Entities.Tex
 			DateAdded = DateTime.Now;
 		}
 	}
-	#region
-	public class FinishingMachineSetupValidator : AbstractValidator<FinishingMachineSetup>
-	{
-		public FinishingMachineSetupValidator()
-		{
-			RuleFor(x => x.FMCMasterID).NotEmpty();
-			RuleFor(x => x.BrandID).NotEmpty();
-			RuleFor(x => x.UnitID).NotEmpty();
-			RuleFor(x => x.Capacity).NotEmpty();
-			RuleFor(x => x.MachineNo).NotEmpty();
-			RuleFor(x => x.Param1Value).NotEmpty().WithMessage("Please enter atleast one parameter value!");
-		}
-	}
-	#endregion
+
 }

@@ -1,12 +1,13 @@
 using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.DTOs;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
+using EPYSLTEX.Core.Statics;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 
 namespace EPYSLTEX.Core.Entities.Tex
 {
-    [Table("FinishingMachineConfigurationMaster")]
+
+    [Table(TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER)]
     public class FinishingMachineConfigurationMaster : DapperBaseEntity
     {
         [ExplicitKey]
@@ -67,16 +68,5 @@ namespace EPYSLTEX.Core.Entities.Tex
         }
     }
 
-    #region
 
-    public class FinishingMachineConfigurationMasterValidator : AbstractValidator<FinishingMachineConfigurationMaster>
-    {
-        public FinishingMachineConfigurationMasterValidator()
-        {
-            RuleFor(x => x.ProcessTypeID).NotEmpty();
-            RuleFor(x => x.ProcessName).NotEmpty();
-        }
-    }
-
-    #endregion
 }

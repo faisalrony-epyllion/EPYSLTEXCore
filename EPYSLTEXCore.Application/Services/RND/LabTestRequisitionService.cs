@@ -17,14 +17,15 @@ namespace EPYSLTEXCore.Application.Services.RND
     internal class LabTestRequisitionService : ILabTestRequisitionService
     {
         private readonly IDapperCRUDService<LabTestRequisitionMaster> _service;
-        
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
 
         public LabTestRequisitionService(IDapperCRUDService<LabTestRequisitionMaster> service)
         {
             _service = service;
-            
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<LabTestRequisitionMaster>> GetPagedAsync(int isBDS, Status status, PaginationInfo paginationInfo)

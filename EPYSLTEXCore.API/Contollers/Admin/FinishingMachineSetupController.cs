@@ -1,23 +1,20 @@
-﻿using AutoMapper;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.GuardClauses;
-using EPYSLTEX.Core.Interfaces.Repositories;
+﻿using EPYSLTEX.Core.Entities.Tex;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Core.Models;
-using EPYSLTEX.Core.Statics;
-using EPYSLTEX.Web.Extends.Filters;
 using EPYSLTEX.Web.Extends.Helpers;
-using EPYSLTEX.Web.Models;
-using System;
+using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.API.Extends.Filters;
+using EPYSLTEXCore.Application.Interfaces.Admin;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Http;
 
-namespace EPYSLTEX.Web.Controllers.Apis
+namespace EPYSLTEXCore.API.Contollers.Admin
 {
-    [AuthorizeJwt]
-    [RoutePrefix("api/finishing-machine-setup")]
+    [Authorize]
+    [Route("api/finishing-machine-setup")]
     public class FinishingMachineSetupController : ApiBaseController
     {
         private readonly IFinishingMachineSetupService _service;
@@ -26,8 +23,8 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         public FinishingMachineSetupController(
              IFinishingMachineSetupService service
-            , ICommonHelpers commonHelpers
-           )
+            , ICommonHelpers commonHelpers, IUserService userService
+           ) : base(userService)
         {
             _service = service;
             _commonHelpers = commonHelpers;
@@ -35,7 +32,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [Route("list")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetList(Status status, int offset = 0, int limit = 10, string filter = null, string sort = null, string order = null)
+        public async Task<IActionResult> GetList(Status status, int offset = 0, int limit = 10, string filter = null, string sort = null, string order = null)
         {
             var filterBy = _commonHelpers.GetFilterBy(filter);
             var orderBy = string.IsNullOrEmpty(sort) ? "" : $"ORDER BY {sort} {order}";
@@ -49,14 +46,14 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [HttpGet]
         [Route("new/{newId}")]
-        public async Task<IHttpActionResult> GetNew(int newId)
+        public async Task<IActionResult> GetNew(int newId)
         {
             return Ok(await _service.GetNewAsync(newId));
         }
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var record = await _service.GetAsync(id);
             Guard.Against.NullObject(id, record);
@@ -66,7 +63,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [Route("machinelist")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetMachineList(String processId, string processTypeId)
+        public async Task<IActionResult> GetMachineList(String processId, string processTypeId)
         {
             var data = await _service.GetAsyncFinishingMachineConfiguration(processId.ToInt(), processTypeId.ToInt());
             return Ok(data);
@@ -75,7 +72,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IHttpActionResult> Save(FinishingMachineConfigurationMaster model)
+        public async Task<IActionResult> Save(FinishingMachineConfigurationMaster model)
         {
             FinishingMachineConfigurationMaster entity;
 
@@ -125,7 +122,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                         child.Param18Value = item.Param18Value;
                         child.Param19Value = item.Param19Value;
                         child.Param20Value = item.Param20Value;
-                        child.UpdatedBy = UserId;
+                        child.UpdatedBy = AppUser.UserCode;
                         child.DateUpdated = DateTime.Now;
 
                         child.EntityState = EntityState.Modified;
@@ -139,7 +136,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             else
             {
                 entity = model;
-                entity.AddedBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
                
             }

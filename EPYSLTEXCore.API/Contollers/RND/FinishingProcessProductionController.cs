@@ -5,10 +5,12 @@ using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEX.Web.Controllers.Apis
@@ -57,8 +59,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(FinishingProcessChild model)
+        public async Task<IActionResult> Save(dynamic JsonString )
         {
+            FinishingProcessChild model = JsonConvert.DeserializeObject<FinishingProcessChild>(Convert.ToString(JsonString));
             FinishingProcessMaster entity = new FinishingProcessMaster();
             entity = await _FinishingProcessService.GetAllByIDAsync(model.FPMasterID);
             //entity.BatchQty = model.BatchQty;

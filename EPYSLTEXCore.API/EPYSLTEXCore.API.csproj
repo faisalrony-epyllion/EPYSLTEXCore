@@ -32,8 +32,6 @@
   <ItemGroup>
     <Compile Remove="Contollers\APIBaseController\ApiBaseController.cs" />
     <Compile Remove="Contollers\HomeController.cs" />
-    <Compile Remove="Contollers\RND\LabTestResultController.cs" />
-    <Compile Remove="Contollers\RND\RollFinishingController.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1500,7 +1500,15 @@
         columns.push.apply(columns, getYarnItemColumnsForDisplayOnly());
         columns.push.apply(columns, [
             { field: 'ShadeCode', headerText: 'Shade Code', allowEditing: false },
-            { field: 'DayValidDurationName', headerText: 'Yarn Sourcing Mode', allowEditing: false },
+            { field: 'DayValidDurationName', headerText: 'Yarn Sourcing Mode', allowEditing: false, visible: status != statusConstants.ROL_BASE_PENDING },
+            {
+                field: 'DayValidDurationId', headerText: 'Yarn Sourcing Mode', width: 120, visible: status == statusConstants.ROL_BASE_PENDING, 
+                valueAccessor: ej2GridDisplayFormatter,
+                dataSource: masterData.DayValidDurations,
+                displayField: "text",
+                edit: ej2GridDropDownObj({
+                })
+            },
             { field: 'FPRCompanyName', headerText: 'Company', visible: !isCPRPage, allowEditing: false },
             {
                 field: 'FPRCompanyID', headerText: 'Company', visible: isCPRPage, allowEditing: isCPRPage, valueAccessor: ej2GridDisplayFormatter, dataSource: masterData.CompanyList,
@@ -1589,8 +1597,25 @@
                     args.rowData.AllocationQty = args.data.AllocationQty;
 
                     if (status == statusConstants.ROL_BASE_PENDING) {
-                        if (args.data.ReqQty + args.data.StockQty > args.data.MOQ) {
-                            toastr.error(`Maximum Req Qty is ${args.data.MOQ - args.data.StockQty}`);
+                        
+                        if (args.data.DayValidDurationId == 1) {
+                            if (args.data.ReqQty > args.data.MaximumPRQtyLP) {
+                                toastr.error(`Maximum Local PR Qty is ${args.data.MaximumPRQtyLP}`);
+                                args.data.ReqQty = 0;
+                                args.data.ReqCone = 0;
+                                return false;
+                            }
+                        }
+                        else if (args.data.DayValidDurationId == 2 || args.data.DayValidDurationId == 3) {
+                            if (args.data.ReqQty > args.data.MaximumPRQtyFP) {
+                                toastr.error(`Maximum Import PR Qty is ${args.data.MaximumPRQtyFP}`);
+                                args.data.ReqQty = 0;
+                                args.data.ReqCone = 0;
+                                return false;
+                            }
+                        }
+                        else {
+                            toastr.error(`Sourcing Mode Required !`);
                             args.data.ReqQty = 0;
                             args.data.ReqCone = 0;
                             return false;

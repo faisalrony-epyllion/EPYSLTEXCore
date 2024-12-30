@@ -1313,7 +1313,7 @@ namespace EPYSLTEX.Infrastructure.Services
 					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID
 	                , ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc
 	                , ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, ISV8.SegmentValue Segment8ValueDesc, BaseTypeId = 0,
-                    ' ROL Base Booking' As [Source], ROL.MOQ
+                    ' ROL Base Booking' As [Source], ROL.ROLLocalPurchase, ROL.ROLForeignPurchase, ROL.ReOrderQty, ROL.MaximumPRQtyLP, ROL.MaximumPRQtyFP, ROL.MOQ
                     , StockQty = SUM(ISNULL(YSM.PipelineStockQty,0) + ISNULL(YSM.QuarantineStockQty,0) + ISNULL(YSM.AdvanceStockQty,0) + ISNULL(YSM.SampleStockQty,0) + ISNULL(YSM.LeftoverStockQty,0) + ISNULL(YSM.LiabilitiesStockQty,0))
                 FROM {TableNames.ItemMasterReOrderStatus} ROL
                 LEFT JOIN {TableNames.YarnStockMaster_New} YSM ON YSM.ItemMasterID = ROL.ItemMasterID AND YSM.CompanyID = ROL.CompanyID
@@ -1331,7 +1331,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 GROUP BY  IM.ItemMasterID, ROL.CompanyID, CE.ShortName
 					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID
 	                , ISV1.SegmentValue, ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue
-	                , ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, ISV8.SegmentValue, ROL.MOQ;";
+	                , ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, ISV8.SegmentValue, ROL.ROLLocalPurchase, ROL.ROLForeignPurchase, ROL.ReOrderQty, ROL.MaximumPRQtyLP, ROL.MaximumPRQtyFP, ROL.MOQ;";
             }
             else if (source == PRFromName.CONCEPT && revisionstatus == "Revision Pending")
             {

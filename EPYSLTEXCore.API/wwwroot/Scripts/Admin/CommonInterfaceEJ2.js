@@ -85,7 +85,7 @@
             var currentDDL = interfaceConfigs.Childs.find(p => p.EntryType === 'select' && p.ColumnName === el.id);
             if (currentDDL != null && currentDDL.DefaultValue != null) {
                 var selectedOption = $(el).find('option').filter(function () {
-                    return $(this).text() === currentDDL.DefaultValue;
+                    return $(this).id == currentDDL.DefaultValue;
                 });
 
                 var optionId = selectedOption.length ? selectedOption.val() : currentDDL.DefaultValue;
@@ -805,8 +805,8 @@
                         allowClear: true,
                         data: data
                     });
-
-                    let result = data.find(item => item.text === value.defaultValue);
+           
+                    let result = data.find(item => item.id == value.defaultValue);
 
                     // Set the value to null if result is undefined, otherwise set result.id
                     el.val(result?.id ?? null).trigger('change');

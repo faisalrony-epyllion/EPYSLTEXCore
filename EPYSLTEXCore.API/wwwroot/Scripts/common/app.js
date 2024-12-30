@@ -899,7 +899,11 @@ var freeConceptStatus = Object.freeze({
 
 var pageNameConstants = Object.freeze({
     CPR: "CPR",
-    FPR: "FPR"
+    FPR: "FPR",
+     YDBB: "YDBB",
+    MRSA: "MRSA",
+    MRSACK: "MRSACK",
+    YDMRSACK: "YDMRSACK",
 });
 
 var contactCategoryConstants = Object.freeze({

@@ -3160,7 +3160,7 @@
     }
 
     function handleCommands(args) {
-        debugger;
+        
         //var isValidate =  FBookingAckRevisionPendingValidation(args.rowData.BookingNo, args.rowData.ExportOrderID);
         if (isOnlyBulkBookingKnittingInfoMenu() && args.commandColumn.type != 'View Attachment' && args.commandColumn.type != 'Tech Pack Attachment' && args.commandColumn.type != 'Booking Attachment' && args.commandColumn.type != 'Export' && args.commandColumn.type != 'Booking Report' && args.commandColumn.type != 'Bulk Booking Report' && args.commandColumn.type != 'Bulk Booking Yarn Info') {
             FBookingAckRevisionPendingValidation(args.rowData.BookingNo, args.rowData.ExportOrderID)
@@ -3260,7 +3260,7 @@
         //    toastr.error("Marketing Ack Pending");
         //    return false;
         //}
-        debugger;
+        
         if (args.commandColumn.type == 'Add') {
             if (args.rowData.PendingRevision != null && typeof args.rowData.PendingRevision !== "undefined" && $.trim(args.rowData.PendingRevision.length) > 0) {
                 getNew(args.rowData.BookingID, true);
@@ -4336,7 +4336,7 @@
                 ];
 
                 columns.unshift({
-                    headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                    headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                     ]
                 });
@@ -5731,7 +5731,7 @@
             if (c == "Commands") indexF = childColumns.findIndex(x => x.headerText == c);
             else indexF = childColumns.findIndex(x => x.field == c);
 
-            if (c == "Commands") widthValue = 60;
+            if (c == "Commands") widthValue = 200;
             else if (c == "Segment1ValueId") widthValue = 180;
 
             if (indexF > -1) childColumns[indexF].width = widthValue;
@@ -5784,6 +5784,7 @@
         }
 
         if (!isYarnBookingAcknowledgeMenu()) {
+            debugger;
             if (isAllowEditing) {
                 childColumns = await getYarnItemColumnsWithSearchDDLAsync(ch_getCountRelatedList(masterData, 2), isAllowEditing);
 
@@ -5878,12 +5879,13 @@
 
         if (isOnlyAllowDelete) {
             childColumns.unshift({
-                headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                     { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                 ]
             });
         }
         childColumns = setVisiblePropValueYarn(childColumns);
+        debugger;
         return childColumns;
     }
 
@@ -6639,7 +6641,7 @@
                 ];
 
                 columns.unshift({
-                    headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                    headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                     ]
                 });
@@ -7827,7 +7829,7 @@
                 ];
 
                 columns.unshift({
-                    headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                    headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                     ]
                 });

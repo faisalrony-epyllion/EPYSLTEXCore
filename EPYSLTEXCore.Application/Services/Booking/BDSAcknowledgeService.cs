@@ -17,6 +17,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
+using System.Transactions;
 
 namespace EPYSLTEXCore.Application.Services.Booking
 {
@@ -42,8 +43,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             _service = service;
             _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
-            //_signatureRepository = signatureRepository;
-            _connection = service.Connection;
+            _connection = _service.Connection;
+
 
 #if DEBUG
             _startingDate = "31-May-2023";
@@ -10457,8 +10458,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
                 INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = C.YBookingID
 				INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = YBM.BookingID
-                INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
-                INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
+                LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
+                LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
@@ -11335,8 +11336,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
 					INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = M.BookingID
                     INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBC ON FBC.BookingChildID = C.BookingChildID AND FBC.AcknowledgeID = FBA.FBAckID AND FBC.BookingQty > 0
-                    INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
-                    INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
+                    LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
+                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
@@ -12151,8 +12152,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
                     INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
                     INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
-                    INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
-                    INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
+                    LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
+                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
@@ -13776,8 +13777,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = GYU.YBChildItemID
                     INNER JOIN {TableNames.YarnBookingChild_New} C ON C.YBChildID = YBCI.YBChildID
                     INNER JOIN {TableNames.YarnBookingMaster_New} M ON M.YBookingID = C.YBookingID
-                    INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
-                    INNER JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
+                    LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = GYU.YarnStockSetID
+                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = YSS.YarnStockSetId
                     INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterId
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
@@ -15630,6 +15631,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
                 await _connectionGmt.OpenAsync();
                 transactionGmt = _connectionGmt.BeginTransaction();
 
@@ -16389,7 +16391,6 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     Console.WriteLine("The transaction connection is open.");
                 }
                 await _service.SaveSingleAsync(entity, _connection, transaction);
-                //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FBookingAcknowledge", entity.EntityState, UserId, entity.FBAckID);
                 await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge, new { EntityState = entity.EntityState, UserId = UserId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
                 List<FBookingAcknowledgeChild> SaveEntityChilds = new List<FBookingAcknowledgeChild>();
@@ -16552,15 +16553,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 foreach (FreeConceptMaster item in SaveEntityFreeConcepts)
                 {
-                    //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FreeConceptMaster", item.EntityState, UserId, item.ConceptID);
                     await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMaster, new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.ConceptID }, transaction, 30, CommandType.StoredProcedure);
 
                 }
-
-                //foreach (FreeConceptMaster item in SaveEntityFreeConcepts)
-                //{
-                //    await _connection.ExecuteAsync("sp_Validation_FreeConceptMaster", new { ConceptID = item.ConceptID, UserId = UserId, EntityState = item.EntityState }, transaction, 30, CommandType.StoredProcedure);
-                //}
 
                 await _service.SaveAsync(SaveChildColors, _connection, transaction);
                 if (isBDS == 2)
@@ -16643,31 +16638,31 @@ namespace EPYSLTEXCore.Application.Services.Booking
         public async Task<string> SaveAsyncBulk(int userId, FBookingAcknowledge entity, List<FBookingAcknowledge> entities, bool isAddition, List<FreeConceptMRChild> mcChilds)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
-                //if (entity.IsReviseBBKI)
-                //{
-                //    await _service.ExecuteAsync("spBackupFBookingAcknowledge", new { UserId = entity.UserId, BookingId = entity.BookingID, IsReviseBBKI = true, IsReviseLabdip = false }, 30, CommandType.StoredProcedure);
-                //}
-
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
                 List<YarnBookingMaster> yarnBookings = new List<YarnBookingMaster>();
                 //if (!entity.IsUnAcknowledge)
                 //{
                 if (entity.YarnBookings.Count() > 0)
                 {
-                    yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition);
+                    yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition, false, transactionGmt);
                 }
                 else if (!entity.HasYarnBooking)
                 {
-                    yarnBookings = await this.GetYarnBooking(entity, isAddition);
+                    yarnBookings = await this.GetYarnBooking(entity, isAddition, transactionGmt);
                 }
                 //}
 
                 #region Finishing Process Operation
-                entity = await this.GetFinishingProcess(entity);
+                entity = await this.GetFinishingProcess(entity, transactionGmt);
                 #endregion
 
                 List<FBookingAcknowledgeChildDetails> fBookingAcknowledgeChildDetails = new List<FBookingAcknowledgeChildDetails>();
@@ -16710,43 +16705,28 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 if (!isAddition)
                 {
-                    await _service.SaveSingleAsync(entity, transaction);
-                    //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FBookingAcknowledge_1", entity.EntityState, userId, entity.FBAckID);
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                    await _service.SaveSingleAsync(entity, _connection, transaction);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
-                    await _service.SaveAsync(entity.FBookingChild, transaction);
+                    await _service.SaveAsync(entity.FBookingChild, _connection, transaction);
                     foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID);
-                        await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
-                /*
-                yarnBookingChilds = await this.GetYBChilds(yarnBookingChilds);
-                */
-
-                yarnBookingChilds = await this.GetYBChilds_ForUtilizationPOPUP(yarnBookingChilds);
+                yarnBookingChilds = await this.GetYBChilds_ForUtilizationPOPUP(yarnBookingChilds, transactionGmt);
                 List<BulkBookingFinishFabricUtilization> fFUtilizationList = new List<BulkBookingFinishFabricUtilization>();
                 List<FBookingAcknowledgeChildGFUtilization> gFUtilizationList = new List<FBookingAcknowledgeChildGFUtilization>();
 
-                await _service.SaveAsync(yarnBookings, transaction);
+                await _service.SaveAsync(yarnBookings, _connection, transaction);
                 foreach (YarnBookingMaster item in yarnBookings)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                 }
-                await _service.SaveAsync(yarnBookingChilds, transaction);
+                await _service.SaveAsync(yarnBookingChilds, _connection, transaction);
                 foreach (YarnBookingChild item in yarnBookingChilds)
                 {
-                    //if (item.EntityState != EntityState.Deleted)
-                    //{
-                    //    decimal totalDis = item.ChildItems.Where(x => x.EntityState != EntityState.Deleted).Sum(x => x.Distribution);
-                    //    if (totalDis != 100)
-                    //    {
-                    //        throw new Exception("Total Distribution Qty is not 100%. => SaveAsyncBulk => BDSAcknowledgeService");
-                    //    }
-                    //}
 
                     if (item.BookingUnitID == 1 && item.QtyInKG == 0)
                     {
@@ -16760,24 +16740,17 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     fFUtilizationList.AddRange(item.FinishFabricUtilizationPopUpList);
                     gFUtilizationList.AddRange(item.GreyFabricUtilizationPopUpList);
 
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChild_1", item.EntityState, userId, item.YBChildID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
-                await _service.SaveAsync(yarnBookingChildItems, transaction);
+                await _service.SaveAsync(yarnBookingChildItems, _connection, transaction);
                 foreach (YarnBookingChildItem item in yarnBookingChildItems)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChildItem_1", item.EntityState, userId, item.YBChildItemID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChildItem_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChildItem_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
 
-                /*await _service.SaveAsync(finishFabricUtPopUpList, transaction); //Saif
-                await _service.SaveAsync(greyFabricUtPopUpList, transaction);
-                await _service.SaveAsync(greyYarnUtPopUpList, transaction);
-                await _service.SaveAsync(dyedYarnUtPopUpList, transaction);*/
-
-                await _service.SaveAsync(fFUtilizationList, transaction);
-                await _service.SaveAsync(gFUtilizationList, transaction);
+                await _service.SaveAsync(fFUtilizationList,_connection,transaction);
+                await _service.SaveAsync(gFUtilizationList, _connection, transaction);
 
 
                 if (!isAddition && !entity.IsUnAcknowledge)
@@ -16799,71 +16772,77 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             FPChildItems.AddRange(fpc.FinishingProcessChildItems);
                         });
                     });
-                    await _service.SaveAsync(FPChilds, transaction);
-                    await _service.SaveAsync(FPChildItems, transaction);
+                    await _service.SaveAsync(FPChilds, _connection, transaction);
+                    await _service.SaveAsync(FPChildItems, _connection, transaction);
 
                     #endregion
                 }
 
                 if (entities.Count() > 0) //Use only for knitting head check or reject
                 {
-                    await _service.SaveAsync(entities, transaction);
+                    await _service.SaveAsync(entities, _connection, transaction);
                     foreach (FBookingAcknowledge item in entities)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_1", item.EntityState, userId, item.FBAckID);
-                        await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
-                await _service.SaveAsync(mcChilds, transaction);
+                await _service.SaveAsync(mcChilds, _connection, transaction);
                 foreach (FreeConceptMRChild item in mcChilds)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, userId, item.FCMRChildID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 return _yarnBookingNo;
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
+                if (ex.Message.Contains('~')) throw new Exception(ex.Message.Split('~')[0]);
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<string> SaveAsyncBulkAddition(int userId, FBookingAcknowledge entity, List<FBookingAcknowledge> entities, bool isAddition, List<FreeConceptMRChild> mcChilds, bool isUpdateAddition = false, List<YarnBookingMaster_New_RevisionReason> RevisionReasonList = null, bool isRevisedYarn = false)
         {//--
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
-                //if (entity.IsReviseBBKI)
-                //{
-                //    await _service.ExecuteAsync("spBackupFBookingAcknowledge", new { UserId = entity.UserId, BookingId = entity.BookingID, IsReviseBBKI = true, IsReviseLabdip = false }, 30, CommandType.StoredProcedure);
-                //}
 
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
                 List<YarnBookingMaster> yarnBookings = new List<YarnBookingMaster>();
                 if (!entity.IsUnAcknowledge)
                 {
                     if (entity.YarnBookings.Count() > 0)
                     {
-                        yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition, isUpdateAddition);
+                        yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition, isUpdateAddition, transactionGmt);
+
                     }
                     else if (!entity.HasYarnBooking)
                     {
-                        yarnBookings = await this.GetYarnBooking(entity, isAddition);
+                        yarnBookings = await this.GetYarnBooking(entity, isAddition, transactionGmt);
                     }
                 }
 
                 #region Finishing Process Operation
-                entity = await this.GetFinishingProcess(entity);
+                entity = await this.GetFinishingProcess(entity, transactionGmt);
                 #endregion
 
                 List<FBookingAcknowledgeChildDetails> fBookingAcknowledgeChildDetails = new List<FBookingAcknowledgeChildDetails>();
@@ -16900,27 +16879,24 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 if (!isAddition)
                 {
                     await _service.SaveSingleAsync(entity, transaction);
-                    //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FBookingAcknowledge_1", entity.EntityState, userId, entity.FBAckID);
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
                     await _service.SaveAsync(entity.FBookingChild, transaction);
                     foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID);
-                        await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
                 if ((entity.IsAdditionalRevise || isRevisedYarn) && yarnBookings[0].AcknowledgeCount > 0)
                 {
-                    await _connection.ExecuteAsync("spYarnBooking_BK", new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spYarnBooking_BK, new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 await _service.SaveAsync(yarnBookings, transaction);
                 foreach (YarnBookingMaster item in yarnBookings)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChilds, transaction);
                 foreach (YarnBookingChild item in yarnBookingChilds)
@@ -16947,14 +16923,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     {
                         throw new Exception("Yarn Item missing => SaveAsyncBulkAddition => BDSAcknowledgeService");
                     }
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChild_1", item.EntityState, userId, item.YBChildID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChildItems, transaction);
                 foreach (YarnBookingChildItem item in yarnBookingChildItems)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChildItem_1", item.EntityState, userId, item.YBChildItemID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChildItem_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChildItem_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
 
@@ -16996,28 +16970,26 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         await _service.SaveAsync(entities, transaction);
                         foreach (FBookingAcknowledge item in entities)
                         {
-                            //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_1", item.EntityState, userId, item.FBAckID);
-                            await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                            await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                         }
                     }
                 }
                 //await _service.SaveAsync(mcChilds, transaction);
                 foreach (FreeConceptMRChild item in mcChilds)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, userId, item.FCMRChildID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
 
                 #region Yarn Booking Revision Reason
 
-                await _connection.ExecuteAsync("spDeleteRevisionReason", new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
+                await _connection.ExecuteAsync(SPNames.spDeleteRevisionReason, new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
 
                 if (RevisionReasonList.Count > 0)
                 {
                     int maxChildId = 0;
 
-                    maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count);
+                    maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                     foreach (YarnBookingMaster_New_RevisionReason item in RevisionReasonList)
                     {
                         item.YBRReasonID = maxChildId++;
@@ -17030,7 +17002,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 //if ((entity.ParamTypeId == (int)ParamTypeId.AYBKnittingHeadApproval && (yarnBookings[0].PMCFinalApproveCount > 1) || (entity.IsReject && yarnBookings[0].PMCFinalApproveCount > 0)))
                 if (entity.IsReject && yarnBookings[0].AcknowledgeCount > 0)
                 {
-                    await _connection.ExecuteAsync("spYarnBooking_BK", new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = entity.IsApprove, IsFinalReject = entity.IsReject, IsFabricRevision = false }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spYarnBooking_BK, new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = entity.IsApprove, IsFinalReject = entity.IsReject, IsFabricRevision = false }, transaction, 30, CommandType.StoredProcedure);
                     //if (entity.IsApprove == true && yarnBookings[0].PMCFinalApproveCount > 1)
                     //{
                     //    yarnBookings.ForEach(x =>
@@ -17043,46 +17015,51 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 }
 
                 transaction.Commit();
+                transactionGmt.Commit();
+
                 return _yarnBookingNo;
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<string> SaveAsyncBulkWithRevision(int userId, FBookingAcknowledge entity, List<FBookingAcknowledge> entities, bool isAddition, List<FreeConceptMRChild> mcChilds)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
-                //if (entity.IsReviseBBKI)
-                //{
-                //    await _service.ExecuteAsync("spBackupFBookingAcknowledge", new { UserId = entity.UserId, BookingId = entity.BookingID, IsReviseBBKI = true, IsReviseLabdip = false }, 30, CommandType.StoredProcedure);
-                //}
-
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
                 List<YarnBookingMaster> yarnBookings = new List<YarnBookingMaster>();
                 if (!entity.IsUnAcknowledge)
                 {
                     if (entity.YarnBookings.Count() > 0)
                     {
-                        yarnBookings = await this.GetYarnBookingForUpdateWithRevision(entity.YarnBookings, entity, isAddition);
+                        yarnBookings = await this.GetYarnBookingForUpdateWithRevision(entity.YarnBookings, entity, isAddition, transactionGmt);
                     }
                     else if (!entity.HasYarnBooking)
                     {
-                        yarnBookings = await this.GetYarnBookingWithRevision(entity, isAddition);
+                        yarnBookings = await this.GetYarnBookingWithRevision(entity, isAddition, transactionGmt);
                     }
                 }
 
                 #region Finishing Process Operation
-                entity = await this.GetFinishingProcess(entity);
+                entity = await this.GetFinishingProcess(entity, transactionGmt);
                 #endregion
 
                 List<FBookingAcknowledgeChildDetails> fBookingAcknowledgeChildDetails = new List<FBookingAcknowledgeChildDetails>();
@@ -17101,22 +17078,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 if (!isAddition)
                 {
                     await _service.SaveSingleAsync(entity, transaction);
-                    //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FBookingAcknowledge_1", entity.EntityState, userId, entity.FBAckID);
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
                     await _service.SaveAsync(entity.FBookingChild, transaction);
                     foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID);
-                        await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
                 await _service.SaveAsync(yarnBookings, transaction);
                 foreach (YarnBookingMaster item in yarnBookings)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChilds, transaction);
                 foreach (YarnBookingChild item in yarnBookingChilds)
@@ -17133,8 +17107,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     {
                         throw new Exception("Qty In KG missing => SaveAsyncBulkWithRevision => BDSAcknowledgeService");
                     }
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChild_1", item.EntityState, userId, item.YBChildID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChildItemsRevision, transaction);
 
@@ -17168,16 +17141,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     await _service.SaveAsync(entities, transaction);
                     foreach (FBookingAcknowledge item in entities)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_1", item.EntityState, userId, item.FBAckID);
-                        await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
                 await _service.SaveAsync(mcChilds, transaction);
                 foreach (FreeConceptMRChild item in mcChilds)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, userId, item.FCMRChildID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 transaction.Commit();
@@ -17206,35 +17177,36 @@ namespace EPYSLTEXCore.Application.Services.Booking
             List<YarnBookingMaster_New_RevisionReason> RevisionReasonList = null)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
-                //if (entity.IsReviseBBKI)
-                //{
-                //    await _service.ExecuteAsync("spBackupFBookingAcknowledge", new { UserId = entity.UserId, BookingId = entity.BookingID, IsReviseBBKI = true, IsReviseLabdip = false }, 30, CommandType.StoredProcedure);
-                //}
-
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 if (entity.IsReviseBBKI)
                 {
-                    await _connection.ExecuteAsync("spBackupFBookingAcknowledge_Full", new { BookingNo = entity.BookingNo }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spBackupFBookingAcknowledge_Full, new { BookingNo = entity.BookingNo }, transaction, 30, CommandType.StoredProcedure);
                 }
                 List<YarnBookingMaster> yarnBookings = new List<YarnBookingMaster>();
                 if (entity.YarnBookings.Count() > 0)
                 {
-                    yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition);
+                    yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition, false, transactionGmt);
                 }
                 else if (!entity.HasYarnBooking)
                 {
-                    yarnBookings = await this.GetYarnBooking(entity, isAddition);
+                    yarnBookings = await this.GetYarnBooking(entity, isAddition, transactionGmt);
                 }
                 if (yarnBookings[0].PMCFinalApproveCount > 0)
                 {
-                    await _connection.ExecuteAsync("spYarnBooking_BK", new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spYarnBooking_BK, new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 #region Finishing Process Operation
-                entity = await this.GetFinishingProcess(entity);
+                entity = await this.GetFinishingProcess(entity, transactionGmt);
                 #endregion
 
                 List<FBookingAcknowledgeChildDetails> fBookingAcknowledgeChildDetails = new List<FBookingAcknowledgeChildDetails>();
@@ -17249,27 +17221,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 if (!isAddition)
                 {
                     await _service.SaveSingleAsync(entity, transaction);
-                    //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FBookingAcknowledge_1", entity.EntityState, userId, entity.FBAckID);
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
                     await _service.SaveAsync(entity.FBookingChild, transaction);
                     foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID);
-                        await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
                 #region Yarn Booking Revision Reason
                 if (isYarnRevised)
                 {
-                    await _connection.ExecuteAsync("spDeleteRevisionReason", new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spDeleteRevisionReason, new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
 
                     if (RevisionReasonList.Count > 0)
                     {
                         int maxChildId = 0;
 
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         foreach (YarnBookingMaster_New_RevisionReason item in RevisionReasonList)
                         {
                             item.YBRReasonID = maxChildId++;
@@ -17296,8 +17266,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(yarnBookings, transaction);
                 foreach (YarnBookingMaster item in yarnBookings)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChilds, transaction);
                 foreach (YarnBookingChild item in yarnBookingChilds)
@@ -17319,14 +17288,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     {
                         throw new Exception("Yarn Item missing => SaveAsyncBulkWithFreeConcept => BDSAcknowledgeService");
                     }
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChild_1", item.EntityState, userId, item.YBChildID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChildItems, transaction);
                 foreach (YarnBookingChildItem item in yarnBookingChildItems)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChildItem_1", item.EntityState, userId, item.YBChildItemID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChildItem_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChildItem_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 #endregion
 
@@ -17348,8 +17315,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     await _service.SaveAsync(entitiesYB, transaction);
                     foreach (YarnBookingMaster item in entitiesYB)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                        await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
@@ -17383,8 +17349,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         await _service.SaveAsync(entities, transaction);
                         foreach (FBookingAcknowledge item in entities)
                         {
-                            //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_1", item.EntityState, userId, item.FBAckID);
-                            await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                            await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                         }
                     }
                 }
@@ -17892,44 +17857,44 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(SaveEntityFreeConcepts, transaction);
                 foreach (FreeConceptMaster item in SaveEntityFreeConcepts)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMaster_1", item.EntityState, userId, item.ConceptID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.ConceptID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.ConceptID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(SaveChildColors, transaction);
                 foreach (FreeConceptChildColor item in SaveChildColors)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptChildColor_1", item.EntityState, userId, item.CCColorID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptChildColor_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.CCColorID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptChildColor_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.CCColorID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 if (isBDS == 2)
                 {
                     await _service.SaveAsync(SaveEntityFreeMRs, transaction);
                     foreach (FreeConceptMRMaster item in SaveEntityFreeMRs)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRMaster_1", item.EntityState, userId, item.FCMRMasterID);
-                        await _connection.ExecuteAsync("sp_Validation_FreeConceptMRMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRMasterID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRMasterID }, transaction, 30, CommandType.StoredProcedure);
                     }
                     await _service.SaveAsync(SaveChildMRs, transaction);
                     foreach (FreeConceptMRChild item in SaveChildMRs)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, userId, item.FCMRChildID);
-                        await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
                 #endregion Free Concept
 
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 return _yarnBookingNo;
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public List<YarnBookingChildItemRevision> GetYarnRevisedChildItems(List<YarnBookingChildItem> yarnBookingChildItems)
@@ -17991,35 +17956,37 @@ namespace EPYSLTEXCore.Application.Services.Booking
         List<YarnBookingMaster_New_RevisionReason> RevisionReasonList = null)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
-                //if (entity.IsReviseBBKI)
-                //{
-                //    await _service.ExecuteAsync("spBackupFBookingAcknowledge", new { UserId = entity.UserId, BookingId = entity.BookingID, IsReviseBBKI = true, IsReviseLabdip = false }, 30, CommandType.StoredProcedure);
-                //}
-
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 if (entity.IsReviseBBKI)
                 {
-                    await _connection.ExecuteAsync("spBackupFBookingAcknowledge_Full", new { BookingNo = entity.BookingNo }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spBackupFBookingAcknowledge_Full, new { BookingNo = entity.BookingNo }, transaction, 30, CommandType.StoredProcedure);
                 }
                 List<YarnBookingMaster> yarnBookings = new List<YarnBookingMaster>();
                 if (entity.YarnBookings.Count() > 0)
                 {
-                    yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition);
+                    yarnBookings = await this.GetYarnBookingForUpdate(entity.YarnBookings, entity, isAddition, false, transactionGmt);
+
                 }
                 else if (!entity.HasYarnBooking)
                 {
-                    yarnBookings = await this.GetYarnBooking(entity, isAddition);
+                    yarnBookings = await this.GetYarnBooking(entity, isAddition, transactionGmt);
                 }
                 if (yarnBookings[0].PMCFinalApproveCount > 0)
                 {
-                    await _connection.ExecuteAsync("spYarnBooking_BK", new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spYarnBooking_BK, new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = false, IsFinalReject = false, IsFabricRevision = true }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 #region Finishing Process Operation
-                entity = await this.GetFinishingProcess(entity);
+                entity = await this.GetFinishingProcess(entity, transactionGmt);
                 #endregion
 
                 List<FBookingAcknowledgeChildDetails> fBookingAcknowledgeChildDetails = new List<FBookingAcknowledgeChildDetails>();
@@ -18034,27 +18001,25 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 if (!isAddition)
                 {
                     await _service.SaveSingleAsync(entity, transaction);
-                    //await _service.ValidationSingleAsync(entity, transaction, "sp_Validation_FBookingAcknowledge_1", entity.EntityState, userId, entity.FBAckID);
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
                     await _service.SaveAsync(entity.FBookingChild, transaction);
                     foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID);
-                        await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
                 #region Yarn Booking Revision Reason
                 if (isYarnRevised)
                 {
-                    await _connection.ExecuteAsync("spDeleteRevisionReason", new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spDeleteRevisionReason, new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
 
                     if (RevisionReasonList.Count > 0)
                     {
                         int maxChildId = 0;
 
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         foreach (YarnBookingMaster_New_RevisionReason item in RevisionReasonList)
                         {
                             item.YBRReasonID = maxChildId++;
@@ -18081,8 +18046,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(yarnBookings, transaction);
                 foreach (YarnBookingMaster item in yarnBookings)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChilds, transaction);
                 foreach (YarnBookingChild item in yarnBookingChilds)
@@ -18105,14 +18069,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     {
                         throw new Exception("Yarn Item missing => SaveAsyncBulkWithFreeConcept => BDSAcknowledgeService");
                     }
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChild_1", item.EntityState, userId, item.YBChildID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnBookingChildItemsRevision, transaction);
-                //foreach (YarnBookingChildItemRevision item in yarnBookingChildItemsRevision)
-                //{
-                //    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChildItem_1", item.EntityState, userId, item.YBChildItemID);
-                //}
+
                 #endregion
 
                 if (entitiesYB.IsNotNull())
@@ -18133,8 +18093,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     await _service.SaveAsync(entitiesYB, transaction);
                     foreach (YarnBookingMaster item in entitiesYB)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                        await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
@@ -18168,8 +18127,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         await _service.SaveAsync(entities, transaction);
                         foreach (FBookingAcknowledge item in entities)
                         {
-                            //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledge_1", item.EntityState, userId, item.FBAckID);
-                            await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledge_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
+                            await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
                         }
                     }
                 }
@@ -18664,59 +18622,65 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(SaveEntityFreeConcepts, transaction);
                 foreach (FreeConceptMaster item in SaveEntityFreeConcepts)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMaster_1", item.EntityState, userId, item.ConceptID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.ConceptID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.ConceptID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(SaveChildColors, transaction);
                 foreach (FreeConceptChildColor item in SaveChildColors)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptChildColor_1", item.EntityState, userId, item.CCColorID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptChildColor_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.CCColorID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptChildColor_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.CCColorID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 if (isBDS == 2)
                 {
                     await _service.SaveAsync(SaveEntityFreeMRs, transaction);
                     foreach (FreeConceptMRMaster item in SaveEntityFreeMRs)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRMaster_1", item.EntityState, userId, item.FCMRMasterID);
-                        await _connection.ExecuteAsync("sp_Validation_FreeConceptMRMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRMasterID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRMasterID }, transaction, 30, CommandType.StoredProcedure);
                     }
                     await _service.SaveAsync(SaveChildMRs, transaction);
                     foreach (FreeConceptMRChild item in SaveChildMRs)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, userId, item.FCMRChildID);
-                        await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
                 #endregion Free Concept
 
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 return _yarnBookingNo;
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task UpdateBulkStatus(List<FBookingAcknowledge> entities, List<YarnBookingChildItem> yarnBookingChildItems, List<YarnBookingMaster> yarnBookings, List<YarnBookingChild> yarnBookingChilds, List<FreeConceptMRChild> mrChilds, bool isYarnRevised, bool pmcApprove = false, bool IsRejectByPMC = false, int UserId = 0)//int UserId alamin
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 await _service.SaveAsync(entities, transaction);
 
                 //if (isYarnRevised & !IsRejectByPMC)
                 if (pmcApprove == true || IsRejectByPMC == true)
                 {
-                    await _connection.ExecuteAsync("spYarnBooking_BK", new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = pmcApprove, IsFinalReject = IsRejectByPMC, IsFabricRevision = false }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spYarnBooking_BK, new { YBookingNo = yarnBookings[0].YBookingNo, IsFinalApprove = pmcApprove, IsFinalReject = IsRejectByPMC, IsFabricRevision = false }, transaction, 30, CommandType.StoredProcedure);
                     if (pmcApprove == true && isYarnRevised)
                     {
                         yarnBookings.ForEach(x =>
@@ -18730,7 +18694,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 if (yarnBookingChilds.Count() > 0)
                 {
-                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds);//alamin UserId
+                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds, transactionGmt);//alamin UserId
                     yarnBookingChilds = new List<YarnBookingChild>();
                     yarnBookingChildItems = new List<YarnBookingChildItem>();
                     //List<BulkBookingGreyYarnUtilization> gGreyYarnUtilizationList = new List<BulkBookingGreyYarnUtilization>();
@@ -18769,14 +18733,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(yarnBookings, transaction);
                 foreach (YarnBookingMaster item in yarnBookings)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                    await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Update_KnittingPlanMaster_RevisionNo", item.EntityState, UserId, item.YBookingID);
-                    await _connection.ExecuteAsync("sp_Update_KnittingPlanMaster_RevisionNo", new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Update_KnittingPlanMaster_RevisionNo, new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
 
-                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities);
+                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities, transactionGmt);
                 if (yarnPRs.Count() > 0)
                 {
                     List<YarnPRChild> yarnPRChilds = new List<YarnPRChild>();
@@ -18791,20 +18753,23 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(mrChilds, transaction);
                 foreach (FreeConceptMRChild item in mrChilds)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, UserId, item.FCMRChildID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = UserId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task UpdateBulkStatus2(int userId, List<FBookingAcknowledge> entities,
@@ -18814,10 +18779,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
             List<FreeConceptMRChild> mrChilds)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 await _service.SaveAsync(entities, transaction);
 
                 List<FBookingAcknowledgeChild> FBAckChildList = new List<FBookingAcknowledgeChild>();
@@ -18836,14 +18807,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(FBAckChildList, transaction);
                 foreach (FBookingAcknowledgeChild item in FBAckChildList)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FBookingAcknowledgeChild_1", item.EntityState, userId, item.BookingChildID, item.ConsumptionID, item.BookingID, item.ItemMasterID, item.AcknowledgeID);
-                    await _connection.ExecuteAsync("sp_Validation_FBookingAcknowledgeChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(FBAckChildDetailsList, transaction);
 
                 if (yarnBookingChilds.Count() > 0)
                 {
-                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds);//alamin UserId
+                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds, transactionGmt);//alamin UserId
                     yarnBookingChilds = new List<YarnBookingChild>();
                     yarnBookingChildItems = new List<YarnBookingChildItem>();
                     List<BulkBookingFinishFabricUtilization> fFUtilizationList = new List<BulkBookingFinishFabricUtilization>();
@@ -18892,14 +18862,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         {
                             throw new Exception("Yarn Item missing => UpdateBulkStatus2 => BDSAcknowledgeService");
                         }
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChild_1", item.EntityState, userId, item.YBChildID);
-                        await _connection.ExecuteAsync("sp_Validation_YarnBookingChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
                     }
                     await _service.SaveAsync(yarnBookingChildItems, transaction);
                     foreach (YarnBookingChildItem item in yarnBookingChildItems)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChildItem_1", item.EntityState, userId, item.YBChildItemID);
-                        await _connection.ExecuteAsync("sp_Validation_YarnBookingChildItem_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChildItem_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
                     }
                     await _service.SaveAsync(fFUtilizationList, transaction);
                     await _service.SaveAsync(gFUtilizationList, transaction);
@@ -18911,8 +18879,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     await _service.SaveAsync(yarnBookingChildItems, transaction);
                     foreach (YarnBookingChildItem item in yarnBookingChildItems)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingChildItem_1", item.EntityState, userId, item.YBChildItemID);
-                        await _connection.ExecuteAsync("sp_Validation_YarnBookingChildItem_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChildItem_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
                 if (yarnBookings.Count() > 0)
@@ -18920,12 +18887,11 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     await _service.SaveAsync(yarnBookings, transaction);
                     foreach (YarnBookingMaster item in yarnBookings)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                        await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
-                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities);
+                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities, transactionGmt);
                 if (yarnPRs.Count() > 0)
                 {
                     List<YarnPRChild> yarnPRChilds = new List<YarnPRChild>();
@@ -18940,19 +18906,23 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(mrChilds, transaction);
                 foreach (FreeConceptMRChild item in mrChilds)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, userId, item.FCMRChildID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
+
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task UpdateBulkStatusYarnRevision(int userId, List<FBookingAcknowledge> entities,
@@ -18963,10 +18933,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
             bool pmcApprove = false, bool IsRejectByPMC = false)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 await _service.SaveAsync(entities, transaction);
 
                 List<FBookingAcknowledgeChild> FBAckChildList = new List<FBookingAcknowledgeChild>();
@@ -18987,7 +18963,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 if (yarnBookingChilds.Count() > 0)
                 {
-                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds);
+                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds, transactionGmt);
                     yarnBookingChilds = new List<YarnBookingChild>();
                     yarnBookingChildItemsRevision = new List<YarnBookingChildItemRevision>();
                     List<BulkBookingFinishFabricUtilization> fFUtilizationList = new List<BulkBookingFinishFabricUtilization>();
@@ -19042,8 +19018,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 }
                 if (pmcApprove)
                 {
-                    //await _service.ExecuteAsync("spBackupYarnBookingChildItem_Full_New", new { YBookingNo = yarnBookings[0].YBookingNo, IsRejectByPMC= IsRejectByPMC }, 30, CommandType.StoredProcedure);
-                    await _connection.ExecuteAsync("spBackupYarnBookingChildItem", new { YBookingNo = yarnBookings[0].YBookingNo, IsRejectByPMC = IsRejectByPMC, YarnBookingRevisionTypeID = yarnBookings[0].YarnBookingRevisionTypeID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.spBackupYarnBookingChildItem, new { YBookingNo = yarnBookings[0].YBookingNo, IsRejectByPMC = IsRejectByPMC, YarnBookingRevisionTypeID = yarnBookings[0].YarnBookingRevisionTypeID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 if (yarnBookings.Count() > 0)
                 {
@@ -19058,14 +19033,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     await _service.SaveAsync(yarnBookings, transaction);
                     foreach (YarnBookingMaster item in yarnBookings)
                     {
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_YarnBookingMaster_1", item.EntityState, userId, item.YBookingID);
-                        await _connection.ExecuteAsync("sp_Validation_YarnBookingMaster_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
-                        //await _service.ValidationSingleAsync(item, transaction, "sp_Update_KnittingPlanMaster_RevisionNo", item.EntityState, userId, item.YBookingID);
-                        await _connection.ExecuteAsync("sp_Update_KnittingPlanMaster_RevisionNo", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
+                        await _connection.ExecuteAsync(SPNames.sp_Update_KnittingPlanMaster_RevisionNo, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                     }
                 }
 
-                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities);
+                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities, transactionGmt);
                 if (yarnPRs.Count() > 0)
                 {
                     List<YarnPRChild> yarnPRChilds = new List<YarnPRChild>();
@@ -19080,24 +19053,24 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(mrChilds, transaction);
                 foreach (FreeConceptMRChild item in mrChilds)
                 {
-                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_FreeConceptMRChild_1", item.EntityState, userId, item.FCMRChildID);
-                    await _connection.ExecuteAsync("sp_Validation_FreeConceptMRChild_1", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
+                    await _connection.ExecuteAsync(SPNames.sp_Validation_FreeConceptMRChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FCMRChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
-
-
                 transaction.Commit();
-
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
 
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task SaveRevision(List<FBookingAcknowledge> entities,
@@ -19108,10 +19081,17 @@ namespace EPYSLTEXCore.Application.Services.Booking
          List<YarnBookingMaster_New_RevisionReason> RevisionReasonList = null)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
+
                 await _service.SaveAsync(entities, transaction);
 
                 List<FBookingAcknowledgeChild> FBAckChildList = new List<FBookingAcknowledgeChild>();
@@ -19132,7 +19112,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 if (yarnBookingChilds.Count() > 0)
                 {
-                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds);
+                    List<YarnBookingChild> ybChilds = await this.GetYBChilds(yarnBookingChilds, transactionGmt);
                     yarnBookingChilds = new List<YarnBookingChild>();
                     //yarnBookingChildItemsRevision = new List<YarnBookingChildItemRevision>();
                     List<BulkBookingFinishFabricUtilization> fFUtilizationList = new List<BulkBookingFinishFabricUtilization>();
@@ -19201,7 +19181,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 {
 
                     var addedChilds = yarnBookingChildItemsRevision.FindAll(x => x.EntityState == EntityState.Added);
-                    int maxChildItemId = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, addedChilds.Count);
+                    int maxChildItemId = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, addedChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                     foreach (var item in addedChilds)
                     {
@@ -19219,7 +19199,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     await _service.SaveAsync(yarnBookings, transaction);
                 }
 
-                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities);
+                List<YarnPRMaster> yarnPRs = await this.GetPRs(entities, transactionGmt);
                 if (yarnPRs.Count() > 0)
                 {
                     List<YarnPRChild> yarnPRChilds = new List<YarnPRChild>();
@@ -19235,13 +19215,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 #region Yarn Booking Revision Reason
 
-                await _connection.ExecuteAsync("spDeleteRevisionReason", new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
+                await _connection.ExecuteAsync(SPNames.spDeleteRevisionReason, new { YBookingNo = yarnBookings[0].YBookingNo }, transaction, 30, CommandType.StoredProcedure);
 
                 if (RevisionReasonList.Count > 0)
                 {
                     int maxChildId = 0;
 
-                    maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count);
+                    maxChildId = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster_New_RevisionReason, RevisionReasonList.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                     foreach (YarnBookingMaster_New_RevisionReason item in RevisionReasonList)
                     {
                         item.YBRReasonID = maxChildId++;
@@ -19252,18 +19232,22 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 #endregion
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
-        private async Task<List<YarnPRMaster>> GetPRs(List<FBookingAcknowledge> entities)
+        private async Task<List<YarnPRMaster>> GetPRs(List<FBookingAcknowledge> entities, SqlTransaction transactionGmt)
         {
             List<YarnPRMaster> yarnPRs = new List<YarnPRMaster>();
 
@@ -19295,8 +19279,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     });
                 });
 
-                int maxMaster = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER, countMaster);
-                int maxChild = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, countChild);
+                int maxMaster = await _service.GetMaxIdAsync(TableNames.YARN_PR_MASTER, countMaster, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxChild = await _service.GetMaxIdAsync(TableNames.YARN_PR_CHILD, countChild, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                 yarnPRs.ForEach(c =>
                 {
@@ -19316,7 +19300,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             }
             return yarnPRs;
         }
-        private async Task<List<YarnBookingChild>> GetYBChilds(List<YarnBookingChild> yarnBookingChilds)
+        private async Task<List<YarnBookingChild>> GetYBChilds(List<YarnBookingChild> yarnBookingChilds, SqlTransaction transactionGmt)
         {
             int countChild = 0,
                 countChildItem = 0,
@@ -19344,12 +19328,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 countFFUtilization += c.FinishFabricUtilizationPopUpList.Where(x => x.EntityState == EntityState.Added).Count();
                 countGFUtilization += c.GreyFabricUtilizationPopUpList.Where(x => x.EntityState == EntityState.Added).Count();
             });
-            int maxChild = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countChild);
-            int maxChildItem = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countChildItem);
-            int maxFFUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFFUtilization);
-            int maxGFUtilization = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization);
-            int maxGreyYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countGreyYarnUtilization);
-            int maxDyedYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countDyedYarnUtilization);
+            int maxChild = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countChild, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxChildItem = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countChildItem, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxFFUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxGFUtilization = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxGreyYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countGreyYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxDyedYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countDyedYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             yarnBookingChilds.ForEach(c =>
             {
@@ -19416,7 +19400,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             return yarnBookingChilds;
         }
 
-        private async Task<List<YarnBookingChild>> GetYBChilds_ForUtilizationPOPUP(List<YarnBookingChild> yarnBookingChilds)
+        private async Task<List<YarnBookingChild>> GetYBChilds_ForUtilizationPOPUP(List<YarnBookingChild> yarnBookingChilds, SqlTransaction transactionGmt)
         {
             int countFFUtilization = 0,
                 countGFUtilization = 0,
@@ -19436,10 +19420,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 countGFUtilization += c.GreyFabricUtilizationPopUpList.Where(x => x.EntityState == EntityState.Added).Count();
             });
 
-            int maxFFUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFFUtilization);
-            int maxGFUtilization = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization);
-            int maxGreyYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countGreyYarnUtilization);
-            int maxDyedYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countDyedYarnUtilization);
+            int maxFFUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxGFUtilization = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxGreyYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countGreyYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxDyedYarnUtilization = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countDyedYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             yarnBookingChilds.ForEach(c =>
             {
@@ -19552,13 +19536,18 @@ namespace EPYSLTEXCore.Application.Services.Booking
         public async Task<FBookingAcknowledge> UpdateFBookingAck(FBookingAcknowledge entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _service.Connection.OpenAsync();
                 transaction = _service.Connection.BeginTransaction();
 
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 int count = 0;
-                count = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entity.FBookingChild.Count(x => x.EntityState == EntityState.Added));
+                count = await _service.GetMaxIdAsync(TableNames.FBBOOKING_ACKNOWLEDGE_CHILD, entity.FBookingChild.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                 entity.FBookingChild.Where(x => x.EntityState == EntityState.Added).ToList().ForEach(x =>
                 {
@@ -19585,17 +19574,20 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 #endregion Sample Booking Master
 
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 return entity;
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
-                _service.Connection.Close();
+                _connection.Close();
+                _connectionGmt.Close();
             }
         }
         public async Task<FreeConceptMaster> GetAllAsyncR(int id)
@@ -20165,7 +20157,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             };
             return fBAChildDetail;
         }
-        private async Task<List<YarnBookingMaster>> GetYarnBooking(FBookingAcknowledge fBookingAck, bool isAddition)
+        private async Task<List<YarnBookingMaster>> GetYarnBooking(FBookingAcknowledge fBookingAck, bool isAddition, SqlTransaction transactionGmt)
         {
             var subGroupIDs = string.Join(",", fBookingAck.FBookingChild.Select(x => x.SubGroupID).Distinct());
             var subGroupIDsSplit = subGroupIDs.Split(',');
@@ -20194,16 +20186,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     countReqQTYReplacement += n.AdditionalNetReqPOPUPList.Where(g => g.EntityState == EntityState.Added).Count();
                 });
             });
-            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, subGroupIDsSplit.Count());
-            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC);
-            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI);
+            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, subGroupIDsSplit.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
-            int maxBBFFUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFUtilization);
-            int maxGFUtilizationID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization);
-            int maxReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildReplacement, countReplacement);
-            int maxBBGreyYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countBBGreyYarnUtilization);
-            int maxBBDyedYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countBBDyedYarnUtilization);
-            int maxReqQTYReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildItemNetReqQTY, countReqQTYReplacement);
+            int maxBBFFUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxGFUtilizationID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildReplacement, countReplacement, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxBBGreyYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countBBGreyYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxBBDyedYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countBBDyedYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxReqQTYReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildItemNetReqQTY, countReqQTYReplacement, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             List<YarnBookingMaster> YarnBookings = new List<YarnBookingMaster>();
 
@@ -20512,7 +20504,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             return YarnBookings;
         }
-        private async Task<List<YarnBookingMaster>> GetYarnBookingWithRevision(FBookingAcknowledge fBookingAck, bool isAddition)
+        private async Task<List<YarnBookingMaster>> GetYarnBookingWithRevision(FBookingAcknowledge fBookingAck, bool isAddition, SqlTransaction transactionGmt)
         {
             var subGroupIDs = string.Join(",", fBookingAck.FBookingChild.Select(x => x.SubGroupID).Distinct());
             var subGroupIDsSplit = subGroupIDs.Split(',');
@@ -20526,9 +20518,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 countYBCI += m.ChildItemsRevision.Count();
             });
 
-            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, subGroupIDsSplit.Count());
-            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC);
-            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI);
+            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, subGroupIDsSplit.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             List<YarnBookingMaster> YarnBookings = new List<YarnBookingMaster>();
 
@@ -20683,7 +20675,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             return YarnBookings;
         }
-        private async Task<FBookingAcknowledge> GetFinishingProcess(FBookingAcknowledge entity)
+        private async Task<FBookingAcknowledge> GetFinishingProcess(FBookingAcknowledge entity, SqlTransaction transactionGmt)
         {
             List<FBookingAcknowledgeChild> BookingChilds = new List<FBookingAcknowledgeChild>();
 
@@ -20720,8 +20712,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 });
             });
 
-            int maxFPC = await _service.GetMaxIdAsync(TableNames.FBookingAckChildFinishingProcess, FPChilds.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxFPCI = await _service.GetMaxIdAsync(TableNames.FBookingAckChildFinishingProcessItem, FPChildItems.Where(x => x.EntityState == EntityState.Added).Count());
+            int maxFPC = await _service.GetMaxIdAsync(TableNames.FBookingAckChildFinishingProcess, FPChilds.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxFPCI = await _service.GetMaxIdAsync(TableNames.FBookingAckChildFinishingProcessItem, FPChildItems.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
 
             entity.FBookingChild.ForEach(c =>
@@ -20761,7 +20753,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             return entity;
         }
-        private async Task<List<YarnBookingMaster>> GetYarnBookingForUpdate(List<YarnBookingMaster> yarnBookings, FBookingAcknowledge fBookingAck, bool isAddition, bool isUpdateAddition = false)
+        private async Task<List<YarnBookingMaster>> GetYarnBookingForUpdate(List<YarnBookingMaster> yarnBookings, FBookingAcknowledge fBookingAck, bool isAddition, bool isUpdateAddition = false, SqlTransaction transactionGmt = null)
         {
             var subGroupIDs = string.Join(",", fBookingAck.FBookingChild.Select(x => x.SubGroupID).Distinct());
             var subGroupIDsSplit = subGroupIDs.Split(',');
@@ -20811,16 +20803,16 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     });
                 });
             });
-            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, subGroupIDsSplit.Count());
+            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, subGroupIDsSplit.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
             //int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC);
             //int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI);
 
-            int maxBBFFUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFUtilization);
-            int maxGFUtilizationID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization);
-            int maxReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildReplacement, countReplacement);
-            int maxBBGreyYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countBBGreyYarnUtilization);
-            int maxBBDyedYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countBBDyedYarnUtilization);
-            int maxReqQTYReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildItemNetReqQTY, countReqQTYReplacement);
+            int maxBBFFUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxGFUtilizationID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildReplacement, countReplacement, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxBBGreyYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countBBGreyYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxBBDyedYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countBBDyedYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxReqQTYReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildItemNetReqQTY, countReqQTYReplacement, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             List<YarnBookingMaster> ybsFinal = new List<YarnBookingMaster>();
 
@@ -21637,9 +21629,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 });
             });
 
-            maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, countYBM);
-            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC);
-            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI);
+            maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, countYBM, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             ybsFinal.ForEach(yb =>
             {
@@ -21683,7 +21675,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
             return ybsFinal;
         }
-        private async Task<List<YarnBookingMaster>> GetYarnBookingForUpdateWithRevision(List<YarnBookingMaster> yarnBookings, FBookingAcknowledge fBookingAck, bool isAddition)
+        private async Task<List<YarnBookingMaster>> GetYarnBookingForUpdateWithRevision(List<YarnBookingMaster> yarnBookings, FBookingAcknowledge fBookingAck, bool isAddition, SqlTransaction transactionGmt)
         {
             var subGroupIDs = string.Join(",", fBookingAck.FBookingChild.Select(x => x.SubGroupID).Distinct());
             var subGroupIDsSplit = subGroupIDs.Split(',');
@@ -22098,9 +22090,9 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 });
             });
 
-            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, countYBM);
-            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC);
-            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI);
+            int maxYBM = await _service.GetMaxIdAsync(TableNames.YarnBookingMaster, countYBM, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBC = await _service.GetMaxIdAsync(TableNames.YarnBookingChild, countYBC, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             ybsFinal.ForEach(yb =>
             {
@@ -22252,10 +22244,15 @@ namespace EPYSLTEXCore.Application.Services.Booking
         public async Task ApproveOrRejectBulkAddition(YarnBookingMaster yarnBooking, List<YarnBookingMaster> yarnBookings)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
                 List<YarnBookingChild> yarnBookingChilds = new List<YarnBookingChild>();
                 List<YarnBookingChildItem> yarnBookingChildItems = new List<YarnBookingChildItem>();
@@ -22290,13 +22287,13 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         countNetReqQTY += n.AdditionalNetReqPOPUPList.Where(g => g.EntityState == EntityState.Added).Count();
                     });
                 });
-                countYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI);
-                int maxBBFFUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFUtilization);
-                int maxGFUtilizationID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization);
-                int maxReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildReplacement, countReplacement);
-                int maxBBGreyYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countBBGreyYarnUtilization);
-                int maxBBDyedYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countBBDyedYarnUtilization);
-                int maxNetReqQTYID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildItemNetReqQTY, countNetReqQTY);
+                countYBCI = await _service.GetMaxIdAsync(TableNames.YarnBookingChildItem, countYBCI, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxBBFFUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingFinishFabricUtilization, countFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxGFUtilizationID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildGFUtilization, countGFUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxReplacementID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildReplacement, countReplacement, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxBBGreyYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingGreyYarnUtilization, countBBGreyYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxBBDyedYarnUtilizationID = await _service.GetMaxIdAsync(TableNames.BulkBookingDyedYarnUtilization, countBBDyedYarnUtilization, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxNetReqQTYID = await _service.GetMaxIdAsync(TableNames.FBookingAcknowledgeChildItemNetReqQTY, countNetReqQTY, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
 
                 yarnBooking.Childs.ForEach(x =>
@@ -22499,15 +22496,19 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _service.SaveAsync(childItemNetReqQTYPopUpList, transaction);
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
-                if (transaction != null) transaction.Rollback();
+                transaction.Rollback();
+                transactionGmt.Rollback();
+
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 
@@ -22906,7 +22907,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
         {
             var query = "";
 
-            query = String.Format(@"Select * FROM "+TableNames.BulkBookingFinishFabricUtilization+" where YBChildID = {0}", YBChildID);
+            query = String.Format(@"Select * FROM " + TableNames.BulkBookingFinishFabricUtilization + " where YBChildID = {0}", YBChildID);
 
             try
             {

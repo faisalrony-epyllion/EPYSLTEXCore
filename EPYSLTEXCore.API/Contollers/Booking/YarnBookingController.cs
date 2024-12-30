@@ -33,6 +33,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         {
             _service = service;
         }
+
         [HttpGet]
         [Route("forBulk/{bookingNo}/{isSample}")]
         public async Task<IActionResult> GetYBForBulkAsync(string bookingNo, bool isSample)

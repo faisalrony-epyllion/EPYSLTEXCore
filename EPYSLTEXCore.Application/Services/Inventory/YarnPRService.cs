@@ -1254,9 +1254,9 @@ namespace EPYSLTEX.Infrastructure.Services
 				MAX(FCC.ReqCone) ReqCone, PurchaseQty = SUM(FCC.ReqQty), FCC.ShadeCode, FCM.CompanyID As FPRCompanyID, CE.ShortName As FPRCompanyName, 
 				FCM.ConceptID,FCC.FCMRChildID,
                 IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, 
-				IM.Segment6ValueID, IM.Segment7ValueID, ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, 
+				IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID, ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, 
 				ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc, 
-				ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, 'BDS' As [Source], FCM.ConceptNo, FCM.GroupConceptNo,
+				ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, ISV8.SegmentValue Segment8ValueDesc, 'BDS' As [Source], FCM.ConceptNo, FCM.GroupConceptNo,
 				FBA.BaseTypeId, FCC.DayValidDurationId
                 FROM {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCC
                 INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_MASTER} FCMR ON FCMR.FCMRMasterID = FCC.FCMRMasterID
@@ -1271,12 +1271,13 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV5 ON ISV5.SegmentValueID = IM.Segment5ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 On ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
+				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV8 ON ISV8.SegmentValueID = IM.Segment8ValueID
                 Left Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = FCM.CompanyID
                 Where FCM.GroupConceptNo IN ({iDs}) AND FCC.IsPR = 1 AND FCC.FCMRChildID NOT IN (SELECT FCMRChildID FROM {TableNames.YarnPRChild})
 				GROUP BY FCC.ItemMasterID, FCC.ShadeCode, FCM.CompanyID, FCM.ConceptNo, FCM.GroupConceptNo, CE.ShortName, IM.Segment1ValueID, IM.Segment2ValueID, 
 				FCM.ConceptID,FCC.FCMRChildID,
-                IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, ISV1.SegmentValue, 
-				ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue, ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue,FBA.BaseTypeId, FCC.DayValidDurationId;";
+                IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID, ISV1.SegmentValue, 
+				ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue, ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, ISV8.SegmentValue,FBA.BaseTypeId, FCC.DayValidDurationId;";
             }
             else if (source == PRFromName.PROJECTION_YARN_BOOKING)
             {
@@ -1577,10 +1578,10 @@ namespace EPYSLTEX.Infrastructure.Services
                 )
                 Select YRC.YarnPRChildID,YRC.YarnCategory, YRC.YarnPRMasterID, YRC.ConceptID, YRC.ItemMasterID, YRC.UnitID, YRC.Remarks, SUM(YRC.ReqQty) ReqQty, MAX(YRC.ReqCone) ReqCone
                     , YRC.ShadeCode, YRC.FPRCompanyID, CE.ShortName FPRCompanyName, IM.Segment1ValueID, IM.Segment2ValueID
-					, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID
+					, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID
 					,ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc
 					, ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc
-					, ISV7.SegmentValue Segment7ValueDesc, FCM.ConceptNo, 
+					, ISV7.SegmentValue Segment7ValueDesc, ISV8.SegmentValue Segment8ValueDesc, FCM.ConceptNo, 
                     GroupConceptNo = CASE WHEN ISNULL(YRC.ConceptID,0) > 0 THEN FCM.GroupConceptNo ELSE '' END,
                     ISNULL(PYBM.PYBookingNo, YMRM.YDMaterialRequirementNo) BookingNo
                     , YRC.RefLotNo, YRC.RefSpinnerID, RefSpinner = CASE WHEN ISNULL(YRC.RefSpinnerID,0) > 0 THEN S.ShortName ELSE '' END {bulkCondition}
@@ -1594,6 +1595,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV5 ON ISV5.SegmentValueID = IM.Segment5ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 On ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
+				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV8 ON ISV8.SegmentValueID = IM.Segment8ValueID
                 LEFT Join {DbNames.EPYSL}..Contacts S On S.ContactID = YRC.RefSpinnerID
                 LEFT JOIN {DbNames.EPYSL}..Unit U ON U.UnitID = YRC.UnitID
                 LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON YRC.FPRCompanyID = CE.CompanyID
@@ -1604,8 +1606,8 @@ namespace EPYSLTEX.Infrastructure.Services
                 LEFT JOIN {TableNames.YD_MATERIAL_REQUIREMENT_MASTER} YMRM ON YMRM.YDMaterialRequirementMasterID = YMRCI.YDMaterialRequirementMasterID
 				GROUP BY YRC.YarnPRChildID,YRC.YarnCategory, YRC.YarnPRMasterID, YRC.ConceptID, YRC.ItemMasterID, YRC.UnitID, YRC.Remarks, YRC.ShadeCode, YRC.FPRCompanyID
 				, CE.ShortName, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID
-				, IM.Segment6ValueID, IM.Segment7ValueID, ISV1.SegmentValue, ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue
-				, ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, FCM.ConceptNo, ISNULL(YRC.ConceptID,0), FCM.GroupConceptNo, PYBM.PYBookingNo, YMRM.YDMaterialRequirementNo
+				, IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID, ISV1.SegmentValue, ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue
+				, ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, ISV8.SegmentValue, FCM.ConceptNo, ISNULL(YRC.ConceptID,0), FCM.GroupConceptNo, PYBM.PYBookingNo, YMRM.YDMaterialRequirementNo
                 , YRC.RefLotNo, YRC.RefSpinnerID, S.ShortName,YRC.DayValidDurationId;
 
                 -- PR Company

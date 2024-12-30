@@ -747,7 +747,6 @@
                 }
             ];
         }
-
         else if (status == statusConstants.REJECT) {
             columns = [
                 {
@@ -801,7 +800,6 @@
                 }
             ];
         }
-
         else {
             columns = [
                 {
@@ -1229,12 +1227,15 @@
                 $formEl.find("#divUnAcknowledgeReason").hide();
                 $formEl.find("#btnAcknowledgeMR").hide();
                 $formEl.find("#btnAcknowledge").hide();
-
+                
                 if (status == statusConstants.ADDITIONAL) $formEl.find("#btnSave,#btnSaveForApproval").fadeOut();
                 else $formEl.find("#btnSave,#btnSaveForApproval").fadeIn();
                 masterData = response.data;
-                if (masterData.YarnPRRequiredDate != null) {
+                if (masterData.YarnPRRequiredDate != null && masterData.YarnPRRequiredDate !== "0001-01-01T00:00:00") {
                     masterData.YarnPRRequiredDate = formatDateToDefault(masterData.YarnPRRequiredDate);
+                }
+                else {
+                    masterData.YarnPRRequiredDate = formatDateToDefault(new Date());
                 }
 
                 if (masterData.YarnPRDate != null) {
@@ -1280,7 +1281,7 @@
             .then(function (response) {
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
-
+                
                 masterData = response.data;
                 if (masterData.YarnPRRequiredDate != null) {
                     masterData.YarnPRRequiredDate = formatDateToDefault(masterData.YarnPRRequiredDate);
@@ -1572,7 +1573,7 @@
                     args.data.YarnPRChildID = getMaxIdForArray($tblChildEl.getCurrentViewRecords(), "YarnPRChildID");
                 }
                 else if (args.requestType === "save") {
-                    debugger;
+                    
                     args.data.PurchaseQty = parseFloat(parseFloat(args.data.PurchaseQty).toFixed(2));
                     args.data.AllocationQty = parseFloat(parseFloat(args.data.AllocationQty).toFixed(2));
                     args.data.ReqQty = parseFloat(parseFloat(args.data.ReqQty).toFixed(2));

@@ -1310,9 +1310,9 @@ namespace EPYSLTEX.Infrastructure.Services
                 
                 SELECT PYBBookingChildID = 0, IM.ItemMasterID, ReqQty = 0, Remarks = '', FPRCompanyID = ROL.CompanyID, CE.ShortName As FPRCompanyName
 	                , UnitID = 28, BookingID = 0, BookingNo = 0, BookingDate = null
-					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID
+					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID
 	                , ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc
-	                , ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, BaseTypeId = 0,
+	                , ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, ISV8.SegmentValue Segment8ValueDesc, BaseTypeId = 0,
                     ' ROL Base Booking' As [Source], ROL.MOQ
                     , StockQty = SUM(ISNULL(YSM.PipelineStockQty,0) + ISNULL(YSM.QuarantineStockQty,0) + ISNULL(YSM.AdvanceStockQty,0) + ISNULL(YSM.SampleStockQty,0) + ISNULL(YSM.LeftoverStockQty,0) + ISNULL(YSM.LiabilitiesStockQty,0))
                 FROM {TableNames.ItemMasterReOrderStatus} ROL
@@ -1325,12 +1325,13 @@ namespace EPYSLTEX.Infrastructure.Services
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV5 On IM.Segment5ValueID = ISV5.SegmentValueID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV6 On IM.Segment6ValueID = ISV6.SegmentValueID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV7 On IM.Segment7ValueID = ISV7.SegmentValueID
+				Left Join {DbNames.EPYSL}..ItemSegmentValue ISV8 On IM.Segment8ValueID = ISV8.SegmentValueID
                 Left Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = ROL.CompanyID 
 				Where ROL.ROSID IN ({iDs})
                 GROUP BY  IM.ItemMasterID, ROL.CompanyID, CE.ShortName
-					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID
+					, IM.Segment1ValueID, IM.Segment2ValueID, IM.Segment3ValueID, IM.Segment4ValueID, IM.Segment5ValueID, IM.Segment6ValueID, IM.Segment7ValueID, IM.Segment8ValueID
 	                , ISV1.SegmentValue, ISV2.SegmentValue, ISV3.SegmentValue, ISV4.SegmentValue
-	                , ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, ROL.MOQ;";
+	                , ISV5.SegmentValue, ISV6.SegmentValue, ISV7.SegmentValue, ISV8.SegmentValue, ROL.MOQ;";
             }
             else if (source == PRFromName.CONCEPT && revisionstatus == "Revision Pending")
             {
@@ -1966,8 +1967,8 @@ namespace EPYSLTEX.Infrastructure.Services
                     await _connection.ExecuteAsync(SPNames.spBackupYarnPR, new { YarnPRMasterID = yarnPRMaster.YarnPRMasterID }, transaction, 30, CommandType.StoredProcedure);
                 }
 
-                await _service.SaveSingleAsync(yarnPRMaster, transaction);
-                await _service.SaveAsync(yarnPRMaster.Childs, transaction);
+                await _service.SaveSingleAsync(yarnPRMaster, _connection,  transaction);
+                await _service.SaveAsync(yarnPRMaster.Childs, _connection, transaction);
                 if (yarnPRMaster.Status != Status.ROL_BASE_PENDING)
                 {
                     foreach (YarnPRChild item in yarnPRMaster.Childs)

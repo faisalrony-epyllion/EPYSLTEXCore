@@ -811,45 +811,6 @@
                     return false;
                 });
             }
-
-            //-----------------------Load Notification Count-----------------------------------
-            /*
-            var countTagProps = "";
-            switch (menuType) {
-                case _paramType.BulkBookingAck:
-                    countTagProps = "Pending,Draft,SendingForApproval,Reject,Approved,Reject2,AllCount";
-                    break;
-                case _paramType.BulkBookingYarnAllowance:
-                    countTagProps = "Pending,SendingForApproval,Reject,AllCount";
-                    break;
-                case _paramType.BulkBookingUtilizationProposal:
-                    countTagProps = "UtilizationProposalPending,AllCount";
-                    break;
-                case _paramType.BulkBookingUtilizationConfirmation:
-                    countTagProps = "UtilizationConfirmationPending,UtilizationConfirmed,AllCount";
-                    break;
-                case _paramType.BulkBookingCheck:
-                    countTagProps = "Pending,CheckCount,Reject,AllCount";
-                    break;
-                case _paramType.BulkBookingApprove:
-                    countTagProps = "Pending,Approved,Reject,AllCount";
-                    break;
-                case _paramType.BulkBookingFinalApprove:
-                    countTagProps = "Pending,Approved,Reject,AllCount";
-                    break;
-                default:
-                // code block
-            }
-            if (countTagProps.length > 0) {
-                loadListCountMethod({
-                    ToolbarId: toolbarId,
-                    URL: `/api/bds-acknowledge/bulk/bulk-booking-knitting-info/get-list-count/${menuType}`,
-                    CountTagProps: countTagProps,
-                    IsDefaultAllCount: false
-                });
-            }
-            */
-            //-----------------------Load Notification Count-----------------------------------
         }
         else if (menuType == _paramType.BDSAcknowledge) {
             $formEl.find("#lblTableTitle").text("Sample Booking Consumption");
@@ -2501,7 +2462,8 @@
         compositionComponents.reverse();
 
         var composition = "";
-        compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
         compositionComponents.forEach(function (component) {
 
             composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
@@ -3198,7 +3160,7 @@
     }
 
     function handleCommands(args) {
-
+        
         //var isValidate =  FBookingAckRevisionPendingValidation(args.rowData.BookingNo, args.rowData.ExportOrderID);
         if (isOnlyBulkBookingKnittingInfoMenu() && args.commandColumn.type != 'View Attachment' && args.commandColumn.type != 'Tech Pack Attachment' && args.commandColumn.type != 'Booking Attachment' && args.commandColumn.type != 'Export' && args.commandColumn.type != 'Booking Report' && args.commandColumn.type != 'Bulk Booking Report' && args.commandColumn.type != 'Bulk Booking Yarn Info') {
             FBookingAckRevisionPendingValidation(args.rowData.BookingNo, args.rowData.ExportOrderID)
@@ -3298,7 +3260,7 @@
         //    toastr.error("Marketing Ack Pending");
         //    return false;
         //}
-
+        
         if (args.commandColumn.type == 'Add') {
             if (args.rowData.PendingRevision != null && typeof args.rowData.PendingRevision !== "undefined" && $.trim(args.rowData.PendingRevision.length) > 0) {
                 getNew(args.rowData.BookingID, true);
@@ -4374,7 +4336,7 @@
                 ];
 
                 columns.unshift({
-                    headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                    headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                     ]
                 });
@@ -5769,7 +5731,7 @@
             if (c == "Commands") indexF = childColumns.findIndex(x => x.headerText == c);
             else indexF = childColumns.findIndex(x => x.field == c);
 
-            if (c == "Commands") widthValue = 60;
+            if (c == "Commands") widthValue = 200;
             else if (c == "Segment1ValueId") widthValue = 180;
 
             if (indexF > -1) childColumns[indexF].width = widthValue;
@@ -5822,6 +5784,7 @@
         }
 
         if (!isYarnBookingAcknowledgeMenu()) {
+            debugger;
             if (isAllowEditing) {
                 childColumns = await getYarnItemColumnsWithSearchDDLAsync(ch_getCountRelatedList(masterData, 2), isAllowEditing);
 
@@ -5916,12 +5879,13 @@
 
         if (isOnlyAllowDelete) {
             childColumns.unshift({
-                headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                     { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                 ]
             });
         }
         childColumns = setVisiblePropValueYarn(childColumns);
+        debugger;
         return childColumns;
     }
 
@@ -6677,7 +6641,7 @@
                 ];
 
                 columns.unshift({
-                    headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                    headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                     ]
                 });
@@ -7865,7 +7829,7 @@
                 ];
 
                 columns.unshift({
-                    headerText: 'Commands', textAlign: 'Center', width: 80, commands: [
+                    headerText: 'Commands', textAlign: 'Center', width: ch_setActionCommandCellWidth(1), commands: [
                         { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } }
                     ]
                 });

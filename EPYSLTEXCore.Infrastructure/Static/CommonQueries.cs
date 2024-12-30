@@ -251,7 +251,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
         public static string GetUnit()
         {
             return $@"SELECT CAST(UnitID AS VARCHAR) AS id, DisplayUnitDesc AS text
-                  FROM Unit";
+                  FROM {DbNames.EPYSL}..Unit";
         }
         public static string GetAllFiberType()
         {
@@ -1433,8 +1433,8 @@ namespace EPYSLTEXCore.Infrastructure.Static
         {
             return $@"SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                       text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
-                      FROM FBookingAcknowledgeChild BAC
-                      INNER JOIN FBookingAcknowledge FCM ON FCM.BookingID = BAC.BookingID
+                      FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                      INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FCM ON FCM.BookingID = BAC.BookingID
                       INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -1449,8 +1449,8 @@ namespace EPYSLTEXCore.Infrastructure.Static
         {
             return $@"SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                       text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
-                      FROM FBookingAcknowledgeChild BAC
-                      INNER JOIN FBookingAcknowledge FCM ON FCM.BookingID = BAC.BookingID
+                      FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                      INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FCM ON FCM.BookingID = BAC.BookingID
                       INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -1469,8 +1469,8 @@ namespace EPYSLTEXCore.Infrastructure.Static
                       Color = CASE WHEN BAC.SubGroupID = 1 THEN ISV3.SegmentValue ELSE ISV5.SegmentValue END, 
                       Length = CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END,
                       Width = CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
-                      FROM FBookingAcknowledgeChild BAC
-                      INNER JOIN FBookingAcknowledge FCM ON FCM.BookingID = BAC.BookingID
+                      FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                      INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FCM ON FCM.BookingID = BAC.BookingID
                       INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -1489,8 +1489,8 @@ namespace EPYSLTEXCore.Infrastructure.Static
                       Color = CASE WHEN BAC.SubGroupID = 1 THEN ISV3.SegmentValue ELSE ISV5.SegmentValue END, 
                       Length = CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END,
                       Width = CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
-                      FROM FBookingAcknowledgeChild BAC
-                      INNER JOIN FBookingAcknowledge FCM ON FCM.BookingID = BAC.BookingID
+                      FROM {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} BAC
+                      INNER JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FCM ON FCM.BookingID = BAC.BookingID
                       INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = BAC.ItemMasterID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                       LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID

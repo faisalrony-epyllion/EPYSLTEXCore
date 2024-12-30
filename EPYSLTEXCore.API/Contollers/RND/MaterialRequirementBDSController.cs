@@ -641,8 +641,15 @@ namespace EPYSLTEXCore.API.Contollers.RND
         [Route("revise")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Revise(List<FreeConceptMRMaster> models)
+        public async Task<IActionResult> Revise(dynamic jsnString)
         {
+            List<FreeConceptMRMaster> models = JsonConvert.DeserializeObject<List<FreeConceptMRMaster>>(
+                  Convert.ToString(jsnString),
+                  new JsonSerializerSettings
+                  {
+                      DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+                  });
+
             string grpConceptNo = models[0].GroupConceptNo;
             int vFCMRMasterID = models[0].FCMRMasterID;
             int bookingID = models[0].BookingID;

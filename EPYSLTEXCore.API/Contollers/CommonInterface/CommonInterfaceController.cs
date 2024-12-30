@@ -139,6 +139,27 @@ namespace EPYSLTEXCore.API.Contollers.CommonInterface
             return Ok();
 
         }
+         
+        [Route("dependentCombodata/{menuId}/{ChildID}/{FilterID}")]
+        public async Task<IActionResult> GetDependentComboData(int menuId, int ChildID,int FilterID)
+        {
+
+            var commonInterfaceMasterlst = await GetOrCreateCacheValue(InMemoryCacheKeys.CommonInterfaceConfig, AppConstants.APPLICATION_ID);
+            CommonInterfaceMaster commonInterfaceMaster = commonInterfaceMasterlst.FirstOrDefault(p => p.MenuId == menuId);
+
+            //  string connKey = commonInterfaceMaster.ChildGrids.FirstOrDefault().ConName
+            string connKey = commonInterfaceMaster.ConName;
+            var childColumn = commonInterfaceMaster.Childs.Find(p => p.ChildID == ChildID);
+
+            string selectSql = childColumn.SelectSql + " WHERE  [desc]=" + FilterID.ToString();
+            var records = await _service.GetDynamicDataAsync(selectSql, connKey);
+            return Ok(records);
+
+
+
+            return Ok();
+
+        }
         [Route("combodatachildgrid/{menuId}/{childGridColumnID}")]
         public async Task<IActionResult> GetComboDataChildgrid(int menuId, int childGridColumnID)
         {

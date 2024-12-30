@@ -1,4 +1,5 @@
 using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Statics;
@@ -34,5 +35,9 @@ namespace EPYSLTEXCore.Application.Interfaces
 
         Task ReviseAsync(List<FreeConceptMRMaster> entities, string grpConceptNo, int userId, string fcmrChildIds);
         Task SaveBlendTypeName(CompositionBlendType entity);
+        Task<List<CT>> GetDataDapperAsync<CT>(string query) where CT : class;
+        Task<bool> ExistsAsync(int SegmentNameID, string SegmentValue);
+        Task<ItemSegmentName> FindAsync(string SegmentName);
+        //Task<ItemSegmentName> FindAsync(Func<object, bool> value);
     }
 }

@@ -1207,7 +1207,8 @@
         $divTblEl.fadeIn();
         if (status === statusConstants.NEW) {
             status = statusConstants.ADDITIONAL;
-            toggleActiveToolbarBtn("#btnPendingList", $toolbarEl);
+            //toggleActiveToolbarBtn("#btnPendingList", $toolbarEl);
+            $toolbarEl.find("#btnPendingList").click();
         }
         initMasterTable();
     }
@@ -2156,7 +2157,10 @@
         compositionComponents.reverse();
 
         var composition = "";
-        compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        var blendTypeNames = [];
+        var programTypeNames = [];
+        //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
         compositionComponents.forEach(function (component) {
             composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
             if (component.YarnSubProgramNew) {
@@ -2171,11 +2175,39 @@
                 }
             }
             composition += ` ${component.Fiber}`;
+
+
+            component.FiberTypeName = getDefaultValueWhenInvalidS(component.FiberTypeName);
+            if (component.FiberTypeName.length > 0) {
+                blendTypeNames.push(component.FiberTypeName);
+            }
+            component.ProgramTypeName = getDefaultValueWhenInvalidS(component.ProgramTypeName);
+            if (component.ProgramTypeName.length > 0) {
+                programTypeNames.push(component.ProgramTypeName);
+            }
+
         });
 
+        blendTypeNames = [...new Set(blendTypeNames)];
+        var blendTypeName = blendTypeNames.join(" + ");
+
+        programTypeNames = [...new Set(programTypeNames)];
+        var programTypeName = "Conventional";
+        var indexF = programTypeNames.findIndex(x => x == "Sustainable");
+        if (indexF > -1) {
+            programTypeName = "Sustainable";
+        }
+
+        //var data = {
+        //    SegmentValue: composition
+        //};
         var data = {
-            SegmentValue: composition
-        };
+            ItemSegmentValue: {
+                SegmentValue: composition
+            },
+            BlendTypeName: blendTypeName,
+            ProgramTypeName: programTypeName
+        }
 
         axios.post("/api/rnd-free-concept-mr/save-yarn-composition", data)
             .then(function () {

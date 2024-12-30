@@ -1,5 +1,5 @@
 ﻿(function () {
-    var menuId, pageName, pageId, pageIdWithHash;
+    var menuId, pageName, pageId, pageIdWithHash,menuParam;
     var toolbarId;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $formEl,
         tblTestingRequirementId, $divItemInfo, $divTestingRequirement, $tblTestingRequirementEl,
@@ -39,7 +39,7 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
-
+        if (!menuParam) menuParam = localStorage.getItem("menuParam");
         pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
         toolbarId = pageConstants.TOOLBAR_ID_PREFIX + pageId;
@@ -53,6 +53,8 @@
         tblSpecialMethodsId = "#tblSpecialMethods" + pageId;
         pageIdWithHash = "#" + pageId;
 
+      
+
         tblTestingRequirementmodal = "#tblTestingRequirementmodal" + pageId;
         $divItemInfo = $(`#divItemInfo${pageId}`);
         $divTestingRequirement = $(`#divTestingRequirement${pageId}`);
@@ -62,8 +64,11 @@
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
 
-        isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
-        isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
+        if (menuParam == "Ack") isAcknowledgePage = true;
+        else if (menuParam == "A") isApprovePage = true;
+
+
+     
         isReqBulkPage = convertToBoolean($(`#${pageId}`).find("#ReqBulkPage").val());
         isReqApproveBulkPage = convertToBoolean($(`#${pageId}`).find("#ReqApproveBulkPage").val());
         isReqAckBulkPage = convertToBoolean($(`#${pageId}`).find("#ReqAckBulkPage").val());

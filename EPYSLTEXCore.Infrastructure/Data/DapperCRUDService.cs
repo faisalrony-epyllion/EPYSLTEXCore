@@ -1290,7 +1290,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
         public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
-            if (increment == 0) return 0;
+            //if (increment == 0) return 0;
             var signature = GetSignature(field, 1, 1, repeatAfter, transaction, connectionGmt);
             //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 

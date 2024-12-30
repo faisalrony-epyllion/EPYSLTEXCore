@@ -128,8 +128,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
 
         [HttpPost]
         [Route("update-finishing-process")]
-        public async Task<IActionResult> UpdateFinishingProcess(DyeingBatchMaster model)
+        public async Task<IActionResult> UpdateFinishingProcess(dynamic JsonString)
         {
+            DyeingBatchMaster model = JsonConvert.DeserializeObject<DyeingBatchMaster>(Convert.ToString(JsonString));
             List<DyeingBatchChildFinishingProcess> existFinishingProcessList = await _RollFinishingInfoService.GetExistFinishingProcessList(model.DBIID);
             List<DyeingBatchChildFinishingProcess> newFinishingProcessList = await _RollFinishingInfoService.GetNewFinishingProcessList(model.ConceptID, model.ColorID);
 
@@ -258,10 +259,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                 }
             }
 
-            //existFinishingProcessList.Where(x => x.ProductionDate == null).ToList().ForEach(x =>
-            //  {
-            //      if (x.EntityState == EntityState.Unchanged) x.EntityState = EntityState.Deleted;
-            //  });
+           
             existFinishingProcessList.ToList().ForEach(x =>
             {
                 if (x.EntityState == EntityState.Unchanged) x.EntityState = EntityState.Deleted;

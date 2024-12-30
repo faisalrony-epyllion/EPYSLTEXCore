@@ -9,7 +9,6 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 
 namespace EPYSLTEXCore.Application.Services.General
 {
@@ -38,14 +37,16 @@ namespace EPYSLTEXCore.Application.Services.General
             sql += $@"WITH
                         FinalList AS
                         (
-					        SELECT YPM.YRMPID,
+					        SELECT YPM.YRMPID,YPMC.YRMPChildID,
+							YPMC.SupplierID,Supplier = SUP.ShortName,
+							YPMC.SpinnerID,Spinner = SPN.ShortName,
                             YPM.FiberTypeID, FiberType = FT.SegmentValue,
                             YPM.BlendTypeID, BlendType = CASE WHEN YPM.BlendTypeID=1 THEN 'Blended' WHEN YPM.BlendTypeID=2 THEN 'Non Blended' ELSE '' END, 
                             YPM.YarnTypeID, YT.ValueName YarnType,
                             YPM.ProgramID, Program = P.SegmentValue,
                             YPM.SubProgramID, SubProgram = SP.SegmentValue,
                             YPM.CertificationID, Certification = C.SegmentValue,
-                            YPM.TechnicalParameterID, TechnicalParameter = TPISV.SegmentValue,
+                            YPM.TechnicalParameterID, TechnicalParameter = TP.SegmentValue,
                             YPM.YarnCompositionID, YarnComposition = YC.SegmentValue,
                             YPM.ShadeReferenceID, ShadeReference = YSB.ShadeCode,
                             YPM.ManufacturingLineID, ManufacturingLine=ML.SegmentValue,
@@ -55,13 +56,13 @@ namespace EPYSLTEXCore.Application.Services.General
                             YPM.ColorGradeID, ColorGrade=CG.SegmentValue,
                             YPM.YarnCountID, YarnCount=YarnCount.SegmentValue
                             FROM {TableNames.YarnRMProperties} YPM
+							LEFT JOIN YarnRMPropertiesChild YPMC ON YPMC.YRMPID=YPM.YRMPID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue FT ON FT.SegmentValueID=YPM.FiberTypeID
                             LEFT JOIN {DbNames.EPYSL}..EntityTypeValue YT ON YT.ValueID=YPM.YarnTypeID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue P ON P.SegmentValueID=YPM.ProgramID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue SP ON SP.SegmentValueID=YPM.SubProgramID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue C ON C.SegmentValueID=YPM.CertificationID
-                            LEFT JOIN {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup TP ON TP.QualityParameterSVID=YPM.TechnicalParameterID
-                            LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue TPISV ON TPISV.SegmentValueID=TP.QualityParameterSVID
+                            LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue TP ON TP.SegmentValueID=YPM.TechnicalParameterID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue YC ON YC.SegmentValueID=YPM.YarnCompositionID
                             LEFT JOIN {TableNames.YARN_SHADE_BOOK} YSB ON YSB.YSCID=YPM.ShadeReferenceID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ML ON ML.SegmentValueID=YPM.ManufacturingLineID
@@ -70,6 +71,8 @@ namespace EPYSLTEXCore.Application.Services.General
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID=YPM.ColorID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue CG ON CG.SegmentValueID=YPM.ColorGradeID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue YarnCount ON YarnCount.SegmentValueID=YPM.YarnCountID
+							LEFT JOIN {DbNames.EPYSL}..Contacts SPN ON SPN.ContactID=YPMC.SpinnerID
+							LEFT JOIN {DbNames.EPYSL}..Contacts SUP ON SUP.ContactID=YPMC.SupplierID
 			            )
                         SELECT *, Count(*) Over() TotalRows FROM FinalList";
 
@@ -88,18 +91,23 @@ namespace EPYSLTEXCore.Application.Services.General
             return await _service.GetDataAsync<YarnRMProperties>(query);
         }
 
-
-        public async Task<YarnRMProperties> GetAsync(int yrmpID)
+        public async Task<YarnRMProperties> GetById(int id)
         {
             var sql =
-                $@"SELECT * FROM {TableNames.YarnRMProperties} 
-							Where YRMPID = {yrmpID}";
-
+                $@"
+                   --Master 
+                   SELECT * FROM {TableNames.YarnRMProperties} 
+							Where YRMPID = {id};
+                   --Child
+                   SELECT * FROM {TableNames.YarnRMPropertiesChild} 
+							Where YRMPID = {id};
+                ";
             try
             {
                 await _connection.OpenAsync();
                 var records = await _connection.QueryMultipleAsync(sql);
                 YarnRMProperties data = records.Read<YarnRMProperties>().FirstOrDefault();
+                data.Childs = records.Read<YarnRMPropertiesChild>().ToList();
                 Guard.Against.NullObject(data);
 
                 return data;
@@ -114,194 +122,124 @@ namespace EPYSLTEXCore.Application.Services.General
                 if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
             }
         }
-        public async Task<YarnRMProperties> GetMaster()
+        public async Task<YarnRMProperties> GetNewAsync()
         {
             var sql =
                 $@"--Fiber Type
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence = 1
-	                    UNION
-	                    SELECT id=SegmentValueID,text=SegmentValue, Sequence = 2 
-	                    FROM {DbNames.EPYSL}..ItemSegmentValue 
-	                    WHERE SegmentNameID IN (261) AND SegmentValueID IN (58957,58956,58955)
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+                    SELECT id=SegmentValueID,text=SegmentValue 
+	                FROM {DbNames.EPYSL}..ItemSegmentValue 
+	                WHERE SegmentNameID IN (261) AND SegmentValueID IN (58957,58956,58955)
+					ORDER BY SegmentValue ASC;
 
                     --Blend Type
-
-                    SELECT id = 0, text = 'Select'
-                    UNION
                     SELECT id=1, text='Blended'
                     UNION
                     SELECT id=2, text='Non Blended';
 
                     -- Fabric Components/Yarn Type
-
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence = 1
-	                    UNION
-	                     Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text], Sequence = 2
-	                    From {DbNames.EPYSL}..EntityTypeValue EV
-	                    Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-	                    LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
-	                    Where ET.EntityTypeName = '{EntityTypeNameConstants.FABRIC_TYPE}' AND ISNULL(FBS.IsInactive,0) = 0
-	                    Group By EV.ValueID,EV.ValueName       
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+                    Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text]
+	                From EPYSL..EntityTypeValue EV
+	                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+	                LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
+	                Where ET.EntityTypeName = '{EntityTypeNameConstants.FABRIC_TYPE}' AND ISNULL(FBS.IsInactive,0) = 0
+	                Group By EV.ValueID,EV.ValueName ORDER BY EV.ValueName; 
 
                     --Program
-
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence = 1
-	                    UNION
-	                    SELECT id=SegmentValueID, text=SegmentValue, Sequence = 2
-	                    FROM {DbNames.EPYSL}..ItemSegmentValue WHERE SegmentNameID IN (262)       
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+                    SELECT id=SegmentValueID, text=SegmentValue
+	                FROM {DbNames.EPYSL}..ItemSegmentValue WHERE SegmentNameID IN (262)
+					ORDER BY SegmentValue;
                     
                     --Sub-Program
-
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence=1
-	                    UNION
-	                    SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence=2
-	                    FROM {DbNames.EPYSL}..ItemSegmentName ISN
-	                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
-	                    Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-	                    LEFT JOIN T_SubProgramBasicSetup SBS ON SBS.SegmentValueID = ISV.SegmentValueID
-	                    WHERE ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
-	                    AND ISNULL(SBS.IsInactive,0) = 0 AND ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}'       
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+                    SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text]
+	                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+	                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+	                LEFT JOIN {TableNames.SubProgramBasicSetup} SBS ON SBS.SegmentValueID = ISV.SegmentValueID
+	                WHERE ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+	                AND ISNULL(SBS.IsInactive,0) = 0 AND ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}'
+					ORDER BY ISV.SegmentValue;
 
                     --Certificate
-
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence=1
-	                    UNION
-	                    SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence=2
-	                    FROM {DbNames.EPYSL}..ItemSegmentName ISN
-	                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
-	                    LEFT JOIN {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
-	                    LEFT JOIN T_CertificationsBasicSetup CBS ON CBS.SegmentValueID = ISV.SegmentValueID
-	                    WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And 
-	                    ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
-	                    AND ISNULL(CBS.IsInactive,0) = 0         
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+                    SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text]
+	                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+	                LEFT JOIN {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+	                LEFT JOIN {TableNames.CertificationsBasicSetup} CBS ON CBS.SegmentValueID = ISV.SegmentValueID
+	                WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And 
+	                ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+	                AND ISNULL(CBS.IsInactive,0) = 0 ORDER BY ISV.SegmentValue;
 
                     --Technical Parameter
-
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence=1
-	                    UNION
-	                    SELECT distinct 
-	                    CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
-	                    from {DbNames.EPYSL}..ItemSegmentValue ISV    
-	                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-	                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}')                  
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+                    SELECT distinct 
+	                CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
+	                from {DbNames.EPYSL}..ItemSegmentValue ISV    
+	                LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}') ORDER BY ISV.SegmentValue ;
 
                     --Yarn Composition
 
-                     WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence=1
-	                    UNION
-	                    SELECT 
-	                    id = ISV.SegmentValueID
-	                    ,text = ISV.SegmentValue, Sequence=2
-	                    from {DbNames.EPYSL}..ItemSegmentValue ISV
-	                    INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
-	                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COMPOSITION}') AND ISNULL(ISV.SegmentValue,'') <> ''
-	                    AND ISV.SegmentValueID != 93222                    
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
-
-                    --Shade Reference
-
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence=1
-	                    UNION
-	                    SELECT id = YSCID, text = ShadeCode, Sequence=2 FROM {TableNames.YARN_SHADE_BOOK}                      
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
-
-                    --Manufacturing Line
-
-                    WITH List AS(
-	                    SELECT id = 0, text = 'Select', Sequence=1
-	                    UNION
-	                    SELECT distinct
-	                    id = ISV.SegmentValueID
-	                    ,text = ISV.SegmentValue, Sequence=2
-	                    from {DbNames.EPYSL}..ItemSegmentValue ISV   
-	                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-	                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}') AND ISNULL(ISV.SegmentValue,'') <> ''                      
-                    )
-                SELECT id,text FROM List ORDER BY Sequence,text;
-
-                    --Manufacturing Process
-
-                    WITH List AS(
-					    SELECT id = 0, text = 'Select', Sequence=1
-	                    UNION
-                        SELECT distinct
-                         id = ISV.SegmentValueID
-                        ,text = ISV.SegmentValue, Sequence=2
-                        from {DbNames.EPYSL}..ItemSegmentValue ISV  
-                        LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                        WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> ''            
-                    )
-                    SELECT id,text FROM List ORDER BY Sequence,text;
-
-                    --Manufacturing Sub-process
-
-                   WITH List AS(
-	                SELECT id = 0, text = 'Select', Sequence=1
-	                UNION
-	                SELECT distinct
+                    SELECT 
 	                id = ISV.SegmentValueID
 	                ,text = ISV.SegmentValue, Sequence=2
+	                from {DbNames.EPYSL}..ItemSegmentValue ISV
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COMPOSITION}') AND ISNULL(ISV.SegmentValue,'') <> ''
+	                AND ISV.SegmentValueID != 93222   ORDER BY ISV.SegmentValue;
+
+                    --Shade Reference
+                    SELECT id = YSCID, text = ShadeCode FROM {TableNames.YARN_SHADE_BOOK} ORDER BY ShadeCode;
+
+                    --Manufacturing Line
+                    SELECT distinct
+					id = ISV.SegmentValueID
+					,text = ISV.SegmentValue
+					from {DbNames.EPYSL}..ItemSegmentValue ISV   
+					LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+					WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}') AND ISNULL(ISV.SegmentValue,'') <> ''
+					ORDER BY ISV.SegmentValue;
+
+                    --Manufacturing Process
+                    SELECT distinct
+                    id = ISV.SegmentValueID
+                    ,text = ISV.SegmentValue
+                    from {DbNames.EPYSL}..ItemSegmentValue ISV  
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> '' 
+				    ORDER BY ISV.SegmentValue;
+
+                    --Manufacturing Sub-process
+                    SELECT distinct
+	                id = ISV.SegmentValueID
+	                ,text = ISV.SegmentValue
 	                from {DbNames.EPYSL}..ItemSegmentValue ISV  
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> ''            
-                )
-                SELECT id,text FROM List ORDER BY Sequence,text;
+	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> '' 
+					ORDER BY ISV.SegmentValue;
 
                     --Color
-
-                    WITH List AS(
-	                SELECT id = 0, text = 'Select', Sequence=1
-	                UNION
-	                SELECT id = SegmentValueID, text = SegmentValue , Sequence=2
+                    SELECT id = SegmentValueID, text = SegmentValue
 	                FROM {DbNames.EPYSL}..ItemSegmentValue a 
-	                WHERE a.SegmentNameID = 131)
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+	                WHERE a.SegmentNameID = 131 ORDER BY SegmentValue;
 
                     --Color Grade
-
-                    WITH List AS(
-	                SELECT id = 0, text = 'Select', Sequence=1
-	                UNION
-	                SELECT id = SegmentValueID, text = SegmentValue , Sequence=2
+                    SELECT id = SegmentValueID, text = SegmentValue
 	                FROM {DbNames.EPYSL}..ItemSegmentValue a 
-	                WHERE a.SegmentNameID = 269)
-                    SELECT id,text FROM List ORDER BY Sequence,text;
+	                WHERE a.SegmentNameID = 269 ORDER BY SegmentValue;
 
                     --Count
-
-                    WITH List AS(
-	                SELECT id = 0, text = 'Select', Sequence=1
-	                UNION
-	                SELECT distinct
+                    SELECT distinct
 	                 id = ISV.SegmentValueID
 	                ,text = ISV.SegmentValue, Sequence = 2
 	                from {DbNames.EPYSL}..ItemSegmentValue ISV
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
 	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COUNT}')
-                )
-                SELECT id,text FROM List ORDER BY Sequence,text;";  
+					ORDER BY ISV.SegmentValue;
+
+                    -----SpinnerList
+                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.SPINNER)};
+
+                    -----SupplierList
+                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.SUPPLIER)};";  
             try
             {
                 await _connection.OpenAsync();
@@ -322,6 +260,8 @@ namespace EPYSLTEXCore.Application.Services.General
                 data.ColorList = records.Read<Select2OptionModel>().ToList();
                 data.ColorGradeList = records.Read<Select2OptionModel>().ToList();
                 data.YarnCountList = records.Read<Select2OptionModel>().ToList();
+                data.SpinnerList = records.Read<Select2OptionModel>().ToList();
+                data.SupplierList = records.Read<Select2OptionModel>().ToList();
                 Guard.Against.NullObject(data);
 
                 return data;
@@ -335,7 +275,172 @@ namespace EPYSLTEXCore.Application.Services.General
                 if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
             }
         }
-        public async Task SaveAsync(YarnRMProperties entity)
+        public async Task<YarnRMProperties> GetDetails(int yrmpID)
+        {
+            var sql =
+                $@"
+                    --Master
+                    SELECT * FROM YarnRMProperties WHERE YRMPID={yrmpID};
+
+                    --Child
+                    SELECT YPMC.*, Supplier = SUP.ShortName, Spinner = SPN.ShortName FROM YarnRMPropertiesChild YPMC 
+                    LEFT JOIN EPYSL..Contacts SPN ON SPN.ContactID=YPMC.SpinnerID
+                    LEFT JOIN EPYSL..Contacts SUP ON SUP.ContactID=YPMC.SupplierID
+                    WHERE YPMC.YRMPID={yrmpID};
+
+                    --Fiber Type
+                    SELECT id=SegmentValueID,text=SegmentValue 
+	                FROM {DbNames.EPYSL}..ItemSegmentValue 
+	                WHERE SegmentNameID IN (261) AND SegmentValueID IN (58957,58956,58955)
+					ORDER BY SegmentValue ASC;
+
+                    --Blend Type
+                    SELECT id=1, text='Blended'
+                    UNION
+                    SELECT id=2, text='Non Blended';
+
+                    -- Fabric Components/Yarn Type
+                    Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text]
+	                From EPYSL..EntityTypeValue EV
+	                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+	                LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
+	                Where ET.EntityTypeName = '{EntityTypeNameConstants.FABRIC_TYPE}' AND ISNULL(FBS.IsInactive,0) = 0
+	                Group By EV.ValueID,EV.ValueName ORDER BY EV.ValueName; 
+
+                    --Program
+                    SELECT id=SegmentValueID, text=SegmentValue
+	                FROM {DbNames.EPYSL}..ItemSegmentValue WHERE SegmentNameID IN (262)
+					ORDER BY SegmentValue;
+                    
+                    --Sub-Program
+                    SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text]
+	                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+	                Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+	                LEFT JOIN {TableNames.SubProgramBasicSetup} SBS ON SBS.SegmentValueID = ISV.SegmentValueID
+	                WHERE ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+	                AND ISNULL(SBS.IsInactive,0) = 0 AND ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}'
+					ORDER BY ISV.SegmentValue;
+
+                    --Certificate
+                    SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text]
+	                FROM {DbNames.EPYSL}..ItemSegmentName ISN
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+	                LEFT JOIN {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+	                LEFT JOIN {TableNames.CertificationsBasicSetup} CBS ON CBS.SegmentValueID = ISV.SegmentValueID
+	                WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And 
+	                ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+	                AND ISNULL(CBS.IsInactive,0) = 0 ORDER BY ISV.SegmentValue;
+
+                    --Technical Parameter
+                    SELECT distinct 
+	                CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
+	                from {DbNames.EPYSL}..ItemSegmentValue ISV    
+	                LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}') ORDER BY ISV.SegmentValue ;
+
+                    --Yarn Composition
+
+                    SELECT 
+	                id = ISV.SegmentValueID
+	                ,text = ISV.SegmentValue, Sequence=2
+	                from {DbNames.EPYSL}..ItemSegmentValue ISV
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COMPOSITION}') AND ISNULL(ISV.SegmentValue,'') <> ''
+	                AND ISV.SegmentValueID != 93222   ORDER BY ISV.SegmentValue;
+
+                    --Shade Reference
+                    SELECT id = YSCID, text = ShadeCode FROM {TableNames.YARN_SHADE_BOOK} ORDER BY ShadeCode;
+
+                    --Manufacturing Line
+                    SELECT distinct
+					id = ISV.SegmentValueID
+					,text = ISV.SegmentValue
+					from {DbNames.EPYSL}..ItemSegmentValue ISV   
+					LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+					WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}') AND ISNULL(ISV.SegmentValue,'') <> ''
+					ORDER BY ISV.SegmentValue;
+
+                    --Manufacturing Process
+                    SELECT distinct
+                    id = ISV.SegmentValueID
+                    ,text = ISV.SegmentValue
+                    from {DbNames.EPYSL}..ItemSegmentValue ISV  
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> '' 
+				    ORDER BY ISV.SegmentValue;
+
+                    --Manufacturing Sub-process
+                    SELECT distinct
+	                id = ISV.SegmentValueID
+	                ,text = ISV.SegmentValue
+	                from {DbNames.EPYSL}..ItemSegmentValue ISV  
+	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS}') AND ISNULL(ISV.SegmentValue,'') <> '' 
+					ORDER BY ISV.SegmentValue;
+
+                    --Color
+                    SELECT id = SegmentValueID, text = SegmentValue
+	                FROM {DbNames.EPYSL}..ItemSegmentValue a 
+	                WHERE a.SegmentNameID = 131 ORDER BY SegmentValue;
+
+                    --Color Grade
+                    SELECT id = SegmentValueID, text = SegmentValue
+	                FROM {DbNames.EPYSL}..ItemSegmentValue a 
+	                WHERE a.SegmentNameID = 269 ORDER BY SegmentValue;
+
+                    --Count
+                    SELECT distinct
+	                 id = ISV.SegmentValueID
+	                ,text = ISV.SegmentValue, Sequence = 2
+	                from {DbNames.EPYSL}..ItemSegmentValue ISV
+	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COUNT}')
+					ORDER BY ISV.SegmentValue;
+
+                    -----SpinnerList
+                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.SPINNER)};
+
+                    -----SupplierList
+                    {CommonQueries.GetContactsByCategoryType(ContactCategoryNames.SUPPLIER)};";
+            try
+            {
+                await _connection.OpenAsync();
+                var records = await _connection.QueryMultipleAsync(sql);
+                YarnRMProperties data = new YarnRMProperties();
+                data = records.Read<YarnRMProperties>().FirstOrDefault();
+                data.Childs = records.Read<YarnRMPropertiesChild>().ToList();
+                data.FiberTypeList = records.Read<Select2OptionModel>().ToList();
+                data.BlendTypeList = records.Read<Select2OptionModel>().ToList();
+                data.YarnTypeList = records.Read<Select2OptionModel>().ToList();
+                data.ProgramList = records.Read<Select2OptionModel>().ToList();
+                data.SubProgramList = records.Read<Select2OptionModel>().ToList();
+                data.CertificationList = records.Read<Select2OptionModel>().ToList();
+                data.TechnicalParameterList = records.Read<Select2OptionModel>().ToList();
+                data.YarnCompositionList = records.Read<Select2OptionModel>().ToList();
+                data.ShadeReferenceList = records.Read<Select2OptionModel>().ToList();
+                data.ManufacturingLineList = records.Read<Select2OptionModel>().ToList();
+                data.ManufacturingProcessList = records.Read<Select2OptionModel>().ToList();
+                data.ManufacturingSubProcessList = records.Read<Select2OptionModel>().ToList();
+                data.ColorList = records.Read<Select2OptionModel>().ToList();
+                data.ColorGradeList = records.Read<Select2OptionModel>().ToList();
+                data.YarnCountList = records.Read<Select2OptionModel>().ToList();
+                data.SpinnerList = records.Read<Select2OptionModel>().ToList();
+                data.SupplierList = records.Read<Select2OptionModel>().ToList();
+                Guard.Against.NullObject(data);
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open) _connection.Close();
+            }
+        }
+        public async Task SaveAsync1(YarnRMProperties entity)
         {
             SqlTransaction transaction = null;
             SqlTransaction transactionGmt = null;
@@ -376,6 +481,83 @@ namespace EPYSLTEXCore.Application.Services.General
             {
                 if (transaction != null) transaction.Dispose();
                 if (transactionGmt != null) transactionGmt.Dispose();
+                _connection.Close();
+                _connectionGmt.Close();
+            }
+        }
+        public async Task SaveAsync(YarnRMProperties entity)
+        {
+            SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
+
+            try
+            {
+                await _connection.OpenAsync();
+                transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
+                int maxChildId = 0;
+                int maxChildItemId = 0;
+
+                switch (entity.EntityState)
+                {
+                    case EntityState.Added:
+
+                        entity.YRMPID = await _service.GetMaxIdAsync(TableNames.YarnRMProperties, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.YarnRMPropertiesChild, entity.Childs.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+
+                        foreach (var item in entity.Childs)
+                        {
+                            item.YRMPChildID = maxChildId++;
+                            item.YRMPID = entity.YRMPID;
+                            item.EntityState = EntityState.Added;
+                        }
+
+                        break;
+
+                    case EntityState.Modified:
+
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.YarnRMPropertiesChild, entity.Childs.Count(x => x.EntityState == EntityState.Added), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+
+                        foreach (var item in entity.Childs)
+                        {
+                            if (item.EntityState == EntityState.Added)
+                            {
+                                item.YRMPChildID = maxChildId++;
+                                item.YRMPID = entity.YRMPID;
+                                item.EntityState = EntityState.Added;
+                            }
+                        }
+
+
+                        break;
+
+                    case EntityState.Unchanged:
+                    case EntityState.Deleted:
+                        entity.EntityState = EntityState.Deleted;
+                        entity.Childs.SetDeleted();
+                        break;
+
+                    default:
+                        break;
+                }
+
+                await _service.SaveSingleAsync(entity, transaction);
+                await _service.SaveAsync(entity.Childs, transaction);
+
+                transaction.Commit();
+                transactionGmt.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                transactionGmt.Rollback();
+                throw ex;
+            }
+            finally
+            {
                 _connection.Close();
                 _connectionGmt.Close();
             }

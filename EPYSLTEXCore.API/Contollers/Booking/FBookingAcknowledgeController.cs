@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.Entity;
 using System.Text.Json;
-
+using Newtonsoft.Json;
 
 
 namespace EPYSLTEXCore.API.Contollers.Booking
@@ -42,14 +42,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             var paginationInfo = Request.GetPaginationInfo();
             List<FBookingAcknowledge> records = await _service.GetBulkFabricAckPagedAsync(status, paginationInfo, AppUser);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
-        }
-
-        [HttpGet]
-        [Route("bulk/fabric-booking-acknowledge/get-list-count")]
-        public async Task<IActionResult> GetListCount()
-        {
-            CountListItem data = await _service.GetListCount();
-            return Ok(data);
         }
 
         [HttpGet]
@@ -87,76 +79,8 @@ namespace EPYSLTEXCore.API.Contollers.Booking
             else
             {
                 data = await _service.GetSavedBulkFabricAsync(selectedbookingID == "" ? "0" : selectedbookingID);
-                //data.FBookingChild = data.FBookingChild.Where(x => x.BookingQty > 0).ToList();
-                //data.FBookingChildCollor = data.FBookingChildCollor.Where(x => x.BookingQty > 0).ToList();
-                //data.FBookingChildCuff = data.FBookingChildCuff.Where(x => x.BookingQty > 0).ToList();
             }
             return Ok(data);
-        }
-
-        [HttpGet]
-        [Route("bulk/smail/{bookingNo}/{withoutOB}/{saveType}/{listTypeMasterGrid}")]
-        public async Task<IActionResult> SendMail(string bookingNo, int withoutOB, string saveType, string listTypeMasterGrid)
-        {
-            List<BookingChild> updatedDataNew = new List<BookingChild>();
-            if (bookingNo.IsNotNullOrEmpty())
-            {
-                if (withoutOB == 0)
-                {
-                    updatedDataNew = await _service.GetAllInHouseBookingByBookingNo(bookingNo);
-                }
-                else
-                {
-                    updatedDataNew = await _service.GetAllInHouseSampleBookingByBookingNo(bookingNo);
-                }
-            }
-            String selectedbookingID = String.Empty;
-            var strArr = updatedDataNew.Select(i => i.BookingId.ToString()).Distinct().ToArray();
-            selectedbookingID += string.Join(",", strArr.ToArray());
-            FabricBookingAcknowledge savedFBA = await _service.GetAllSavedFBAcknowledgeByBookingID(selectedbookingID == "" ? "0" : selectedbookingID);
-            bool hasLiabilities = false;
-            if (savedFBA.FBookingChild.Count > 0)
-            {
-                if (savedFBA.FBookingChild.Max(i => Convert.ToInt32(i.SendToMktAck)) == 1)
-                {
-                    hasLiabilities = true;
-                }
-            }
-
-
-            Boolean IsSendMail = false;
-
-            int unAckBy = 0;
-
-            if (withoutOB == 0)
-            {
-                List<BookingMaster> bmList = new List<BookingMaster>();
-                if (updatedDataNew.Count > 0)
-                {
-                    BookingMaster bm = await _service.GetAllBookingAsync(updatedDataNew[0].BookingId);
-                    if (bm.IsNotNull())
-                    {
-                        bmList.Add(bm);
-                        unAckBy = bm.OrderBankMasterID;
-                    }
-                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
-                }
-            }
-            else
-            {
-                List<SampleBookingMaster> bmList = new List<SampleBookingMaster>();
-                if (savedFBA.FabricBookingAcknowledgeList.Count > 0)
-                {
-                    SampleBookingMaster bm = await _service.GetAllAsync(savedFBA.FabricBookingAcknowledgeList[0].BookingID);
-                    if (bm.IsNotNull())
-                    {
-                        bmList.Add(bm);
-                        unAckBy = bm.LabdipUnAcknowledgeBY;
-                    }
-                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, saveType, hasLiabilities, unAckBy, listTypeMasterGrid);
-                }
-            }
-            return Ok(IsSendMail);
         }
 
         [HttpGet]
@@ -168,1047 +92,12 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 data = new FBookingAcknowledge();
             return Ok(data);
         }
-        [HttpGet]
-        [Route("{fbAckId}")]
-        public async Task<IActionResult> GetData(int fbAckId)
-        {
-            FBookingAcknowledge data = await _service.GetDataAsync(fbAckId);
-            return Ok(data);
-        }
 
-        [Route("save")]
-        [HttpPost]
-        [ValidateModel]
-        public async Task<IActionResult> Save(FBookingAcknowledge modelDynamic)
-        {
-            FBookingAcknowledge entity = modelDynamic;// models.FirstOrDefault();
-            string grpConceptNo = modelDynamic.grpConceptNo;
-            int isBDS = modelDynamic.IsBDS;
-
-            bool isRevised = modelDynamic.IsRevised;
-            int preRevisionNo = modelDynamic.PreRevisionNo;
-            string ActionStatus = modelDynamic.ActionStatus;
-            List<FBookingAcknowledge> entities = new List<FBookingAcknowledge>();
-            List<BDSDependentTNACalander> BDCalander = new List<BDSDependentTNACalander>();
-            var fbMaster = new FBookingAcknowledge();
-            fbMaster = await _service.GetFBAcknowledgeByBookingID(entity.BookingID);
-            if (fbMaster.IsNull())
-                fbMaster = new FBookingAcknowledge();
-            //var BDSTNAEvent = await _service.GetAllAsyncBDSTNAEvent_HK();
-
-            entity.IsSample = false;
-            entity.AddedBy = AppUser.UserCode;
-
-            if (entity.IsUnAcknowledge)
-            {
-                entity.IsUnAcknowledge = true;
-                entity.UnAcknowledgeBy = AppUser.EmployeeCode;
-                entity.UnAcknowledgeDate = DateTime.Now;
-                entity.UnAcknowledgeReason = entity.UnAcknowledgeReason;
-            }
-
-            //FBookingAcknowledgeChild
-            List<FBookingAcknowledgeChild> entityChilds = new List<FBookingAcknowledgeChild>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeChild ObjEntityChild = new FBookingAcknowledgeChild(); ;
-                ObjEntityChild.BookingChildID = item.BookingChildID;
-                ObjEntityChild.ConsumptionChildID = item.BookingChildID;
-                ObjEntityChild.BookingID = item.BookingID;
-                ObjEntityChild.IsTxtAck = true;
-                if (ActionStatus == "30" || ActionStatus == "3")
-                {
-                    ObjEntityChild.IsTxtAck = true;
-                    ObjEntityChild.TxtAcknowledgeBy = AppUser.UserCode;
-                    ObjEntityChild.TxtAcknowledgeDate = DateTime.Now;
-                }
-                else if (ActionStatus == "10")
-                {
-                    ObjEntityChild.SendToMktAck = true;
-                    ObjEntityChild.AcknowledgeBy = AppUser.UserCode;
-                    ObjEntityChild.AcknowledgeDate = DateTime.Now;
-                }
-                ObjEntityChild.AcknowledgeID = item.AcknowledgeID;
-                ObjEntityChild.ConsumptionID = item.ConsumptionID;
-                ObjEntityChild.SubGroupID = item.SubGroupID;
-                ObjEntityChild.ItemGroupID = item.ItemGroupID;
-                ObjEntityChild.ItemMasterID = item.ItemMasterID;
-                ObjEntityChild.OrderBankPOID = item.OrderBankPOID;
-                ObjEntityChild.ColorID = item.ColorID;
-                ObjEntityChild.TechPackID = item.TechPackID;
-                ObjEntityChild.BookingUnitID = item.BookingUnitID;
-                ObjEntityChild.PreviousBookingQty = item.PreviousBookingQty;
-                ObjEntityChild.ActualBookingQty = item.ActualBookingQty;
-                ObjEntityChild.LiabilitiesBookingQty = item.LiabilitiesBookingQty;
-                ObjEntityChild.CurrentBookingQty = item.BookingQty;
-                ObjEntityChild.BookingQty = item.BookingQty;
-                entityChilds.Add(ObjEntityChild);
-
-            }
-
-            //FBookingAcknowledgeChildAddProcess
-            List<FBookingAcknowledgeChildAddProcess> entityChildAddProcess = new List<FBookingAcknowledgeChildAddProcess>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeChildAddProcess ObjEntityChildAddProces = new FBookingAcknowledgeChildAddProcess();
-                ObjEntityChildAddProces.BookingCAddProcessID = 0;
-                ObjEntityChildAddProces.BookingChildID = item.BookingChildID;
-                ObjEntityChildAddProces.BookingID = item.BookingID;
-                ObjEntityChildAddProces.ConsumptionID = item.ConsumptionID;
-                ObjEntityChildAddProces.ProcessID = 0;
-                entityChildAddProcess.Add(ObjEntityChildAddProces);
-            }
-
-            //FBookingAcknowledgeChildDetails
-            List<FBookingAcknowledgeChildDetails> entityChildDetails = new List<FBookingAcknowledgeChildDetails>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeChildDetails ObjEntityChildDetails = new FBookingAcknowledgeChildDetails();
-                ObjEntityChildDetails.BookingCDetailsID = 0;
-                ObjEntityChildDetails.BookingChildID = item.BookingChildID;
-                ObjEntityChildDetails.BookingID = item.BookingID;
-                ObjEntityChildDetails.ConsumptionID = item.ConsumptionID;
-                ObjEntityChildDetails.ItemGroupID = item.ItemGroupID;
-                ObjEntityChildDetails.SubGroupID = item.SubGroupID;
-                ObjEntityChildDetails.ItemMasterID = item.ItemMasterID;
-                ObjEntityChildDetails.OrderBankPOID = item.OrderBankPOID;
-                ObjEntityChildDetails.Color = item.Color;
-                ObjEntityChildDetails.ColorID = item.ColorID;
-                ObjEntityChildDetails.SizeID = item.SizeID;
-                ObjEntityChildDetails.TechPackID = item.TechPackID;
-                ObjEntityChildDetails.ConsumptionQty = item.ConsumptionQty;
-                ObjEntityChildDetails.BookingQty = item.BookingQty;
-                ObjEntityChildDetails.BookingUnitID = item.BookingUnitID;
-                ObjEntityChildDetails.RequisitionQty = item.RequisitionQty;
-                ObjEntityChildDetails.AddedBy = item.AddedBy;
-                ObjEntityChildDetails.ExecutionCompanyID = item.ExecutionCompanyID;
-                ObjEntityChildDetails.TechnicalNameId = item.TechnicalNameId;
-                ObjEntityChildDetails.TechnicalName = item.TechnicalName;
-                ObjEntityChildDetails.DateAdded = item.DateAdded;
-                entityChildDetails.Add(ObjEntityChildDetails);
-            }
-
-            //FBookingAcknowledgeChildGarmentPart
-            List<FBookingAcknowledgeChildGarmentPart> entityChildsGpart = new List<FBookingAcknowledgeChildGarmentPart>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeChildGarmentPart ObjEntityChildsGpart = new FBookingAcknowledgeChildGarmentPart();
-                ObjEntityChildsGpart.BookingCGPID = 0;
-                ObjEntityChildsGpart.BookingChildID = item.BookingChildID;
-                ObjEntityChildsGpart.BookingID = item.BookingID;
-                ObjEntityChildsGpart.ConsumptionID = item.ConsumptionID;
-                ObjEntityChildsGpart.FUPartID = item.FUPartID;
-                entityChildsGpart.Add(ObjEntityChildsGpart);
-            }
-
-            //FBookingAcknowledgeChildProcess
-            List<FBookingAcknowledgeChildProcess> entityChildsProcess = new List<FBookingAcknowledgeChildProcess>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeChildProcess ObjEntityChildsProcess = new FBookingAcknowledgeChildProcess();
-                ObjEntityChildsProcess.BookingCProcessID = 0;
-                ObjEntityChildsProcess.BookingChildID = item.BookingChildID;
-                ObjEntityChildsProcess.BookingID = item.BookingID;
-                ObjEntityChildsProcess.ConsumptionID = item.ConsumptionID;
-                ObjEntityChildsProcess.ProcessID = 0;
-                entityChildsProcess.Add(ObjEntityChildsProcess);
-            }
-
-            //FBookingAcknowledgeChildText
-            List<FBookingAcknowledgeChildText> entityChildsText = new List<FBookingAcknowledgeChildText>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeChildText ObjEntityChildsText = new FBookingAcknowledgeChildText();
-                ObjEntityChildsText.TextID = 0;
-                ObjEntityChildsText.BookingChildID = item.BookingChildID;
-                ObjEntityChildsText.BookingID = item.BookingID;
-                ObjEntityChildsText.ConsumptionID = item.ConsumptionID;
-                entityChildsText.Add(ObjEntityChildsText);
-            }
-
-            //FBookingAcknowledgeChildDistribution
-            List<FBookingAcknowledgeChildDistribution> entityChildsDistribution = new List<FBookingAcknowledgeChildDistribution>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                foreach (FBookingAcknowledgeChildDistribution dis in item.ChildsDistribution)
-                {
-                    FBookingAcknowledgeChildDistribution obj = new FBookingAcknowledgeChildDistribution();
-                    obj.DistributionID = 0;
-                    obj.BookingChildID = item.BookingChildID;
-                    obj.BookingID = item.BookingID;
-                    obj.ConsumptionID = item.ConsumptionID;
-                    obj.DeliveryDate = dis.DeliveryDate;
-                    obj.DistributionQty = dis.DistributionQty;
-                    entityChildsDistribution.Add(obj);
-                }
-            }
-
-            //FBookingAcknowledgeChildYarnSubBrand
-            List<FBookingAcknowledgeChildYarnSubBrand> entityChildsYarnSubBrand = new List<FBookingAcknowledgeChildYarnSubBrand>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeChildYarnSubBrand ObjEntityChildsYarnSubBrand = new FBookingAcknowledgeChildYarnSubBrand();
-                ObjEntityChildsYarnSubBrand.BookingCYSubBrandID = 0;
-                ObjEntityChildsYarnSubBrand.BookingChildID = item.BookingChildID;
-                ObjEntityChildsYarnSubBrand.BookingID = item.BookingID;
-                ObjEntityChildsYarnSubBrand.ConsumptionID = item.ConsumptionID;
-                ObjEntityChildsYarnSubBrand.YarnSubBrandID = 0;
-                entityChildsYarnSubBrand.Add(ObjEntityChildsYarnSubBrand);
-            }
-            //FBookingAcknowledgementLiabilityDistribution
-            List<FBookingAcknowledgementLiabilityDistribution> entityChildsLiabilitiesDistribution = new List<FBookingAcknowledgementLiabilityDistribution>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                foreach (FBookingAcknowledgementLiabilityDistribution dis in item.ChildAckLiabilityDetails)
-                {
-                    if (dis.LiabilityQty > 0)
-                    {
-                        FBookingAcknowledgementLiabilityDistribution obj = new FBookingAcknowledgementLiabilityDistribution();
-                        obj.LChildID = 0;
-                        obj.BookingChildID = item.BookingChildID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.BookingID = item.BookingID;
-                        obj.AcknowledgeID = item.AcknowledgeID;
-                        obj.UnitID = item.BookingUnitID;
-                        obj.LiabilitiesProcessID = dis.LiabilitiesProcessID;
-                        obj.LiabilityQty = dis.LiabilityQty;
-                        obj.ConsumedQty = dis.ConsumedQty;
-                        entityChildsLiabilitiesDistribution.Add(obj);
-                    }
-                }
-            }
-
-            List<FBookingAcknowledgeImage> entityChildsImage = new List<FBookingAcknowledgeImage>();
-            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
-            {
-                FBookingAcknowledgeImage ObjEntityChildsImage = new FBookingAcknowledgeImage();
-                ObjEntityChildsImage.ChildImgID = 0;
-                ObjEntityChildsImage.BookingID = item.BookingID;
-                ObjEntityChildsImage.ExportOrderID = item.ExportOrderID;
-                entityChildsImage.Add(ObjEntityChildsImage);
-            }
-            entityChildsImage = entityChildsImage.GroupBy(x => x.BookingID).Select(y => y.First()).ToList();
-            List<FabricBookingAcknowledge> entityFBA = modelDynamic.FabricBookingAcknowledgeList;
-            var fbaMaster = entityFBA.Find(i => i.BookingID == modelDynamic.BookingID);
-            if (fbaMaster.IsNull())
-            {
-                fbaMaster = new FabricBookingAcknowledge();
-                fbaMaster.BookingID = modelDynamic.BookingID;
-                fbaMaster.SubGroupID = modelDynamic.SubGroupID;
-                fbaMaster.ItemGroupID = modelDynamic.ItemGroupId;
-                fbaMaster.PreProcessRevNo = modelDynamic.RevisionNo;
-                fbaMaster.RevisionNo = modelDynamic.RevisionNo;
-                fbaMaster.BOMMasterID = modelDynamic.BomMasterId;
-                fbaMaster.Status = true;
-                fbaMaster.WithoutOB = modelDynamic.WithoutOB;
-                fbaMaster.AcknowledgeDate = DateTime.Now;
-                fbaMaster.AddedBy = AppUser.UserCode;
-                fbaMaster.DateAdded = DateTime.Now;
-                fbaMaster.EntityState = EntityState.Added;
-                if (entity.IsUnAcknowledge)
-                {
-                    fbaMaster.UnAcknowledge = true;
-                    fbaMaster.UnAcknowledgeBy = AppUser.UserCode;
-                    fbaMaster.UnAcknowledgeDate = DateTime.Now;
-                }
-                entityFBA.Add(fbaMaster);
-            }
-            else
-            {
-                fbaMaster.RevisionNo = modelDynamic.RevisionNo + 1;
-                fbaMaster.PreProcessRevNo = fbaMaster.RevisionNo;
-                fbaMaster.EntityState = EntityState.Modified;
-            }
-
-
-
-            List<FBookingAcknowledgeChild> newEntityChilds = new List<FBookingAcknowledgeChild>();
-            List<FBookingAcknowledgeChildAddProcess> newEntityChildAddProcess = new List<FBookingAcknowledgeChildAddProcess>();
-            List<FBookingAcknowledgeChildDetails> newEntityChildDetails = new List<FBookingAcknowledgeChildDetails>();
-            List<FBookingAcknowledgeChildGarmentPart> newEntityChildsGpart = new List<FBookingAcknowledgeChildGarmentPart>();
-            List<FBookingAcknowledgeChildProcess> newEntityChildsProcess = new List<FBookingAcknowledgeChildProcess>();
-            List<FBookingAcknowledgeChildText> newEntityChildsText = new List<FBookingAcknowledgeChildText>();
-            List<FBookingAcknowledgeChildDistribution> newEntityChildsDistribution = new List<FBookingAcknowledgeChildDistribution>();
-            List<FBookingAcknowledgeChildYarnSubBrand> newEntityChildsYarnSubBrand = new List<FBookingAcknowledgeChildYarnSubBrand>();
-            List<FBAChildPlanning> newFBAChildPlanning = new List<FBAChildPlanning>();
-            List<FBookingAcknowledgementLiabilityDistribution> entityChildAckLiabilityDetails = new List<FBookingAcknowledgementLiabilityDistribution>();
-
-
-            if (fbMaster.IsNull())
-                fbMaster = new FBookingAcknowledge();
-            fbMaster.BookingID = modelDynamic.BookingID;
-            fbMaster.BookingNo = modelDynamic.BookingNo;
-            fbMaster.SLNo = modelDynamic.SLNo;
-            fbMaster.BookingDate = modelDynamic.BookingDate;
-            fbMaster.BuyerID = modelDynamic.BuyerID;
-            fbMaster.BuyerTeamID = modelDynamic.BuyerTeamID;
-            fbMaster.ExecutionCompanyID = modelDynamic.ExecutionCompanyID;
-            fbMaster.SupplierID = modelDynamic.SupplierID;
-            fbMaster.StyleMasterID = modelDynamic.StyleMasterID;
-            fbMaster.StyleNo = modelDynamic.StyleNo;
-            fbMaster.FinancialYearID = modelDynamic.FinancialYearID;
-            fbMaster.SeasonID = modelDynamic.SeasonID;
-            fbMaster.SubGroupID = 1;
-            fbMaster.ExportOrderID = modelDynamic.ExportOrderID;
-            fbMaster.BookingQty = modelDynamic.BookingQty;
-            fbMaster.BomMasterId = modelDynamic.BomMasterId;
-            fbMaster.SubGroupID = modelDynamic.SubGroupID;
-            fbMaster.ItemGroupId = modelDynamic.ItemGroupId;
-            fbMaster.AddedBy = AppUser.UserCode;
-            fbMaster.MerchandiserID = AppUser.UserCode;
-            fbMaster.IsSample = false;
-            fbMaster.EntityState = EntityState.Added;
-            fbMaster.FBookingChild.SetUnchanged();
-            fbMaster.FBookingChild.ForEach(x => x.FBAChildPlannings.SetUnchanged());
-            fbMaster.FBookingAcknowledgeChildAddProcess.SetUnchanged();
-            fbMaster.FBookingChildDetails.SetUnchanged();
-            fbMaster.FBookingAcknowledgeChildGarmentPart.SetUnchanged();
-            fbMaster.FBookingAcknowledgeChildProcess.SetUnchanged();
-            fbMaster.FBookingAcknowledgeChildText.SetUnchanged();
-            fbMaster.FBookingAcknowledgeChildDistribution.SetUnchanged();
-            fbMaster.FBookingAcknowledgeChildYarnSubBrand.SetUnchanged();
-            fbMaster.BDSDependentTNACalander.SetUnchanged();
-            fbMaster.FBookingAcknowledgeImage.SetUnchanged();
-
-            entityChilds.ForEach(bookingChild =>
-            {
-                bookingChild.ChildAddProcess = entityChildAddProcess.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-                bookingChild.FBChildDetails = entityChildDetails.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-                bookingChild.ChildsGpart = entityChildsGpart.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-                bookingChild.ChildsProcess = entityChildsProcess.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-                bookingChild.ChildsText = entityChildsText.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-                bookingChild.ChildsDistribution = entityChildsDistribution.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-                bookingChild.ChildsYarnSubBrand = entityChildsYarnSubBrand.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-                bookingChild.ChildAckLiabilityDetails = entityChildAckLiabilityDetails.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
-            });
-            int newBookingChildId = 0;
-            foreach (FBookingAcknowledgeChild item in entityChilds)
-            {
-                newFBAChildPlanning = new List<FBAChildPlanning>();
-
-                item.AcknowledgeID = entity.FBAckID;
-                FBookingAcknowledgeChild fbChild = fbMaster.FBookingChild.Find(x => x.ItemMasterID == item.ItemMasterID && x.SubGroupID == item.SubGroupID);
-                if (fbChild != null)
-                {
-                    int bookingChildID = fbChild.BookingChildID;
-                    item.BookingChildID = bookingChildID;
-                    item.DateUpdated = DateTime.Now;
-                    item.EntityState = EntityState.Modified;
-
-                    foreach (FBookingAcknowledgeChildAddProcess obj in item.ChildAddProcess)
-                    {
-                        FBookingAcknowledgeChildAddProcess tempObj = fbMaster.FBookingAcknowledgeChildAddProcess.Find(x => x.BookingCAddProcessID == obj.BookingCAddProcessID);
-                        if (tempObj != null)
-                        {
-                            obj.BookingChildID = bookingChildID;
-                            obj.EntityState = EntityState.Modified;
-                            newEntityChildAddProcess.Add(obj);
-                        }
-                        else
-                        {
-                            FBookingAcknowledgeChildAddProcess newObj = new FBookingAcknowledgeChildAddProcess();
-                            newObj.BookingCAddProcessID = 0;
-                            newObj.BookingChildID = bookingChildID;
-                            newObj.BookingID = item.BookingID;
-                            newObj.ConsumptionID = item.ConsumptionID;
-                            newEntityChildAddProcess.Add(newObj);
-                        }
-                    }
-                    foreach (FBookingAcknowledgeChildDetails obj in item.FBChildDetails)
-                    {
-                        FBookingAcknowledgeChildDetails tempObj = fbMaster.FBookingChildDetails.Find(x => x.BookingCDetailsID == obj.BookingCDetailsID);
-                        if (tempObj != null)
-                        {
-                            obj.BookingChildID = bookingChildID;
-                            obj.EntityState = EntityState.Modified;
-                            newEntityChildDetails.Add(obj);
-                        }
-                        else
-                        {
-                            FBookingAcknowledgeChildDetails newObj = new FBookingAcknowledgeChildDetails();
-                            newObj.BookingChildID = bookingChildID;
-                            newObj.BookingID = item.BookingID;
-                            newObj.ConsumptionID = item.ConsumptionID;
-                            newObj.ItemGroupID = item.ItemGroupID;
-                            newObj.SubGroupID = item.SubGroupID;
-                            newObj.ItemMasterID = item.ItemMasterID;
-                            newObj.OrderBankPOID = item.OrderBankPOID;
-                            newObj.ColorID = item.ColorID;
-                            newObj.Color = item.Color;
-                            newObj.SizeID = item.SizeID;
-                            newObj.TechPackID = item.TechPackID;
-                            newObj.ConsumptionQty = item.ConsumptionQty;
-                            newObj.BookingQty = item.BookingQty;
-                            newObj.BookingUnitID = item.BookingUnitID;
-                            newObj.RequisitionQty = item.RequisitionQty;
-                            newObj.ExecutionCompanyID = item.ExecutionCompanyID;
-                            newObj.TechnicalNameId = item.TechnicalNameId;
-
-                            newObj.AddedBy = entity.AddedBy;
-                            newObj.DateAdded = DateTime.Now;
-                            newEntityChildDetails.Add(newObj);
-                        }
-                    }
-                    foreach (FBookingAcknowledgeChildGarmentPart obj in item.ChildsGpart)
-                    {
-                        FBookingAcknowledgeChildGarmentPart tempObj = fbMaster.FBookingAcknowledgeChildGarmentPart.Find(x => x.BookingCGPID == obj.BookingCGPID);
-                        if (tempObj != null)
-                        {
-                            obj.BookingChildID = bookingChildID;
-                            obj.EntityState = EntityState.Modified;
-                            newEntityChildsGpart.Add(obj);
-                        }
-                        else
-                        {
-                            FBookingAcknowledgeChildGarmentPart newObj = new FBookingAcknowledgeChildGarmentPart();
-                            newObj.BookingChildID = bookingChildID;
-                            newObj.BookingID = item.BookingID;
-                            newObj.ConsumptionID = item.ConsumptionID;
-                            newObj.FUPartID = item.FUPartID;
-                            newEntityChildsGpart.Add(newObj);
-                        }
-                    }
-                    foreach (FBookingAcknowledgeChildProcess obj in item.ChildsProcess)
-                    {
-                        FBookingAcknowledgeChildProcess tempObj = fbMaster.FBookingAcknowledgeChildProcess.Find(x => x.BookingCProcessID == obj.BookingCProcessID);
-                        if (tempObj != null)
-                        {
-                            obj.BookingChildID = bookingChildID;
-                            obj.EntityState = EntityState.Modified;
-                            newEntityChildsProcess.Add(obj);
-                        }
-                        else
-                        {
-                            FBookingAcknowledgeChildProcess newObj = new FBookingAcknowledgeChildProcess();
-                            newObj.BookingChildID = bookingChildID;
-                            newObj.BookingID = item.BookingID;
-                            newObj.ConsumptionID = item.ConsumptionID;
-                            newEntityChildsProcess.Add(newObj);
-                        }
-                    }
-                    foreach (FBookingAcknowledgeChildText obj in item.ChildsText)
-                    {
-                        FBookingAcknowledgeChildText tempObj = fbMaster.FBookingAcknowledgeChildText.Find(x => x.TextID == obj.TextID);
-                        if (tempObj != null)
-                        {
-                            obj.BookingChildID = bookingChildID;
-                            obj.EntityState = EntityState.Modified;
-                            newEntityChildsText.Add(obj);
-                        }
-                        else
-                        {
-                            FBookingAcknowledgeChildText newObj = new FBookingAcknowledgeChildText();
-                            newObj.BookingChildID = bookingChildID;
-                            newObj.BookingID = item.BookingID;
-                            newObj.ConsumptionID = item.ConsumptionID;
-                            newEntityChildsText.Add(newObj);
-                        }
-                    }
-                    foreach (FBookingAcknowledgeChildDistribution obj in item.ChildsDistribution)
-                    {
-                        FBookingAcknowledgeChildDistribution tempObj = fbMaster.FBookingAcknowledgeChildDistribution.Find(x => x.DistributionID == obj.DistributionID);
-                        if (tempObj != null)
-                        {
-                            obj.BookingChildID = bookingChildID;
-                            obj.BookingID = item.BookingID;
-                            obj.ConsumptionID = item.ConsumptionID;
-                            obj.EntityState = EntityState.Modified;
-                            newEntityChildsDistribution.Add(obj);
-                        }
-                        else
-                        {
-                            FBookingAcknowledgeChildDistribution newObj = new FBookingAcknowledgeChildDistribution();
-                            newObj.BookingChildID = bookingChildID;
-                            newObj.BookingID = item.BookingID;
-                            newObj.ConsumptionID = item.ConsumptionID;
-                            newEntityChildsDistribution.Add(newObj);
-                        }
-                    }
-                    foreach (FBookingAcknowledgeChildYarnSubBrand obj in item.ChildsYarnSubBrand)
-                    {
-                        FBookingAcknowledgeChildYarnSubBrand tempObj = fbMaster.FBookingAcknowledgeChildYarnSubBrand.Find(x => x.BookingCYSubBrandID == obj.BookingCYSubBrandID);
-                        if (tempObj != null)
-                        {
-                            obj.BookingChildID = bookingChildID;
-                            obj.EntityState = EntityState.Modified;
-                            newEntityChildsYarnSubBrand.Add(obj);
-                        }
-                        else
-                        {
-                            FBookingAcknowledgeChildYarnSubBrand newObj = new FBookingAcknowledgeChildYarnSubBrand();
-                            newObj.BookingChildID = bookingChildID;
-                            newObj.BookingID = item.BookingID;
-                            newObj.ConsumptionID = item.ConsumptionID;
-                            newEntityChildsYarnSubBrand.Add(newObj);
-                        }
-                    }
-                    if (item.CriteriaIDs.IsNotNullOrEmpty())
-                    {
-                        string[] criteriaIds = item.CriteriaIDs.Distinct().ToString().Split(',');
-                        if (criteriaIds.Length > 0 && !criteriaIds[0].Equals(""))
-                        {
-                            foreach (string criteriaID in item.CriteriaIDs.Split(','))
-                            {
-                                if (criteriaID.IsNotNullOrEmpty())
-                                {
-                                    var obj = fbChild.FBAChildPlannings.FirstOrDefault(x => x.CriteriaID == Convert.ToInt32(criteriaID));
-                                    if (obj != null)
-                                    {
-                                        obj.BookingChildID = bookingChildID;
-                                        obj.AcknowledgeID = item.AcknowledgeID;
-                                        obj.CriteriaID = obj.CriteriaID;
-                                        obj.EntityState = EntityState.Modified;
-                                        newFBAChildPlanning.Add(obj);
-
-                                        #region Delete Duplicate Criteria BookingChildID wise
-
-                                        var fBACPlannings = fbChild.FBAChildPlannings.Where(x => x.CriteriaID == Convert.ToInt32(criteriaID)).ToList();
-                                        if (fBACPlannings.Count() > 1)
-                                        {
-                                            int count = 0;
-                                            fBACPlannings.ForEach(x =>
-                                            {
-                                                count++;
-                                                if (count > 1)
-                                                {
-                                                    x.EntityState = EntityState.Deleted;
-                                                    newFBAChildPlanning.Add(x);
-                                                }
-                                            });
-                                        }
-
-                                        #endregion Delete Duplicate Criteria BookingChildID wise
-                                    }
-                                    else
-                                    {
-                                        var newObj = new FBAChildPlanning();
-                                        newObj.BookingChildID = bookingChildID;
-                                        newObj.AcknowledgeID = item.AcknowledgeID;
-                                        newObj.CriteriaID = Convert.ToInt32(criteriaID);
-                                        newFBAChildPlanning.Add(newObj);
-                                    }
-                                }
-                            }
-                            List<int> deletedFBACIds = new List<int>();
-                            fbChild.FBAChildPlannings.ForEach(x =>
-                            {
-                                if (!criteriaIds.Contains(x.CriteriaID.ToString()))
-                                {
-                                    deletedFBACIds.Add(x.CriteriaID);
-                                }
-                            });
-                            deletedFBACIds.ForEach(criteriaID =>
-                            {
-                                var obj = fbChild.FBAChildPlannings.Find(x => x.CriteriaID == criteriaID);
-                                obj.EntityState = EntityState.Deleted;
-                                newFBAChildPlanning.Add(obj);
-                            });
-                        }
-                        item.FBAChildPlannings = newFBAChildPlanning;
-                    }
-                    else
-                    {
-                        #region Delete Duplicate Criteria BookingChildID wise
-
-                        newFBAChildPlanning = new List<FBAChildPlanning>();
-                        string[] criteriaIDs = string.Join(",", fbChild.FBAChildPlannings.Select(x => x.CriteriaID).Distinct()).Split(',');
-                        foreach (string critentialId in criteriaIDs)
-                        {
-                            var fBACPlannings = fbChild.FBAChildPlannings.Where(x => x.CriteriaID == Convert.ToInt32(critentialId)).ToList();
-                            if (fBACPlannings.Count() > 1)
-                            {
-                                int count = 0;
-                                fBACPlannings.ForEach(x =>
-                                {
-                                    count++;
-                                    if (count > 1)
-                                    {
-                                        x.EntityState = EntityState.Deleted;
-                                        newFBAChildPlanning.Add(x);
-                                    }
-                                });
-                            }
-                        }
-                        item.FBAChildPlannings = newFBAChildPlanning;
-
-                        #endregion Delete Duplicate Criteria BookingChildID wise
-                    }
-                }
-                else
-                {
-                    newBookingChildId = item.BookingChildID;
-                    item.BookingChildID = newBookingChildId;
-                    item.EntityState = EntityState.Added;
-                    item.DateAdded = DateTime.Now;
-                    foreach (FBookingAcknowledgeChildAddProcess childAddProc in item.ChildAddProcess)
-                    {
-                        var obj = CommonFunction.DeepClone(childAddProc);
-                        obj.BookingChildID = newBookingChildId;
-                        obj.BookingID = item.BookingID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.EntityState = EntityState.Added;
-                        newEntityChildAddProcess.Add(obj);
-                    }
-                    foreach (FBookingAcknowledgeChildDetails ChildDetail in item.FBChildDetails)
-                    {
-                        FBookingAcknowledgeChildDetails obj = CommonFunction.DeepClone(ChildDetail);
-                        obj.BookingChildID = newBookingChildId;
-                        obj.BookingID = item.BookingID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.BookingQty = item.BookingQty;
-                        obj.ItemGroupID = item.ItemGroupID;
-                        obj.SubGroupID = item.SubGroupID;
-                        obj.ItemMasterID = item.ItemMasterID;
-                        obj.OrderBankPOID = item.OrderBankPOID;
-                        obj.ColorID = item.ColorID;
-                        obj.Color = item.Color;
-                        obj.SizeID = item.SizeID;
-                        obj.TechPackID = item.TechPackID;
-                        obj.ConsumptionQty = item.ConsumptionQty;
-                        obj.BookingUnitID = item.BookingUnitID;
-                        obj.RequisitionQty = item.RequisitionQty;
-                        obj.ExecutionCompanyID = item.ExecutionCompanyID;
-                        obj.TechnicalNameId = item.TechnicalNameId;
-
-                        obj.EntityState = EntityState.Added;
-                        newEntityChildDetails.Add(obj);
-                    }
-                    foreach (FBookingAcknowledgeChildGarmentPart ChildsGp in item.ChildsGpart)
-                    {
-                        FBookingAcknowledgeChildGarmentPart obj = CommonFunction.DeepClone(ChildsGp);
-                        obj.BookingChildID = newBookingChildId;
-                        obj.BookingID = item.BookingID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.FUPartID = item.FUPartID;
-                        obj.EntityState = EntityState.Added;
-                        newEntityChildsGpart.Add(obj);
-                    }
-                    foreach (FBookingAcknowledgeChildProcess ChildsProc in item.ChildsProcess)
-                    {
-                        FBookingAcknowledgeChildProcess obj = CommonFunction.DeepClone(ChildsProc);
-                        obj.BookingChildID = newBookingChildId;
-                        obj.BookingID = item.BookingID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.EntityState = EntityState.Added;
-                        newEntityChildsProcess.Add(obj);
-                    }
-                    foreach (FBookingAcknowledgeChildText ChildTxt in item.ChildsText)
-                    {
-                        FBookingAcknowledgeChildText obj = CommonFunction.DeepClone(ChildTxt);
-                        obj.BookingChildID = newBookingChildId;
-                        obj.BookingID = item.BookingID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.EntityState = EntityState.Added;
-                        newEntityChildsText.Add(obj);
-                    }
-                    foreach (FBookingAcknowledgeChildDistribution ChildDis in item.ChildsDistribution)
-                    {
-                        FBookingAcknowledgeChildDistribution obj = CommonFunction.DeepClone(ChildDis);
-                        obj.BookingChildID = newBookingChildId;
-                        obj.BookingID = item.BookingID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.DeliveryDate = ChildDis.DeliveryDate;
-                        obj.DistributionQty = ChildDis.DistributionQty;
-                        obj.EntityState = EntityState.Added;
-                        newEntityChildsDistribution.Add(obj);
-                    }
-                    foreach (FBookingAcknowledgeChildYarnSubBrand ChildYarnSubBrand in item.ChildsYarnSubBrand)
-                    {
-                        FBookingAcknowledgeChildYarnSubBrand obj = CommonFunction.DeepClone(ChildYarnSubBrand);
-                        obj.BookingChildID = newBookingChildId;
-                        obj.BookingID = item.BookingID;
-                        obj.ConsumptionID = item.ConsumptionID;
-                        obj.EntityState = EntityState.Added;
-                        newEntityChildsYarnSubBrand.Add(obj);
-                    }
-                    if (item.CriteriaIDs.IsNotNullOrEmpty())
-                    {
-                        foreach (string criteriaID in item.CriteriaIDs.Split(',').Distinct())
-                        {
-                            if (criteriaID.IsNotNullOrEmpty())
-                            {
-                                var obj = new FBAChildPlanning();
-                                obj.BookingChildID = newBookingChildId;
-                                obj.AcknowledgeID = item.AcknowledgeID;
-                                obj.CriteriaID = Convert.ToInt32(criteriaID);
-                                obj.EntityState = EntityState.Added;
-                                newFBAChildPlanning.Add(obj);
-                            }
-                        }
-                    }
-                    item.FBAChildPlannings = newFBAChildPlanning;
-                }
-                newEntityChilds.Add(item);
-
-
-                fbMaster.FBookingChild.ForEach(x =>
-                {
-                    FBookingAcknowledgeChild obj = newEntityChilds.Find(y => y.ItemMasterID == x.ItemMasterID && y.SubGroupID == x.SubGroupID && y.EntityState != EntityState.Deleted);
-                    if (obj == null)
-                    {
-                        x.EntityState = EntityState.Deleted;
-                        newEntityChilds.Add(x);
-
-                        newEntityChildAddProcess.Where(p => p.BookingChildID == x.BookingChildID && p.ConsumptionID == x.ConsumptionID).ToList().ForEach(p =>
-                        {
-                            p.EntityState = EntityState.Deleted;
-                        });
-
-                        fbMaster.FBookingAcknowledgeChildAddProcess.Where(p => p.BookingChildID == x.BookingChildID && p.ConsumptionID == x.ConsumptionID).ToList().ForEach(p =>
-                        {
-                            FBookingAcknowledgeChildAddProcess objP = newEntityChildAddProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
-                            if (objP != null)
-                            {
-                                newEntityChildAddProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
-                            }
-                            else
-                            {
-                                p.EntityState = EntityState.Deleted;
-                                newEntityChildAddProcess.Add(p);
-                            }
-                        });
-                        fbMaster.FBookingChildDetails.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
-                        {
-                            FBookingAcknowledgeChildDetails objP = newEntityChildDetails.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
-                            if (objP != null)
-                            {
-                                newEntityChildDetails.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
-                            }
-                            else
-                            {
-                                p.EntityState = EntityState.Deleted;
-                                newEntityChildDetails.Add(p);
-                            }
-                        });
-                        fbMaster.FBookingAcknowledgeChildGarmentPart.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
-                        {
-                            FBookingAcknowledgeChildGarmentPart objP = newEntityChildsGpart.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
-                            if (objP != null)
-                            {
-                                newEntityChildsGpart.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
-                            }
-                            else
-                            {
-                                p.EntityState = EntityState.Deleted;
-                                newEntityChildsGpart.Add(p);
-                            }
-                        });
-                        fbMaster.FBookingAcknowledgeChildProcess.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
-                        {
-                            FBookingAcknowledgeChildProcess objP = newEntityChildsProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
-                            if (objP != null)
-                            {
-                                newEntityChildsProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
-                            }
-                            else
-                            {
-                                p.EntityState = EntityState.Deleted;
-                                newEntityChildsProcess.Add(p);
-                            }
-                        });
-                        fbMaster.FBookingAcknowledgeChildText.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
-                        {
-                            FBookingAcknowledgeChildText objP = newEntityChildsText.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
-                            if (objP != null)
-                            {
-                                newEntityChildsText.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
-                            }
-                            else
-                            {
-                                p.EntityState = EntityState.Deleted;
-                                newEntityChildsText.Add(p);
-                            }
-                        });
-                        fbMaster.FBookingAcknowledgeChildDistribution.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
-                        {
-                            FBookingAcknowledgeChildDistribution objP = newEntityChildsDistribution.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
-                            if (objP != null)
-                            {
-                                newEntityChildsDistribution.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
-                            }
-                            else
-                            {
-                                p.EntityState = EntityState.Deleted;
-                                newEntityChildsDistribution.Add(p);
-                            }
-                        });
-                        fbMaster.FBookingAcknowledgeChildYarnSubBrand.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
-                        {
-                            FBookingAcknowledgeChildYarnSubBrand objP = newEntityChildsYarnSubBrand.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
-                            if (objP != null)
-                            {
-                                newEntityChildsYarnSubBrand.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
-                            }
-                            else
-                            {
-                                p.EntityState = EntityState.Deleted;
-                                newEntityChildsYarnSubBrand.Add(p);
-                            }
-                        });
-
-                    }
-                });
-
-                entityChilds = newEntityChilds;
-                entityChildAddProcess = newEntityChildAddProcess;
-                entityChildDetails = newEntityChildDetails;
-                entityChildsGpart = newEntityChildsGpart;
-                entityChildsProcess = newEntityChildsProcess;
-                entityChildsText = newEntityChildsText;
-                entityChildsDistribution = newEntityChildsDistribution;
-                entityChildsYarnSubBrand = newEntityChildsYarnSubBrand;
-                //entityChildAckLiabilityDetails = new;
-                fbMaster.FBookingAcknowledgeImage.ForEach(x => x.EntityState = EntityState.Modified);
-                entityChildsImage = fbMaster.FBookingAcknowledgeImage;
-            }
-
-            var fabricWastageGrids = await _service.GetFabricWastageGridAsync("BDS");
-            foreach (FBookingAcknowledgeChild details in entityChilds.Where(x => x.EntityState != EntityState.Deleted))
-            {
-
-
-                if (entity.FBAckID == 0)
-                {
-                    List<FBAChildPlanning> planningList = new List<FBAChildPlanning>();
-                    string[] criteriaIds = details.CriteriaIDs.Split(',');
-                    if (criteriaIds.Length > 0 && !criteriaIds[0].Equals(""))
-                    {
-                        foreach (string criteria in criteriaIds)
-                        {
-                            if (!string.IsNullOrEmpty(criteria))
-                                planningList.Add(new FBAChildPlanning { CriteriaID = Convert.ToInt32(criteria) });
-                        }
-                        details.FBAChildPlannings = planningList;
-                    }
-                    else
-                    {
-                        details.FBAChildPlannings = new List<FBAChildPlanning>();
-                    }
-                }
-
-                #region Set FabricWastageGrid Values
-
-                FabricWastageGrid fabricWastageGrid = new FabricWastageGrid();
-                details.GSM = string.IsNullOrEmpty(details.GSM) ? 0.ToString() : details.GSM;
-                if (Convert.ToInt32(details.GSM) > 0 && details.SubGroupID == 1)
-                {
-                    fabricWastageGrid = fabricWastageGrids.Where(x => x.IsFabric == true).ToList().Find(x => x.GSMFrom <= Convert.ToInt32(details.GSM)
-                                                                        && Convert.ToInt32(details.GSM) <= x.GSMTo
-                                                                        && x.BookingQtyFrom <= details.BookingQty
-                                                                        && details.BookingQty <= x.BookingQtyTo);
-                }
-                else if (details.SubGroupID == 11 || details.SubGroupID == 12)
-                {
-                    fabricWastageGrid = fabricWastageGrids.Where(x => x.IsFabric == false).ToList().Find(x => x.BookingQtyFrom <= details.BookingQty
-                                                                        && details.BookingQty <= x.BookingQtyTo);
-                }
-                if (fabricWastageGrid != null)
-                {
-                    if (fabricWastageGrid.FixedQty)
-                    {
-                        details.ExcessPercentage = 0;
-                        if (details.BookingQty > 0)
-                        {
-                            details.ExcessQty = fabricWastageGrid.ExcessQty;
-                            details.TotalQty = details.BookingQty + details.ExcessQty;
-                        }
-                        if (details.TotalQtyInKG > 0)
-                        {
-                            details.ExcessQtyInKG = fabricWastageGrid.ExcessQty;
-                            details.TotalQtyInKG = details.TotalQtyInKG + details.ExcessQty;
-                        }
-                    }
-                    else
-                    {
-                        details.ExcessPercentage = fabricWastageGrid.ExcessPercentage;
-                        if (details.BookingQty > 0)
-                        {
-                            details.ExcessQty = Math.Floor(details.BookingQty * fabricWastageGrid.ExcessPercentage / 100);
-                            details.TotalQty = details.BookingQty + details.ExcessQty;
-                        }
-                        if (details.TotalQtyInKG > 0)
-                        {
-                            details.ExcessQtyInKG = Math.Floor(details.BookingQty * fabricWastageGrid.ExcessPercentage / 100);
-                            details.TotalQtyInKG = details.TotalQtyInKG + details.ExcessQtyInKG;
-                        }
-                    }
-                }
-
-                #endregion Set FabricWastageGrid Values
-            }
-
-            List<FBookingAcknowledgementYarnLiability> entityFBYL = new List<FBookingAcknowledgementYarnLiability>();
-            if (isRevised && !entity.IsUnAcknowledge)
-            {
-                entity.FBAckID = fbMaster.FBAckID;
-                entityChilds.ForEach(x => x.AcknowledgeID = entity.FBAckID);
-
-                entity.PreRevisionNo = preRevisionNo;
-                entity.RevisionNo = entity.RevisionNo + 1;
-                entity.RevisionDate = DateTime.Now;
-
-                foreach (FBookingAcknowledgementYarnLiability YL in entity.FBookingAcknowledgementYarnLiabilityList)
-                {
-                    FBookingAcknowledgementYarnLiability objYL = new FBookingAcknowledgementYarnLiability();
-                    objYL.ItemMasterID = YL.ItemMasterID;
-                    objYL.UnitID = YL.UnitID;
-                    objYL.LiabilityQty = YL.LiabilityQty;
-                    objYL.BookingID = entity.BookingID;
-                    entityFBYL.Add(objYL);
-                }
-            }
-            List<FreeConceptMaster> entityFreeConcepts = new List<FreeConceptMaster>();
-            List<FreeConceptMRMaster> entityFreeMR = new List<FreeConceptMRMaster>();
-            await _service.SaveAsync(AppUser.UserCode, entity, entityChilds, entityChildAddProcess, entityChildDetails, entityChildsGpart, entityChildsProcess, entityChildsText, entityChildsDistribution, entityChildsYarnSubBrand, entityChildsImage, BDCalander, isBDS, entityFreeConcepts, entityFreeMR, entityChildsLiabilitiesDistribution, entityFBA, entityFBYL);
-
-            //await _commonService.UpdateFreeConceptStatus(InterfaceFrom.FBookingAcknowledge, 0, grpConceptNo, entity.BookingID);
-            return Ok();
-        }
-
-        private FabricBookingAcknowledge GetFabricBookingAck(FabricBookingAcknowledge fba, BookingMaster bookingMaster, SampleBookingMaster sampleBookingMaster, bool isUnAcknowledge)
-        {
-            int revisionNo = 0;
-            if (bookingMaster.IsNull())
-            {
-                bookingMaster = new BookingMaster();
-            }
-            else
-            {
-                revisionNo = bookingMaster.RevisionNo;
-            }
-
-            if (sampleBookingMaster.IsNull())
-            {
-                sampleBookingMaster = new SampleBookingMaster();
-            }
-            else
-            {
-                revisionNo = sampleBookingMaster.RevisionNo;
-            }
-
-
-            bool isSample = bookingMaster.BookingID > 0 ? false : true;
-
-            if (fba.IsNull())
-            {
-                fba = new FabricBookingAcknowledge();
-            }
-
-            fba.BookingID = isSample ? sampleBookingMaster.BookingID : bookingMaster.BookingID;
-            fba.BOMMasterID = isSample ? 0 : bookingMaster.BOMMasterID;
-
-            fba.ItemGroupID = isSample ? fba.ItemGroupID : bookingMaster.ItemGroupID;
-            fba.SubGroupID = isSample ? fba.SubGroupID : bookingMaster.SubGroupID;
-            fba.WithoutOB = isSample ? true : false;
-
-            if (fba.AcknowledgeID == 0)
-            {
-                fba.AddedBy = AppUser.UserCode;
-                fba.DateAdded = DateTime.Now;
-                fba.EntityState = EntityState.Added;
-            }
-            else
-            {
-                fba.UpdatedBy = AppUser.UserCode;
-                fba.DateUpdated = DateTime.Now;
-                fba.EntityState = EntityState.Modified;
-            }
-
-            if (isUnAcknowledge)
-            {
-                fba.Status = false;
-                fba.UnAcknowledgeBy = AppUser.UserCode;
-                fba.UnAcknowledgeDate = DateTime.Now;
-                fba.UnAcknowledge = true;
-                if (revisionNo > 0)
-                {
-                    fba.PreProcessRevNo = revisionNo - 1;
-                }
-                else
-                {
-                    fba.PreProcessRevNo = revisionNo;
-                }
-            }
-            else
-            {
-                fba.Status = true;
-                fba.UnAcknowledgeBy = 0;
-                fba.UnAcknowledgeDate = null;
-                fba.UnAcknowledge = false;
-                fba.AcknowledgeDate = DateTime.Now;
-            }
-            return fba;
-        }
-        private FBookingAcknowledge GetFBookingAck(FBookingAcknowledge fba, BookingMaster bookingMaster, SampleBookingMaster sampleBookingMaster, bool isUnAcknowledge)
-        {
-            bool isSample = bookingMaster.IsNotNull() ? false : true;
-
-            if (fba.IsNull())
-            {
-                fba = new FBookingAcknowledge();
-            }
-
-            fba.BookingID = isSample ? sampleBookingMaster.BookingID : bookingMaster.BookingID;
-            fba.BookingNo = isSample ? sampleBookingMaster.BookingNo : bookingMaster.BookingNo;
-            fba.SLNo = isSample ? sampleBookingMaster.SLNo : "";
-            fba.BookingDate = isSample ? sampleBookingMaster.BookingDate : bookingMaster.BookingDate;
-            fba.BuyerID = isSample ? (int)sampleBookingMaster.BuyerID : bookingMaster.BuyerID;
-            fba.BuyerTeamID = isSample ? (int)sampleBookingMaster.BuyerTeamID : bookingMaster.BuyerTeamID;
-            fba.ExecutionCompanyID = isSample ? sampleBookingMaster.ExecutionCompanyID : bookingMaster.CompanyID;
-            fba.SupplierID = isSample ? (int)sampleBookingMaster.SupplierID : bookingMaster.SupplierID;
-            fba.StyleMasterID = isSample ? sampleBookingMaster.StyleMasterID : bookingMaster.StyleMasterID;
-            fba.StyleNo = isSample ? sampleBookingMaster.StyleNo : "";
-            fba.ExportOrderID = isSample ? sampleBookingMaster.ExportOrderID : bookingMaster.ExportOrderID;
-            fba.BookingQty = isSample ? sampleBookingMaster.OrderQty : 0;
-            fba.PreRevisionNo = isSample ? sampleBookingMaster.RevisionNo : bookingMaster.RevisionNo;
-            //fba.RevisionNo = fba.RevisionNo;
-            //fba.RevisionDate = fba.RevisionDate;
-            fba.BomMasterId = isSample ? 0 : bookingMaster.BOMMasterID;
-            fba.ItemGroupId = isSample ? sampleBookingMaster.ItemGroupID : bookingMaster.ItemGroupID;
-            fba.SubGroupID = isSample ? sampleBookingMaster.SubGroupID : bookingMaster.SubGroupID;
-            fba.StyleMasterID = isSample ? sampleBookingMaster.StyleMasterID : bookingMaster.StyleMasterID;
-            fba.WithoutOB = isSample ? true : false;
-            fba.IsSample = isSample;
-
-            fba.SeasonID = isSample ? sampleBookingMaster.SeasonID : bookingMaster.SeasonID;
-
-
-            if (fba.FBAckID == 0)
-            {
-                fba.AddedBy = AppUser.UserCode;
-                fba.DateAdded = DateTime.Now;
-                fba.EntityState = EntityState.Added;
-            }
-            else
-            {
-                fba.UpdatedBy = AppUser.UserCode;
-                fba.DateUpdated = DateTime.Now;
-                fba.EntityState = EntityState.Modified;
-            }
-
-            if (isUnAcknowledge)
-            {
-                fba.Status = false;
-                fba.IsUnAcknowledge = true;
-                fba.UnAcknowledgeBy = AppUser.UserCode;
-                fba.UnAcknowledgeDate = DateTime.Now;
-                fba.UnAcknowledgeReason = isSample ? sampleBookingMaster.UnAcknowledgeReason : bookingMaster.UnAcknowledgeReason;
-                fba.AcknowledgeDate = null;
-            }
-            else
-            {
-                fba.Status = true;
-                fba.IsUnAcknowledge = false;
-                fba.UnAcknowledgeBy = 0;
-                fba.UnAcknowledgeDate = null;
-                fba.AcknowledgeDate = DateTime.Now;
-            }
-            return fba;
-        }
         [Route("acknowledge")]
         [HttpPost]
-        public async Task<IActionResult> Acknowledge(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> Acknowledge(dynamic modelDynamicParam)
         {
+            FBookingAcknowledge modelDynamic = JsonConvert.DeserializeObject<FBookingAcknowledge>(Convert.ToString(modelDynamicParam));
 
             await _service.CheckIsBookingApprovedAsync(modelDynamic.BookingNo);
 
@@ -1643,11 +532,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingNo(BookingNo);
-                                    // OFF FOR CORE //IsSendMail = await SystemMailUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
-                                }
-                                else
-                                {
-                                    // OFF FOR CORE //IsSendMail = await SystemMail(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1663,11 +547,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                                 if (isUnAcknowledge)
                                 {
                                     saveBookingItemAcknowledgeList = await _service.GetAllBookingItemAcknowledgeByBookingIDAndWithOutOB(selectedbookingID == "" ? "0" : selectedbookingID);
-                                    // OFF FOR CORE //IsSendMail = await SystemMailForSampleUnAck(saveBookingItemAcknowledgeList, bmList, IsSendMail, SaveType, false, listTypeMasterGrid);
-                                }
-                                else
-                                {
-                                    // OFF FOR CORE //IsSendMail = await SystemMailForSample(savedFBA.FabricBookingAcknowledgeList, bmList, IsSendMail, SaveType, hasLiabilities, 0, listTypeMasterGrid);
                                 }
                             }
                         }
@@ -1936,15 +815,9 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 #region Delete Existing Data
                 foreach (FBookingAcknowledgeChild item in saveFBookingAcknowledgeChild)
                 {
-                    //if (item.BookingChildID == 774600)
-                    //{
-
-                    //}
-                    //List<FBookingAcknowledgeChild> objItem = modelDynamic.FBookingChild.FindAll(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.BookingChildID == item.BookingChildID);
                     List<FBookingAcknowledgeChild> objItem = modelDynamic.FBookingChild.FindAll(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.ConsumptionID == item.ConsumptionID);
                     if (objItem.IsNull())
                         item.EntityState = EntityState.Deleted;
-
                 }
 
                 #endregion
@@ -1954,12 +827,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     int iBookingID = item.BookingID;
                     int iItemMasterID = item.ItemMasterID;
                     int iConsumptionID = item.ConsumptionID;
-                    //if (item.BookingChildID == 774600)
-                    //{
-
-                    //}
-
-                    //var aaa = saveFBookingAcknowledgeChild.Where(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.ConsumptionID == item.ConsumptionID);
 
                     FBookingAcknowledgeChild ObjEntityChild = saveFBookingAcknowledgeChild.Find(i => i.BookingID == item.BookingID && i.ItemMasterID == item.ItemMasterID && i.ConsumptionID == item.ConsumptionID && i.RevisionNoWhenDeleted == -1);
 
@@ -2034,7 +901,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     }
                 }
 
-                if (saveFBookingAcknowledgeChild.Max(i => Convert.ToInt32(i.SendToMktAck)) == 1)
+                if (saveFBookingAcknowledgeChild.Count() > 0 && saveFBookingAcknowledgeChild.Max(i => Convert.ToInt32(i.SendToMktAck)) == 1)
                 {
                     foreach (FabricBookingAcknowledge item in saveFabricBookingItemAcknowledge)
                     {
@@ -2049,7 +916,7 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                         item.IsMktAck = false;
                     }
                 }
-                if (saveFBookingAcknowledgeChild.Min(i => Convert.ToInt32(i.SendToMktAck)) == 0)
+                if (saveFBookingAcknowledgeChild.Count() > 0 && saveFBookingAcknowledgeChild.Min(i => Convert.ToInt32(i.SendToMktAck)) == 0)
                 {
                     foreach (FabricBookingAcknowledge item in saveFabricBookingItemAcknowledge)
                     {
@@ -2065,12 +932,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                 }
                 saveFBookingAcknowledgeChild.Where(x => x.EntityState == EntityState.Unchanged).ToList().ForEach(x =>
                 {
-                    //if (x.BookingChildID == 774600)
-                    //{
-
-                    //}
-
-
                     x.IsDeleted = true;
                     x.EntityState = EntityState.Modified;
                 });
@@ -2187,12 +1048,6 @@ namespace EPYSLTEXCore.API.Contollers.Booking
                     {
                         saveFBookingAcknowledgeChild.Where(x => x.BookingQty == 0 && x.RevisionNoWhenDeleted == -1).ToList().ForEach(x =>
                         {
-                            //if (x.BookingChildID == 774600)
-                            //{
-
-                            //}
-
-
                             x.RevisionNoWhenDeleted = revisionNo;
                             x.RevisionByWhenDeleted = AppUser.UserCode;
                             x.RevisionDateWhenDeleted = currentDate;
@@ -2289,5 +1144,1107 @@ namespace EPYSLTEXCore.API.Contollers.Booking
 
             return Ok(SendMailTrueOrFalse);
         }
+
+        private FabricBookingAcknowledge GetFabricBookingAck(FabricBookingAcknowledge fba, BookingMaster bookingMaster, SampleBookingMaster sampleBookingMaster, bool isUnAcknowledge)
+        {
+            int revisionNo = 0;
+            if (bookingMaster.IsNull())
+            {
+                bookingMaster = new BookingMaster();
+            }
+            else
+            {
+                revisionNo = bookingMaster.RevisionNo;
+            }
+
+            if (sampleBookingMaster.IsNull())
+            {
+                sampleBookingMaster = new SampleBookingMaster();
+            }
+            else
+            {
+                revisionNo = sampleBookingMaster.RevisionNo;
+            }
+
+
+            bool isSample = bookingMaster.BookingID > 0 ? false : true;
+
+            if (fba.IsNull())
+            {
+                fba = new FabricBookingAcknowledge();
+            }
+
+            fba.BookingID = isSample ? sampleBookingMaster.BookingID : bookingMaster.BookingID;
+            fba.BOMMasterID = isSample ? 0 : bookingMaster.BOMMasterID;
+
+            fba.ItemGroupID = isSample ? fba.ItemGroupID : bookingMaster.ItemGroupID;
+            fba.SubGroupID = isSample ? fba.SubGroupID : bookingMaster.SubGroupID;
+            fba.WithoutOB = isSample ? true : false;
+
+            if (fba.AcknowledgeID == 0)
+            {
+                fba.AddedBy = AppUser.UserCode;
+                fba.DateAdded = DateTime.Now;
+                fba.EntityState = EntityState.Added;
+            }
+            else
+            {
+                fba.UpdatedBy = AppUser.UserCode;
+                fba.DateUpdated = DateTime.Now;
+                fba.EntityState = EntityState.Modified;
+            }
+
+            if (isUnAcknowledge)
+            {
+                fba.Status = false;
+                fba.UnAcknowledgeBy = AppUser.UserCode;
+                fba.UnAcknowledgeDate = DateTime.Now;
+                fba.UnAcknowledge = true;
+                if (revisionNo > 0)
+                {
+                    fba.PreProcessRevNo = revisionNo - 1;
+                }
+                else
+                {
+                    fba.PreProcessRevNo = revisionNo;
+                }
+            }
+            else
+            {
+                fba.Status = true;
+                fba.UnAcknowledgeBy = 0;
+                fba.UnAcknowledgeDate = null;
+                fba.UnAcknowledge = false;
+                fba.AcknowledgeDate = DateTime.Now;
+            }
+            return fba;
+        }
+        private FBookingAcknowledge GetFBookingAck(FBookingAcknowledge fba, BookingMaster bookingMaster, SampleBookingMaster sampleBookingMaster, bool isUnAcknowledge)
+        {
+            bool isSample = bookingMaster.IsNotNull() ? false : true;
+
+            if (fba.IsNull())
+            {
+                fba = new FBookingAcknowledge();
+            }
+
+            fba.BookingID = isSample ? sampleBookingMaster.BookingID : bookingMaster.BookingID;
+            fba.BookingNo = isSample ? sampleBookingMaster.BookingNo : bookingMaster.BookingNo;
+            fba.SLNo = isSample ? sampleBookingMaster.SLNo : "";
+            fba.BookingDate = isSample ? sampleBookingMaster.BookingDate : bookingMaster.BookingDate;
+            fba.BuyerID = isSample ? (int)sampleBookingMaster.BuyerID : bookingMaster.BuyerID;
+            fba.BuyerTeamID = isSample ? (int)sampleBookingMaster.BuyerTeamID : bookingMaster.BuyerTeamID;
+            fba.ExecutionCompanyID = isSample ? sampleBookingMaster.ExecutionCompanyID : bookingMaster.CompanyID;
+            fba.SupplierID = isSample ? (int)sampleBookingMaster.SupplierID : bookingMaster.SupplierID;
+            fba.StyleMasterID = isSample ? sampleBookingMaster.StyleMasterID : bookingMaster.StyleMasterID;
+            fba.StyleNo = isSample ? sampleBookingMaster.StyleNo : "";
+            fba.ExportOrderID = isSample ? sampleBookingMaster.ExportOrderID : bookingMaster.ExportOrderID;
+            fba.BookingQty = isSample ? sampleBookingMaster.OrderQty : 0;
+            fba.PreRevisionNo = isSample ? sampleBookingMaster.RevisionNo : bookingMaster.RevisionNo;
+            //fba.RevisionNo = fba.RevisionNo;
+            //fba.RevisionDate = fba.RevisionDate;
+            fba.BomMasterId = isSample ? 0 : bookingMaster.BOMMasterID;
+            fba.ItemGroupId = isSample ? sampleBookingMaster.ItemGroupID : bookingMaster.ItemGroupID;
+            fba.SubGroupID = isSample ? sampleBookingMaster.SubGroupID : bookingMaster.SubGroupID;
+            fba.StyleMasterID = isSample ? sampleBookingMaster.StyleMasterID : bookingMaster.StyleMasterID;
+            fba.WithoutOB = isSample ? true : false;
+            fba.IsSample = isSample;
+
+            fba.SeasonID = isSample ? sampleBookingMaster.SeasonID : bookingMaster.SeasonID;
+
+
+            if (fba.FBAckID == 0)
+            {
+                fba.AddedBy = AppUser.UserCode;
+                fba.DateAdded = DateTime.Now;
+                fba.EntityState = EntityState.Added;
+            }
+            else
+            {
+                fba.UpdatedBy = AppUser.UserCode;
+                fba.DateUpdated = DateTime.Now;
+                fba.EntityState = EntityState.Modified;
+            }
+
+            if (isUnAcknowledge)
+            {
+                fba.Status = false;
+                fba.IsUnAcknowledge = true;
+                fba.UnAcknowledgeBy = AppUser.UserCode;
+                fba.UnAcknowledgeDate = DateTime.Now;
+                fba.UnAcknowledgeReason = isSample ? sampleBookingMaster.UnAcknowledgeReason : bookingMaster.UnAcknowledgeReason;
+                fba.AcknowledgeDate = null;
+            }
+            else
+            {
+                fba.Status = true;
+                fba.IsUnAcknowledge = false;
+                fba.UnAcknowledgeBy = 0;
+                fba.UnAcknowledgeDate = null;
+                fba.AcknowledgeDate = DateTime.Now;
+            }
+            return fba;
+        }
+
+        #region No Need (backup)
+        /*
+        [HttpGet]
+        [Route("bulk/fabric-booking-acknowledge/get-list-count")]
+        public async Task<IActionResult> GetListCount()
+        {
+            CountListItem data = await _service.GetListCount();
+            return Ok(data);
+        }
+        [HttpGet]
+        [Route("{fbAckId}")]
+        public async Task<IActionResult> GetData(int fbAckId)
+        {
+            FBookingAcknowledge data = await _service.GetDataAsync(fbAckId);
+            return Ok(data);
+        }
+        [Route("save")]
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> Save(FBookingAcknowledge modelDynamic)
+        {
+            FBookingAcknowledge entity = modelDynamic;// models.FirstOrDefault();
+            string grpConceptNo = modelDynamic.grpConceptNo;
+            int isBDS = modelDynamic.IsBDS;
+
+            bool isRevised = modelDynamic.IsRevised;
+            int preRevisionNo = modelDynamic.PreRevisionNo;
+            string ActionStatus = modelDynamic.ActionStatus;
+            List<FBookingAcknowledge> entities = new List<FBookingAcknowledge>();
+            List<BDSDependentTNACalander> BDCalander = new List<BDSDependentTNACalander>();
+            var fbMaster = new FBookingAcknowledge();
+            fbMaster = await _service.GetFBAcknowledgeByBookingID(entity.BookingID);
+            if (fbMaster.IsNull())
+                fbMaster = new FBookingAcknowledge();
+
+            entity.IsSample = false;
+            entity.AddedBy = AppUser.UserCode;
+
+            if (entity.IsUnAcknowledge)
+            {
+                entity.IsUnAcknowledge = true;
+                entity.UnAcknowledgeBy = AppUser.EmployeeCode;
+                entity.UnAcknowledgeDate = DateTime.Now;
+                entity.UnAcknowledgeReason = entity.UnAcknowledgeReason;
+            }
+
+            //FBookingAcknowledgeChild
+            List<FBookingAcknowledgeChild> entityChilds = new List<FBookingAcknowledgeChild>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeChild ObjEntityChild = new FBookingAcknowledgeChild(); ;
+                ObjEntityChild.BookingChildID = item.BookingChildID;
+                ObjEntityChild.ConsumptionChildID = item.BookingChildID;
+                ObjEntityChild.BookingID = item.BookingID;
+                ObjEntityChild.IsTxtAck = true;
+                if (ActionStatus == "30" || ActionStatus == "3")
+                {
+                    ObjEntityChild.IsTxtAck = true;
+                    ObjEntityChild.TxtAcknowledgeBy = AppUser.UserCode;
+                    ObjEntityChild.TxtAcknowledgeDate = DateTime.Now;
+                }
+                else if (ActionStatus == "10")
+                {
+                    ObjEntityChild.SendToMktAck = true;
+                    ObjEntityChild.AcknowledgeBy = AppUser.UserCode;
+                    ObjEntityChild.AcknowledgeDate = DateTime.Now;
+                }
+                ObjEntityChild.AcknowledgeID = item.AcknowledgeID;
+                ObjEntityChild.ConsumptionID = item.ConsumptionID;
+                ObjEntityChild.SubGroupID = item.SubGroupID;
+                ObjEntityChild.ItemGroupID = item.ItemGroupID;
+                ObjEntityChild.ItemMasterID = item.ItemMasterID;
+                ObjEntityChild.OrderBankPOID = item.OrderBankPOID;
+                ObjEntityChild.ColorID = item.ColorID;
+                ObjEntityChild.TechPackID = item.TechPackID;
+                ObjEntityChild.BookingUnitID = item.BookingUnitID;
+                ObjEntityChild.PreviousBookingQty = item.PreviousBookingQty;
+                ObjEntityChild.ActualBookingQty = item.ActualBookingQty;
+                ObjEntityChild.LiabilitiesBookingQty = item.LiabilitiesBookingQty;
+                ObjEntityChild.CurrentBookingQty = item.BookingQty;
+                ObjEntityChild.BookingQty = item.BookingQty;
+                entityChilds.Add(ObjEntityChild);
+
+            }
+
+            //FBookingAcknowledgeChildAddProcess
+            List<FBookingAcknowledgeChildAddProcess> entityChildAddProcess = new List<FBookingAcknowledgeChildAddProcess>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeChildAddProcess ObjEntityChildAddProces = new FBookingAcknowledgeChildAddProcess();
+                ObjEntityChildAddProces.BookingCAddProcessID = 0;
+                ObjEntityChildAddProces.BookingChildID = item.BookingChildID;
+                ObjEntityChildAddProces.BookingID = item.BookingID;
+                ObjEntityChildAddProces.ConsumptionID = item.ConsumptionID;
+                ObjEntityChildAddProces.ProcessID = 0;
+                entityChildAddProcess.Add(ObjEntityChildAddProces);
+            }
+
+            //FBookingAcknowledgeChildDetails
+            List<FBookingAcknowledgeChildDetails> entityChildDetails = new List<FBookingAcknowledgeChildDetails>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeChildDetails ObjEntityChildDetails = new FBookingAcknowledgeChildDetails();
+                ObjEntityChildDetails.BookingCDetailsID = 0;
+                ObjEntityChildDetails.BookingChildID = item.BookingChildID;
+                ObjEntityChildDetails.BookingID = item.BookingID;
+                ObjEntityChildDetails.ConsumptionID = item.ConsumptionID;
+                ObjEntityChildDetails.ItemGroupID = item.ItemGroupID;
+                ObjEntityChildDetails.SubGroupID = item.SubGroupID;
+                ObjEntityChildDetails.ItemMasterID = item.ItemMasterID;
+                ObjEntityChildDetails.OrderBankPOID = item.OrderBankPOID;
+                ObjEntityChildDetails.Color = item.Color;
+                ObjEntityChildDetails.ColorID = item.ColorID;
+                ObjEntityChildDetails.SizeID = item.SizeID;
+                ObjEntityChildDetails.TechPackID = item.TechPackID;
+                ObjEntityChildDetails.ConsumptionQty = item.ConsumptionQty;
+                ObjEntityChildDetails.BookingQty = item.BookingQty;
+                ObjEntityChildDetails.BookingUnitID = item.BookingUnitID;
+                ObjEntityChildDetails.RequisitionQty = item.RequisitionQty;
+                ObjEntityChildDetails.AddedBy = item.AddedBy;
+                ObjEntityChildDetails.ExecutionCompanyID = item.ExecutionCompanyID;
+                ObjEntityChildDetails.TechnicalNameId = item.TechnicalNameId;
+                ObjEntityChildDetails.TechnicalName = item.TechnicalName;
+                ObjEntityChildDetails.DateAdded = item.DateAdded;
+                entityChildDetails.Add(ObjEntityChildDetails);
+            }
+
+            //FBookingAcknowledgeChildGarmentPart
+            List<FBookingAcknowledgeChildGarmentPart> entityChildsGpart = new List<FBookingAcknowledgeChildGarmentPart>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeChildGarmentPart ObjEntityChildsGpart = new FBookingAcknowledgeChildGarmentPart();
+                ObjEntityChildsGpart.BookingCGPID = 0;
+                ObjEntityChildsGpart.BookingChildID = item.BookingChildID;
+                ObjEntityChildsGpart.BookingID = item.BookingID;
+                ObjEntityChildsGpart.ConsumptionID = item.ConsumptionID;
+                ObjEntityChildsGpart.FUPartID = item.FUPartID;
+                entityChildsGpart.Add(ObjEntityChildsGpart);
+            }
+
+            //FBookingAcknowledgeChildProcess
+            List<FBookingAcknowledgeChildProcess> entityChildsProcess = new List<FBookingAcknowledgeChildProcess>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeChildProcess ObjEntityChildsProcess = new FBookingAcknowledgeChildProcess();
+                ObjEntityChildsProcess.BookingCProcessID = 0;
+                ObjEntityChildsProcess.BookingChildID = item.BookingChildID;
+                ObjEntityChildsProcess.BookingID = item.BookingID;
+                ObjEntityChildsProcess.ConsumptionID = item.ConsumptionID;
+                ObjEntityChildsProcess.ProcessID = 0;
+                entityChildsProcess.Add(ObjEntityChildsProcess);
+            }
+
+            //FBookingAcknowledgeChildText
+            List<FBookingAcknowledgeChildText> entityChildsText = new List<FBookingAcknowledgeChildText>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeChildText ObjEntityChildsText = new FBookingAcknowledgeChildText();
+                ObjEntityChildsText.TextID = 0;
+                ObjEntityChildsText.BookingChildID = item.BookingChildID;
+                ObjEntityChildsText.BookingID = item.BookingID;
+                ObjEntityChildsText.ConsumptionID = item.ConsumptionID;
+                entityChildsText.Add(ObjEntityChildsText);
+            }
+
+            //FBookingAcknowledgeChildDistribution
+            List<FBookingAcknowledgeChildDistribution> entityChildsDistribution = new List<FBookingAcknowledgeChildDistribution>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                foreach (FBookingAcknowledgeChildDistribution dis in item.ChildsDistribution)
+                {
+                    FBookingAcknowledgeChildDistribution obj = new FBookingAcknowledgeChildDistribution();
+                    obj.DistributionID = 0;
+                    obj.BookingChildID = item.BookingChildID;
+                    obj.BookingID = item.BookingID;
+                    obj.ConsumptionID = item.ConsumptionID;
+                    obj.DeliveryDate = dis.DeliveryDate;
+                    obj.DistributionQty = dis.DistributionQty;
+                    entityChildsDistribution.Add(obj);
+                }
+            }
+
+            //FBookingAcknowledgeChildYarnSubBrand
+            List<FBookingAcknowledgeChildYarnSubBrand> entityChildsYarnSubBrand = new List<FBookingAcknowledgeChildYarnSubBrand>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeChildYarnSubBrand ObjEntityChildsYarnSubBrand = new FBookingAcknowledgeChildYarnSubBrand();
+                ObjEntityChildsYarnSubBrand.BookingCYSubBrandID = 0;
+                ObjEntityChildsYarnSubBrand.BookingChildID = item.BookingChildID;
+                ObjEntityChildsYarnSubBrand.BookingID = item.BookingID;
+                ObjEntityChildsYarnSubBrand.ConsumptionID = item.ConsumptionID;
+                ObjEntityChildsYarnSubBrand.YarnSubBrandID = 0;
+                entityChildsYarnSubBrand.Add(ObjEntityChildsYarnSubBrand);
+            }
+            //FBookingAcknowledgementLiabilityDistribution
+            List<FBookingAcknowledgementLiabilityDistribution> entityChildsLiabilitiesDistribution = new List<FBookingAcknowledgementLiabilityDistribution>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                foreach (FBookingAcknowledgementLiabilityDistribution dis in item.ChildAckLiabilityDetails)
+                {
+                    if (dis.LiabilityQty > 0)
+                    {
+                        FBookingAcknowledgementLiabilityDistribution obj = new FBookingAcknowledgementLiabilityDistribution();
+                        obj.LChildID = 0;
+                        obj.BookingChildID = item.BookingChildID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.BookingID = item.BookingID;
+                        obj.AcknowledgeID = item.AcknowledgeID;
+                        obj.UnitID = item.BookingUnitID;
+                        obj.LiabilitiesProcessID = dis.LiabilitiesProcessID;
+                        obj.LiabilityQty = dis.LiabilityQty;
+                        obj.ConsumedQty = dis.ConsumedQty;
+                        entityChildsLiabilitiesDistribution.Add(obj);
+                    }
+                }
+            }
+
+            List<FBookingAcknowledgeImage> entityChildsImage = new List<FBookingAcknowledgeImage>();
+            foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
+            {
+                FBookingAcknowledgeImage ObjEntityChildsImage = new FBookingAcknowledgeImage();
+                ObjEntityChildsImage.ChildImgID = 0;
+                ObjEntityChildsImage.BookingID = item.BookingID;
+                ObjEntityChildsImage.ExportOrderID = item.ExportOrderID;
+                entityChildsImage.Add(ObjEntityChildsImage);
+            }
+            entityChildsImage = entityChildsImage.GroupBy(x => x.BookingID).Select(y => y.First()).ToList();
+            List<FabricBookingAcknowledge> entityFBA = modelDynamic.FabricBookingAcknowledgeList;
+            var fbaMaster = entityFBA.Find(i => i.BookingID == modelDynamic.BookingID);
+            if (fbaMaster.IsNull())
+            {
+                fbaMaster = new FabricBookingAcknowledge();
+                fbaMaster.BookingID = modelDynamic.BookingID;
+                fbaMaster.SubGroupID = modelDynamic.SubGroupID;
+                fbaMaster.ItemGroupID = modelDynamic.ItemGroupId;
+                fbaMaster.PreProcessRevNo = modelDynamic.RevisionNo;
+                fbaMaster.RevisionNo = modelDynamic.RevisionNo;
+                fbaMaster.BOMMasterID = modelDynamic.BomMasterId;
+                fbaMaster.Status = true;
+                fbaMaster.WithoutOB = modelDynamic.WithoutOB;
+                fbaMaster.AcknowledgeDate = DateTime.Now;
+                fbaMaster.AddedBy = AppUser.UserCode;
+                fbaMaster.DateAdded = DateTime.Now;
+                fbaMaster.EntityState = EntityState.Added;
+                if (entity.IsUnAcknowledge)
+                {
+                    fbaMaster.UnAcknowledge = true;
+                    fbaMaster.UnAcknowledgeBy = AppUser.UserCode;
+                    fbaMaster.UnAcknowledgeDate = DateTime.Now;
+                }
+                entityFBA.Add(fbaMaster);
+            }
+            else
+            {
+                fbaMaster.RevisionNo = modelDynamic.RevisionNo + 1;
+                fbaMaster.PreProcessRevNo = fbaMaster.RevisionNo;
+                fbaMaster.EntityState = EntityState.Modified;
+            }
+
+            List<FBookingAcknowledgeChild> newEntityChilds = new List<FBookingAcknowledgeChild>();
+            List<FBookingAcknowledgeChildAddProcess> newEntityChildAddProcess = new List<FBookingAcknowledgeChildAddProcess>();
+            List<FBookingAcknowledgeChildDetails> newEntityChildDetails = new List<FBookingAcknowledgeChildDetails>();
+            List<FBookingAcknowledgeChildGarmentPart> newEntityChildsGpart = new List<FBookingAcknowledgeChildGarmentPart>();
+            List<FBookingAcknowledgeChildProcess> newEntityChildsProcess = new List<FBookingAcknowledgeChildProcess>();
+            List<FBookingAcknowledgeChildText> newEntityChildsText = new List<FBookingAcknowledgeChildText>();
+            List<FBookingAcknowledgeChildDistribution> newEntityChildsDistribution = new List<FBookingAcknowledgeChildDistribution>();
+            List<FBookingAcknowledgeChildYarnSubBrand> newEntityChildsYarnSubBrand = new List<FBookingAcknowledgeChildYarnSubBrand>();
+            List<FBAChildPlanning> newFBAChildPlanning = new List<FBAChildPlanning>();
+            List<FBookingAcknowledgementLiabilityDistribution> entityChildAckLiabilityDetails = new List<FBookingAcknowledgementLiabilityDistribution>();
+
+            if (fbMaster.IsNull())
+                fbMaster = new FBookingAcknowledge();
+            fbMaster.BookingID = modelDynamic.BookingID;
+            fbMaster.BookingNo = modelDynamic.BookingNo;
+            fbMaster.SLNo = modelDynamic.SLNo;
+            fbMaster.BookingDate = modelDynamic.BookingDate;
+            fbMaster.BuyerID = modelDynamic.BuyerID;
+            fbMaster.BuyerTeamID = modelDynamic.BuyerTeamID;
+            fbMaster.ExecutionCompanyID = modelDynamic.ExecutionCompanyID;
+            fbMaster.SupplierID = modelDynamic.SupplierID;
+            fbMaster.StyleMasterID = modelDynamic.StyleMasterID;
+            fbMaster.StyleNo = modelDynamic.StyleNo;
+            fbMaster.FinancialYearID = modelDynamic.FinancialYearID;
+            fbMaster.SeasonID = modelDynamic.SeasonID;
+            fbMaster.SubGroupID = 1;
+            fbMaster.ExportOrderID = modelDynamic.ExportOrderID;
+            fbMaster.BookingQty = modelDynamic.BookingQty;
+            fbMaster.BomMasterId = modelDynamic.BomMasterId;
+            fbMaster.SubGroupID = modelDynamic.SubGroupID;
+            fbMaster.ItemGroupId = modelDynamic.ItemGroupId;
+            fbMaster.AddedBy = AppUser.UserCode;
+            fbMaster.MerchandiserID = AppUser.UserCode;
+            fbMaster.IsSample = false;
+            fbMaster.EntityState = EntityState.Added;
+            fbMaster.FBookingChild.SetUnchanged();
+            fbMaster.FBookingChild.ForEach(x => x.FBAChildPlannings.SetUnchanged());
+            fbMaster.FBookingAcknowledgeChildAddProcess.SetUnchanged();
+            fbMaster.FBookingChildDetails.SetUnchanged();
+            fbMaster.FBookingAcknowledgeChildGarmentPart.SetUnchanged();
+            fbMaster.FBookingAcknowledgeChildProcess.SetUnchanged();
+            fbMaster.FBookingAcknowledgeChildText.SetUnchanged();
+            fbMaster.FBookingAcknowledgeChildDistribution.SetUnchanged();
+            fbMaster.FBookingAcknowledgeChildYarnSubBrand.SetUnchanged();
+            fbMaster.BDSDependentTNACalander.SetUnchanged();
+            fbMaster.FBookingAcknowledgeImage.SetUnchanged();
+
+            entityChilds.ForEach(bookingChild =>
+            {
+                bookingChild.ChildAddProcess = entityChildAddProcess.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+                bookingChild.FBChildDetails = entityChildDetails.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+                bookingChild.ChildsGpart = entityChildsGpart.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+                bookingChild.ChildsProcess = entityChildsProcess.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+                bookingChild.ChildsText = entityChildsText.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+                bookingChild.ChildsDistribution = entityChildsDistribution.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+                bookingChild.ChildsYarnSubBrand = entityChildsYarnSubBrand.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+                bookingChild.ChildAckLiabilityDetails = entityChildAckLiabilityDetails.Where(x => x.BookingChildID == bookingChild.BookingChildID).ToList();
+            });
+            int newBookingChildId = 0;
+            foreach (FBookingAcknowledgeChild item in entityChilds)
+            {
+                newFBAChildPlanning = new List<FBAChildPlanning>();
+
+                item.AcknowledgeID = entity.FBAckID;
+                FBookingAcknowledgeChild fbChild = fbMaster.FBookingChild.Find(x => x.ItemMasterID == item.ItemMasterID && x.SubGroupID == item.SubGroupID);
+                if (fbChild != null)
+                {
+                    int bookingChildID = fbChild.BookingChildID;
+                    item.BookingChildID = bookingChildID;
+                    item.DateUpdated = DateTime.Now;
+                    item.EntityState = EntityState.Modified;
+
+                    foreach (FBookingAcknowledgeChildAddProcess obj in item.ChildAddProcess)
+                    {
+                        FBookingAcknowledgeChildAddProcess tempObj = fbMaster.FBookingAcknowledgeChildAddProcess.Find(x => x.BookingCAddProcessID == obj.BookingCAddProcessID);
+                        if (tempObj != null)
+                        {
+                            obj.BookingChildID = bookingChildID;
+                            obj.EntityState = EntityState.Modified;
+                            newEntityChildAddProcess.Add(obj);
+                        }
+                        else
+                        {
+                            FBookingAcknowledgeChildAddProcess newObj = new FBookingAcknowledgeChildAddProcess();
+                            newObj.BookingCAddProcessID = 0;
+                            newObj.BookingChildID = bookingChildID;
+                            newObj.BookingID = item.BookingID;
+                            newObj.ConsumptionID = item.ConsumptionID;
+                            newEntityChildAddProcess.Add(newObj);
+                        }
+                    }
+                    foreach (FBookingAcknowledgeChildDetails obj in item.FBChildDetails)
+                    {
+                        FBookingAcknowledgeChildDetails tempObj = fbMaster.FBookingChildDetails.Find(x => x.BookingCDetailsID == obj.BookingCDetailsID);
+                        if (tempObj != null)
+                        {
+                            obj.BookingChildID = bookingChildID;
+                            obj.EntityState = EntityState.Modified;
+                            newEntityChildDetails.Add(obj);
+                        }
+                        else
+                        {
+                            FBookingAcknowledgeChildDetails newObj = new FBookingAcknowledgeChildDetails();
+                            newObj.BookingChildID = bookingChildID;
+                            newObj.BookingID = item.BookingID;
+                            newObj.ConsumptionID = item.ConsumptionID;
+                            newObj.ItemGroupID = item.ItemGroupID;
+                            newObj.SubGroupID = item.SubGroupID;
+                            newObj.ItemMasterID = item.ItemMasterID;
+                            newObj.OrderBankPOID = item.OrderBankPOID;
+                            newObj.ColorID = item.ColorID;
+                            newObj.Color = item.Color;
+                            newObj.SizeID = item.SizeID;
+                            newObj.TechPackID = item.TechPackID;
+                            newObj.ConsumptionQty = item.ConsumptionQty;
+                            newObj.BookingQty = item.BookingQty;
+                            newObj.BookingUnitID = item.BookingUnitID;
+                            newObj.RequisitionQty = item.RequisitionQty;
+                            newObj.ExecutionCompanyID = item.ExecutionCompanyID;
+                            newObj.TechnicalNameId = item.TechnicalNameId;
+
+                            newObj.AddedBy = entity.AddedBy;
+                            newObj.DateAdded = DateTime.Now;
+                            newEntityChildDetails.Add(newObj);
+                        }
+                    }
+                    foreach (FBookingAcknowledgeChildGarmentPart obj in item.ChildsGpart)
+                    {
+                        FBookingAcknowledgeChildGarmentPart tempObj = fbMaster.FBookingAcknowledgeChildGarmentPart.Find(x => x.BookingCGPID == obj.BookingCGPID);
+                        if (tempObj != null)
+                        {
+                            obj.BookingChildID = bookingChildID;
+                            obj.EntityState = EntityState.Modified;
+                            newEntityChildsGpart.Add(obj);
+                        }
+                        else
+                        {
+                            FBookingAcknowledgeChildGarmentPart newObj = new FBookingAcknowledgeChildGarmentPart();
+                            newObj.BookingChildID = bookingChildID;
+                            newObj.BookingID = item.BookingID;
+                            newObj.ConsumptionID = item.ConsumptionID;
+                            newObj.FUPartID = item.FUPartID;
+                            newEntityChildsGpart.Add(newObj);
+                        }
+                    }
+                    foreach (FBookingAcknowledgeChildProcess obj in item.ChildsProcess)
+                    {
+                        FBookingAcknowledgeChildProcess tempObj = fbMaster.FBookingAcknowledgeChildProcess.Find(x => x.BookingCProcessID == obj.BookingCProcessID);
+                        if (tempObj != null)
+                        {
+                            obj.BookingChildID = bookingChildID;
+                            obj.EntityState = EntityState.Modified;
+                            newEntityChildsProcess.Add(obj);
+                        }
+                        else
+                        {
+                            FBookingAcknowledgeChildProcess newObj = new FBookingAcknowledgeChildProcess();
+                            newObj.BookingChildID = bookingChildID;
+                            newObj.BookingID = item.BookingID;
+                            newObj.ConsumptionID = item.ConsumptionID;
+                            newEntityChildsProcess.Add(newObj);
+                        }
+                    }
+                    foreach (FBookingAcknowledgeChildText obj in item.ChildsText)
+                    {
+                        FBookingAcknowledgeChildText tempObj = fbMaster.FBookingAcknowledgeChildText.Find(x => x.TextID == obj.TextID);
+                        if (tempObj != null)
+                        {
+                            obj.BookingChildID = bookingChildID;
+                            obj.EntityState = EntityState.Modified;
+                            newEntityChildsText.Add(obj);
+                        }
+                        else
+                        {
+                            FBookingAcknowledgeChildText newObj = new FBookingAcknowledgeChildText();
+                            newObj.BookingChildID = bookingChildID;
+                            newObj.BookingID = item.BookingID;
+                            newObj.ConsumptionID = item.ConsumptionID;
+                            newEntityChildsText.Add(newObj);
+                        }
+                    }
+                    foreach (FBookingAcknowledgeChildDistribution obj in item.ChildsDistribution)
+                    {
+                        FBookingAcknowledgeChildDistribution tempObj = fbMaster.FBookingAcknowledgeChildDistribution.Find(x => x.DistributionID == obj.DistributionID);
+                        if (tempObj != null)
+                        {
+                            obj.BookingChildID = bookingChildID;
+                            obj.BookingID = item.BookingID;
+                            obj.ConsumptionID = item.ConsumptionID;
+                            obj.EntityState = EntityState.Modified;
+                            newEntityChildsDistribution.Add(obj);
+                        }
+                        else
+                        {
+                            FBookingAcknowledgeChildDistribution newObj = new FBookingAcknowledgeChildDistribution();
+                            newObj.BookingChildID = bookingChildID;
+                            newObj.BookingID = item.BookingID;
+                            newObj.ConsumptionID = item.ConsumptionID;
+                            newEntityChildsDistribution.Add(newObj);
+                        }
+                    }
+                    foreach (FBookingAcknowledgeChildYarnSubBrand obj in item.ChildsYarnSubBrand)
+                    {
+                        FBookingAcknowledgeChildYarnSubBrand tempObj = fbMaster.FBookingAcknowledgeChildYarnSubBrand.Find(x => x.BookingCYSubBrandID == obj.BookingCYSubBrandID);
+                        if (tempObj != null)
+                        {
+                            obj.BookingChildID = bookingChildID;
+                            obj.EntityState = EntityState.Modified;
+                            newEntityChildsYarnSubBrand.Add(obj);
+                        }
+                        else
+                        {
+                            FBookingAcknowledgeChildYarnSubBrand newObj = new FBookingAcknowledgeChildYarnSubBrand();
+                            newObj.BookingChildID = bookingChildID;
+                            newObj.BookingID = item.BookingID;
+                            newObj.ConsumptionID = item.ConsumptionID;
+                            newEntityChildsYarnSubBrand.Add(newObj);
+                        }
+                    }
+                    if (item.CriteriaIDs.IsNotNullOrEmpty())
+                    {
+                        string[] criteriaIds = item.CriteriaIDs.Distinct().ToString().Split(',');
+                        if (criteriaIds.Length > 0 && !criteriaIds[0].Equals(""))
+                        {
+                            foreach (string criteriaID in item.CriteriaIDs.Split(','))
+                            {
+                                if (criteriaID.IsNotNullOrEmpty())
+                                {
+                                    var obj = fbChild.FBAChildPlannings.FirstOrDefault(x => x.CriteriaID == Convert.ToInt32(criteriaID));
+                                    if (obj != null)
+                                    {
+                                        obj.BookingChildID = bookingChildID;
+                                        obj.AcknowledgeID = item.AcknowledgeID;
+                                        obj.CriteriaID = obj.CriteriaID;
+                                        obj.EntityState = EntityState.Modified;
+                                        newFBAChildPlanning.Add(obj);
+
+                                        #region Delete Duplicate Criteria BookingChildID wise
+
+                                        var fBACPlannings = fbChild.FBAChildPlannings.Where(x => x.CriteriaID == Convert.ToInt32(criteriaID)).ToList();
+                                        if (fBACPlannings.Count() > 1)
+                                        {
+                                            int count = 0;
+                                            fBACPlannings.ForEach(x =>
+                                            {
+                                                count++;
+                                                if (count > 1)
+                                                {
+                                                    x.EntityState = EntityState.Deleted;
+                                                    newFBAChildPlanning.Add(x);
+                                                }
+                                            });
+                                        }
+
+                                        #endregion Delete Duplicate Criteria BookingChildID wise
+                                    }
+                                    else
+                                    {
+                                        var newObj = new FBAChildPlanning();
+                                        newObj.BookingChildID = bookingChildID;
+                                        newObj.AcknowledgeID = item.AcknowledgeID;
+                                        newObj.CriteriaID = Convert.ToInt32(criteriaID);
+                                        newFBAChildPlanning.Add(newObj);
+                                    }
+                                }
+                            }
+                            List<int> deletedFBACIds = new List<int>();
+                            fbChild.FBAChildPlannings.ForEach(x =>
+                            {
+                                if (!criteriaIds.Contains(x.CriteriaID.ToString()))
+                                {
+                                    deletedFBACIds.Add(x.CriteriaID);
+                                }
+                            });
+                            deletedFBACIds.ForEach(criteriaID =>
+                            {
+                                var obj = fbChild.FBAChildPlannings.Find(x => x.CriteriaID == criteriaID);
+                                obj.EntityState = EntityState.Deleted;
+                                newFBAChildPlanning.Add(obj);
+                            });
+                        }
+                        item.FBAChildPlannings = newFBAChildPlanning;
+                    }
+                    else
+                    {
+                        #region Delete Duplicate Criteria BookingChildID wise
+
+                        newFBAChildPlanning = new List<FBAChildPlanning>();
+                        string[] criteriaIDs = string.Join(",", fbChild.FBAChildPlannings.Select(x => x.CriteriaID).Distinct()).Split(',');
+                        foreach (string critentialId in criteriaIDs)
+                        {
+                            var fBACPlannings = fbChild.FBAChildPlannings.Where(x => x.CriteriaID == Convert.ToInt32(critentialId)).ToList();
+                            if (fBACPlannings.Count() > 1)
+                            {
+                                int count = 0;
+                                fBACPlannings.ForEach(x =>
+                                {
+                                    count++;
+                                    if (count > 1)
+                                    {
+                                        x.EntityState = EntityState.Deleted;
+                                        newFBAChildPlanning.Add(x);
+                                    }
+                                });
+                            }
+                        }
+                        item.FBAChildPlannings = newFBAChildPlanning;
+
+                        #endregion Delete Duplicate Criteria BookingChildID wise
+                    }
+                }
+                else
+                {
+                    newBookingChildId = item.BookingChildID;
+                    item.BookingChildID = newBookingChildId;
+                    item.EntityState = EntityState.Added;
+                    item.DateAdded = DateTime.Now;
+                    foreach (FBookingAcknowledgeChildAddProcess childAddProc in item.ChildAddProcess)
+                    {
+                        var obj = CommonFunction.DeepClone(childAddProc);
+                        obj.BookingChildID = newBookingChildId;
+                        obj.BookingID = item.BookingID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.EntityState = EntityState.Added;
+                        newEntityChildAddProcess.Add(obj);
+                    }
+                    foreach (FBookingAcknowledgeChildDetails ChildDetail in item.FBChildDetails)
+                    {
+                        FBookingAcknowledgeChildDetails obj = CommonFunction.DeepClone(ChildDetail);
+                        obj.BookingChildID = newBookingChildId;
+                        obj.BookingID = item.BookingID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.BookingQty = item.BookingQty;
+                        obj.ItemGroupID = item.ItemGroupID;
+                        obj.SubGroupID = item.SubGroupID;
+                        obj.ItemMasterID = item.ItemMasterID;
+                        obj.OrderBankPOID = item.OrderBankPOID;
+                        obj.ColorID = item.ColorID;
+                        obj.Color = item.Color;
+                        obj.SizeID = item.SizeID;
+                        obj.TechPackID = item.TechPackID;
+                        obj.ConsumptionQty = item.ConsumptionQty;
+                        obj.BookingUnitID = item.BookingUnitID;
+                        obj.RequisitionQty = item.RequisitionQty;
+                        obj.ExecutionCompanyID = item.ExecutionCompanyID;
+                        obj.TechnicalNameId = item.TechnicalNameId;
+
+                        obj.EntityState = EntityState.Added;
+                        newEntityChildDetails.Add(obj);
+                    }
+                    foreach (FBookingAcknowledgeChildGarmentPart ChildsGp in item.ChildsGpart)
+                    {
+                        FBookingAcknowledgeChildGarmentPart obj = CommonFunction.DeepClone(ChildsGp);
+                        obj.BookingChildID = newBookingChildId;
+                        obj.BookingID = item.BookingID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.FUPartID = item.FUPartID;
+                        obj.EntityState = EntityState.Added;
+                        newEntityChildsGpart.Add(obj);
+                    }
+                    foreach (FBookingAcknowledgeChildProcess ChildsProc in item.ChildsProcess)
+                    {
+                        FBookingAcknowledgeChildProcess obj = CommonFunction.DeepClone(ChildsProc);
+                        obj.BookingChildID = newBookingChildId;
+                        obj.BookingID = item.BookingID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.EntityState = EntityState.Added;
+                        newEntityChildsProcess.Add(obj);
+                    }
+                    foreach (FBookingAcknowledgeChildText ChildTxt in item.ChildsText)
+                    {
+                        FBookingAcknowledgeChildText obj = CommonFunction.DeepClone(ChildTxt);
+                        obj.BookingChildID = newBookingChildId;
+                        obj.BookingID = item.BookingID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.EntityState = EntityState.Added;
+                        newEntityChildsText.Add(obj);
+                    }
+                    foreach (FBookingAcknowledgeChildDistribution ChildDis in item.ChildsDistribution)
+                    {
+                        FBookingAcknowledgeChildDistribution obj = CommonFunction.DeepClone(ChildDis);
+                        obj.BookingChildID = newBookingChildId;
+                        obj.BookingID = item.BookingID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.DeliveryDate = ChildDis.DeliveryDate;
+                        obj.DistributionQty = ChildDis.DistributionQty;
+                        obj.EntityState = EntityState.Added;
+                        newEntityChildsDistribution.Add(obj);
+                    }
+                    foreach (FBookingAcknowledgeChildYarnSubBrand ChildYarnSubBrand in item.ChildsYarnSubBrand)
+                    {
+                        FBookingAcknowledgeChildYarnSubBrand obj = CommonFunction.DeepClone(ChildYarnSubBrand);
+                        obj.BookingChildID = newBookingChildId;
+                        obj.BookingID = item.BookingID;
+                        obj.ConsumptionID = item.ConsumptionID;
+                        obj.EntityState = EntityState.Added;
+                        newEntityChildsYarnSubBrand.Add(obj);
+                    }
+                    if (item.CriteriaIDs.IsNotNullOrEmpty())
+                    {
+                        foreach (string criteriaID in item.CriteriaIDs.Split(',').Distinct())
+                        {
+                            if (criteriaID.IsNotNullOrEmpty())
+                            {
+                                var obj = new FBAChildPlanning();
+                                obj.BookingChildID = newBookingChildId;
+                                obj.AcknowledgeID = item.AcknowledgeID;
+                                obj.CriteriaID = Convert.ToInt32(criteriaID);
+                                obj.EntityState = EntityState.Added;
+                                newFBAChildPlanning.Add(obj);
+                            }
+                        }
+                    }
+                    item.FBAChildPlannings = newFBAChildPlanning;
+                }
+                newEntityChilds.Add(item);
+
+                fbMaster.FBookingChild.ForEach(x =>
+                {
+                    FBookingAcknowledgeChild obj = newEntityChilds.Find(y => y.ItemMasterID == x.ItemMasterID && y.SubGroupID == x.SubGroupID && y.EntityState != EntityState.Deleted);
+                    if (obj == null)
+                    {
+                        x.EntityState = EntityState.Deleted;
+                        newEntityChilds.Add(x);
+
+                        newEntityChildAddProcess.Where(p => p.BookingChildID == x.BookingChildID && p.ConsumptionID == x.ConsumptionID).ToList().ForEach(p =>
+                        {
+                            p.EntityState = EntityState.Deleted;
+                        });
+
+                        fbMaster.FBookingAcknowledgeChildAddProcess.Where(p => p.BookingChildID == x.BookingChildID && p.ConsumptionID == x.ConsumptionID).ToList().ForEach(p =>
+                        {
+                            FBookingAcknowledgeChildAddProcess objP = newEntityChildAddProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
+                            if (objP != null)
+                            {
+                                newEntityChildAddProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                p.EntityState = EntityState.Deleted;
+                                newEntityChildAddProcess.Add(p);
+                            }
+                        });
+                        fbMaster.FBookingChildDetails.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
+                        {
+                            FBookingAcknowledgeChildDetails objP = newEntityChildDetails.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
+                            if (objP != null)
+                            {
+                                newEntityChildDetails.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                p.EntityState = EntityState.Deleted;
+                                newEntityChildDetails.Add(p);
+                            }
+                        });
+                        fbMaster.FBookingAcknowledgeChildGarmentPart.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
+                        {
+                            FBookingAcknowledgeChildGarmentPart objP = newEntityChildsGpart.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
+                            if (objP != null)
+                            {
+                                newEntityChildsGpart.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                p.EntityState = EntityState.Deleted;
+                                newEntityChildsGpart.Add(p);
+                            }
+                        });
+                        fbMaster.FBookingAcknowledgeChildProcess.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
+                        {
+                            FBookingAcknowledgeChildProcess objP = newEntityChildsProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
+                            if (objP != null)
+                            {
+                                newEntityChildsProcess.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                p.EntityState = EntityState.Deleted;
+                                newEntityChildsProcess.Add(p);
+                            }
+                        });
+                        fbMaster.FBookingAcknowledgeChildText.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
+                        {
+                            FBookingAcknowledgeChildText objP = newEntityChildsText.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
+                            if (objP != null)
+                            {
+                                newEntityChildsText.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                p.EntityState = EntityState.Deleted;
+                                newEntityChildsText.Add(p);
+                            }
+                        });
+                        fbMaster.FBookingAcknowledgeChildDistribution.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
+                        {
+                            FBookingAcknowledgeChildDistribution objP = newEntityChildsDistribution.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
+                            if (objP != null)
+                            {
+                                newEntityChildsDistribution.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                p.EntityState = EntityState.Deleted;
+                                newEntityChildsDistribution.Add(p);
+                            }
+                        });
+                        fbMaster.FBookingAcknowledgeChildYarnSubBrand.Where(p => p.BookingChildID == x.BookingChildID).ToList().ForEach(p =>
+                        {
+                            FBookingAcknowledgeChildYarnSubBrand objP = newEntityChildsYarnSubBrand.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID);
+                            if (objP != null)
+                            {
+                                newEntityChildsYarnSubBrand.Find(pp => p.BookingChildID == p.BookingChildID && pp.ConsumptionID == p.ConsumptionID).EntityState = EntityState.Deleted;
+                            }
+                            else
+                            {
+                                p.EntityState = EntityState.Deleted;
+                                newEntityChildsYarnSubBrand.Add(p);
+                            }
+                        });
+
+                    }
+                });
+
+                entityChilds = newEntityChilds;
+                entityChildAddProcess = newEntityChildAddProcess;
+                entityChildDetails = newEntityChildDetails;
+                entityChildsGpart = newEntityChildsGpart;
+                entityChildsProcess = newEntityChildsProcess;
+                entityChildsText = newEntityChildsText;
+                entityChildsDistribution = newEntityChildsDistribution;
+                entityChildsYarnSubBrand = newEntityChildsYarnSubBrand;
+                fbMaster.FBookingAcknowledgeImage.ForEach(x => x.EntityState = EntityState.Modified);
+                entityChildsImage = fbMaster.FBookingAcknowledgeImage;
+            }
+
+            var fabricWastageGrids = await _service.GetFabricWastageGridAsync("BDS");
+            foreach (FBookingAcknowledgeChild details in entityChilds.Where(x => x.EntityState != EntityState.Deleted))
+            {
+                if (entity.FBAckID == 0)
+                {
+                    List<FBAChildPlanning> planningList = new List<FBAChildPlanning>();
+                    string[] criteriaIds = details.CriteriaIDs.Split(',');
+                    if (criteriaIds.Length > 0 && !criteriaIds[0].Equals(""))
+                    {
+                        foreach (string criteria in criteriaIds)
+                        {
+                            if (!string.IsNullOrEmpty(criteria))
+                                planningList.Add(new FBAChildPlanning { CriteriaID = Convert.ToInt32(criteria) });
+                        }
+                        details.FBAChildPlannings = planningList;
+                    }
+                    else
+                    {
+                        details.FBAChildPlannings = new List<FBAChildPlanning>();
+                    }
+                }
+
+                #region Set FabricWastageGrid Values
+
+                FabricWastageGrid fabricWastageGrid = new FabricWastageGrid();
+                details.GSM = string.IsNullOrEmpty(details.GSM) ? 0.ToString() : details.GSM;
+                if (Convert.ToInt32(details.GSM) > 0 && details.SubGroupID == 1)
+                {
+                    fabricWastageGrid = fabricWastageGrids.Where(x => x.IsFabric == true).ToList().Find(x => x.GSMFrom <= Convert.ToInt32(details.GSM)
+                                                                        && Convert.ToInt32(details.GSM) <= x.GSMTo
+                                                                        && x.BookingQtyFrom <= details.BookingQty
+                                                                        && details.BookingQty <= x.BookingQtyTo);
+                }
+                else if (details.SubGroupID == 11 || details.SubGroupID == 12)
+                {
+                    fabricWastageGrid = fabricWastageGrids.Where(x => x.IsFabric == false).ToList().Find(x => x.BookingQtyFrom <= details.BookingQty
+                                                                        && details.BookingQty <= x.BookingQtyTo);
+                }
+                if (fabricWastageGrid != null)
+                {
+                    if (fabricWastageGrid.FixedQty)
+                    {
+                        details.ExcessPercentage = 0;
+                        if (details.BookingQty > 0)
+                        {
+                            details.ExcessQty = fabricWastageGrid.ExcessQty;
+                            details.TotalQty = details.BookingQty + details.ExcessQty;
+                        }
+                        if (details.TotalQtyInKG > 0)
+                        {
+                            details.ExcessQtyInKG = fabricWastageGrid.ExcessQty;
+                            details.TotalQtyInKG = details.TotalQtyInKG + details.ExcessQty;
+                        }
+                    }
+                    else
+                    {
+                        details.ExcessPercentage = fabricWastageGrid.ExcessPercentage;
+                        if (details.BookingQty > 0)
+                        {
+                            details.ExcessQty = Math.Floor(details.BookingQty * fabricWastageGrid.ExcessPercentage / 100);
+                            details.TotalQty = details.BookingQty + details.ExcessQty;
+                        }
+                        if (details.TotalQtyInKG > 0)
+                        {
+                            details.ExcessQtyInKG = Math.Floor(details.BookingQty * fabricWastageGrid.ExcessPercentage / 100);
+                            details.TotalQtyInKG = details.TotalQtyInKG + details.ExcessQtyInKG;
+                        }
+                    }
+                }
+
+                #endregion Set FabricWastageGrid Values
+            }
+
+            List<FBookingAcknowledgementYarnLiability> entityFBYL = new List<FBookingAcknowledgementYarnLiability>();
+            if (isRevised && !entity.IsUnAcknowledge)
+            {
+                entity.FBAckID = fbMaster.FBAckID;
+                entityChilds.ForEach(x => x.AcknowledgeID = entity.FBAckID);
+
+                entity.PreRevisionNo = preRevisionNo;
+                entity.RevisionNo = entity.RevisionNo + 1;
+                entity.RevisionDate = DateTime.Now;
+
+                foreach (FBookingAcknowledgementYarnLiability YL in entity.FBookingAcknowledgementYarnLiabilityList)
+                {
+                    FBookingAcknowledgementYarnLiability objYL = new FBookingAcknowledgementYarnLiability();
+                    objYL.ItemMasterID = YL.ItemMasterID;
+                    objYL.UnitID = YL.UnitID;
+                    objYL.LiabilityQty = YL.LiabilityQty;
+                    objYL.BookingID = entity.BookingID;
+                    entityFBYL.Add(objYL);
+                }
+            }
+            List<FreeConceptMaster> entityFreeConcepts = new List<FreeConceptMaster>();
+            List<FreeConceptMRMaster> entityFreeMR = new List<FreeConceptMRMaster>();
+            await _service.SaveAsync(AppUser.UserCode, entity, entityChilds, entityChildAddProcess, entityChildDetails, entityChildsGpart, entityChildsProcess, entityChildsText, entityChildsDistribution, entityChildsYarnSubBrand, entityChildsImage, BDCalander, isBDS, entityFreeConcepts, entityFreeMR, entityChildsLiabilitiesDistribution, entityFBA, entityFBYL);
+            return Ok();
+        }
+        [HttpGet]
+        [Route("bulk/smail/{bookingNo}/{withoutOB}/{saveType}/{listTypeMasterGrid}")]
+        public async Task<IActionResult> SendMail(string bookingNo, int withoutOB, string saveType, string listTypeMasterGrid)
+        {
+            List<BookingChild> updatedDataNew = new List<BookingChild>();
+            if (bookingNo.IsNotNullOrEmpty())
+            {
+                if (withoutOB == 0)
+                {
+                    updatedDataNew = await _service.GetAllInHouseBookingByBookingNo(bookingNo);
+                }
+                else
+                {
+                    updatedDataNew = await _service.GetAllInHouseSampleBookingByBookingNo(bookingNo);
+                }
+            }
+            String selectedbookingID = String.Empty;
+            var strArr = updatedDataNew.Select(i => i.BookingId.ToString()).Distinct().ToArray();
+            selectedbookingID += string.Join(",", strArr.ToArray());
+            FabricBookingAcknowledge savedFBA = await _service.GetAllSavedFBAcknowledgeByBookingID(selectedbookingID == "" ? "0" : selectedbookingID);
+            bool hasLiabilities = false;
+            if (savedFBA.FBookingChild.Count > 0)
+            {
+                if (savedFBA.FBookingChild.Max(i => Convert.ToInt32(i.SendToMktAck)) == 1)
+                {
+                    hasLiabilities = true;
+                }
+            }
+
+
+            Boolean IsSendMail = false;
+
+            int unAckBy = 0;
+
+            if (withoutOB == 0)
+            {
+                List<BookingMaster> bmList = new List<BookingMaster>();
+                if (updatedDataNew.Count > 0)
+                {
+                    BookingMaster bm = await _service.GetAllBookingAsync(updatedDataNew[0].BookingId);
+                    if (bm.IsNotNull())
+                    {
+                        bmList.Add(bm);
+                        unAckBy = bm.OrderBankMasterID;
+                    }
+                }
+            }
+            else
+            {
+                List<SampleBookingMaster> bmList = new List<SampleBookingMaster>();
+                if (savedFBA.FabricBookingAcknowledgeList.Count > 0)
+                {
+                    SampleBookingMaster bm = await _service.GetAllAsync(savedFBA.FabricBookingAcknowledgeList[0].BookingID);
+                    if (bm.IsNotNull())
+                    {
+                        bmList.Add(bm);
+                        unAckBy = bm.LabdipUnAcknowledgeBY;
+                    }
+                }
+            }
+            return Ok(IsSendMail);
+        }
+       
+     
+        */
+        #endregion
     }
 }

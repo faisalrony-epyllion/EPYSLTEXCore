@@ -120,8 +120,6 @@
             Received(this);
         });
         $formEl.find("#btnUnAcknowledge").click(function (e) {
-            alert(12);
-
             bootbox.prompt("Enter your UnAcknowledge reason:", function (result) {
                 if (!result) {
                     return toastr.error("UnAcknowledge reason is required.");
@@ -347,7 +345,7 @@
                     { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
                     { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
                     { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
-                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'e-email e-icons' } }
+                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-envelope' } }
                 ]
             },
             {
@@ -356,7 +354,7 @@
                     { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
                     { type: 'Tech Pack Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
                     { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'e-image e-icons' } },
-                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'e-email e-icons' } }
+                    { type: 'Email', title: 'Send Email', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-envelope' } }
                 ]
             },
             {
@@ -990,6 +988,7 @@
         $tblChildCuffIdEl.appendTo(tblChildCuffId);
     }
     async function initYarnChildTableAsync(data) {
+        if (data == null) data = [];
         data.map(x => {
             x.TotalValue = x.LiabilityQty * x.Rate;
             x.TotalValue = getDefaultValueWhenInvalidN_Float(x.TotalValue);
@@ -1832,7 +1831,6 @@
                 $divTblEl.fadeOut();
 
                 masterData = response.data;
-                debugger;
                 masterData.BookingDate = formatDateToDefault(masterData.BookingDate);
                 setFormData($formEl, masterData);
 
@@ -2495,6 +2493,7 @@
             save(result, isUnAcknowledge);
         }
     }
+
     function save(result = "", isUnAcknowledge) {
 
         var acknowledgeList = [];
@@ -2507,7 +2506,6 @@
             data.UnAcknowledgeReason = result;
             data.IsUnAcknowledge = true;
         }
-
 
         if (masterData.HasFabric && result == "") {
             var fabrics = $tblChildEl.getCurrentViewRecords();
@@ -2658,16 +2656,13 @@
             x.YarnSubBrandID = getDefaultValueWhenInvalidN(x.YarnSubBrandID);
             x.LabdipUpdateDate = null;
         });
-        //data.FBookingAcknowledgeList = masterData.FBookingAcknowledgeList;
-        //data.FabricBookingAcknowledgeList = masterData.FabricBookingAcknowledgeList;
-        //data.FBookingChild = acknowledgeList;
-        //data.FBookingAckLiabilityDistributionList = liabilityDistributionList;
-        //data.FBookingAcknowledgementYarnLiabilityList = yarnLiabilityList.filter(x => x.AllocatedQty > 0);
-        data.FBookingAcknowledgeList = [];
-        data.FabricBookingAcknowledgeList = [];
-        data.FBookingChild = [];
-        data.FBookingAckLiabilityDistributionList = [];
-        data.FBookingAcknowledgementYarnLiabilityList = [];
+       
+        data.FBookingAcknowledgeList = masterData.FBookingAcknowledgeList;
+        data.FabricBookingAcknowledgeList = masterData.FabricBookingAcknowledgeList;
+        data.FBookingChild = acknowledgeList;
+        data.FBookingAckLiabilityDistributionList = liabilityDistributionList;
+        data.FBookingAcknowledgementYarnLiabilityList = yarnLiabilityList.filter(x => x.AllocatedQty > 0);
+
         data.grpConceptNo = $formEl.find('#GroupConceptNo').val();
         data.IsBDS = _isBDS;
 
@@ -2682,7 +2677,6 @@
 
         data.ListTypeMasterGrid = getListTypeMasterGrid();
 
-        debugger;
         //var modelDynamic = data;
         //modelDynamic.Remarks = 'j';
 
@@ -2693,12 +2687,22 @@
         //}
         axios.post("/api/fab-acknowledge/acknowledge", data)
             .then(function (response) {
-                if (response.data) {
-                    toastr.success("Acknowledged successfully.");
+                if (isUnAcknowledge) {
+                    if (response.data) {
+                        toastr.success("Successfully unacknowledged.");
+                    }
+                    else {
+                        toastr.error('Unacknowledged but mail not sent properly !!!');
+                    }
+                } else {
+                    if (response.data) {
+                        toastr.success("Successfully acknowledged.");
+                    }
+                    else {
+                        toastr.error('Acknowledged but mail not sent properly !!!');
+                    }
                 }
-                else {
-                    toastr.error('Acknowledged but mail not sent properly!!!');
-                }
+                
                 if (status == statusConstants.PENDING || status == statusConstants.NEW) {
                     $toolbarEl.find("#btnList").click();
                 } else if (status == statusConstants.REVISE) {

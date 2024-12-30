@@ -720,7 +720,10 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             try
             {
-                await Connection.OpenAsync();
+                if (Connection.State != System.Data.ConnectionState.Open)
+                {
+                    await Connection.OpenAsync();
+                }
                 transaction = Connection.BeginTransaction();
                 int rows = await Connection.ExecuteAsync(query, param, transaction, commandTimeOut, commandType);
                 transaction.Commit();
@@ -1299,18 +1302,24 @@ namespace EPYSLTEXCore.Infrastructure.Data
                     Dates = DateTime.Today,
                     LastNumber = increment
                 };
-                connectionGmt.InsertAsync(signature, transaction);
+                if (connectionGmt.IsNotNull()) connectionGmt.InsertAsync(signature, transaction);
+                else Connection.InsertAsync(signature, transaction);
             }
             else
             {
                 signature.LastNumber += increment;
-                connectionGmt.UpdateAsync(signature, transaction);
+
+                if (connectionGmt.IsNotNull()) connectionGmt.UpdateAsync(signature, transaction);
+                else Connection.UpdateAsync(signature, transaction);
+
             }
 
             return Convert.ToInt32(signature.LastNumber - increment + 1);
         }
         public int GetMaxId(string field, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
+            if (connectionGmt.IsNull()) connectionGmt = Connection;
+
             var signature = GetSignature(field, 1, 1, repeatAfter, transaction, connectionGmt);
             //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
@@ -1357,6 +1366,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             try
             {
+                if (connectionGmt.IsNull()) connectionGmt = Connection;
 
                 if (connectionGmt.State == System.Data.ConnectionState.Closed)
                 {
@@ -1403,6 +1413,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
             try
             {
                 Signatures signature = null;
+                if (connectionGmt.IsNull()) connectionGmt = Connection;
                 if (connectionGmt.State == System.Data.ConnectionState.Closed)
                 {
                     await connectionGmt.OpenAsync();
@@ -1627,7 +1638,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 var columnNames = "";
                 var parameters = "";
                 var sql = "";
- 
+
                 var data = dataObject
                  .Where(property => columns.Contains(property.Key))
                  .ToDictionary(property => property.Key, property => ConvertJsonNodeToType<object>(property.Value));
@@ -2162,7 +2173,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 var columnNames = string.Join(",", properties.Select(p => p.Name));
                 // Get the property values
                 var values = properties
-                    .Select(p => {
+                    .Select(p =>
+                    {
                         var value = p.GetValue(entity);
                         return value == null ? "NULL" :
                                value is string || value is DateTime ? $"'{value.ToString().Replace("'", "''")}'" :
@@ -2190,6 +2202,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             return $"INSERT INTO {tableName} ({columnNames}) VALUES ({columnValues})";
         }
-        
+
     }
 }

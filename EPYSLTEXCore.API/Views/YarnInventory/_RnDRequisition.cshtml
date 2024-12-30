@@ -1,0 +1,228 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblFreeConceptMRId = "tblFreeConceptMRId" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    @* <input type="hidden" id="AcknowledgePage" value="@ViewBag.AcknowledgePage" />
+    <input type="hidden" id="ApprovePage" value="@ViewBag.ApprovePage" />
+    <input type="hidden" id="YDAcknowledgePage" value="@ViewBag.YDAcknowledgePage" /> *@
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <div>
+                    <button id="btnPending" class="btn btn-success text-white btn-sm">
+                        &nbsp;Pending
+                    </button>
+                    <button id="btnList" class="btn btn-default btn-sm">
+                        <i class="fa fa-hourglass"></i>&nbsp;Requisition List
+                    </button>
+                    <button id="btnWaitForApprove" class="btn btn-default btn-sm">
+                        <i class="fa fa-hourglass"></i>&nbsp;Waiting For Approval
+                    </button>
+                    <button id="btnApproved" class="btn btn-default btn-sm">
+                        <i class="fa fa-list-ul"></i>&nbsp;Approved List
+                    </button>
+                    <button id="btnPendingAcknowledgeList" class="btn btn-success text-white btn-sm">
+                        <i class="fa fa-hourglass"></i> Pending Acknowledge
+                    </button>
+                    <button id="btnAcknowledge" class="btn btn-default btn-sm">
+                        <i class="fa fa-check-square-o"></i>&nbsp;Acknowledge List
+                    </button>
+                    <button id="btnPendingRevision" class="btn btn-default btn-sm">
+                        <i class="fa fa-check-square-o"></i>&nbsp;Pending Revision List
+                    </button>
+                    <button id="btnRefreshList" class="btn btn-default text-grey btn-sm">
+                        <i class="fa fa-refresh"></i>&nbsp;
+                    </button>
+                </div>
+                <div style="margin-top:10px;">
+                    <button id="btnCreate" class="btn btn-primary btn-sm btnExtra">
+                        <i class="fa fa-plus"></i>&nbsp;Create
+                    </button>
+                    <button id="btnNewWithoutKnittingInfo" class="btn btn-primary btn-sm btnExtra" style="float:right;">
+                        <i class="fa fa-plus"></i>&nbsp;New without knitting info
+                    </button>
+                </div>
+            </div>
+            <div style="font-size:12px">
+                <table id="@tblMasterId"></table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="RnDReqMasterID" name="RnDReqMasterID" value="-1111" />
+            <input type="hidden" id="FiberTypeID" name="FiberTypeID" />
+            <input type="hidden" id="RequisitionType" name="RequisitionType" />
+            <input type="hidden" id="RCompanyID" name="RCompanyID" />
+            <input type="hidden" id="OCompanyID" name="OCompanyID" />
+
+            <input type="hidden" id="Status" name="Status" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Requisition No</label>
+                                            <div class="col-sm-8">
+                                                <input id="RnDReqNo" name="RnDReqNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Requisition Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="RnDReqDate" name="RnDReqDate" class="form-control input-sm ej2-datepicker" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Company</label>
+                                            <div class="col-sm-8">
+                                                <input id="RCompanyName" name="RCompanyName" class="form-control input-sm" readonly />
+                                                <button type="button" id="btnCompanyName" class="fa fa-eye" style="float:left;height:24px"></button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-4 col-sm-8">
+                                                <div class="icheck-primary">
+                                                    <input type="checkbox" id="IsReqForYD" class="form-control input-sm" name="IsReqForYD" />
+                                                    <label for="IsReqForYD">YD Requisition?</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 divSummaryDiv">
+                                        <table id="@tblFreeConceptMRId"></table>&nbsp;
+                                        <div>
+                                            <button type="button" id="btnAddItem" class="btn btn-success btn-xs">
+                                                <i class="fa fa-plus"></i>&nbsp;&nbsp;Add New Concept
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                            <button type="button" class="btn btn-success btn-xs" id="btnAddItemPopup">
+                                <i class="fa fa-plus"></i>&nbsp;&nbsp; Add Item
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-12">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnAkgYPR"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledgement</button>
+                            <button type="button" class="btn btn-danger m-w-120" id="btnAkgYPRUN"><i class="fa fa-remove"></i>&nbsp;Unacknowledgement</button>
+
+                            @*<button type="button" class="btn btn-success m-w-120" id="btnSaveAndProposeYPR"><i class="fa fa-angle-double-right"></i>&nbsp;Propose</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnApproveYPR" style="display:none"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                            <button type="button" class="btn btn-danger m-w-120" id="btnRejectYPR" style="display:none"><i class="fa fa-remove"></i>&nbsp;Reject</button>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="modal-ReqFor" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="childTitle"></h4>
+                    RnD Requisition
+                </div>
+                <div class="modal-body">
+                    <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                        <div class="panel-heading">
+                            Requisition For
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <div class="icheck-primary icheck-inline">
+                                            <input type="radio" id="Req-for-YD" name="ReqFor" value="YD" checked />
+                                            <label for="Req-for-YD">YD</label>
+                                        </div>
+                                        <div class="icheck-primary icheck-inline">
+                                            <input type="radio" id="Req-for-Grey" name="ReqFor" value="Grey" />
+                                            <label for="Req-for-Grey">Grey</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnOkReqFor">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal-new-item-@pageId" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Create New Item</h4>
+                </div>
+                <div class="modal-body" style="padding: 0 15px">
+                    <table id="tblCreateItem-@pageId"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default m-w-100" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary m-w-100" id="btnAddItem1">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -350,7 +350,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 --Fiber-SubProgram-Certifications Mapping Setup
                 Select * FROM {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP}
 
-
+                /*
                 --Color Wise Size Collar
                     SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                           text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
@@ -364,8 +364,17 @@ namespace EPYSLTEXCore.Application.Services.RND
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV5 ON ISV5.SegmentValueID = IM.Segment5ValueID
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
-                          WHERE FCM.FBAckID = {FBAckID} AND BAC.SubGroupID IN (11); 
+                          WHERE FCM.FBAckID = {FBAckID} AND BAC.SubGroupID IN (11);
+                */
+				--Color Wise Size Collar
+				SELECT DISTINCT 
+					id = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))), 
+					[text] = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))),
+					[desc] = RTRIM(CAST(CAST(SWW.Weight AS FLOAT) AS VARCHAR(20)))
+				FROM {TableNames.SizeWiseWeight_HK} SWW
+				WHERE SWW.SubGroupID IN ({SubGroupEnum.Collar});
 
+                /*
                 --Color Wise Size Cuff
                     SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                           text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
@@ -380,6 +389,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                           WHERE FCM.FBAckID = {FBAckID} AND BAC.SubGroupID IN (12); 
+                */
+                --Color Wise Size Cuff
+                    SELECT DISTINCT 
+					id = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))), 
+					[text] = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))),
+					[desc] = RTRIM(CAST(CAST(SWW.Weight AS FLOAT) AS VARCHAR(20)))
+				FROM {TableNames.SizeWiseWeight_HK} SWW
+				WHERE SWW.SubGroupID IN ({SubGroupEnum.Cuff});
 
                 --Color Wise All Size Collar
                     SELECT BAC.*,ConstructionId=ISV1.SegmentValueID, Construction = ISV1.SegmentValue, 
@@ -843,7 +860,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 -- DayValidDuration
                 {CommonQueries.GetDayValidDurations()};
 
-
+                /*
                 --Color Wise Size Collar
                     SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                           text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
@@ -858,7 +875,16 @@ namespace EPYSLTEXCore.Application.Services.RND
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                           WHERE FCM.BookingNo = '{grpConceptNo}' AND BAC.SubGroupID IN (11); 
+                */
+				--Color Wise Size Collar
+				SELECT DISTINCT 
+					id = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))), 
+					[text] = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))),
+					[desc] = RTRIM(CAST(CAST(SWW.Weight AS FLOAT) AS VARCHAR(20)))
+				FROM {TableNames.SizeWiseWeight_HK} SWW
+				WHERE SWW.SubGroupID IN ({SubGroupEnum.Collar});
 
+                /*
                 --Color Wise Size Cuff
                     SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                           text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
@@ -873,6 +899,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                           LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                           WHERE FCM.BookingNo = '{grpConceptNo}' AND BAC.SubGroupID IN (12); 
+                */
+                --Color Wise Size Cuff
+                    SELECT DISTINCT 
+					id = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))), 
+					[text] = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))),
+					[desc] = RTRIM(CAST(CAST(SWW.Weight AS FLOAT) AS VARCHAR(20)))
+				FROM {TableNames.SizeWiseWeight_HK} SWW
+				WHERE SWW.SubGroupID IN ({SubGroupEnum.Cuff});
 
                 --Color Wise All Size Collar
                     SELECT BAC.*,ConstructionId=ISV1.SegmentValueID, Construction = ISV1.SegmentValue, 
@@ -1260,7 +1294,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                         --Fiber-SubProgram-Certifications Mapping Setup
                         Select * FROM {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP};
 
-
+                        /*
                         --Color Wise Size Collar
                             SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                                   text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
@@ -1275,7 +1309,15 @@ namespace EPYSLTEXCore.Application.Services.RND
                                   LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                                   LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                                   WHERE FCM.BookingNo = '{grpConceptNo}' AND BAC.SubGroupID IN (11); 
-
+                        */
+				        --Color Wise Size Collar
+				            SELECT DISTINCT 
+					            id = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))), 
+					            [text] = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))),
+					            [desc] = RTRIM(CAST(CAST(SWW.Weight AS FLOAT) AS VARCHAR(20)))
+				            FROM {TableNames.SizeWiseWeight_HK} SWW
+				            WHERE SWW.SubGroupID IN ({SubGroupEnum.Collar});
+                        /*
                         --Color Wise Size Cuff
                             SELECT distinct id=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END,
                                   text=CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV3.SegmentValue END+' X '+CASE WHEN BAC.SubGroupID = 1 THEN '0' ELSE ISV4.SegmentValue END
@@ -1290,6 +1332,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                                   LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                                   LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                                   WHERE FCM.BookingNo = '{grpConceptNo}' AND BAC.SubGroupID IN (12); 
+                        */
+                        --Color Wise Size Cuff
+                            SELECT DISTINCT 
+					        id = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))), 
+					        [text] = RTRIM(CAST(CAST(SWW.Length AS FLOAT) AS VARCHAR(20))) + ' X ' + RTRIM(CAST(CAST(SWW.Width AS FLOAT) AS VARCHAR(20))),
+					        [desc] = RTRIM(CAST(CAST(SWW.Weight AS FLOAT) AS VARCHAR(20)))
+				        FROM {TableNames.SizeWiseWeight_HK} SWW
+				        WHERE SWW.SubGroupID IN ({SubGroupEnum.Cuff});
 
                         --Color Wise All Size Collar
                             SELECT BAC.*,ConstructionId=ISV1.SegmentValueID, Construction = ISV1.SegmentValue, 

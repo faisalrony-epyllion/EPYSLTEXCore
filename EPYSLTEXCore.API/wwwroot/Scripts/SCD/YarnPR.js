@@ -747,7 +747,6 @@
                 }
             ];
         }
-
         else if (status == statusConstants.REJECT) {
             columns = [
                 {
@@ -801,7 +800,6 @@
                 }
             ];
         }
-
         else {
             columns = [
                 {
@@ -1229,12 +1227,15 @@
                 $formEl.find("#divUnAcknowledgeReason").hide();
                 $formEl.find("#btnAcknowledgeMR").hide();
                 $formEl.find("#btnAcknowledge").hide();
-
+                
                 if (status == statusConstants.ADDITIONAL) $formEl.find("#btnSave,#btnSaveForApproval").fadeOut();
                 else $formEl.find("#btnSave,#btnSaveForApproval").fadeIn();
                 masterData = response.data;
-                if (masterData.YarnPRRequiredDate != null) {
+                if (masterData.YarnPRRequiredDate != null && masterData.YarnPRRequiredDate !== "0001-01-01T00:00:00") {
                     masterData.YarnPRRequiredDate = formatDateToDefault(masterData.YarnPRRequiredDate);
+                }
+                else {
+                    masterData.YarnPRRequiredDate = formatDateToDefault(new Date());
                 }
 
                 if (masterData.YarnPRDate != null) {
@@ -1280,7 +1281,7 @@
             .then(function (response) {
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
-
+                
                 masterData = response.data;
                 if (masterData.YarnPRRequiredDate != null) {
                     masterData.YarnPRRequiredDate = formatDateToDefault(masterData.YarnPRRequiredDate);
@@ -1587,11 +1588,13 @@
                     args.data.AllocationQty = args.data.AllocationQty.toFixed(2);
                     args.rowData.AllocationQty = args.data.AllocationQty;
 
-                    if (args.data.ReqQty + args.data.StockQty > args.data.MOQ) {
-                        toastr.error(`Maximum Req Qty is ${args.data.MOQ - args.data.StockQty}`);
-                        args.data.ReqQty = 0;
-                        args.data.ReqCone = 0;
-                        return false;
+                    if (status == statusConstants.ROL_BASE_PENDING) {
+                        if (args.data.ReqQty + args.data.StockQty > args.data.MOQ) {
+                            toastr.error(`Maximum Req Qty is ${args.data.MOQ - args.data.StockQty}`);
+                            args.data.ReqQty = 0;
+                            args.data.ReqCone = 0;
+                            return false;
+                        }
                     }
                 }
             },

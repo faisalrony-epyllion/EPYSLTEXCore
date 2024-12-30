@@ -1,27 +1,9 @@
-﻿using AutoMapper;
-using EPYSLTEX.Core.Interfaces;
+﻿using EPYSLTEX.Core.Interfaces;
 using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Infrastructure.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
-using EPYSLTEXCore.Application.Interfaces.Booking;
-using EPYSLTEXCore.Application.Interfaces.Repositories;
-using EPYSLTEXCore.Application.Interfaces.RND;
-using EPYSLTEXCore.Application.Services;
-using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.CountEntities;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Fabric;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
@@ -86,8 +68,10 @@ namespace EPYSLTEXCore.API.Contollers.Inventory
         }
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(YarnReceiveMaster model)
+        public async Task<IActionResult> Save(YarnReceiveMaster modelParam)
         {
+            YarnReceiveMaster model = JsonConvert.DeserializeObject<YarnReceiveMaster>(Convert.ToString(modelParam));
+
             YarnReceiveMaster entity = new YarnReceiveMaster();
             List<YarnReceiveChild> childRecords = model.YarnReceiveChilds;
             _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_LIVE, ref childRecords);

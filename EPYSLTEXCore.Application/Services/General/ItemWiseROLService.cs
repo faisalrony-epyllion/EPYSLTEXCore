@@ -181,7 +181,7 @@ namespace EPYSLTEXCore.Application.Services.General
                     SELECT IM.ItemMasterID, ISG.SubGroupID , ISG.SubGroupName, IM.ItemName
 				    FROM {DbNames.EPYSL}..ItemMaster IM
 				    INNER JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=IM.SubGroupID
-                    WHERE ISNULL(IM.ItemName,'') <> '' AND ISG.SubGroupName = 'Yarn New'
+                    WHERE ISNULL(IM.ItemName,'') <> '' AND ISG.SubGroupName = 'Yarn Live'
                 )
                 SELECT *, COUNT(*) Over() TotalRows FROM FinalList
 

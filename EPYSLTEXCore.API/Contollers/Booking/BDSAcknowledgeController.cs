@@ -44,8 +44,8 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         private readonly IFBookingAcknowledgeService _fbaService;
 
         public KnittingProgramBDSController(
-            //IEmailService emailService
-            //, IReportingService reportingService
+             //IEmailService emailService
+             //, IReportingService reportingService
              IUserService userService
             , IBDSAcknowledgeService KnittingProgramBDSService
             , IFreeConceptService FreeConceptService
@@ -2207,10 +2207,16 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("bulk/save")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> BulkSave(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> BulkSave(dynamic jsnString)
         {
-            DateTime currentDate = DateTime.Now;
+            FBookingAcknowledge modelDynamic = JsonConvert.DeserializeObject<FBookingAcknowledge>(
+             Convert.ToString(jsnString),
+             new JsonSerializerSettings
+             {
+                 DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+             });
 
+            DateTime currentDate = DateTime.Now;
 
             FBookingAcknowledge model = modelDynamic;
             bool isRevised = model.IsRevised;
@@ -2937,8 +2943,15 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("bulk/saveAddition")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> BulkSaveAddition(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> BulkSaveAddition(dynamic jsnString)
         {
+            FBookingAcknowledge modelDynamic = JsonConvert.DeserializeObject<FBookingAcknowledge>(
+             Convert.ToString(jsnString),
+             new JsonSerializerSettings
+             {
+                 DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+             });
+
             FBookingAcknowledge model = modelDynamic;
             bool isRevised = model.IsRevised;
             bool isAddition = model.IsAddition;
@@ -3545,8 +3558,14 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("bulk/saveWithFreeConcept")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> BulkSaveWithFreeConcept(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> BulkSaveWithFreeConcept(dynamic jsnString)
         {
+            FBookingAcknowledge modelDynamic = JsonConvert.DeserializeObject<FBookingAcknowledge>(
+             Convert.ToString(jsnString),
+             new JsonSerializerSettings
+             {
+                 DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+             });
             DateTime currentDate = DateTime.Now;
 
             FBookingAcknowledge model = modelDynamic;
@@ -4220,8 +4239,14 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("bulk/saveWithFreeConceptWithRevision")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> BulkSaveWithFreeConceptWithRevision(FBookingAcknowledge modelDynamic)
+        public async Task<IActionResult> BulkSaveWithFreeConceptWithRevision(dynamic jsnString)
         {
+            FBookingAcknowledge modelDynamic = JsonConvert.DeserializeObject<FBookingAcknowledge>(
+             Convert.ToString(jsnString),
+             new JsonSerializerSettings
+             {
+                 DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+             });
             DateTime currentDate = DateTime.Now;
 
             FBookingAcknowledge model = modelDynamic;
@@ -4906,8 +4931,15 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("bulk/approveAllowance")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> BulkApproveAllowance(FBookingAcknowledge model)
+        public async Task<IActionResult> BulkApproveAllowance(dynamic jsnString)
         {
+            FBookingAcknowledge model = JsonConvert.DeserializeObject<FBookingAcknowledge>(
+             Convert.ToString(jsnString),
+             new JsonSerializerSettings
+             {
+                 DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+             });
+
             List<FBookingAcknowledge> entities = new List<FBookingAcknowledge>();
             List<YarnBookingChild> yarnBookingChilds = new List<YarnBookingChild>();
             List<YarnBookingChildItem> yarnBookingChildItems = new List<YarnBookingChildItem>();
@@ -5083,8 +5115,14 @@ namespace EPYSLTEXCore.API.Contollers.Booking
         [Route("bulk/utilizationProposalSend")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IActionResult> BulkUtilizationProposalSend(FBookingAcknowledge model)
+        public async Task<IActionResult> BulkUtilizationProposalSend(dynamic jsnString)
         {
+            FBookingAcknowledge model = JsonConvert.DeserializeObject<FBookingAcknowledge>(
+             Convert.ToString(jsnString),
+             new JsonSerializerSettings
+             {
+                 DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+             });
             List<FBookingAcknowledge> entities = new List<FBookingAcknowledge>();
             List<YarnBookingChild> yarnBookingChilds = new List<YarnBookingChild>();
             List<YarnBookingChildItem> yarnBookingChildItems = new List<YarnBookingChildItem>();

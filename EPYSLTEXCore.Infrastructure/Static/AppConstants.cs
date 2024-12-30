@@ -39,7 +39,7 @@
         public const string YARN_CI_FILE_PATH = "/Uploads/YarnCI";
         public const string YARN_PI_FILE_PATH = "/Uploads/YarnPI";
         public const string LC_FILE_PATH = "/Uploads/LC";
-
+        public const string RND_LABTEST_FILE_PATH = "/Uploads/RND/LabTest";
     }
     public static class ContactCategoryNames
     {
@@ -643,5 +643,10 @@
         public const string YARNS = "Yarn Live";
         public const string DYES = "Dyes";
         public const string CHEMICALS = "Chemicals";
+    }
+    public static class SubGroupEnum // EntityTypeValue
+    {
+        public const int Collar = 11;
+        public const int Cuff = 12;
     }
 }

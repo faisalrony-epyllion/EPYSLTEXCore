@@ -980,7 +980,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         }
         public async Task UpdateBDSTNA_YDBatchPreparationPlanAsync(int BatchID)
         {
-            await _service.ExecuteAsync($"{SPNames.spUpdateBDSTNA_BatchPreparationPlan}", new { BatchID = BatchID }, 30, CommandType.StoredProcedure);
+            await _service.ExecuteAsync(SPNames.spUpdateBDSTNA_BatchPreparationPlan, new { BatchID = BatchID }, 30, CommandType.StoredProcedure);
         }
 
         #region Helpers

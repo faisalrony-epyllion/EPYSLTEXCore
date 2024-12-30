@@ -3,6 +3,8 @@ using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Data.Entity;
+using System.Linq.Expressions;
 using System.Text.Json.Nodes;
 
 namespace EPYSLTEXCore.Infrastructure.Data
@@ -92,6 +94,14 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
         Task SaveAsync<CT>(IEnumerable<CT> entities, SqlConnection connection, SqlTransaction transaction) where CT : class, IDapperBaseEntity;
 
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue) where CT : class, IDapperBaseEntity;
+        Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue, int fifthParamValue) where CT : class, IDapperBaseEntity;
+       // Task ValidationAsync<CT>(IEnumerable<CT> entities, SqlTransaction transaction, string validationStoreProcedureName, int primaryKeyValue, int userId, EntityState entityState) where CT : class, IDapperBaseEntity;
+
+
         Task<int> ExecuteAsync(string query, object param, int commandTimeOut = 30, CommandType commandType = CommandType.Text);
 
         int ExecuteWithTransactionAsync(string query, ref SqlTransaction transaction, object param = null, int commandTimeOut = 30, CommandType commandType = CommandType.Text);
@@ -129,5 +139,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
         Task AddAsync<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false);
         void Add<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false);
         string GetInsertQuery<T>(T entity, string tableName, SqlTransaction transaction = null, SqlConnection connectionGmt = null);
+       
     }
 }

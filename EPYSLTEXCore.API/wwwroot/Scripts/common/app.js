@@ -900,7 +900,7 @@ var freeConceptStatus = Object.freeze({
 var pageNameConstants = Object.freeze({
     CPR: "CPR",
     FPR: "FPR",
-     YDBB: "YDBB",
+    YDBB: "YDBB",
     MRSA: "MRSA",
     MRSACK: "MRSACK",
     YDMRSACK: "YDMRSACK",

@@ -39,8 +39,8 @@ namespace EPYSLTEXCore.Application.Services.RND
                       WITH 
                         BM As(
                             Select a.DBatchID, a.DBatchNo, a.CCColorID, a.DBatchDate, a.RecipeID, a.ColorID, b.Qty BatchWeightKG, b.ConceptID
-                            From DyeingBatchMaster a
-                            Inner Join DyeingBatchItem b on b.DBatchID = a.DBatchID
+                            From {TableNames.DYEING_BATCH_MASTER} a
+                            Inner Join  {TableNames.DYEING_BATCH_ITEM}  b on b.DBatchID = a.DBatchID
 	                        Where b.ItemSubGroupID = 1
                         ),M AS (
                             SELECT BM.DBatchID, BM.DBatchNo, BM.DBatchDate, BM.RecipeID, BM.ColorID, BM.BatchWeightKG,
@@ -69,8 +69,8 @@ namespace EPYSLTEXCore.Application.Services.RND
                         ),
                         BM1 As(
                             Select a.DBatchID, a.DBatchNo, a.CCColorID, a.DBatchDate, a.RecipeID, a.ColorID, b.Qty BatchWeightKG, b.ConceptID, B.ItemSubGroupID
-                            From DyeingBatchMaster a
-	                        Inner Join DyeingBatchItem b on b.DBatchID = a.DBatchID
+                            From  {TableNames.DYEING_BATCH_MASTER}  a
+	                        Inner Join {TableNames.DYEING_BATCH_ITEM} b on b.DBatchID = a.DBatchID
 	                        Where b.ItemSubGroupID in  (11,12)
                         ),M1 AS (
                             SELECT BM1.DBatchID, BM1.DBatchNo, BM1.DBatchDate, BM1.RecipeID, BM1.ColorID, BM1.BatchWeightKG,
@@ -98,8 +98,8 @@ namespace EPYSLTEXCore.Application.Services.RND
                         ),
                         BMProd As(
                             Select a.DBatchID, a.DBatchNo, a.CCColorID, a.DBatchDate, a.RecipeID, a.ColorID, b.Qty BatchWeightKG, b.ConceptID
-                            From DyeingBatchMaster a
-                            Inner Join DyeingBatchItem b on b.DBatchID = a.DBatchID
+                            From  {TableNames.DYEING_BATCH_MASTER}  a
+                            Inner Join {TableNames.DYEING_BATCH_ITEM} b on b.DBatchID = a.DBatchID
 	                        Where b.ItemSubGroupID = 1
                         ),
                         MProdWithIsProduction AS (
@@ -170,7 +170,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                A.ExportOrderID, A.BuyerID, A.BuyerTeamID, A.ItemMasterID, A.ColorID, A.FabricQty, A.UnitID, A.Remarks,
 	                Batch.DBatchNo, Batch.DBatchDate, A.ContactPersonID, A.IsRetest, A.IsProduction
 	                FROM A
-	                INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = A.DBatchID
+	                INNER JOIN  {TableNames.DYEING_BATCH_MASTER}  Batch ON Batch.DBatchID = A.DBatchID
                 ),
                 ALL_DATA AS (
 	                SELECT M.*,CM.ConceptNo, ISG.SubGroupName,T.TechnicalName,MSC.SubClassName,Gsm.SegmentValue Gsm,Composition.SegmentValue Composition,CM.Length,CM.Width,FU.PartName FUPartName,COL.SegmentValue ColorName,
@@ -235,7 +235,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                A.ExportOrderID, A.BuyerID, A.BuyerTeamID, A.ItemMasterID, A.ColorID, A.FabricQty, A.UnitID, A.Remarks,
 	                Batch.DBatchNo, Batch.DBatchDate, A.ContactPersonID, A.IsRetest, A.IsProduction
 	                FROM A
-	                INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = A.DBatchID
+	                INNER JOIN  {TableNames.DYEING_BATCH_MASTER}  Batch ON Batch.DBatchID = A.DBatchID
                 ),
                 ALL_DATA AS (
 	                SELECT M.*,CM.ConceptNo, ISG.SubGroupName,T.TechnicalName,MSC.SubClassName,Gsm.SegmentValue Gsm,Composition.SegmentValue Composition,CM.Length,CM.Width,FU.PartName FUPartName,COL.SegmentValue ColorName,
@@ -301,7 +301,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                        A.ExportOrderID, A.BuyerID, A.BuyerTeamID, A.ItemMasterID, A.ColorID, A.FabricQty, A.UnitID, A.Remarks,
 	                        Batch.DBatchNo, Batch.DBatchDate, A.ContactPersonID, A.IsRetest, A.IsProduction
 	                        FROM A
-	                        INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = A.DBatchID
+	                        INNER JOIN  {TableNames.DYEING_BATCH_MASTER}  Batch ON Batch.DBatchID = A.DBatchID
                         ),
                         ALL_DATA AS (
 	                        SELECT M.*,CM.ConceptNo, ISG.SubGroupName,T.TechnicalName,MSC.SubClassName,Gsm.SegmentValue Gsm,Composition.SegmentValue Composition,CM.Length,CM.Width,FU.PartName FUPartName,COL.SegmentValue ColorName,
@@ -367,7 +367,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                        A.ExportOrderID, A.BuyerID, A.BuyerTeamID, A.ItemMasterID, A.ColorID, A.FabricQty, A.UnitID, A.Remarks,
 	                        Batch.DBatchNo, Batch.DBatchDate, A.ContactPersonID, A.IsRetest, A.IsProduction
 	                        FROM A
-	                        INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = A.DBatchID
+	                        INNER JOIN  {TableNames.DYEING_BATCH_MASTER}  Batch ON Batch.DBatchID = A.DBatchID
                         ),
                         ALL_DATA AS (
 	                        SELECT M.*,CM.ConceptNo, ISG.SubGroupName,T.TechnicalName,MSC.SubClassName,Gsm.SegmentValue Gsm,Composition.SegmentValue Composition,CM.Length,CM.Width,FU.PartName FUPartName,COL.SegmentValue ColorName,
@@ -429,14 +429,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                 sql = $@";WITH 
 					D AS (
 						SELECT DBI.ConceptID, DBI.DBatchID 
-						FROM DyeingBatchItem DBI
+						FROM {TableNames.DYEING_BATCH_ITEM} DBI
 						WHERE DBI.DBatchID = {newId} AND DBI.ConceptID = {conceptId}
 					),
 					M AS (
                         SELECT BM.DBatchID, BM.DBatchNo, BM.DBatchDate, BM.RecipeID, BM.ColorID, FCM.CompositionID,FCM.TechnicalNameId,FCM.MCSubClassID,BM.BatchWeightKG, BM.CCColorID, D.ConceptID, FCM.SubGroupID,
 						FCM.GroupConceptNo ConceptNo, FCM.BuyerID, FCM.BuyerTeamID,FCM.ItemMasterID,
                         FCM.BookingID,FCM.ExportOrderID
-                        FROM DyeingBatchMaster BM
+                        FROM  {TableNames.DYEING_BATCH_MASTER}  BM
 						INNER JOIN D ON D.DBatchID = BM.DBatchID
                         INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  FCM ON FCM.ConceptID = D.ConceptID
                     )
@@ -464,7 +464,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 sql = $@";WITH 
 	            D AS (
 		            SELECT ConceptID = MIN(DBI.ConceptID), DBI.DBatchID 
-		            FROM DyeingBatchItem DBI
+		            FROM {TableNames.DYEING_BATCH_ITEM} DBI
 		            WHERE DBI.DBatchID = {newId} AND DBI.ItemSubGroupID = {subGroupId}
                     GROUP BY DBI.DBatchID
 	            ),
@@ -472,7 +472,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     SELECT BM.DBatchID, BM.DBatchNo, BM.DBatchDate, BM.RecipeID, BM.ColorID, FCM.CompositionID,FCM.TechnicalNameId,FCM.MCSubClassID,BM.BatchWeightKG, BM.CCColorID, D.ConceptID, FCM.SubGroupID,
 		            FCM.GroupConceptNo ConceptNo, FCM.BuyerID, FCM.BuyerTeamID,FCM.ItemMasterID,
                     FCM.BookingID,FCM.ExportOrderID
-                    FROM DyeingBatchMaster BM
+                    FROM  {TableNames.DYEING_BATCH_MASTER}  BM
 		            INNER JOIN D ON D.DBatchID = BM.DBatchID
                     INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  FCM ON FCM.ConceptID = D.ConceptID
                 )
@@ -517,11 +517,11 @@ namespace EPYSLTEXCore.Application.Services.RND
 					   INNER JOIN {DbNames.EPYSL}..EntityTypeValue ETV on ETV.ValueID = BP.TestMethodID
 					   WHERE BP.BuyerID = (
                             Select Top 1 BuyerID = CASE WHEN BuyerID = 0 THEN -1 ELSE ISNULL(BuyerID,-1) END 
-                            From DyeingBatchItem 
+                            From {TableNames.DYEING_BATCH_ITEM} 
                             WHERE DBatchID = {newId} AND ConceptID = {conceptId}
                             Group By BuyerID
                         )
-                       --ISNULL((Select Top 1 BuyerID From DyeingBatchItem WHERE DBatchID = {newId} AND ConceptID = {conceptId} Group By BuyerID),-1)
+                       --ISNULL((Select Top 1 BuyerID From {TableNames.DYEING_BATCH_ITEM} WHERE DBatchID = {newId} AND ConceptID = {conceptId} Group By BuyerID),-1)
 					   GROUP BY BP.BPID, BP.BuyerID, BP.RefValueFrom, BP.RefValueTo, BP.TestName, BP.Requirement, BP.SeqNo,ETV.ValueName
 					),
 					BZ AS
@@ -554,7 +554,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                    INNER JOIN {DbNames.EPYSL}..EntityTypeValue ETV on ETV.ValueID = BP.TestMethodID
 	                    WHERE BP.BuyerID = (
                             Select Top 1 BuyerID = CASE WHEN BuyerID = 0 THEN -1 ELSE ISNULL(BuyerID,-1) END 
-                            From DyeingBatchItem 
+                            From {TableNames.DYEING_BATCH_ITEM} 
                             WHERE DBatchID = {newId} AND ConceptID = {conceptId} 
                             Group By BuyerID
                         )
@@ -815,7 +815,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     BuyerTeam = Case When M.BuyerTeamID = 0 then 'R&D'  Else CCT.TeamName End,
                     DefaultCareInstruction = ISNULL(CI.CareInstruction,'')
                     FROM M
-                    INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
+                    INNER JOIN  {TableNames.DYEING_BATCH_MASTER}  Batch ON Batch.DBatchID = M.DBatchID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
                     LEFT JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.ConceptID = M.ConceptID
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
@@ -841,7 +841,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     BuyerTeam = Case When M.BuyerTeamID = 0 then 'R&D'  Else CCT.TeamName End,
                     DefaultCareInstruction = ISNULL(CI.CareInstruction,'')
                     FROM M
-                    INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID 
+                    INNER JOIN  {TableNames.DYEING_BATCH_MASTER}  Batch ON Batch.DBatchID = M.DBatchID 
                     INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.GroupConceptNo = M.GroupConceptNo
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID

@@ -393,7 +393,7 @@
             ? [{ type: 'Add', title: 'Create New', buttonOption: { cssClass: 'e-flat', iconCss: 'e-add e-icons' } }]
             : [
                 //{ type: 'Add', title: 'Another Batch Create', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-plus-circle' } },
-                { type: 'View', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                { type: 'View', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-pdf e-icons' } },
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } }
             ];
 

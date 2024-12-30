@@ -13,6 +13,8 @@ using System.Data;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
+using System.Linq.Expressions;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
 
 namespace EPYSLTEX.Core.Interfaces.Services
 {
@@ -1236,6 +1238,9 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 var freeConceptStatusList = await _conceptStatusService.GetByCPSIDs("1,2", entity.ConceptID.ToString());
 
                 bool isPR = false;
@@ -1251,9 +1256,9 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity.FCMRMasterID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER);
+                        entity.FCMRMasterID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, entity.Childs.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, entity.Childs.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         foreach (var item in entity.Childs)
                         {
                             item.FCMRChildID = maxChildId++;
@@ -1263,7 +1268,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
                     case EntityState.Modified:
                         var addedChilds = entity.Childs.FindAll(x => x.EntityState == EntityState.Added);
-                        maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, addedChilds.Count);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, addedChilds.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
                         foreach (var item in addedChilds)
                         {
@@ -1293,19 +1298,22 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 }
                 await _service.SaveAsync(entity.ConceptStatusList, transaction);
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
-                if (transaction != null) transaction.Dispose();
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
-
+    
+        
         public async Task<List<FreeConceptMRMaster>> GetMultiDetailsAsync(string grpConceptNo)
         {
             string query =
@@ -1350,6 +1358,9 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
+
                 var conceptIds = string.Join(",", entities.Select(x => x.ConceptID).Distinct());
                 var freeConceptStatusList = await _conceptStatusService.GetByCPSIDs("1,2", conceptIds);
 
@@ -1384,54 +1395,58 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 await _service.SaveAsync(childs, transaction);
                 await _service.SaveAsync(conceptStatusList, transaction);
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
-                if (transaction != null) transaction.Dispose();
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 
         private async Task<List<FreeConceptMRMaster>> AddManyAsync(List<FreeConceptMRMaster> entities, List<ConceptStatus> freeConceptStatusList)
         {
-            int fcMRMasterID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, entities.Count);
-            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, entities.Sum(x => x.Childs.Count));
 
-            entities.ToList().ForEach(entity =>
-            {
-                entity.FCMRMasterID = fcMRMasterID++;
-                entity.EntityState = EntityState.Added;
-                entity.ConceptStatusList = new List<ConceptStatus>();
+                int fcMRMasterID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, entities.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, entities.Sum(x => x.Childs.Count), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
-                bool isPR = false;
-                bool isYD = false;
-
-                var objList = entity.Childs.Where(x => x.IsPR == true).ToList();
-                if (objList != null && objList.Count() > 0) isPR = true;
-
-                objList = entity.Childs.Where(x => x.YD == true).ToList();
-                if (objList != null && objList.Count() > 0) isYD = true;
-
-                foreach (FreeConceptMRChild item in entity.Childs)
+                entities.ToList().ForEach(entity =>
                 {
-                    item.FCMRChildID = maxChildId++;
-                    item.FCMRMasterID = entity.FCMRMasterID;
-                }
-                entity.ConceptStatusList = this.GetConceptStatusList(entity.ConceptID, freeConceptStatusList, isPR, isYD);
-            });
+                    entity.FCMRMasterID = fcMRMasterID++;
+                    entity.EntityState = EntityState.Added;
+                    entity.ConceptStatusList = new List<ConceptStatus>();
 
-            return entities;
-        }
+                    bool isPR = false;
+                    bool isYD = false;
+
+                    var objList = entity.Childs.Where(x => x.IsPR == true).ToList();
+                    if (objList != null && objList.Count() > 0) isPR = true;
+
+                    objList = entity.Childs.Where(x => x.YD == true).ToList();
+                    if (objList != null && objList.Count() > 0) isYD = true;
+
+                    foreach (FreeConceptMRChild item in entity.Childs)
+                    {
+                        item.FCMRChildID = maxChildId++;
+                        item.FCMRMasterID = entity.FCMRMasterID;
+                    }
+                    entity.ConceptStatusList = this.GetConceptStatusList(entity.ConceptID, freeConceptStatusList, isPR, isYD);
+                });
+
+                return entities;
+            //}
+         }
 
         private async Task<List<FreeConceptMRMaster>> UpdateMany(List<FreeConceptMRMaster> entities, List<ConceptStatus> freeConceptStatusList)
         {
-            int fcMRMasterID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, entities.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, entities.Sum(x => x.Childs.Where(y => y.EntityState == EntityState.Added).Count()));
+            int fcMRMasterID = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_MASTER, entities.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+            int maxChildId = await _service.GetMaxIdAsync(TableNames.RND_FREE_CONCEPT_MR_CHILD, entities.Sum(x => x.Childs.Where(y => y.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
 
             entities.ToList().ForEach(entity =>
             {
@@ -1482,10 +1497,11 @@ namespace EPYSLTEX.Core.Interfaces.Services
         {
             try
             {
-                //await _service.ExecuteAsync("spBackupFreeConceptMR_Full", new { ConceptNo = grpConceptNo, UserId = userId }, 30, CommandType.StoredProcedure);
-
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _connectionGmt.OpenAsync();
+                transactionGmt = _connectionGmt.BeginTransaction();
 
                 await _connection.ExecuteAsync("spBackupFreeConceptMR_Full", new { ConceptNo = grpConceptNo, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
 
@@ -1519,16 +1535,18 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 }
 
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
-                if (transaction != null) transaction.Dispose();
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
         private List<ConceptStatus> GetConceptStatusList(int conceptID, List<ConceptStatus> freeConceptStatusList, bool isPR, bool isYD)
@@ -1578,5 +1596,51 @@ namespace EPYSLTEX.Core.Interfaces.Services
                 _connection.Close();
             }
         }
+
+        public async Task<List<CT>> GetDataDapperAsync<CT>(string query) where CT : class
+        {
+            //var connection = _dbContext.Database.Connection;
+
+            try
+            {
+                await _connection.OpenAsync();
+                var records = await _connection.QueryAsync<CT>(query);
+                return records.ToList();
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public async Task<bool> ExistsAsync(int SegmentNameID, string SegmentValue)
+        {
+            string sql = $@"Select * from EPYSL..ItemSegmentValue where SegmentNameID = {SegmentNameID} and SegmentValue = {SegmentValue}";
+            var record = await _connection.QueryAsync(sql);
+            return record != null;
+
+        }
+        //public async Task<bool> FindAsync(string SegmentName)
+        //{
+        //    string sql = $@"Select * from EPYSL..ItemSegmentName where SegmentName = {SegmentName}";
+        //    var record = await _connection.QueryAsync(sql);
+        //    return record != null;
+
+        //}
+        public async Task<ItemSegmentName> FindAsync(string segmentName)
+        {
+            string sql = @"SELECT * FROM EPYSL..ItemSegmentName WHERE SegmentName = @SegmentName";
+            var record = await _connection.QueryFirstOrDefaultAsync<ItemSegmentName>(sql, new { SegmentName = segmentName });
+            return record;
+        }
+
+        //public Task<ItemSegmentName> FindAsync(Func<object, bool> value)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

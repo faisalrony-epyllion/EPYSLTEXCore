@@ -939,6 +939,8 @@
         public const string JobCardStatus = "JobCardStatus";
         public const string DyeingMCStatusSetup = "DyeingMCStatusSetup";
         public const string SizeWiseWeight_HK = "SizeWiseWeight_HK";
+        public const string YDBookingRef = "YDBookingRef";
+        public const string YarnDyeingFor_HK = "YarnDyeingFor_HK";
     }
 
 }

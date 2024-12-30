@@ -15,6 +15,7 @@ using static Dapper.SqlMapper;
 using System.Data.Common;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography.Xml;
+using System.Linq.Expressions;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -1289,7 +1290,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
         public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
-            if (increment == 0) return 0;
+            //if (increment == 0) return 0;
             var signature = GetSignature(field, 1, 1, repeatAfter, transaction, connectionGmt);
             //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
@@ -2036,6 +2037,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 return result.HasValue;
             }
         }
+
+        
         public async Task AddAsync<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false)
         {
             //var query = GenerateInsertQuery(entity, tableName);

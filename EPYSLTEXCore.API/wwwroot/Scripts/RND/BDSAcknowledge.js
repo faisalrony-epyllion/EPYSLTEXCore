@@ -811,45 +811,6 @@
                     return false;
                 });
             }
-
-            //-----------------------Load Notification Count-----------------------------------
-            /*
-            var countTagProps = "";
-            switch (menuType) {
-                case _paramType.BulkBookingAck:
-                    countTagProps = "Pending,Draft,SendingForApproval,Reject,Approved,Reject2,AllCount";
-                    break;
-                case _paramType.BulkBookingYarnAllowance:
-                    countTagProps = "Pending,SendingForApproval,Reject,AllCount";
-                    break;
-                case _paramType.BulkBookingUtilizationProposal:
-                    countTagProps = "UtilizationProposalPending,AllCount";
-                    break;
-                case _paramType.BulkBookingUtilizationConfirmation:
-                    countTagProps = "UtilizationConfirmationPending,UtilizationConfirmed,AllCount";
-                    break;
-                case _paramType.BulkBookingCheck:
-                    countTagProps = "Pending,CheckCount,Reject,AllCount";
-                    break;
-                case _paramType.BulkBookingApprove:
-                    countTagProps = "Pending,Approved,Reject,AllCount";
-                    break;
-                case _paramType.BulkBookingFinalApprove:
-                    countTagProps = "Pending,Approved,Reject,AllCount";
-                    break;
-                default:
-                // code block
-            }
-            if (countTagProps.length > 0) {
-                loadListCountMethod({
-                    ToolbarId: toolbarId,
-                    URL: `/api/bds-acknowledge/bulk/bulk-booking-knitting-info/get-list-count/${menuType}`,
-                    CountTagProps: countTagProps,
-                    IsDefaultAllCount: false
-                });
-            }
-            */
-            //-----------------------Load Notification Count-----------------------------------
         }
         else if (menuType == _paramType.BDSAcknowledge) {
             $formEl.find("#lblTableTitle").text("Sample Booking Consumption");
@@ -3199,7 +3160,7 @@
     }
 
     function handleCommands(args) {
-
+        debugger;
         //var isValidate =  FBookingAckRevisionPendingValidation(args.rowData.BookingNo, args.rowData.ExportOrderID);
         if (isOnlyBulkBookingKnittingInfoMenu() && args.commandColumn.type != 'View Attachment' && args.commandColumn.type != 'Tech Pack Attachment' && args.commandColumn.type != 'Booking Attachment' && args.commandColumn.type != 'Export' && args.commandColumn.type != 'Booking Report' && args.commandColumn.type != 'Bulk Booking Report' && args.commandColumn.type != 'Bulk Booking Yarn Info') {
             FBookingAckRevisionPendingValidation(args.rowData.BookingNo, args.rowData.ExportOrderID)
@@ -3299,7 +3260,7 @@
         //    toastr.error("Marketing Ack Pending");
         //    return false;
         //}
-
+        debugger;
         if (args.commandColumn.type == 'Add') {
             if (args.rowData.PendingRevision != null && typeof args.rowData.PendingRevision !== "undefined" && $.trim(args.rowData.PendingRevision.length) > 0) {
                 getNew(args.rowData.BookingID, true);

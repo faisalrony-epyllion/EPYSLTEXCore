@@ -17,6 +17,7 @@ using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Admin;
 
 namespace EPYSLTEXCore.Application.Services.Booking
 {
@@ -33,6 +34,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
         private readonly SqlConnection _connectionGmt;
         private SqlTransaction transaction = null;
         private SqlTransaction transactionGmt = null;
+
         public YarnBookingService(IDapperCRUDService<YarnBookingMaster> service
             , IDapperCRUDService<YarnBookingChild> childService
             , IDapperCRUDService<YarnBookingChildItem> childItemService
@@ -45,12 +47,17 @@ namespace EPYSLTEXCore.Application.Services.Booking
             _service = service;
             _childService = childService;
             _childItemService = childItemService;
-            //_signatureRepository = signatureRepository;
+
+            _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
+            _connectionGmt = service.Connection;
+
+            _service.Connection = service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
-            //_serviceEntityTypeValue = serviceEntityTypeValue;
+
             _serviceFreeConcept = serviceFreeConcept;
             _serviceFreeConceptMR = serviceFreeConceptMR;
         }
+
         public async Task<List<YarnBookingMaster>> GetPagedAsync(Status status, string PageName, PaginationInfo paginationInfo)
         {
             var orderBy = "";//string.IsNullOrEmpty(paginationInfo.OrderBy) ? "ORDER BY YBookingDate DESC" : paginationInfo.OrderBy;
@@ -7861,7 +7868,8 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 ),
 				 FBA As
                 (
-	                Select top 1 FBA.* FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
+	                Select top 1 FBA.* 
+                    FROM {TableNames.FBBOOKING_ACKNOWLEDGE} FBA
 					INNER JOIN AllBookingID ABI ON ABI.BookingID=FBA.BookingID
                 ),
                 FBA1 AS

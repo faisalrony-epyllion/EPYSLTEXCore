@@ -719,7 +719,10 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             try
             {
-                await Connection.OpenAsync();
+                if (Connection.State != System.Data.ConnectionState.Open)
+                {
+                    await Connection.OpenAsync();
+                }
                 transaction = Connection.BeginTransaction();
                 int rows = await Connection.ExecuteAsync(query, param, transaction, commandTimeOut, commandType);
                 transaction.Commit();

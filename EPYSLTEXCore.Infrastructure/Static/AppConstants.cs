@@ -644,4 +644,9 @@
         public const string DYES = "Dyes";
         public const string CHEMICALS = "Chemicals";
     }
+    public static class SubGroupEnum // EntityTypeValue
+    {
+        public const int Collar = 11;
+        public const int Cuff = 12;
+    }
 }

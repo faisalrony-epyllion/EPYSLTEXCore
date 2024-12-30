@@ -1301,10 +1301,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Coalesce(IM.Segment4ValueID, C.SegmentValueId4) Segment4ValueId, 
                 Coalesce(IM.Segment5ValueID, C.SegmentValueId5) Segment5ValueId,  
                 Coalesce(IM.Segment6ValueID, C.SegmentValueId6) Segment6ValueId,
-                Coalesce(IM.Segment7ValueID, C.SegmentValueId7) Segment7ValueId,  
+                Coalesce(IM.Segment7ValueID, C.SegmentValueId7) Segment7ValueId, 
+				Coalesce(IM.Segment8ValueID, C.SegmentValueId8) Segment8ValueId,  
                 ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc,
                 ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc,
-                ISV7.SegmentValue Segment7ValueDesc, C.DayValidDurationId
+                ISV7.SegmentValue Segment7ValueDesc,ISV8.SegmentValue Segment8ValueDesc, C.DayValidDurationId
                 From C
                 LEFT JOIN YRCV ON YRCV.PYBBookingChildID = C.PYBBookingChildID
                 Left Join {DbNames.EPYSL}..ItemMaster IM On C.ItemMasterID = IM.ItemMasterID
@@ -1315,6 +1316,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV5 On Coalesce(IM.Segment5ValueID, C.SegmentValueId5) = ISV5.SegmentValueID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV6 On Coalesce(IM.Segment6ValueID, C.SegmentValueId6) = ISV6.SegmentValueID
                 Left Join {DbNames.EPYSL}..ItemSegmentValue ISV7 On Coalesce(IM.Segment7ValueID, C.SegmentValueId7) = ISV7.SegmentValueID
+				Left Join EPYSL..ItemSegmentValue ISV8 On Coalesce(IM.Segment8ValueID, C.SegmentValueId8) = ISV8.SegmentValueID
                 Left Join {DbNames.EPYSL}..Unit U On C.UnitID = U.UnitID
 				
                 -- Child Details Information
@@ -1921,7 +1923,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     case EntityState.Modified:
                         maxChildId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILD, entity.ProjectionYarnBookingItemChilds.FindAll(x => x.EntityState == EntityState.Added).Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_ITEM_CHILDDETAILS, entity.ProjectionYarnBookingItemChilds.Sum(x => x.PYBItemChildDetails.Where(y => y.EntityState == EntityState.Added).ToList().Count), RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
-                        maxPYBookingBuyerAndBuyerTeamId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_BUYER_AND_BUYERTEAM, entity.PYBookingBuyerAndBuyerTeams.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
+                        maxPYBookingBuyerAndBuyerTeamId = await _service.GetMaxIdAsync(TableNames.PROJECTION_YARN_BOOKING_BUYER_AND_BUYERTEAM, entity.PYBookingBuyerAndBuyerTeams.Where(y => y.EntityState == EntityState.Added).ToList().Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
                         foreach (var item in entity.ProjectionYarnBookingItemChilds)
 
                         {
@@ -2021,6 +2023,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             }
             finally
             {
+                if (transaction != null) transaction.Dispose();
+                if (transactionGmt != null) transactionGmt.Dispose();
                 _connection.Close();
                 _connectionGmt.Close();
             }
@@ -2090,16 +2094,19 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 }
                 await _service.SaveAsync(yarnPRMaster.YarnPOMasters, _connection, transaction);
                 transaction.Commit();
+                transactionGmt.Commit();
             }
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 if (ex.Message.Contains('~')) throw new Exception(ex.Message.Split('~')[0]);
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _connectionGmt.Close();
             }
         }
 

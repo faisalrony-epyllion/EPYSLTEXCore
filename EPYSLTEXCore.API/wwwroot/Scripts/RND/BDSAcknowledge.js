@@ -2462,7 +2462,8 @@
         compositionComponents.reverse();
 
         var composition = "";
-        compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
         compositionComponents.forEach(function (component) {
 
             composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;

@@ -4633,8 +4633,12 @@ function getYarnItemColumnsForDisplayOnly() {
         { field: 'Segment4ValueId', visible: false },
         { field: 'Segment5ValueDesc', headerText: 'Quality Parameter', allowEditing: false, width: 100 },
         { field: 'Segment5ValueId', visible: false },
-        { field: 'Segment6ValueDesc', headerText: 'Count', allowEditing: false, width: 80 },
+        { field: 'Segment6ValueDesc', headerText: 'Color', allowEditing: false, width: 80 },
         { field: 'Segment6ValueId', visible: false },
+        { field: 'Segment7ValueDesc', headerText: 'Color Grade', allowEditing: false, width: 80 },
+        { field: 'Segment7ValueId', visible: false },
+        { field: 'Segment8ValueDesc', headerText: 'Count', allowEditing: false, width: 80 },
+        { field: 'Segment8ValueId', visible: false },
         //{ field: 'Segment7ValueDesc', headerText: 'No of Ply', allowEditing: false, width: 40, textAlign: 'Center', headerTextAlign: 'Center' },
         //{ field: 'Segment7ValueId', visible: false }
     ];

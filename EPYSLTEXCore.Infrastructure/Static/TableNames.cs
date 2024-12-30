@@ -938,6 +938,7 @@
         public const string YDBookingChild = "T_YDBookingChild";
         public const string JobCardStatus = "JobCardStatus";
         public const string DyeingMCStatusSetup = "DyeingMCStatusSetup";
+        public const string SizeWiseWeight_HK = "SizeWiseWeight_HK";
     }
 
 }

@@ -15,6 +15,7 @@ using static Dapper.SqlMapper;
 using System.Data.Common;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography.Xml;
+using System.Linq.Expressions;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -2025,6 +2026,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 return result.HasValue;
             }
         }
+
+        
         public async Task AddAsync<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false)
         {
             //var query = GenerateInsertQuery(entity, tableName);

@@ -93,8 +93,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory
         public string Count { get; set; } = ""; //Segment6Value
 
         [Write(false)]
-        public int ItemMasterId { get; set; } = 0;
-        [Write(false)]
         public int SupplierId { get; set; } = 0;
         [Write(false)]
         public int SpinnerId { get; set; } = 0;

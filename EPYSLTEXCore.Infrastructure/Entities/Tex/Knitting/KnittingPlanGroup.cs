@@ -46,6 +46,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting
         [Write(false)]
         public List<KnittingPlanChild> KnittingPlanChilds { get; set; } = new List<KnittingPlanChild>();
         [Write(false)]
+        public List<KnittingPlanChild> Childs { get; set; } = new List<KnittingPlanChild>();
+        [Write(false)]
         public List<KnittingPlanYarn> Yarns { get; set; } = new List<KnittingPlanYarn>();
         [Write(false)]
         public List<Select2OptionModel> YarnBrandList { get; set; } = new List<Select2OptionModel>();
@@ -120,8 +122,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Knitting
         public string ConceptForName { get; set; } = "";
         [Write(false)]
         public string BAnalysisNo { get; set; } = "";
-        [Write(false)]
-        public bool isModified { get; set; } = false;
+        //[Write(false)]
+        //public bool isModified { get; set; } = false;
         [Write(false)]
         public DateTime? BAnalysisDate { get; set; }
         [Write(false)]

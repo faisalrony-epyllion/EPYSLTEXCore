@@ -17,14 +17,15 @@ namespace EPYSLTEXCore.Application.Services.RND
     internal class LabTestRequisitionService : ILabTestRequisitionService
     {
         private readonly IDapperCRUDService<LabTestRequisitionMaster> _service;
-        
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
 
         public LabTestRequisitionService(IDapperCRUDService<LabTestRequisitionMaster> service)
         {
             _service = service;
-            
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<LabTestRequisitionMaster>> GetPagedAsync(int isBDS, Status status, PaginationInfo paginationInfo)
@@ -45,7 +46,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                             SELECT BM.DBatchID, BM.DBatchNo, BM.DBatchDate, BM.RecipeID, BM.ColorID, BM.BatchWeightKG,
                             BM.CCColorID, LTRM.ContactPersonID, BM.ConceptID, LTRM.IsProduction
                             FROM BM
-                            Left Join LabTestRequisitionMaster LTRM On LTRM.DBatchID = BM.DBatchID And LTRM.ConceptID = BM.ConceptID
+                            Left Join  {TableNames.LAB_TEST_REQUISITION_MASTER}  LTRM On LTRM.DBatchID = BM.DBatchID And LTRM.ConceptID = BM.ConceptID
                             WHERE LTRM.DBatchID IS NULL
                         ),
                         FABRIC AS (
@@ -56,7 +57,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                        IsProduction = ISNULL(M.IsProduction,0)
                             FROM M
                             INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
-                            INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = M.ConceptID
+                            INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  FCM ON FCM.ConceptID = M.ConceptID
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = FCM.BuyerID
                             LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FCM.BuyerTeamID
                             LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FCM.TechnicalNameId
@@ -75,7 +76,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                             SELECT BM1.DBatchID, BM1.DBatchNo, BM1.DBatchDate, BM1.RecipeID, BM1.ColorID, BM1.BatchWeightKG,
                             BM1.CCColorID, LTRM.ContactPersonID, BM1.ConceptID, LTRM.IsProduction
                             FROM BM1
-                            Left Join LabTestRequisitionMaster LTRM On LTRM.DBatchID = BM1.DBatchID And LTRM.SubGroupID = BM1.ItemSubGroupID --And LTRM.ConceptID = BM1.ConceptID
+                            Left Join  {TableNames.LAB_TEST_REQUISITION_MASTER}  LTRM On LTRM.DBatchID = BM1.DBatchID And LTRM.SubGroupID = BM1.ItemSubGroupID --And LTRM.ConceptID = BM1.ConceptID
                             WHERE LTRM.DBatchID IS NULL
                         ),
                         CC AS (
@@ -85,7 +86,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                        IsProduction = ISNULL(M1.IsProduction,0)
                             FROM M1
                             INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M1.ColorID
-                            INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = M1.ConceptID
+                            INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  FCM ON FCM.ConceptID = M1.ConceptID
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = FCM.BuyerID
                             LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FCM.BuyerTeamID
                             LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = FCM.TechnicalNameId
@@ -105,14 +106,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                             SELECT BM.DBatchID, BM.DBatchNo, BM.DBatchDate, BM.RecipeID, BM.ColorID, BM.BatchWeightKG,
                             BM.CCColorID, LTRM.ContactPersonID, BM.ConceptID, LTRM.IsProduction
                             FROM BMProd BM
-                            LEFT JOIN LabTestRequisitionMaster LTRM On LTRM.DBatchID = BM.DBatchID And LTRM.ConceptID = BM.ConceptID
+                            LEFT JOIN  {TableNames.LAB_TEST_REQUISITION_MASTER}  LTRM On LTRM.DBatchID = BM.DBatchID And LTRM.ConceptID = BM.ConceptID
                             WHERE LTRM.IsProduction = 1 AND LTRM.LTReqMasterID IS NULL 
                         ),
                         PL AS
                         (
 	                        SELECT LTRM.LTReqMasterID, LTRM.ConceptID, LTRM.IsProduction
 	                        FROM MProdWithIsProduction MP
-	                        INNER JOIN LabTestRequisitionMaster LTRM ON LTRM.ConceptID = MP.ConceptID
+	                        INNER JOIN  {TableNames.LAB_TEST_REQUISITION_MASTER}  LTRM ON LTRM.ConceptID = MP.ConceptID
 	                        WHERE LTRM.IsProduction = 0
 	                        GROUP BY LTRM.LTReqMasterID, LTRM.ConceptID, LTRM.IsProduction
                         ),
@@ -125,7 +126,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                        IsProduction = ISNULL(M.IsProduction,0)
                             FROM MProdWithIsProduction M
                             INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
-                            INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = M.ConceptID
+                            INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  FCM ON FCM.ConceptID = M.ConceptID
                             LEFT JOIN PL ON PL.ConceptID = M.ConceptID
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = FCM.BuyerID
                             LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FCM.BuyerTeamID
@@ -153,13 +154,13 @@ namespace EPYSLTEXCore.Application.Services.RND
                 sql += $@"
                 ;WITH A AS(
 	                Select *
-	                FROM LabTestRequisitionMaster M
+	                FROM {TableNames.LAB_TEST_REQUISITION_MASTER} M
 	                WHERE IsApproved = 0 AND IsAcknowledge = 0
                 ), 
                 TNI AS
                 (
 	                SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                FROM LabTestRequisitionBuyerParameter LTR
+	                FROM  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  LTR
 	                INNER JOIN A ON A.LTReqMasterID = LTR.LTReqMasterID
 	                LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -179,7 +180,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+	                INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.ConceptID = M.ConceptID
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
@@ -197,10 +198,10 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN FreeConceptMaster CM ON CM.GroupConceptNo = M.GroupConceptNo
+	                INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.GroupConceptNo = M.GroupConceptNo
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
-	                INNER JOIN FreeConceptChildColor FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
 	                LEFT JOIN KnittingMachineSubClass MSC ON MSC.SubClassID = CM.MCSubClassID
 	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
@@ -218,13 +219,13 @@ namespace EPYSLTEXCore.Application.Services.RND
                 sql += $@"
                 ;WITH A AS(
 	                    Select *
-	                    FROM LabTestRequisitionMaster M
+	                    FROM  {TableNames.LAB_TEST_REQUISITION_MASTER}  M
 	                    WHERE IsApproved = 1 AND IsAcknowledge = 0
                 ), 
                 TNI AS
                 (
 	                SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                FROM LabTestRequisitionBuyerParameter LTR
+	                FROM  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  LTR
 	                INNER JOIN A ON A.LTReqMasterID = LTR.LTReqMasterID
 	                LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -244,7 +245,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+	                INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.ConceptID = M.ConceptID
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
@@ -264,10 +265,10 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN FreeConceptMaster CM ON CM.GroupConceptNo = M.GroupConceptNo
+	                INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.GroupConceptNo = M.GroupConceptNo
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
-	                INNER JOIN FreeConceptChildColor FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
 	                LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
 	                LEFT JOIN KnittingMachineSubClass MSC ON MSC.SubClassID = CM.MCSubClassID
 	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
@@ -284,13 +285,13 @@ namespace EPYSLTEXCore.Application.Services.RND
             {
                 sql += $@";WITH A AS(
 	                            Select *
-	                            FROM LabTestRequisitionMaster M
+	                            FROM  {TableNames.LAB_TEST_REQUISITION_MASTER}  M
 	                            WHERE IsApproved = 1 AND IsAcknowledge = 1
                         ), 
                         TNI AS
                         (
 	                        SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                        FROM LabTestRequisitionBuyerParameter LTR
+	                        FROM  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  LTR
 	                        INNER JOIN A ON A.LTReqMasterID = LTR.LTReqMasterID
 	                        LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                        GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -310,7 +311,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                             LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                             TNI.TestNatureName
 	                        FROM M
-	                        INNER JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+	                        INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.ConceptID = M.ConceptID
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                             LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
 	                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
@@ -330,10 +331,10 @@ namespace EPYSLTEXCore.Application.Services.RND
                             LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                             TNI.TestNatureName
 	                        FROM M
-	                        INNER JOIN FreeConceptMaster CM ON CM.GroupConceptNo = M.GroupConceptNo
+	                        INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.GroupConceptNo = M.GroupConceptNo
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                             LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
-		                    INNER JOIN FreeConceptChildColor FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
+		                    INNER JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
 	                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
 	                        LEFT JOIN KnittingMachineSubClass MSC ON MSC.SubClassID = CM.MCSubClassID
 	                        INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
@@ -350,13 +351,13 @@ namespace EPYSLTEXCore.Application.Services.RND
             {
                 sql += $@";WITH A AS(
 	                            Select *
-	                            FROM LabTestRequisitionMaster M
+	                            FROM  {TableNames.LAB_TEST_REQUISITION_MASTER}  M
 	                            WHERE IsApproved = 0 AND IsAcknowledge = 0 AND UnAcknowledge = 1
                         ), 
                         TNI AS
                         (
 	                        SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                        FROM LabTestRequisitionBuyerParameter LTR
+	                        FROM  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  LTR
 	                        INNER JOIN A ON A.LTReqMasterID = LTR.LTReqMasterID
 	                        LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                        GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -376,7 +377,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                             LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                             TNI.TestNatureName
 	                        FROM M
-	                        INNER JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+	                        INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.ConceptID = M.ConceptID
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                             LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
 	                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
@@ -396,10 +397,10 @@ namespace EPYSLTEXCore.Application.Services.RND
                             LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                             TNI.TestNatureName
 	                        FROM M
-	                        INNER JOIN FreeConceptMaster CM ON CM.GroupConceptNo = M.GroupConceptNo
+	                        INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.GroupConceptNo = M.GroupConceptNo
                             LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                             LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
-		                    INNER JOIN FreeConceptChildColor FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
+		                    INNER JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
 	                        LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
 	                        LEFT JOIN KnittingMachineSubClass MSC ON MSC.SubClassID = CM.MCSubClassID
 	                        INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
@@ -437,7 +438,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                         FCM.BookingID,FCM.ExportOrderID
                         FROM DyeingBatchMaster BM
 						INNER JOIN D ON D.DBatchID = BM.DBatchID
-                        INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = D.ConceptID
+                        INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  FCM ON FCM.ConceptID = D.ConceptID
                     )
                     SELECT M.DBatchID, M.DBatchNo, M.DBatchDate, M.RecipeID, M.ColorID, M.BatchWeightKG FabricQty, COL.SegmentValue ColorName,
                     COM.SegmentValue Composition,T.TechnicalName,MSC.SubClassName,
@@ -473,7 +474,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     FCM.BookingID,FCM.ExportOrderID
                     FROM DyeingBatchMaster BM
 		            INNER JOIN D ON D.DBatchID = BM.DBatchID
-                    INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = D.ConceptID
+                    INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  FCM ON FCM.ConceptID = D.ConceptID
                 )
                 SELECT M.DBatchID, M.DBatchNo, M.DBatchDate, M.RecipeID, M.ColorID, SUM(M.BatchWeightKG) FabricQty, COL.SegmentValue ColorName,
 	            COM.SegmentValue Composition,T.TechnicalName,MSC.SubClassName,
@@ -668,7 +669,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             {
                 sql = $@"
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionMaster WHERE LTReqMasterID = {id}
+                        SELECT	* FROM  {TableNames.LAB_TEST_REQUISITION_MASTER}  WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LabTestServiceTypeID,M.IsRetest, 0 As LTReqMasterID, '**<< NEW >>**' As ReqNo, Getdate() As ReqDate, 
                     M.DBatchID, M.ConceptID,M.KnittingUnitID, M.BookingID, M.ExportOrderID, M.BuyerID, M.BuyerTeamID, M.IsProduction, M.WashTemp, 
@@ -679,9 +680,9 @@ namespace EPYSLTEXCore.Application.Services.RND
                     Buyer = CASE WHEN ISNULL(CM.BuyerID,0) > 0 THEN B.Name ELSE 'R&D' END,
                     BuyerTeam = CASE WHEN ISNULL(CM.BuyerTeamID,0) > 0 THEN CCT.TeamName ELSE 'R&D' END
                     FROM M
-                    INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
+                    INNER JOIN {TableNames.DYEING_BATCH_MASTER} Batch ON Batch.DBatchID = M.DBatchID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
-                    LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = M.ConceptID
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
                     INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.ContactPersonID
@@ -689,7 +690,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                     -----childs
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyer WHERE LTReqMasterID = {id}
+                        SELECT	* FROM {TableNames.LAB_TEST_REQUISITION_BUYER} WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqBuyerID, M.BuyerID, M.LTReqMasterID, Contacts.Name BuyerName
                     FROM M
@@ -697,7 +698,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                     ----Buyer Group Parameter
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyerParameter WHERE LTReqMasterID = {id}
+                        SELECT	* FROM {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqMasterID, M.BuyerID,	M.BPID, M.RefValueFrom, M.RefValueTo,BWP.TestName,BWP.Requirement,
 					M.TestValue, M.TestValue1, M.Requirement, M.Requirement1, M.IsPass, M.Remarks, M.LTReqBuyerID, 
@@ -712,7 +713,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     
                     ----Buyer Parameters
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyerParameter WHERE LTReqMasterID = {id}
+                        SELECT	* FROM  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqBPID, M.LTReqMasterID, M.LTReqBuyerID, M.BuyerID, M.BPID, M.BPSubID,
 					M.TestValue, M.TestValue1, M.Requirement, M.Requirement1, M.IsPass, M.Remarks, M.TestNatureID, Contacts.Name BuyerName, BWP.TestName,
@@ -800,7 +801,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             {
                 sql = $@"
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionMaster WHERE LTReqMasterID = {id}
+                        SELECT	* FROM  {TableNames.LAB_TEST_REQUISITION_MASTER}  WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LabTestServiceTypeID,M.IsRetest,M.LTReqMasterID, M.ReqNo, M.ReqDate, M.DBatchID, M.ConceptID,M.KnittingUnitID, 
                     M.BookingID, M.ExportOrderID, M.BuyerID, M.BuyerTeamID, M.ItemMasterID, M.ColorID,M.FabricQty, M.UnitID, M.Remarks, M.IsProduction, M.WashTemp,
@@ -816,7 +817,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     FROM M
                     INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
-                    LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+                    LEFT JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.ConceptID = M.ConceptID
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
                     INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.ContactPersonID
@@ -841,11 +842,11 @@ namespace EPYSLTEXCore.Application.Services.RND
                     DefaultCareInstruction = ISNULL(CI.CareInstruction,'')
                     FROM M
                     INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID 
-                    INNER JOIN FreeConceptMaster CM ON CM.GroupConceptNo = M.GroupConceptNo
+                    INNER JOIN  {TableNames.RND_FREE_CONCEPT_MASTER}  CM ON CM.GroupConceptNo = M.GroupConceptNo
                     LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
                     LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
                     INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.ContactPersonID
-                    INNER JOIN FreeConceptChildColor FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
+                    INNER JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.ConceptID = CM.ConceptID And FCC.ColorID = M.ColorID
                     LEFT JOIN FabricTechnicalName T ON T.TechnicalNameId = CM.TechnicalNameId
                     LEFT JOIN KnittingMachineSubClass MSC ON MSC.SubClassID = CM.MCSubClassID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
@@ -856,7 +857,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                     -----childs
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyer WHERE LTReqMasterID = {id}
+                        SELECT	* FROM {TableNames.LAB_TEST_REQUISITION_BUYER} WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqBuyerID, M.BuyerID, M.LTReqMasterID, Contacts.Name BuyerName
                     FROM M
@@ -864,7 +865,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                     ----Buyer Group Parameter
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyerParameter WHERE LTReqMasterID = {id}
+                        SELECT	* FROM  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqMasterID, M.BuyerID,	M.BPID, M.RefValueFrom, M.TestNatureID, TN.TestNatureName, M.RefValueTo,BWP.TestName,BWP.Requirement,
 					M.TestValue, M.TestValue1, M.Requirement, M.Requirement1, M.IsPass, M.Remarks, M.LTReqBuyerID, 
@@ -880,7 +881,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     
                     ----Buyer Parameters
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyerParameter WHERE LTReqMasterID = {id}
+                        SELECT	* FROM  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqMasterID, M.BuyerID,	M.BPID, M.RefValueFrom, M.RefValueTo, M.TestNatureID, BWP.TestName,BWP.Requirement,
                     M.TestValue, M.TestValue1, M.Requirement, M.Requirement1, M.IsPass, M.Remarks, M.LTReqBuyerID, 
@@ -932,10 +933,10 @@ namespace EPYSLTEXCore.Application.Services.RND
 					   FROM LabTestBuyerWiseParameter_HK BP
 					   INNER JOIN LabTestBuyerWiseParameterSub_HK BPS ON BPS.BPID = BP.BPID
 					   INNER JOIN {DbNames.EPYSL}..EntityTypeValue ETV on ETV.ValueID = BP.TestMethodID
-					   --WHERE BP.BuyerID = ISNULL((Select Top 1 BuyerID From LabTestRequisitionBuyerParameter WHERE LTReqMasterID = {id} Group By BuyerID),-1)
+					   --WHERE BP.BuyerID = ISNULL((Select Top 1 BuyerID From  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  WHERE LTReqMasterID = {id} Group By BuyerID),-1)
                        WHERE BP.BuyerID = (
                             Select Top 1 BuyerID = CASE WHEN BuyerID = 0 THEN -1 ELSE ISNULL(BuyerID,-1) END 
-                            From LabTestRequisitionBuyerParameter 
+                            From  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  
                             WHERE LTReqMasterID = {id} 
                             Group By BuyerID
                         )
@@ -1058,11 +1059,11 @@ namespace EPYSLTEXCore.Application.Services.RND
         public async Task<LabTestRequisitionMaster> GetAllByIDAsync(int id)
         {
             string sql = $@"
-            ;Select * From LabTestRequisitionMaster Where LTReqMasterID = {id}
+            ;Select * From  {TableNames.LAB_TEST_REQUISITION_MASTER}  Where LTReqMasterID = {id}
 
-            ;Select * From LabTestRequisitionBuyer Where LTReqMasterID = {id}
+            ;Select * From {TableNames.LAB_TEST_REQUISITION_BUYER} Where LTReqMasterID = {id}
 
-            ;Select * From LabTestRequisitionBuyerParameter Where LTReqMasterID = {id}
+            ;Select * From  {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER}  Where LTReqMasterID = {id}
 
             ;Select * From LabTestRequisitionCareLabel Where LTReqMasterID = {id}
 
@@ -1184,19 +1185,24 @@ namespace EPYSLTEXCore.Application.Services.RND
         public async Task<LabTestRequisitionMaster> SaveAsync(LabTestRequisitionMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
+
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity =  await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:
@@ -1215,7 +1221,9 @@ namespace EPYSLTEXCore.Application.Services.RND
                 await _service.SaveAsync(entity.Countries, transaction);
                 await _service.SaveAsync(entity.EndUses, transaction);
                 await _service.SaveAsync(entity.FinishDyeMethods, transaction);
+
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 //LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END
 
@@ -1226,25 +1234,27 @@ namespace EPYSLTEXCore.Application.Services.RND
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 
-        private async Task<LabTestRequisitionMaster> AddAsync(LabTestRequisitionMaster entity)
+        private async Task<LabTestRequisitionMaster> AddAsync(LabTestRequisitionMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            entity.LTReqMasterID = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_MASTER);
-            entity.ReqNo = await _service.GetMaxNoAsync(TableNames.REQ_NO);
-            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Count());
-            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Count()));
-            int maxLabTestRequisitionCareLableId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_CARE_LABEL, entity.CareLabels.Count());
+            entity.LTReqMasterID = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_MASTER, RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            entity.ReqNo = await _service.GetMaxNoAsync(TableNames.REQ_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionCareLableId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_CARE_LABEL, entity.CareLabels.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
-            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Count());
-            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Count());
-            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Count());
+            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             int nLTReqBuyerID = 0;
 
@@ -1305,15 +1315,15 @@ namespace EPYSLTEXCore.Application.Services.RND
             return entity;
         }
 
-        private async Task<LabTestRequisitionMaster> UpdateAsync(LabTestRequisitionMaster entity)
+        private async Task<LabTestRequisitionMaster> UpdateAsync(LabTestRequisitionMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()));
-            int maxLabTestRequisitionCareLableId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_CARE_LABEL, entity.CareLabels.Where(x => x.EntityState == EntityState.Added).Count());
+            int maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxLabTestRequisitionCareLableId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_CARE_LABEL, entity.CareLabels.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
-            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Where(x => x.EntityState == EntityState.Added).Count());
-            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Where(x => x.EntityState == EntityState.Added).Count());
+            int maxCountriesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_EXPORT_COUNTRY, entity.Countries.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxEndUsesId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_END_USE, entity.EndUses.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            int maxFinishDyeMethodsId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_FINISH_DYE_METHOD, entity.FinishDyeMethods.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             int nLTReqBuyerID = 0;
 
@@ -1505,10 +1515,14 @@ namespace EPYSLTEXCore.Application.Services.RND
         public async Task<LabTestRequisitionMaster> ReviseAsync(LabTestRequisitionMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
 
                 //only for revision after UnAcknowledge
                 await _connection.ExecuteAsync("spBackupLabTestRequisition_Full", new { LTReqMasterID = entity.LTReqMasterID }, transaction, 30, CommandType.StoredProcedure);
@@ -1517,11 +1531,11 @@ namespace EPYSLTEXCore.Application.Services.RND
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity = await AddAsync(entity);
+                        entity = await AddAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:

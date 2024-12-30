@@ -22,9 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="DataAccess\Interfaces\IGmtSqlQueryRepository.cs" />
+    <Compile Remove="Interfaces\Repositories\IGmtEfRepository.cs" />
     <Compile Remove="Services\Reporting\RDLReportDocument.cs" />
     <Compile Remove="Services\Reporting\ReportingService.cs" />
-    <Compile Remove="Services\RND\LabTestRequisitionService.cs" />
     <Compile Remove="Services\User\LoginHistoryService.cs" />
   </ItemGroup>
 
@@ -37,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\CommonInterface\" />
+    <Folder Include="Interfaces\Repositories\" />
     <Folder Include="Interfaces\Select2\" />
     <Folder Include="Interfaces\User\" />
     <Folder Include="Services\CommonInterface\" />

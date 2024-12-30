@@ -6,9 +6,11 @@ using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 
 namespace EPYSLTEX.Web.Controllers.Apis
@@ -90,8 +92,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Save(FinishingProcessMaster model)
+        public async Task<IActionResult> Save(dynamic JsonString )
         {
+            FinishingProcessMaster model = JsonConvert.DeserializeObject<FinishingProcessMaster>(Convert.ToString(JsonString));
             FinishingProcessMaster entity; 
             if (model.FPMasterID > 0) 
             {
@@ -106,12 +109,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     item.EntityState = EntityState.Unchanged;
                 foreach (FinishingProcessChildItem item in entity.PreFinishingProcessChildItems)
                     item.EntityState = EntityState.Unchanged;
-                //foreach (FinishingProcessChild item in entity.FinishingProcessChilds)
-                //{
-                //    item.EntityState = EntityState.Unchanged;
-                //    foreach (FinishingProcessChildItem childItem in item.PreFinishingProcessChildItems)
-                //        childItem.EntityState = EntityState.Unchanged;
-                //}
+          
 
                 int nSeq = 1;
                 foreach (FinishingProcessChild item in model.PreFinishingProcessChilds)
@@ -173,18 +171,8 @@ namespace EPYSLTEX.Web.Controllers.Apis
                         childEntity.Param18Value = item.Param18Value;
                         childEntity.Param19Value = item.Param19Value;
                         childEntity.Param20Value = item.Param20Value;
-                        //foreach (FinishingProcessChildItem ci in item.PreFinishingProcessChildItems)
-                        //{
-                        //    FinishingProcessChildItem ci1 = childEntity.PreFinishingProcessChildItems.FirstOrDefault(y => y.ItemMasterID == ci.ItemMasterID);
-                        //    if (ci1 == null)
-                        //    {
-                        //        childEntity.PreFinishingProcessChildItems.Add(ci1);
-                        //    }
-                        //    else
-                        //    {
-                        //        ci1.EntityState = EntityState.Modified;
-                        //    }
-                        //}
+              
+    
                         childEntity.EntityState = item.EntityState == EntityState.Deleted ? EntityState.Deleted : EntityState.Modified;
                     }
                 }

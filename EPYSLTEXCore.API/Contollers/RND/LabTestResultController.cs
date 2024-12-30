@@ -2,13 +2,15 @@
 using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Web.Extends.Helpers;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json;
 using System.Data.Entity;
 namespace EPYSLTEX.Web.Controllers.Apis
@@ -21,8 +23,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
         private readonly ICommonHelpers _commonHelpers;
         private readonly ISelect2Service _select2Service;
         private readonly ICommonHelperService _commonService;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public LabTestResultController(ILabTestResultService LabTestResultService, IUserService userService
+        public LabTestResultController(ILabTestResultService LabTestResultService, IUserService userService, IWebHostEnvironment hostingEnvironment
             , ICommonHelpers commonHelpers
         , ISelect2Service select2Service
             , ICommonHelperService commonService) : base(userService)
@@ -31,6 +34,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             _commonHelpers = commonHelpers;
             _select2Service = select2Service;
             _commonService = commonService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [Route("list")]
@@ -81,37 +85,29 @@ namespace EPYSLTEX.Web.Controllers.Apis
             return Ok(labTestreqBuyers);
         }
 
+
+        #region save will be fixed when all will be done
         [Route("save")]
         [HttpPost]
-        [ValidateModel]
+
         public async Task<IActionResult> Save()
         {
-            var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartFormDataStreamProvider());
+            var formData = Request.Form;
+            // Access the uploaded file
+            var file = Request.Form.Files.FirstOrDefault();
 
-            var formData = provider.FormData;
-            var model = JsonConvert.DeserializeObject<LabTestRequisitionMaster>(formData.Get("data"));
-            model.LabTestRequisitionBuyers = JsonConvert.DeserializeObject<List<LabTestRequisitionBuyer>>(formData.Get("LabTestRequisitionBuyers"));
-            model.LabTestRequisitionImages = JsonConvert.DeserializeObject<List<LabTestRequisitionImage>>(formData.Get("LabTestRequisitionImages"));
+            // Validate file
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded or the file is empty.");
 
-            bool isNewFile = true;
-            if (!provider.Files.Any() && !string.IsNullOrEmpty(model.ImagePath)) isNewFile = false;
+            if (file.Length > 4 * 1024 * 1024)
+                return BadRequest("File is bigger than 4MB.");
 
-            #region Image Conditions
-            if (isNewFile)
-            {
-                //if (!provider.Files.Any()) return BadRequest("You must upload lab test result file.");
+            var model = JsonConvert.DeserializeObject<LabTestRequisitionMaster>(formData["data"]);
+            model.LabTestRequisitionBuyers = JsonConvert.DeserializeObject<List<LabTestRequisitionBuyer>>(formData["LabTestRequisitionBuyers"]);
+            model.LabTestRequisitionImages = JsonConvert.DeserializeObject<List<LabTestRequisitionImage>>(formData["LabTestRequisitionImages"]);
 
-                if (provider.Files.Any())
-                {
-                    if (!Request.Content.IsMimeMultipartContent())
-                        return BadRequest("Unsupported media type.");
-
-                    if (Request.Content.Headers.ContentLength >= 4 * 1024 * 1024)
-                        return BadRequest("File is bigger than 4MB");
-                }
-
-            }
-            #endregion Image Conditions
+       
 
             string fileName = "",
                filePath = "",
@@ -121,68 +117,82 @@ namespace EPYSLTEX.Web.Controllers.Apis
             {
                 x.FileName = Path.GetFileNameWithoutExtension(x.FileName);
             });
-
-            for (int i = 0; i < provider.Files.Count(); i++)
+            if (file != null)
             {
-                var originalFile = provider.Files[i];
-
-                var inputStream = await originalFile.ReadAsStreamAsync();
-
-                fileName = string.Join("", originalFile.Headers.ContentDisposition.FileName.Split(Path.GetInvalidFileNameChars()));
-                var contentType = originalFile.Headers.ContentType.ToString();
-
-                var fileExtension = Path.GetExtension(fileName);
-                previewTemplate = fileExtension.Contains(".pdf") ? "pdf" : MimeMapping.GetMimeMapping(fileName).StartsWith("image/") ? "image" : "office";
-
-                filePath = $"{AppConstants.RND_LABTEST_FILE_PATH}/LabTest_{Guid.NewGuid().ToString("N").ToUpper()}{fileExtension}";
-                var savePath = HttpContext.Current.Server.MapPath(filePath);
-
-                using (var fileStream = File.Create(savePath))
+                for (int i = 1; i < Request.Form.Files.Count(); i++)
                 {
-                    inputStream.Seek(0, SeekOrigin.Begin);
-                    await inputStream.CopyToAsync(fileStream);
-                }
-                //labtestreqimage.FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'";
-                //labtestreqimage.ImagePath = filePath;
-                //labtestreqimage.PreviewTemplate = previewTemplate;
+                     fileName = "";
+                    filePath = "";
+                    previewTemplate = "";
+                    var originalFile = Request.Form.Files[i];
+                    var inputStream = originalFile.OpenReadStream();
 
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-                int indexF = model.LabTestRequisitionImages.FindIndex(x => x.FileName == fileNameWithoutExtension);
-                if (indexF > -1)
-                {
-                    model.LabTestRequisitionImages[indexF].FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'";
-                    model.LabTestRequisitionImages[indexF].ImagePath = filePath;
-                    model.LabTestRequisitionImages[indexF].PreviewTemplate = previewTemplate;
-                    //model.LabTestRequisitionImages[indexF] = labtestreqimage;
+                    fileName = string.Join("", originalFile.FileName.Split(Path.GetInvalidFileNameChars()));
+                    var splitFileName = fileName.Split('~');
+                    int docTypeID = 0;
+                    if (splitFileName.Count() > 0)
+                    {
+                        fileName = splitFileName[0];
+                        docTypeID = Convert.ToInt32(splitFileName[1]);
+                    }
+                    var contentType = originalFile.ContentType;
+
+                    var fileExtension = Path.GetExtension(fileName);
+                    var provider = new FileExtensionContentTypeProvider();
+                    string mimeType;
+
+                    if (provider.TryGetContentType(fileName, out mimeType))
+                    {
+                        // Set previewTemplate based on file type
+                        previewTemplate = fileExtension.Contains(".pdf") ? "pdf" :
+                                          mimeType.StartsWith("image/") ? "image" :
+                                          "office";
+                    }
+                    else
+                    {
+                        // If MIME type couldn't be determined, fallback to "office"
+                        previewTemplate = "office";
+                    }
+
+
+                    filePath = $"{UploadLocations.RND_LABTEST_FILE_PATH}/CommercialInvoice_{fileName}";
+                    var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
+                    string directoryPath = Path.GetDirectoryName(fullPath);
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+                    using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await inputStream.CopyToAsync(fileStream);
+                    }
+                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+                    int indexF = model.LabTestRequisitionImages.FindIndex(x => x.FileName == fileNameWithoutExtension);
+                    if (indexF > -1)
+                    {
+                        model.LabTestRequisitionImages[indexF].FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'";
+                        model.LabTestRequisitionImages[indexF].ImagePath = filePath;
+                        model.LabTestRequisitionImages[indexF].PreviewTemplate = previewTemplate;
+                    }
+                    else
+                    {
+                        model.LabTestRequisitionImages.Add(new LabTestRequisitionImage()
+                        {
+                            FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'",
+                            ImagePath = filePath,
+                            PreviewTemplate = previewTemplate
+                     
+                        });
+                    }
                 }
             }
-
-            /*
-            foreach (var originalFile in provider.Files)
+            else
             {
-                var inputStream = await originalFile.ReadAsStreamAsync();
-
-                fileName = string.Join("", originalFile.Headers.ContentDisposition.FileName.Split(Path.GetInvalidFileNameChars()));
-                var contentType = originalFile.Headers.ContentType.ToString();
-
-                var fileExtension = Path.GetExtension(fileName);
-                previewTemplate = fileExtension.Contains(".pdf") ? "pdf" : MimeMapping.GetMimeMapping(fileName).StartsWith("image/") ? "image" : "office";
-
-                filePath = $"{AppConstants.RND_LABTEST_FILE_PATH}/LabTest_{Guid.NewGuid().ToString("N").ToUpper()}{fileExtension}";
-                var savePath = HttpContext.Current.Server.MapPath(filePath);
-
-                using (var fileStream = File.Create(savePath))
-                {
-                    inputStream.Seek(0, SeekOrigin.Begin);
-                    await inputStream.CopyToAsync(fileStream);
-                }
-                labtestreqimage.FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'";
-
-                labtestreqimage.ImagePath = filePath;
-                labtestreqimage.PreviewTemplate = previewTemplate;
-                model.LabTestRequisitionImages.Add(DeepClone(labtestreqimage));
+                filePath = "defaultFilePath";  // Handle no file uploaded scenario
+                previewTemplate = "office";    // Set default preview template
             }
-            */
+           
+
 
             LabTestRequisitionMaster entity = await _LabTestResultService.GetAllByIDAsync(model.LTReqMasterID);
             foreach (LabTestRequisitionBuyer reqBuyer in entity.LabTestRequisitionBuyers)
@@ -231,11 +241,13 @@ namespace EPYSLTEX.Web.Controllers.Apis
             entity.UpdatedBy = AppUser.UserCode;
             entity.DateUpdated = DateTime.Now;
             entity.PerformanceCode = model.PerformanceCode;
-            if (isNewFile)
+          
+            if (file is not null)
             {
-                if (File.Exists(HttpContext.Current.Server.MapPath(entity.ImagePath)))
+                var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, entity.ImagePath.TrimStart('/'));
+                if (System.IO.File.Exists(fullPath))
                 {
-                    File.Delete(HttpContext.Current.Server.MapPath(entity.ImagePath));
+                    System.IO.File.Delete(fullPath);
                 }
 
                 entity.FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'";
@@ -338,102 +350,8 @@ namespace EPYSLTEX.Web.Controllers.Apis
             }
             return Ok(entity);
         }
+        #endregion
 
-        /*
-         [Route("save")]
-        [HttpPost]
-        [ValidateModel]
-        public async Task<IActionResult> Save(LabTestRequisitionMaster model)
-        {
-            LabTestRequisitionMaster entity = await _LabTestResultService.GetAllByIDAsync(model.LTReqMasterID);
-            foreach (LabTestRequisitionBuyer reqBuyer in entity.LabTestRequisitionBuyers)
-            {
-                reqBuyer.LabTestRequisitionBuyerParameters = entity.LabTestRequisitionBuyerParameters.Where(x => x.LTReqBuyerID == reqBuyer.LTReqBuyerID).ToList();
-            }
 
-            entity.LabTestRequisitionBuyers.SetUnchanged();
-            entity.LabTestRequisitionBuyers.ForEach(x => { x.LabTestRequisitionBuyerParameters.SetUnchanged(); });
-
-            entity.ReqDate = model.ReqDate;
-            entity.FabricQty = model.FabricQty;
-            entity.UnitID = model.UnitID;
-            entity.UpdatedBy = AppUser.UserCode;
-            entity.DateUpdated = DateTime.Now;
-            entity.EntityState = EntityState.Modified;
-
-            LabTestRequisitionBuyer labTestRequisitionBuyer;
-            LabTestRequisitionBuyerParameter labTestRequisitionBuyerParameter;
-            foreach (LabTestRequisitionBuyer child in model.LabTestRequisitionBuyers)
-            {
-                labTestRequisitionBuyer = entity.LabTestRequisitionBuyers.FirstOrDefault(x => x.LTReqBuyerID == child.LTReqBuyerID);
-                if (labTestRequisitionBuyer == null)
-                {
-                    labTestRequisitionBuyer = child;
-                    labTestRequisitionBuyer.EntityState = EntityState.Added;
-                    if (model.IsSend)
-                    {
-                        labTestRequisitionBuyer.IsSend = true;
-                        labTestRequisitionBuyer.SendBy = AppUser.UserCode;
-                        labTestRequisitionBuyer.SendDate = DateTime.Now;
-                    }
-                    entity.LabTestRequisitionBuyers.Add(labTestRequisitionBuyer);
-                }
-                else
-                {
-                    labTestRequisitionBuyer.LTResultUpdate = true;
-                    labTestRequisitionBuyer.LTResultUpdateBy = AppUser.UserCode;
-                    labTestRequisitionBuyer.LTResultUpdateDate = DateTime.Now;
-                    if (model.IsSend)
-                    {
-                        labTestRequisitionBuyer.IsSend = true;
-                        labTestRequisitionBuyer.SendBy = AppUser.UserCode;
-                        labTestRequisitionBuyer.SendDate = DateTime.Now;
-                    }
-                    if (child.IsApproved)
-                    {
-                        labTestRequisitionBuyer.IsApproved = true;
-                        labTestRequisitionBuyer.ApprovedBy = AppUser.UserCode;
-                        labTestRequisitionBuyer.ApprovedDate = DateTime.Now;
-                    }
-                    if (child.IsAcknowledge)
-                    {
-                        labTestRequisitionBuyer.IsAcknowledge = true;
-                        labTestRequisitionBuyer.AcknowledgeBy = AppUser.UserCode;
-                        labTestRequisitionBuyer.AcknowledgeDate = DateTime.Now;
-                    }
-                    labTestRequisitionBuyer.IsPass = child.IsPass;
-                    labTestRequisitionBuyer.Remarks = child.Remarks;
-                    labTestRequisitionBuyer.EntityState = EntityState.Modified;
-
-                    foreach (LabTestRequisitionBuyerParameter item in child.LabTestRequisitionBuyerParameters)
-                    {
-                        labTestRequisitionBuyerParameter = labTestRequisitionBuyer.LabTestRequisitionBuyerParameters.FirstOrDefault(x => x.LTReqBPID == item.LTReqBPID);
-                        if (labTestRequisitionBuyerParameter == null)
-                        {
-                            labTestRequisitionBuyerParameter = item;
-                            labTestRequisitionBuyerParameter.EntityState = EntityState.Added;
-                            labTestRequisitionBuyer.LabTestRequisitionBuyerParameters.Add(labTestRequisitionBuyerParameter);
-                        }
-                        else
-                        {
-                            labTestRequisitionBuyerParameter.TestValue = item.TestValue;
-                            labTestRequisitionBuyerParameter.Addition1 = item.Addition1;
-                            labTestRequisitionBuyerParameter.Addition2 = item.Addition2;
-                            labTestRequisitionBuyerParameter.AdditionalInfo = item.AdditionalInfo;
-                            labTestRequisitionBuyerParameter.RefValueFrom = item.RefValueFrom;
-                            labTestRequisitionBuyerParameter.RefValueTo = item.RefValueTo;
-                            labTestRequisitionBuyerParameter.IsPass = item.IsPass;
-                            labTestRequisitionBuyerParameter.Remarks = item.Remarks;
-                            labTestRequisitionBuyerParameter.EntityState = EntityState.Modified;
-                        }
-                    }
-                }
-            }
-
-            await _LabTestResultService.SaveAsync(entity);
-
-            return Ok();
-        }
-         */
     }
 }

@@ -81,7 +81,7 @@
 
         $.each($formEl.find('select'), function (i, el) {
 
-         
+
             var currentDDL = interfaceConfigs.Childs.find(p => p.EntryType === 'select' && p.ColumnName === el.id);
             if (currentDDL != null && currentDDL.DefaultValue != null) {
                 var selectedOption = $(el).find('option').filter(function () {
@@ -90,6 +90,9 @@
 
                 var optionId = selectedOption.length ? selectedOption.val() : currentDDL.DefaultValue;
                 $(el).val(optionId).trigger('change');
+            }
+            else {
+                $(el).val(null).trigger('change');
             }
             // $(el).select2('').trigger('change');
         });

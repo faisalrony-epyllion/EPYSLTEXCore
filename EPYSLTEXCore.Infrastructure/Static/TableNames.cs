@@ -938,6 +938,8 @@
         public const string YDBookingChild = "T_YDBookingChild";
         public const string JobCardStatus = "JobCardStatus";
         public const string DyeingMCStatusSetup = "DyeingMCStatusSetup";
+        public const string YDBookingRef = "YDBookingRef";
+        public const string YarnDyeingFor_HK = "YarnDyeingFor_HK";
     }
 
 }

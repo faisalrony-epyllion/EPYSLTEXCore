@@ -67,7 +67,27 @@
 
             actionBegin: function (args) {
                 if (args.requestType === "save") {
-
+                    console.log(args);
+                    var dataObj = {
+                        YarnPackingID: args.data.YarnPackingID,
+                        SpinnerID: getDefaultValueWhenInvalidN(args.data.SpinnerID),
+                        PackNo: getDefaultValueWhenInvalidS(args.data.PackNo),
+                        Cone: getDefaultValueWhenInvalidN(args.data.Cone),
+                        NetWeight: getDefaultValueWhenInvalidN(args.data.NetWeight),
+                        GrossWeightPC: getDefaultValueWhenInvalidN(args.data.GrossWeightPC),
+                    };
+                    if (!update(dataObj)) {
+                        args.cancel = true;
+                        return;
+                    };
+                }
+                if (args.requestType === "delete") {
+                    console.log(args);
+                    debugger;
+                    if (!deleteObj(args.data[0].YarnPackingID)) {
+                        args.cancel = true;
+                        return;
+                    };
                 }
             },
             actionComplete: function (args) {
@@ -147,7 +167,44 @@
                 }
                 args.cancel = true;
             });
-            //.catch(showResponseError);
+        //.catch(showResponseError);
     }
+    function update(dataObj) {
+        var returnFlag = false;
+        axios.post("/api/spinner-wise-yarn-packing-hk/update", dataObj)
+            .then(function () {
+                toastr.success("Saved successfully.");
+                $tblMasterEl.refresh();
+                returnFlag = true;
+            })
+            .catch(error => {
+                if (error.response.data.Message === undefined) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+            });
+        //.catch(showResponseError);
 
+        return returnFlag;
+    }
+    function deleteObj(yarnPackingID) {
+        var returnFlag = false;
+        axios.post("/api/spinner-wise-yarn-packing-hk/delete/" + yarnPackingID)
+            .then(function () {
+                toastr.success("Successfully Removed.");
+                $tblMasterEl.refresh();
+                returnFlag = true;
+            })
+            .catch(error => {
+                if (error.response.data.Message === undefined) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+            });
+        //.catch(showResponseError);
+
+        return returnFlag;
+    }
 })();

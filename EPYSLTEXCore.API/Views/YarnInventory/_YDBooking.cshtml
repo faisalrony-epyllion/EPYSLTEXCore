@@ -1,6 +1,7 @@
 ﻿<script type="text/javascript">
     localStorage.setItem("pageName", "@ViewBag.PageName");
     localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
 </script>
 
 @{
@@ -58,7 +59,7 @@
                     <i class="fa fa-list"></i>&nbsp;Complete List
                 </button>
                 <button id="btnRefreshList" class="btn btn-default text-grey btn-sm">
-                    <i class="fa fa-refresh"></i>&nbsp;
+                    <i class="fas fa-sync-alt"></i>&nbsp;
                 </button>
             </div>
         </div>
@@ -189,8 +190,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-default m-w-80" id="btnBackToDyeing"><i class="fa fa-angle-double-left"></i>&nbsp;Back</button>
-                        <button type="button" class="btn btn-success m-w-80" id="btnNextForTwist"><i class="fa fa-angle-double-right"></i>&nbsp;Next</button>
+                        <button type="button" class="btn btn-default btn-sm w-150" id="btnBackToDyeing"><i class="fa fa-angle-double-left"></i>&nbsp;Back</button>
+                        <button type="button" class="btn btn-success btn-sm w-150" id="btnNextForTwist"><i class="fa fa-angle-double-right"></i>&nbsp;Next</button>
                     </div>
                 </div>
 
@@ -212,8 +213,8 @@
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-default m-w-80" id="btnBackToTwisted"><i class="fa fa-angle-double-left"></i>&nbsp;Back</button>
-                        <button type="button" class="btn btn-success m-w-80" id="btnNextForDyedCalculation"><i class="fa fa-angle-double-right"></i>&nbsp;Next</button>
+                        <button type="button" class="btn btn-default btn-sm w-150" id="btnBackToTwisted"><i class="fa fa-angle-double-left"></i>&nbsp;Back</button>
+                        <button type="button" class="btn btn-success btn-sm w-150" id="btnNextForDyedCalculation"><i class="fa fa-angle-double-right"></i>&nbsp;Next</button>
                     </div>
                 </div>
 
@@ -235,17 +236,17 @@
                 </div>
 
                 <div class="box-footer btn-e-float-margin" id="divFormButtons">
-                    <div class="col-md-offset-2 col-md-10">
+                    <div class="col-md-offset-2 col-md-12">
                         <div class="pull-right">
-                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save As Draft</button>
-                            <button type="button" class="btn btn-success m-w-120" id="btnSaveAndSend"><i class="fa fa-angle-double-right"></i>&nbsp;Save and Send</button>
-                            <button type="button" class="btn btn-success m-w-120" style="display:none" id="btnApprove"><i class="fa fa-angle-double-right"></i>&nbsp;Approve</button>
-                            <button type="button" class="btn btn-success m-w-120" style="display:none" id="btnAcknowledge"><i class="fa fa-angle-double-right"></i>&nbsp;Acknowlege</button>
-                            <button type="button" class="btn btn-danger m-w-120" style="display:none" id="btnUnAcknowledge"><i class="fa fa-ban"></i>&nbsp;UnAcknowlege</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
-                            <button type="button" class="btn btn-success m-w-120" style="display:none" id="btnApproveMailResend"><i class="fa fa-angle-double-right"></i>&nbsp;Approve Mail Resend</button>
-                            <button type="button" class="btn btn-primary m-w-120" id="btnYDBNoSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-default btn-sm w-150" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save As Draft</button>
+                            <button type="button" class="btn btn-success btn-sm w-150" id="btnSaveAndSend"><i class="fa fa-angle-double-right"></i>&nbsp;Save and Send</button>
+                            <button type="button" class="btn btn-success btn-sm w-150" style="display:none" id="btnApprove"><i class="fa fa-angle-double-right"></i>&nbsp;Approve</button>
+                            <button type="button" class="btn btn-success btn-sm w-150" style="display:none" id="btnAcknowledge"><i class="fa fa-angle-double-right"></i>&nbsp;Acknowlege</button>
+                            <button type="button" class="btn btn-danger btn-sm w-150" style="display:none" id="btnUnAcknowledge"><i class="fa fa-ban"></i>&nbsp;UnAcknowlege</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                            <button type="button" class="btn btn-success btn-sm w-150" style="display:none" id="btnApproveMailResend"><i class="fa fa-angle-double-right"></i>&nbsp;Approve Mail Resend</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnYDBNoSave" style="display:none;"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
                         </div>
                     </div>
                 </div>
@@ -257,13 +258,14 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                    <h4 class="modal-title">Select Printing Colors</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title">Select Printing Colors</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                    @* <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'"> *@
+                    <div style="font-family:'Kohinoor Bangla'">
                         <div class="panel-body">
                             <div class="form-horizontal">
                                 <div class="col-sm-12">

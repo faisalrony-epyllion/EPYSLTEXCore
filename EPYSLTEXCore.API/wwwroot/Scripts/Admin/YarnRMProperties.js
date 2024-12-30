@@ -196,13 +196,23 @@
     }
 
     async function initChild(data) {
+        var commands = [];
+        if (status != statusConstants.ALL) {
+            commands = [
+                { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
+                { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
+                { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }
+            ]
+        }
+        else {
+            commands = [
+                { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
+                { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }
+            ]
+        }
         var columns = [
             {
-                headerText: 'Action', visible: status != statusConstants.ALL, width: 100, commands: [
-                    { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
-                    { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
-                    { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }
-                ]
+                headerText: 'Action', width: 100, commands: commands
             },
             { field: 'YRMPChildID', isPrimaryKey: true, visible: false },
             { field: 'YRMPID', headerText: 'YRMPID', visible: false },

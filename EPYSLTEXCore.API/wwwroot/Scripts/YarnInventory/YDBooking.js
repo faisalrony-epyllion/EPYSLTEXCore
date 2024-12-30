@@ -1,5 +1,5 @@
 ﻿(function () {
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId, pageId;
     var status = statusConstants.PENDING;
     var isBookingPage = false;
@@ -29,7 +29,9 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
-
+        if (!menuParam)
+            menuParam = localStorage.getItem("menuParam");
+        debugger;
         pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
         toolbarId = pageConstants.TOOLBAR_ID_PREFIX + pageId;
@@ -48,10 +50,13 @@
         //isAcknowledgePage = false;
         //isApprovePage = false;
         //isYDBBPage = false;
-
-        isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
-        isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
-        isYDBBPage = convertToBoolean($(`#${pageId}`).find("#YDBBPage").val());
+        debugger;
+        //isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
+        //isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
+        //isYDBBPage = convertToBoolean($(`#${pageId}`).find("#YDBBPage").val());
+        isAcknowledgePage = menuParam === "Ack";
+        isApprovePage = menuParam === "A";
+        isYDBBPage = menuParam === "YDBB";
 
         $formEl.find("#divDyeingDetailsCalculation,#btnBackToTwisted").hide();
         $formEl.find("#btnNextForDyedCalculation").show();
@@ -123,7 +128,7 @@
             $toolbarEl.find("#btnPendingAcknowlegeList").hide();
             $toolbarEl.find("#btnCompleteList").show();
 
-            toggleActiveToolbarBtn($toolbarEl.find("#btnPendingList"), $toolbarEl);
+            //toggleActiveToolbarBtn($toolbarEl.find("#btnPendingList"), $toolbarEl);
 
             $formEl.find("#btnSave").hide();
             $formEl.find("#btnApprove").hide();
@@ -139,7 +144,7 @@
 
         }
         else {
-            $formEl.find("#div_YDBNo").show();
+            $formEl.find("#div_YDBNo").hide();
             isBookingPage = true;
             $toolbarEl.find("#btnNew").show();
             $toolbarEl.find("#btnList").show();
@@ -164,7 +169,7 @@
             $toolbarEl.find("#btnYDBNoSave").hide();
         }
 
-        initMasterTable();
+        //initMasterTable();
 
         $toolbarEl.find("#btnPendingList").click(function (e) {
             e.preventDefault();
@@ -514,15 +519,15 @@
         //    commands = [
         //        { type: 'Addition', buttonOption: { cssClass: 'e-flat', iconCss: 'e-add e-icons' } },
         //        { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-        //        { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-        //        { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-        //        { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+        //        { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+        //        { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+        //        { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image' } }
         //    ]
         //}
         //else {
         //    commands = [
         //        { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-        //        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+        //        { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
         //    ]
         //}
         if (isBookingPage && status == statusConstants.PENDING) {
@@ -533,29 +538,29 @@
         else if ((isBookingPage && (status == statusConstants.PARTIALLY_COMPLETED || status == statusConstants.PROPOSED || status == statusConstants.REVISE)) || (isApprovePage && status == statusConstants.PROPOSED)) {
             commands = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
             ]
         }
         else if (isBookingPage && status == statusConstants.APPROVED) {
             commands = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
                 { type: 'Addition', buttonOption: { cssClass: 'e-flat', iconCss: 'e-add e-icons' } },
-                { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
+                { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
             ]
         }
         else if ((isBookingPage && (status == statusConstants.ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE)) || (isAcknowledgePage && (status == statusConstants.APPROVED || status == statusConstants.ACKNOWLEDGE || status == statusConstants.UN_ACKNOWLEDGE))) {
             commands = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } },
-                { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } },
-                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image-o' } }
+                { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                { type: 'Booking Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } },
+                { type: 'View Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image' } },
+                { type: 'Booking Attachment', buttonOption: { cssClass: 'e-flat booking_attImage', iconCss: 'fa fa-file-image' } }
             ]
         }
         else if (isApprovePage && status == statusConstants.APPROVED) {
             commands = [
                 { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
-                { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                { type: 'YD Booking', buttonOption: { cssClass: 'e-flat', iconCss: 'fas fa-file-pdf' } }
             ]
         }
         else if (isYDBBPage && status == statusConstants.PENDING) {
@@ -623,11 +628,12 @@
                 field: 'RStatus', headerText: 'Receive Status', visible: status == statusConstants.COMPLETED
             }
         ];
-        var pageName = isYDBBPage ? pageNameConstants.YDBB : "";
+        var paramPageName = isYDBBPage ? pageNameConstants.YDBB : pageName;
         if ($tblMasterEl) $tblMasterEl.destroy();
+        debugger;
         $tblMasterEl = initEJ2Grid({
             tableId: tblMasterId,
-            apiEndPoint: `/api/yd-booking/list?status=${status}&pageName=${pageName}`,
+            apiEndPoint: `/api/yd-booking/list?status=${status}&pageName=${paramPageName}`,
             columns: columns,
             autofitColumns: false,
             commandClick: handleCommands

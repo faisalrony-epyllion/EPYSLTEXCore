@@ -328,8 +328,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
 
         [HttpPost]
         [Route("save-ydbno")]
-        public async Task<IActionResult> SaveYDBNo(YDBookingMaster model)
+        public async Task<IActionResult> SaveYDBNo(dynamic jsonString)
         {
+            YDBookingMaster model = JsonConvert.DeserializeObject<YDBookingMaster>(Convert.ToString(jsonString)); ;
             YDBookingMaster entity;
             string message = "";
             bool status = false;

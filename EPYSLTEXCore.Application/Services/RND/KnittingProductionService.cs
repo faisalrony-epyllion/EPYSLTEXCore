@@ -809,11 +809,11 @@ namespace EPYSLTEX.Infrastructure.Services
 
         public async Task UpdateJobCardAsync(int KJobCardMasterID)
         {
-            await _service.ExecuteAsync($"{SPNames.spUpdateJobCardProductionQty}", new { KJobCardMasterID = KJobCardMasterID }, 30, CommandType.StoredProcedure);
+            await _service.ExecuteAsync(SPNames.spUpdateJobCardProductionQty, new { KJobCardMasterID = KJobCardMasterID }, 30, CommandType.StoredProcedure);
         }
         public async Task UpdateBDSTNA_KnittingPlanAsync(int KJobCardMasterID)
         {
-            await _service.ExecuteAsync($"{SPNames.spUpdateBDSTNA_KnittingPlan}", new { KJobCardMasterID = KJobCardMasterID }, 30, CommandType.StoredProcedure);
+            await _service.ExecuteAsync(SPNames.spUpdateBDSTNA_KnittingPlan, new { KJobCardMasterID = KJobCardMasterID }, 30, CommandType.StoredProcedure);
         }
     }
 }

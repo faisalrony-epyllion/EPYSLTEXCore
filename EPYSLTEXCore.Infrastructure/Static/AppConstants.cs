@@ -40,6 +40,7 @@
         public const string YARN_PI_FILE_PATH = "/Uploads/YarnPI";
         public const string LC_FILE_PATH = "/Uploads/LC";
         public const string RND_LABTEST_FILE_PATH = "/Uploads/RND/LabTest";
+        public const string YARN_DYEING_BOOKING_FILE_PATH = "/uploads/inventory/yarn";
     }
     public static class ContactCategoryNames
     {
@@ -643,5 +644,15 @@
         public const string YARNS = "Yarn Live";
         public const string DYES = "Dyes";
         public const string CHEMICALS = "Chemicals";
+    }
+    public static class EnumReqType
+    {
+        public const int None = 0;
+        public const int SC_BULK = 1;
+        public const int SC_SAMPLE = 2;
+        public const int SC_CONCEPT = 3;
+        public const int YD_BULK = 4;
+        public const int YD_SAMPLE = 5;
+        public const int YD_CONCEPT = 6;
     }
 }

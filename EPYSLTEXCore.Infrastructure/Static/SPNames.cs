@@ -51,6 +51,7 @@ namespace EPYSLTEX.Core.Statics
         public const string spUpdateBDSTNA_BatchPreparationPlan = "T_spUpdateBDSTNA_BatchPreparationPlan";
         public const string spUpdateJobCardProductionQty = "T_spUpdateJobCardProductionQty";
         public const string spUpdateBDSTNA_KnittingPlan = "T_spUpdateBDSTNA_KnittingPlan";
+        public const string spBackupYDBooking = "T_spBackupYDBooking";
     }
 }
 

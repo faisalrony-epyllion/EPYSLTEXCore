@@ -23,7 +23,6 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             IItemMasterService<YarnYDReqChild> itemMasterRepository)
         {
             _service = service;
-            _service = service;
             _service.Connection = service.GetConnection(AppConstants.GMT_CONNECTION);
             _connectionGmt = service.Connection;
 

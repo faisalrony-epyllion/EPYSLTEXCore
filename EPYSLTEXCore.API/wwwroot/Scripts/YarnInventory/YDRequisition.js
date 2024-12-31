@@ -1,5 +1,5 @@
 ﻿(function () {
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId, pageId, pageIdWithHash;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, tblMasterId, $formEl, $tblChildEl, tblChildId;
     var status;
@@ -21,6 +21,8 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
+        if (!menuParam)
+            menuParam = localStorage.getItem("menuParam");
 
         pageId = pageName + "-" + menuId;
         $pageEl = $(pageConstants.PAGE_ID_PREFIX + pageId);
@@ -32,9 +34,10 @@
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
         pageIdWithHash = "#" + pageId;
-        menuType = localStorage.getItem("YDReqPage");
-        menuType = parseInt(menuType);
-
+        //menuType = localStorage.getItem("YDReqPage");
+        //menuType = parseInt(menuType);
+        menuType = menuParam === "YDReq" ? 0 : 1;
+        debugger;
         if (menuType == _paramType.YDReq) {
 
             $toolbarEl.find("#btnPending").show();

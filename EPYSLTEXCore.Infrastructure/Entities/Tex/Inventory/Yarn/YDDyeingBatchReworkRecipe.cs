@@ -9,16 +9,24 @@ using System.Threading.Tasks;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn
 {
-    [Table(TableNames.KYReqBuyerTeam)]
-    public class KYReqBuyerTeam: DapperBaseEntity
+    [Table(TableNames.YD_DYEING_BATCH_REWORK_RECIPE)]
+    public class YDDyeingBatchReworkRecipe : DapperBaseEntity
     {
-        [ExplicitKey]
-        public int KYReqBuyerTeamID { get; set; }
+        public YDDyeingBatchReworkRecipe()
+        {
+            YDDBRRID = 0;
+            DBatchID = 0;
+            DBRID = 0;
+            YDRecipeReqMasterID = 0;
+        }
+        public int YDDBRRID { get; set; }
+        public int DBatchID { get; set; }
+        public int DBRID { get; set; }
+        public int YDRecipeReqMasterID { get; set; }
 
-        public int KYReqMasterID { get; set; }
-        public int BuyerTeamId { get; set; }
-
+        #region Additional Properties
         [Write(false)]
-        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || this.KYReqBuyerTeamID > 0;
+        public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || YDDBRRID > 0;
+        #endregion
     }
 }

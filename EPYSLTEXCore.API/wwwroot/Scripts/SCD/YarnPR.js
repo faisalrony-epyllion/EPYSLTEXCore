@@ -1471,7 +1471,7 @@
     //check
     async function initChildTable(data) {
         if ($tblChildEl) $tblChildEl.destroy();
-        
+        var sourcingModeElem, sourcingModeObj;
         var columns = [{ field: 'YarnPRChildID', isPrimaryKey: true, visible: false }];
         if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ADDITIONAL || status == statusConstants.APPROVED) {
             columns.push.apply(columns,
@@ -1509,6 +1509,7 @@
                 edit: ej2GridDropDownObj({
                 })
             },
+
             { field: 'FPRCompanyName', headerText: 'Company', visible: !isCPRPage, allowEditing: false },
             {
                 field: 'FPRCompanyID', headerText: 'Company', visible: isCPRPage, allowEditing: isCPRPage, valueAccessor: ej2GridDisplayFormatter, dataSource: masterData.CompanyList,
@@ -1595,20 +1596,31 @@
                     args.data.AllocationQty = args.data.ReqQty - args.data.PurchaseQty;
                     args.data.AllocationQty = args.data.AllocationQty.toFixed(2);
                     args.rowData.AllocationQty = args.data.AllocationQty;
+                    
+                    args.data.DayValidDurationName = masterData.DayValidDurations.find(item => item.id == args.data.DayValidDurationId).text;
 
                     if (status == statusConstants.ROL_BASE_PENDING) {
-                        
-                        if (args.data.DayValidDurationId == 1) {
+
+                        var balanceQty = args.data.ReOrderQty - args.data.StockQty - args.data.PRQty;
+
+                        if (args.data.ReqQty > balanceQty) {
+                            toastr.error(`PR Qty can not greater than Balance Qty: ${balanceQty}`);
+                            args.data.ReqQty = 0;
+                            args.data.ReqCone = 0;
+                            return false;
+                        }
+
+                        if (args.data.DayValidDurationName.includes("Local")) {
                             if (args.data.ReqQty > args.data.MaximumPRQtyLP) {
-                                toastr.error(`Maximum Local PR Qty is ${args.data.MaximumPRQtyLP}`);
+                                toastr.error(`PR Qty can not greater than maximum Local PR Qty: ${args.data.MaximumPRQtyLP}`);
                                 args.data.ReqQty = 0;
                                 args.data.ReqCone = 0;
                                 return false;
                             }
                         }
-                        else if (args.data.DayValidDurationId == 2 || args.data.DayValidDurationId == 3) {
+                        else if (args.data.DayValidDurationName.includes("Import")) {
                             if (args.data.ReqQty > args.data.MaximumPRQtyFP) {
-                                toastr.error(`Maximum Import PR Qty is ${args.data.MaximumPRQtyFP}`);
+                                toastr.error(`PR Qty can not greater than maximum Import PR Qty: ${args.data.MaximumPRQtyFP}`);
                                 args.data.ReqQty = 0;
                                 args.data.ReqCone = 0;
                                 return false;

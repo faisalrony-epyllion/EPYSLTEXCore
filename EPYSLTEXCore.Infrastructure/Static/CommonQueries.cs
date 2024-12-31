@@ -41,7 +41,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingLineID    
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}')                
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_LINE}')                
                     --ORDER BY ISV.SegmentValue
                 ),
                 MP as (
@@ -600,7 +600,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     from {DbNames.EPYSL}..SegmentValueYarnTypeMappingSetup SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.YarnTypeSVID    
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}') AND ISNULL(ISV.SegmentValue,'') <> ''             
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_LINE}') AND ISNULL(ISV.SegmentValue,'') <> ''             
                     ORDER BY ISV.SegmentValue";
 
             return sql;

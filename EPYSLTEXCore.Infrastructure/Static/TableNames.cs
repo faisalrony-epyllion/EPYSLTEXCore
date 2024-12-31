@@ -897,7 +897,6 @@
         public const string YarnQCReceiveMaster = "T_YarnQCReceiveMaster";
         public const string YarnQCRemarksChild = "T_YarnQCRemarksChild";
         public const string YarnQCRemarksMaster = "T_YarnQCRemarksMaster";
-        public const string YarnPRChild = "T_YarnPRChild";
         public const string YarnMRIRChild = "T_YarnMRIRChild";
         public const string YarnMRIRMaster = "T_YarnMRIRMaster";
         public const string YarnBookingChildItem_New_Bk = "T_YarnBookingChildItem_New_Bk";

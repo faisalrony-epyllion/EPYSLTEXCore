@@ -91,7 +91,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					LEFT Join {TableNames.YarnQCRemarksMaster} M On M.QCRemarksMasterID = C.QCRemarksMasterID
 					LEFT JOIN {TableNames.YarnPOMaster} YPM ON YPM.YPOMasterID=YRM.POID
 					LEFT JOIN {TableNames.YarnPOChild} YPC ON YPC.YPOChildID=YRC2.POChildID
-					LEFT JOIN {TableNames.YarnPRChild} PRC ON PRC.YarnPRChildID = YPC.PRChildID
+					LEFT JOIN {TableNames.YARN_PR_CHILD} PRC ON PRC.YarnPRChildID = YPC.PRChildID
 					LEFT JOIN {TableNames.YarnMRIRChild} YMC ON YMC.ReceiveChildID=YRC2.ChildID--YMC.QCRemarksChildID=C.QCRemarksChildID
 					LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID=YPM.CompanyID
 					Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID
@@ -161,7 +161,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					LEFT Join {TableNames.YarnQCRemarksMaster} M On M.QCRemarksMasterID = C.QCRemarksMasterID
 					LEFT JOIN {TableNames.YarnPOMaster} YPM ON YPM.YPOMasterID=YRM.POID
 					LEFT JOIN {TableNames.YarnPOChild} YPC ON YPC.YPOChildID=YRC.POChildID
-					LEFT JOIN {TableNames.YarnPRChild} PRC ON PRC.YarnPRChildID = YPC.PRChildID
+					LEFT JOIN {TableNames.YARN_PR_CHILD} PRC ON PRC.YarnPRChildID = YPC.PRChildID
 					LEFT JOIN {TableNames.YarnMRIRChild} YMC ON YMC.ReceiveChildID=YRC.ChildID
 					LEFT JOIN {DbNames.EPYSL}..CompanyEntity CE ON CE.CompanyID=YPM.CompanyID
 					Left Join {DbNames.EPYSL}..EntityTypeValue QCReqFor On RM.QCForID = QCReqFor.ValueID

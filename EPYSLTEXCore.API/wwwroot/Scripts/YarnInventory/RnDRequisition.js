@@ -280,12 +280,10 @@
 
                     $divDetailsEl.fadeIn();
                     $divTblEl.fadeOut();
-
                     masterData = response.data;
                     masterData.RnDReqDate = formatDateToDefault(masterData.RnDReqDate);
                     setFormData($formEl, masterData);
                     operationKnittingInfoFields();
-
                     initFCMRTable([]);
                     initChildTable([]);
                 })

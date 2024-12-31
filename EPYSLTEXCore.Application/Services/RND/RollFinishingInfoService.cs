@@ -42,22 +42,22 @@ namespace EPYSLTEX.Infrastructure.Services
                 FPWithPreProcess AS
                 (
 	                SELECT FPM.FPMasterID
-	                FROM FinishingProcessMaster FPM
-	                INNER JOIN FinishingProcessChild FPC ON FPC.FPMasterID = FPM.FPMasterID
+	                FROM {TableNames.FINISHING_PROCESS_MASTER} FPM
+	                INNER JOIN {TableNames.FINISHING_PROCESS_CHILD} FPC ON FPC.FPMasterID = FPM.FPMasterID
 	                WHERE FPC.IsPreProcess = 1 AND FPM.PDProductionComplete = 0
 	                GROUP BY FPM.FPMasterID
                 ),
                 FP AS (
 	                SELECT FPM.ConceptID, FPC.ColorID
-	                FROM FinishingProcessMaster FPM
-	                INNER JOIN FinishingProcessChild FPC ON FPC.FPMasterID = FPM.FPMasterID
+	                FROM {TableNames.FINISHING_PROCESS_MASTER} FPM
+	                INNER JOIN {TableNames.FINISHING_PROCESS_CHILD} FPC ON FPC.FPMasterID = FPM.FPMasterID
 	                WHERE FPC.IsPreProcess = 0 AND FPM.FPMasterID NOT IN (SELECT FWP.FPMasterID FROM FPWithPreProcess FWP)
 	                GROUP BY FPM.ConceptID, FPC.ColorID
                 ), 
                 BM As(
 					SELECT BM.*, DBI.ItemMasterID, DBI.ConceptID, DBI.DBIID
-					FROM DyeingBatchMaster BM
-					INNER JOIN DyeingBatchItem DBI ON DBI.DBatchID = BM.DBatchID
+					FROM  {TableNames.DYEING_BATCH_MASTER}  BM
+					INNER JOIN   {TableNames.DYEING_BATCH_ITEM} DBI ON DBI.DBatchID = BM.DBatchID
                     INNER JOIN FP ON FP.ConceptID = DBI.ConceptID And FP.ColorID = BM.ColorID
 					Where DBI.PostProductionComplete = 0
                     AND BM.ProductionDate IS NOT NULL And BM.BatchStartTime IS NOT NULL And BM.BatchEndTime IS NOT NULL
@@ -68,10 +68,10 @@ namespace EPYSLTEX.Infrastructure.Services
                     FTN.TechnicalName, ISV.SegmentValue Composition, GSV.SegmentValue Gsm, Color.SegmentValue ColorName,
                     BM.DBIID, FCM.Length, FCM.Width
                     FROM BM
-                    INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = BM.ConceptID
+                    INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = BM.ConceptID
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=FCM.SubGroupID
-                    LEFT JOIN KnittingMachineType KT ON KT.TypeID=FCM.KnittingTypeID
-                    LEFT JOIN FabricTechnicalName FTN ON FTN.TechnicalNameId=FCM.TechnicalNameId
+                    LEFT JOIN  {TableNames.KNITTING_MACHINE_TYPE}  KT ON KT.TypeID=FCM.KnittingTypeID
+                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} FTN ON FTN.TechnicalNameId=FCM.TechnicalNameId
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID
 				    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = BM.ColorID
@@ -84,14 +84,14 @@ namespace EPYSLTEX.Infrastructure.Services
                 sql = $@"
                 ;WITH FP AS (
 	                SELECT FPM.ConceptID, FPC.ColorID
-	                FROM FinishingProcessMaster FPM
-	                INNER JOIN FinishingProcessChild FPC ON FPC.FPMasterID = FPM.FPMasterID
+	                FROM {TableNames.FINISHING_PROCESS_MASTER} FPM
+	                INNER JOIN {TableNames.FINISHING_PROCESS_CHILD} FPC ON FPC.FPMasterID = FPM.FPMasterID
 	                WHERE FPC.IsPreProcess = 0
 	                GROUP BY FPM.ConceptID, FPC.ColorID
                 ), BM As(
 					SELECT BM.*, DBI.ItemMasterID, DBI.ConceptID, DBI.DBIID
-					FROM DyeingBatchMaster BM
-					INNER JOIN DyeingBatchItem DBI ON DBI.DBatchID = BM.DBatchID
+					FROM  {TableNames.DYEING_BATCH_MASTER}  BM
+					INNER JOIN {TableNames.DYEING_BATCH_ITEM} DBI ON DBI.DBatchID = BM.DBatchID
                     INNER JOIN FP ON FP.ConceptID = DBI.ConceptID And FP.ColorID = BM.ColorID
 					Where DBI.PostProductionComplete = 1
 				),
@@ -101,10 +101,10 @@ namespace EPYSLTEX.Infrastructure.Services
                     FTN.TechnicalName, ISV.SegmentValue Composition, GSV.SegmentValue Gsm, Color.SegmentValue ColorName,
                     BM.DBIID, FCM.Length, FCM.Width
                     FROM BM
-                    INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = BM.ConceptID
+                    INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = BM.ConceptID
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=FCM.SubGroupID
-                    LEFT JOIN KnittingMachineType KT ON KT.TypeID=FCM.KnittingTypeID
-                    LEFT JOIN FabricTechnicalName FTN ON FTN.TechnicalNameId=FCM.TechnicalNameId
+                    LEFT JOIN  {TableNames.KNITTING_MACHINE_TYPE}  KT ON KT.TypeID=FCM.KnittingTypeID
+                    LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} FTN ON FTN.TechnicalNameId=FCM.TechnicalNameId
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID
 				    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = BM.ColorID
@@ -132,13 +132,13 @@ namespace EPYSLTEX.Infrastructure.Services
 				BM.BatchStartTime, BM.BatchEndTime, FCM.ConceptNo, ISG.SubGroupName, KT.TypeName KnittingType,
                 FTN.TechnicalName, ISV.SegmentValue Composition, GSV.SegmentValue Gsm, BM.CCColorID,
                 Color.SegmentValue ColorName, FCM.Length, FCM.Width, DBI.DBIID, BM.ColorID, DBI.ConceptID
-				FROM DyeingBatchMaster BM
-				Inner Join DyeingBatchItem DBI On DBI.DBatchID = BM.DBatchID
-				INNER JOIN FreeConceptChildColor FCC ON FCC.CCColorID = BM.CCColorID
-				INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = DBI.ConceptID
+				FROM {TableNames.DYEING_BATCH_MASTER} BM
+				Inner Join {TableNames.DYEING_BATCH_ITEM} DBI On DBI.DBatchID = BM.DBatchID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = BM.CCColorID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = DBI.ConceptID
                 LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID=FCM.SubGroupID
-				LEFT JOIN KnittingMachineType KT ON KT.TypeID=FCM.KnittingTypeID
-				LEFT JOIN FabricTechnicalName FTN ON FTN.TechnicalNameId=FCM.TechnicalNameId
+				LEFT JOIN  {TableNames.KNITTING_MACHINE_TYPE}  KT ON KT.TypeID=FCM.KnittingTypeID
+				LEFT JOIN {TableNames.FABRIC_TECHNICAL_NAME} FTN ON FTN.TechnicalNameId=FCM.TechnicalNameId
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
 				LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = BM.ColorID
@@ -158,27 +158,27 @@ namespace EPYSLTEX.Infrastructure.Services
                 FPC.PParam5Value, FPC.PParam6Value, FPC.PParam7Value, FPC.PParam8Value, FPC.PParam9Value, FPC.PParam10Value, FPC.PParam11Value,
                 FPC.PParam12Value, FPC.PParam13Value, FPC.PParam14Value, FPC.PParam15Value, FPC.PParam16Value,
                 FPC.PParam17Value, FPC.PParam18Value, FPC.PParam19Value, FPC.PParam20Value, DBI.DBIID
-                FROM DyeingBatchItem DBI
-				Inner Join DyeingBatchChildFinishingProcess FPC ON FPC.DBIID = DBI.DBIID
+                FROM {TableNames.DYEING_BATCH_ITEM} DBI
+				Inner Join   {TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS} FPC ON FPC.DBIID = DBI.DBIID
                 INNER JOIN FinishingMachineProcess_HK FMP On FMP.FMProcessID = FPC.ProcessID
-                INNER JOIN FinishingMachineConfigurationMaster FMC ON FMC.FMCMasterID = FMP.FMCMasterID
+                INNER JOIN  {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} FMC ON FMC.FMCMasterID = FMP.FMCMasterID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = FPC.ProcessTypeID
-                LEFT JOIN FinishingMachineSetup FMS On FMS.FMSID = FPC.FMSID
-                LEFT JOIN FinishingMachineSetup PFMS On PFMS.FMSID = FPC.PFMSID
+                LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} FMS On FMS.FMSID = FPC.FMSID
+                LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} PFMS On PFMS.FMSID = FPC.PFMSID
                 Left Join {DbNames.EPYSL}..EntityTypeValue b on b.ValueID = FMS.BrandID
-                Left Join KnittingUnit c on c.KnittingUnitID = FMS.UnitID
+                Left Join {TableNames.KNITTING_UNIT} c on c.KnittingUnitID = FMS.UnitID
                 WHERE DBI.DBIID = {dbiID} ORDER BY FPC.SeqNo ASC;
 
                 ----Knitting Prod. /Roll Info
                 ;SELECT GRollID, ConceptID, RollNo, RollLength, RollQty
-                FROM KnittingProduction WHERE ConceptID IN (SELECT ConceptID FROM DyeingBatchItem WHERE DBIID = {dbiID});
+                FROM {TableNames.RND_KNITTING_PRODUCTION}  WHERE ConceptID IN (SELECT ConceptID FROM {TableNames.DYEING_BATCH_ITEM} WHERE DBIID = {dbiID});
 
                 --Unit
                 ;select cast(KnittingUnitID as varchar) id,UnitName [text]
-                from KnittingUnit WHERE IsKnitting = 0 order by UnitName;
+                from {TableNames.KNITTING_UNIT} WHERE IsKnitting = 0 order by UnitName;
 
                 --Finishing Machine Configuration
-                SELECT * From FinishingMachineConfigurationChild FMC;
+                SELECT * From {TableNames.FINISHING_MACHINE_CONFIGURATION_CHILD}  FMC;
 
                 --Shifts
                 ;SELECT CAST(ShiftId AS VARCHAR) id, ShortName text, CAST(FromHour AS nvarchar(6)) [desc],CAST(ToHour AS nvarchar(6)) additionalValue
@@ -237,7 +237,7 @@ namespace EPYSLTEX.Infrastructure.Services
             var query = $@"
                 -- Process Machine param List
                 ;WITH FMS AS( SELECT FMSID,FMCMasterID,REPLACE(REPLACE(ParamName, 'Param', ''),'Value','') AS SerialNo, MachineNo, BrandID, UnitID, Capacity,ParamName, ParamValue
-                FROM (SELECT * FROM FinishingMachineSetup
+                FROM (SELECT * FROM {TableNames.FINISHING_MACHINE_SETUP}
                 WHERE FMSID = {fmsId}
                 ) p
                 UNPIVOT
@@ -245,7 +245,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 )AS unpvt
                 ), FP AS(
                 SELECT FMSID,REPLACE(REPLACE(ParamName, 'Param', ''),'Value','') AS SerialNo, ParamName, ParamValue
-                FROM (Select * From DyeingBatchChildFinishingProcess
+                FROM (Select * From   {TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS}
                 Where FMSID = {fmsId} And DBCFPID = {childId} AND IsPreProcess=0
                 ) p
                 UNPIVOT
@@ -253,7 +253,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 )AS unpvt
                 ), AFP AS(
                 SELECT FMSID,REPLACE(REPLACE(ParamName, 'PParam', ''),'Value','') AS SerialNo, ParamName, ParamValue
-                FROM (Select * From DyeingBatchChildFinishingProcess
+                FROM (Select * From   {TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS}
                 Where FMSID = {fmsId} And DBCFPID = {childId} AND IsPreProcess=0
                 ) p
                 UNPIVOT
@@ -263,7 +263,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 --Select * From FP
                 ,M AS(
                 SELECT ETV.ValueName, FMS.FMSID,FMS.FMCMasterID,FMS.SerialNo, FMS.MachineNo, FMS.BrandID, FMS.UnitID,FMS.Capacity,FMS.ParamName, FMS.ParamValue,FMCC.ParamName AS ParamDispalyName,FMCC.NeedItem, FP.ParamValue PlanParamValue, AFP.ParamValue ActulaPlanParamValue
-                FROM FinishingMachineConfigurationChild FMCC
+                FROM {TableNames.FINISHING_MACHINE_CONFIGURATION_CHILD} FMCC
                 INNER JOIN FMS ON FMS.FMCMasterID=FMCC.FMCMasterID AND FMS.SerialNo=FMCC.Sequence
                 LEFT JOIN FP ON FP.FMSID=FMS.FMSID AND FP.SerialNo=FMS.SerialNo
                 LEFT JOIN AFP ON AFP.FMSID=FMS.FMSID AND AFP.SerialNo=FMS.SerialNo
@@ -294,9 +294,9 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<DyeingBatchMaster> GetAllByIDAsync(int id)
         {
             string sql = $@"
-            ;Select * From DyeingBatchMaster Where DBatchID = {id}
+            ;Select * From  {TableNames.DYEING_BATCH_MASTER}  Where DBatchID = {id}
 
-            ;Select * From DyeingBatchChildFinishingProcess Where DBatchID = {id} AND IsPreProcess=0";
+            ;Select * From   {TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS} Where DBatchID = {id} AND IsPreProcess=0";
 
             try
             {
@@ -321,9 +321,9 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<DyeingBatchItem> GetAllByBDIIDAsync(int id)
         {
             string sql = $@"
-            ;Select * From DyeingBatchItem Where DBIID = {id}
+            ;Select * From {TableNames.DYEING_BATCH_ITEM} Where DBIID = {id}
 
-            ;Select * From DyeingBatchChildFinishingProcess Where DBIID = {id} AND IsPreProcess=0";
+            ;Select * From   {TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS} Where DBIID = {id} AND IsPreProcess=0";
 
             try
             {
@@ -356,15 +356,15 @@ namespace EPYSLTEX.Infrastructure.Services
                 FPC.PParam5Value, FPC.PParam6Value, FPC.PParam7Value, FPC.PParam8Value, FPC.PParam9Value, FPC.PParam10Value, FPC.PParam11Value,
                 FPC.PParam12Value, FPC.PParam13Value, FPC.PParam14Value, FPC.PParam15Value, FPC.PParam16Value,
                 FPC.PParam17Value, FPC.PParam18Value, FPC.PParam19Value, FPC.PParam20Value, DBI.DBIID, DBI.ConceptID, FPC.IsPreProcess
-                FROM DyeingBatchItem DBI
-				Inner Join DyeingBatchChildFinishingProcess FPC ON FPC.DBIID = DBI.DBIID
+                FROM {TableNames.DYEING_BATCH_ITEM} DBI
+				Inner Join   {TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS} FPC ON FPC.DBIID = DBI.DBIID
                 INNER JOIN FinishingMachineProcess_HK FMP On FMP.FMProcessID = FPC.ProcessID
-                INNER JOIN FinishingMachineConfigurationMaster FMC ON FMC.FMCMasterID = FMP.FMCMasterID
+                INNER JOIN  {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} FMC ON FMC.FMCMasterID = FMP.FMCMasterID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = FPC.ProcessTypeID
-                LEFT JOIN FinishingMachineSetup FMS On FMS.FMSID = FPC.FMSID
-                LEFT JOIN FinishingMachineSetup PFMS On PFMS.FMSID = FPC.PFMSID
+                LEFT JOIN  {TableNames.FINISHING_MACHINE_SETUP} FMS On FMS.FMSID = FPC.FMSID
+                LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} PFMS On PFMS.FMSID = FPC.PFMSID
                 Left Join {DbNames.EPYSL}..EntityTypeValue b on b.ValueID = FMS.BrandID
-                Left Join KnittingUnit c on c.KnittingUnitID = FMS.UnitID
+                Left Join {TableNames.KNITTING_UNIT} c on c.KnittingUnitID = FMS.UnitID
                 WHERE DBI.DBIID = {dbId} ORDER BY FPC.SeqNo ASC";
 
             return await _service.GetDataAsync<DyeingBatchChildFinishingProcess>(sql);
@@ -374,13 +374,13 @@ namespace EPYSLTEX.Infrastructure.Services
         {
             string sql = $@"WITH FC AS (
 	                SELECT FC.ConceptID
-	                FROM FreeConceptMaster FC
+	                FROM {TableNames.RND_FREE_CONCEPT_MASTER} FC 
 	                WHERE FC.ConceptID = {conceptId}
                     ),
                     FPC AS (
                     SELECT FPC.*, FP.ConceptID
-                    FROM FinishingProcessChild FPC
-                    INNER JOIN FinishingProcessMaster FP ON FP.FPMasterID = FPC.FPMasterID
+                    FROM {TableNames.FINISHING_PROCESS_CHILD} FPC
+                    INNER JOIN {TableNames.FINISHING_PROCESS_MASTER} FP ON FP.FPMasterID = FPC.FPMasterID
 	                INNER JOIN FC ON FC.ConceptID = FP.ConceptID
                     WHERE FPC.ColorID = {colorId} AND FPC.IsPreProcess = 0
                     )
@@ -392,11 +392,11 @@ namespace EPYSLTEX.Infrastructure.Services
                     FPC.Param19Value, FPC.Param20Value, FMS.UnitID, FMS.BrandID
                     FROM FPC
                     INNER JOIN FinishingMachineProcess_HK FMP On FMP.FMProcessID = FPC.ProcessID
-                    INNER JOIN FinishingMachineConfigurationMaster FMC ON FMC.FMCMasterID = FMP.FMCMasterID
+                    INNER JOIN  {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} FMC ON FMC.FMCMasterID = FMP.FMCMasterID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = FPC.ProcessTypeID
-                    LEFT JOIN FinishingMachineSetup FMS On FMS.FMSID = FPC.FMSID
+                    LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} FMS On FMS.FMSID = FPC.FMSID
                     Left Join {DbNames.EPYSL}..EntityTypeValue b on b.ValueID = FMS.BrandID
-                    Left Join KnittingUnit c on c.KnittingUnitID = FMS.UnitID
+                    Left Join {TableNames.KNITTING_UNIT} c on c.KnittingUnitID = FMS.UnitID
                     GROUP BY FPC.FPChildID, FPC.ConceptID, FPC.FPMasterID, FPC.ProcessID, FPC.SeqNo, FMP.ProcessName, C.ShortName,b.ValueName, FPC.ProcessTypeID, ET.ValueName,
                     FPC.IsPreProcess, FPC.FMSID,FMC.FMCMasterID, FMS.MachineNo, FMC.ProcessName, FPC.Remarks, FPC.Param1Value, FPC.Param2Value, FPC.Param3Value,
                     FPC.Param4Value, FPC.Param5Value, FPC.Param6Value, FPC.Param7Value, FPC.Param8Value, FPC.Param9Value, FPC.Param10Value, FPC.Param11Value,
@@ -463,11 +463,16 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task UpdateFinishingProcess(List<DyeingBatchChildFinishingProcess> finishingProcessList)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
-                var maxDBCFPID = await _service.GetMaxIdAsync(TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS, finishingProcessList.Where(x=>x.EntityState == EntityState.Added).Count());
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
+                var maxDBCFPID = await _service.GetMaxIdAsync(TableNames.DYEING_BATCH_CHILD_FINISHING_PROCESS, 
+                    finishingProcessList.Where(x=>x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
                 finishingProcessList.Where(x => x.EntityState == EntityState.Added).ToList().ForEach(process =>
                 {
                     process.DBCFPID = maxDBCFPID++;
@@ -476,6 +481,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 //await _service.SaveSingleAsync(entity, transaction);
                 await _service.SaveAsync(finishingProcessList, transaction);
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 //#region Update TNA
                 //if (finishingProcessList.Count > 0)
@@ -491,11 +497,13 @@ namespace EPYSLTEX.Infrastructure.Services
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 

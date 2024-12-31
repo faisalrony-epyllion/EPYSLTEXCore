@@ -16,14 +16,15 @@ namespace EPYSLTEX.Infrastructure.Services
     internal class LabTestResultService : ILabTestResultService
     {
         private readonly IDapperCRUDService<LabTestRequisitionMaster> _service;
-
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
 
         public LabTestResultService(IDapperCRUDService<LabTestRequisitionMaster> service)
         {
             _service = service;
-         
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<List<LabTestRequisitionMaster>> GetPagedAsync(Status status, int offset = 0, int limit = 10, string filterBy = null, string orderBy = null)
@@ -37,19 +38,19 @@ namespace EPYSLTEX.Infrastructure.Services
                 sql += $@"
                 WITH LTB As(
                     SELECT LTReqMasterID 
-                    FROM LabTestRequisitionBuyer 
+                    FROM {TableNames.LAB_TEST_REQUISITION_BUYER}  
                     WHERE IsSend = 0
                     Group By LTReqMasterID
                 ), M AS (
                     SELECT	LTRM.* 
-                    FROM LabTestRequisitionMaster LTRM 
+                    FROM {TableNames.LAB_TEST_REQUISITION_MASTER}  LTRM 
                     Inner Join LTB On LTB.LTReqMasterID = LTRM.LTReqMasterID
                     WHERE LTRM.IsApproved = 1 AND LTRM.IsAcknowledge = 1
                 ),
                 TNI AS
                 (
 	                SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                FROM LabTestRequisitionBuyerParameter LTR
+	                FROM {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} LTR
 	                INNER JOIN M ON M.LTReqMasterID = LTR.LTReqMasterID
 	                LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -64,9 +65,9 @@ namespace EPYSLTEX.Infrastructure.Services
                     LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
+	                INNER JOIN {TableNames.DYEING_BATCH_MASTER} Batch ON Batch.DBatchID = M.DBatchID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
-	                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = M.ConceptID
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = M.BookingID
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = CM.BuyerID
 	                LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = M.BuyerTeamID
@@ -85,19 +86,19 @@ namespace EPYSLTEX.Infrastructure.Services
                 sql += $@"
                 WITH LTB As(
                     SELECT LTReqMasterID 
-                    FROM LabTestRequisitionBuyer 
+                    FROM {TableNames.LAB_TEST_REQUISITION_BUYER}   
                     WHERE IsSend = 1 AND IsApproved = 0 AND IsAcknowledge = 0
                     Group By LTReqMasterID
                 ), M AS (
                     SELECT	LTRM.* 
-                    FROM LabTestRequisitionMaster LTRM 
+                    FROM {TableNames.LAB_TEST_REQUISITION_MASTER} LTRM 
                     Inner Join LTB On LTB.LTReqMasterID = LTRM.LTReqMasterID
                     WHERE LTRM.IsApproved = 1 AND LTRM.IsAcknowledge = 1
                 ),
                 TNI AS
                 (
 	                SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                FROM LabTestRequisitionBuyerParameter LTR
+	                FROM {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} LTR
 	                INNER JOIN M ON M.LTReqMasterID = LTR.LTReqMasterID
 	                LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -111,7 +112,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
+	                INNER JOIN {TableNames.DYEING_BATCH_MASTER} Batch ON Batch.DBatchID = M.DBatchID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 	                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = M.BookingID
@@ -131,19 +132,19 @@ namespace EPYSLTEX.Infrastructure.Services
                 sql += $@"
                 WITH LTB As(
                     SELECT LTReqMasterID 
-                    FROM LabTestRequisitionBuyer 
+                    FROM {TableNames.LAB_TEST_REQUISITION_BUYER}   
                     WHERE IsSend = 1 AND IsApproved = 1 AND IsAcknowledge = 0
                     Group By LTReqMasterID
                 ), M AS (
                     SELECT	LTRM.* 
-                    FROM LabTestRequisitionMaster LTRM 
+                    FROM {TableNames.LAB_TEST_REQUISITION_MASTER} LTRM 
                     Inner Join LTB On LTB.LTReqMasterID = LTRM.LTReqMasterID
                     WHERE LTRM.IsApproved = 1 AND LTRM.IsAcknowledge = 1
                 ),
                 TNI AS
                 (
 	                SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                FROM LabTestRequisitionBuyerParameter LTR
+	                FROM {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} LTR
 	                INNER JOIN M ON M.LTReqMasterID = LTR.LTReqMasterID
 	                LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -158,7 +159,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
+	                INNER JOIN {TableNames.DYEING_BATCH_MASTER} Batch ON Batch.DBatchID = M.DBatchID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 	                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = M.BookingID
@@ -178,19 +179,19 @@ namespace EPYSLTEX.Infrastructure.Services
                 sql += $@"
                 WITH LTB As(
                     SELECT LTReqMasterID 
-                    FROM LabTestRequisitionBuyer 
+                    FROM {TableNames.LAB_TEST_REQUISITION_BUYER}   
                     WHERE IsSend = 1 AND IsApproved = 1 AND IsAcknowledge = 1
                     Group By LTReqMasterID
                 ), M AS (
                     SELECT	LTRM.* 
-                    FROM LabTestRequisitionMaster LTRM 
+                    FROM {TableNames.LAB_TEST_REQUISITION_MASTER} LTRM 
                     Inner Join LTB On LTB.LTReqMasterID = LTRM.LTReqMasterID
                     WHERE LTRM.IsApproved = 1 AND LTRM.IsAcknowledge = 1
                 ),
                 TNI AS
                 (
 	                SELECT LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
-	                FROM LabTestRequisitionBuyerParameter LTR
+	                FROM {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} LTR
 	                INNER JOIN M ON M.LTReqMasterID = LTR.LTReqMasterID
 	                LEFT JOIN TestNature TN ON TN.TestNatureID = LTR.TestNatureID
 	                GROUP BY LTR.LTReqMasterID, LTR.TestNatureID, TN.TestNatureName
@@ -205,9 +206,9 @@ namespace EPYSLTEX.Infrastructure.Services
                     LabTestStatus = CASE WHEN M.IsProduction = 1 THEN 'Production' ELSE '' END,
                     TNI.TestNatureName
 	                FROM M
-	                INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
+	                INNER JOIN {TableNames.DYEING_BATCH_MASTER} Batch ON Batch.DBatchID = M.DBatchID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
-	                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = M.ConceptID
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = M.BookingID
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = CM.BuyerID
 	                LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
@@ -233,12 +234,14 @@ namespace EPYSLTEX.Infrastructure.Services
 
             return await _service.GetDataAsync<LabTestRequisitionMaster>(sql);
         }
+        
+
 
         public async Task<LabTestRequisitionMaster> GetAsync(int id)
         {
             var sql = $@"
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionMaster WHERE LTReqMasterID = {id}
+                        SELECT	* FROM {TableNames.LAB_TEST_REQUISITION_MASTER} WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqMasterID, M.ReqNo, M.ReqDate, M.DBatchID, M.ConceptID, M.BookingID, M.ExportOrderID, M.BuyerID, M.BuyerTeamID, M.ItemMasterID,
 	                M.ColorID, M.FabricQty, M.UnitID, M.Remarks,M.[FileName], M.ImagePath, M.PreviewTemplate, Batch.DBatchNo, Batch.DBatchDate, CM.ConceptNo, BM.BookingNo, COL.SegmentValue ColorName,
@@ -252,9 +255,9 @@ namespace EPYSLTEX.Infrastructure.Services
                     BuyerTeamName = CASE WHEN CM.BuyerTeamID > 0 THEN CCT.TeamName ELSE CASE WHEN M.ConceptID > 0 THEN 'R&D' ELSE '-' END END
 
 	                FROM M
-	                INNER JOIN DyeingBatchMaster Batch ON Batch.DBatchID = M.DBatchID
+	                INNER JOIN {TableNames.DYEING_BATCH_MASTER} Batch ON Batch.DBatchID = M.DBatchID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
-	                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = M.ConceptID
 	                LEFT JOIN {DbNames.EPYSL}..BookingMaster BM ON BM.BookingID = M.BookingID
 	                LEFT JOIN {DbNames.EPYSL}..Contacts B ON B.ContactID = CM.BuyerID
 	                LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = CM.BuyerTeamID
@@ -266,7 +269,7 @@ namespace EPYSLTEX.Infrastructure.Services
 
                     -----childs
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyer WHERE LTReqMasterID = {id}
+                        SELECT	* FROM {TableNames.LAB_TEST_REQUISITION_BUYER}   WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqBuyerID, M.BuyerID, M.LTReqMasterID, Contacts.Name BuyerName, M.IsPass, M.Remarks, M.IsApproved, M.IsAcknowledge, M.IsSend
                     FROM M
@@ -274,7 +277,7 @@ namespace EPYSLTEX.Infrastructure.Services
 
                     ----Buyer Parameter Group
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyerParameter WHERE LTReqMasterID = {id}
+                        SELECT	* FROM {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} WHERE LTReqMasterID = {id}
                     )
                     SELECT  M.LTReqMasterID, M.LTReqBuyerID, M.BuyerID, M.BPID, 
                     BWP.TestName, BWP.Requirement,
@@ -289,7 +292,7 @@ namespace EPYSLTEX.Infrastructure.Services
 
                     ----Buyer Parameters
                     ;WITH M AS (
-                        SELECT	* FROM LabTestRequisitionBuyerParameter WHERE LTReqMasterID = {id}
+                        SELECT	* FROM {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} WHERE LTReqMasterID = {id}
                     )
                     SELECT M.LTReqBPID, M.LTReqMasterID, M.LTReqBuyerID, M.BuyerID, M.BPID, M.BPSubID,
 					M.TestValue, M.TestValue1, M.Requirement, M.Requirement1, M.IsPass, M.Addition1, M.Addition2, M.AdditionalInfo, M.Remarks, M.IsParameterPass, M.ParameterStatus, M.ParameterRemarks,
@@ -303,7 +306,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     Order By SUB.SeqNo;
                     -----files
                     ;WITH M AS (
-                        SELECT	LTReqImageID, LTReqMasterID, FileName, ImagePath, PreviewTemplate, ImageGroup, ImageSubGroup, BPID FROM LabTestRequisitionImage WHERE LTReqMasterID = {id}
+                        SELECT	LTReqImageID, LTReqMasterID, FileName, ImagePath, PreviewTemplate, ImageGroup, ImageSubGroup, BPID FROM {TableNames.LABTEST_REQUISITION_IMAGE} WHERE LTReqMasterID = {id}
 	
                     )
                     SELECT * FROM M
@@ -379,13 +382,13 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<LabTestRequisitionMaster> GetAllByIDAsync(int id)
         {
             string sql = $@"
-            ;Select * From LabTestRequisitionMaster Where LTReqMasterID = {id}
+            ;Select * From {TableNames.LAB_TEST_REQUISITION_MASTER} Where LTReqMasterID = {id}
 
-            ;Select * From LabTestRequisitionBuyer Where LTReqMasterID = {id}
+            ;Select * From {TableNames.LAB_TEST_REQUISITION_BUYER}   Where LTReqMasterID = {id}
 
-            ;Select * From LabTestRequisitionBuyerParameter Where LTReqMasterID = {id}
+            ;Select * From {TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER} Where LTReqMasterID = {id}
             
-            ;Select * From LabTestRequisitionImage Where LTReqMasterID = {id}
+            ;Select * From {TableNames.LABTEST_REQUISITION_IMAGE} Where LTReqMasterID = {id}
             ";
 
             try
@@ -412,32 +415,25 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task SaveAsync(LabTestRequisitionMaster entity)
         {
             SqlTransaction transaction = null;
+            SqlTransaction transactionGmt = null;
             try
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
+
                 switch (entity.EntityState)
                 {
                     case EntityState.Modified:
-                        entity = await UpdateAsync(entity);
+                        entity = await UpdateAsync(entity, transaction, _connection, transactionGmt, _gmtConnection);
                         break;
 
                     default:
                         break;
                 }
 
-                //LTReqImage imageLTR = await _serviceILTReqImage.GetImageByLTReqMasterId(entity.LTReqMasterID);
-                //if (imageLTR != null && imageLTR.LTReqImageID > 0)
-                //{
-                //    imageLTR.ImagePath = entity.LTReqImages.Count() > 0 ? entity.LTReqImages.FirstOrDefault().ImagePath : imageLTR.ImagePath;
-                //    foreach (LTReqImage objLTReqImage in entity.LTReqImages)
-                //    {
-                //        objLTReqImage.LTReqImageID = imageLTR.LTReqImageID;
-                //        objLTReqImage.ImagePath = imageLTR.ImagePath;
-                //        objLTReqImage.EntityState = EntityState.Modified;
-                //    }
-                //}
 
                 await _service.SaveSingleAsync(entity, transaction);
                 await _service.SaveAsync(entity.LabTestRequisitionBuyers, transaction);
@@ -447,6 +443,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 await _service.SaveAsync(buyerParmsList, transaction);
 
                 transaction.Commit();
+                transactionGmt.Commit();
 
                 //#region Update TNA
                 //if (entity.LTReqMasterID > 0)
@@ -459,11 +456,13 @@ namespace EPYSLTEX.Infrastructure.Services
             catch (Exception ex)
             {
                 if (transaction != null) transaction.Rollback();
+                if (transactionGmt != null) transactionGmt.Rollback();
                 throw ex;
             }
             finally
             {
                 _connection.Close();
+                _gmtConnection.Close();
             }
         }
 
@@ -472,10 +471,10 @@ namespace EPYSLTEX.Infrastructure.Services
             await _service.ExecuteAsync("spUpdateBDSTNA_TestReportPlan", new { LTReqMasterID = LTReqMasterID }, 30, CommandType.StoredProcedure);
         }
 
-        private async Task<LabTestRequisitionMaster> UpdateAsync(LabTestRequisitionMaster entity)
+        private async Task<LabTestRequisitionMaster> UpdateAsync(LabTestRequisitionMaster entity, SqlTransaction transaction, SqlConnection _connection, SqlTransaction transactionGmt, SqlConnection _gmtConnection)
         {
-            var maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count());
-            var maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()));
+            var maxLabTestRequisitionBuyerId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER, entity.LabTestRequisitionBuyers.Where(x => x.EntityState == EntityState.Added).Count(), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
+            var maxLabTestRequisitionBuyerParamId = await _service.GetMaxIdAsync(TableNames.LAB_TEST_REQUISITION_BUYER_PARAMETER, entity.LabTestRequisitionBuyers.Sum(x => x.LabTestRequisitionBuyerParameters.Where(y => y.EntityState == EntityState.Added).Count()), RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
 
             foreach (var item in entity.LabTestRequisitionBuyers.ToList())
             {
@@ -523,7 +522,7 @@ namespace EPYSLTEX.Infrastructure.Services
                 }
             }
 
-            var maxLabTestRequisitionImageId = await _service.GetMaxIdAsync(TableNames.LABTEST_REQUISITION_IMAGE, entity.LabTestRequisitionImages.Where(x => x.EntityState == EntityState.Added).Count());
+            var maxLabTestRequisitionImageId = await _service.GetMaxIdAsync(TableNames.LABTEST_REQUISITION_IMAGE, entity.LabTestRequisitionImages.Where(x => x.EntityState == EntityState.Added).Count(),RepeatAfterEnum.NoRepeat, transactionGmt, _gmtConnection);
             foreach (var item in entity.LabTestRequisitionImages.ToList())
             {
                 switch (item.EntityState)

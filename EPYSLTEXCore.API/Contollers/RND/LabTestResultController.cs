@@ -107,7 +107,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
             model.LabTestRequisitionBuyers = JsonConvert.DeserializeObject<List<LabTestRequisitionBuyer>>(formData["LabTestRequisitionBuyers"]);
             model.LabTestRequisitionImages = JsonConvert.DeserializeObject<List<LabTestRequisitionImage>>(formData["LabTestRequisitionImages"]);
 
-       
+
+            bool isNewFile = true;
+            if (file  is not  null && !string.IsNullOrEmpty(model.ImagePath)) isNewFile = false;
 
             string fileName = "",
                filePath = "",
@@ -119,7 +121,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             });
             if (file != null)
             {
-                for (int i = 1; i < Request.Form.Files.Count(); i++)
+                for (int i = 0; i < Request.Form.Files.Count(); i++)
                 {
                      fileName = "";
                     filePath = "";
@@ -128,13 +130,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     var inputStream = originalFile.OpenReadStream();
 
                     fileName = string.Join("", originalFile.FileName.Split(Path.GetInvalidFileNameChars()));
-                    var splitFileName = fileName.Split('~');
-                    int docTypeID = 0;
-                    if (splitFileName.Count() > 0)
-                    {
-                        fileName = splitFileName[0];
-                        docTypeID = Convert.ToInt32(splitFileName[1]);
-                    }
+                
                     var contentType = originalFile.ContentType;
 
                     var fileExtension = Path.GetExtension(fileName);
@@ -155,7 +151,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     }
 
 
-                    filePath = $"{UploadLocations.RND_LABTEST_FILE_PATH}/CommercialInvoice_{fileName}";
+                    filePath = $"{UploadLocations.RND_LABTEST_FILE_PATH}/LabTest_{fileName}";
                     var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
                     string directoryPath = Path.GetDirectoryName(fullPath);
                     if (!Directory.Exists(directoryPath))
@@ -241,20 +237,22 @@ namespace EPYSLTEX.Web.Controllers.Apis
             entity.UpdatedBy = AppUser.UserCode;
             entity.DateUpdated = DateTime.Now;
             entity.PerformanceCode = model.PerformanceCode;
-          
-            if (file is not null)
-            {
-                var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, entity.ImagePath.TrimStart('/'));
-                if (System.IO.File.Exists(fullPath))
-                {
-                    System.IO.File.Delete(fullPath);
-                }
 
-                entity.FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'";
-                entity.ImagePath = filePath;
-                entity.PreviewTemplate = previewTemplate;
-            }
 
+            #region cluless code
+            //if (isNewFile)
+            //{
+            //    var fullPath = Path.Combine(_hostingEnvironment.WebRootPath, entity.ImagePath.TrimStart('/'));
+            //    if (System.IO.File.Exists(fullPath))
+            //    {
+            //        System.IO.File.Delete(fullPath);
+            //    }
+
+            //    entity.FileName = !string.IsNullOrEmpty(fileName) ? Path.GetFileNameWithoutExtension(fileName) : "'";
+            //    entity.ImagePath = filePath;
+            //    entity.PreviewTemplate = previewTemplate;
+            //}
+            #endregion
             entity.EntityState = EntityState.Modified;
 
             LabTestRequisitionBuyer labTestRequisitionBuyer;

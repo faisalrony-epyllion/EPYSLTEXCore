@@ -320,10 +320,11 @@ namespace EPYSLTEXCore.API.Contollers.RND
         [Route("save-yarn-composition")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SaveComposition(ItemSegmentValue model)
+        public async Task<IActionResult> SaveComposition(dynamic jsonString)
         {
-           //ItemSegmentName itemSegmentName = await _service.FindAsync(a => a.SegmentName == ItemSegmentNameConstants.YARN_COMPOSITION);
-            ItemSegmentName itemSegmentName = await _service.FindAsync(ItemSegmentNameConstants.YARN_COMPOSITION);
+                ItemSegmentValue model = JsonConvert.DeserializeObject<ItemSegmentValue>(Convert.ToString(jsonString));
+                //ItemSegmentName itemSegmentName = await _service.FindAsync(a => a.SegmentName == ItemSegmentNameConstants.YARN_COMPOSITION);
+                ItemSegmentName itemSegmentName = await _service.FindAsync(ItemSegmentNameConstants.YARN_COMPOSITION);
 
             if (itemSegmentName.IsNull())
                 return BadRequest("Yarn Composition Segment Not Found");

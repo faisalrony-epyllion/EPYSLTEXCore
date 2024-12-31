@@ -518,7 +518,7 @@
     }
     function generateElements() {
         var template = "";
-
+        
         //var items = [];
         //items.push(interfaceConfigs.Childs[0]);
         //items.push(interfaceConfigs.Childs[1]);
@@ -633,9 +633,8 @@
                     break;
             }
 
-            if (value.IsRequired) {
-                constraints[value.ColumnName] = value.MaxLength > 0 ? { presence: true, length: { maximum: value.MaxLength } } : { presence: true };
-            }
+            // Generate validation object using the function
+            constraints[value.ColumnName] = createValidationObject(value);
 
             if (rowCount == totalRow) {
                 //Set col-sm-x
@@ -652,6 +651,36 @@
         initAddNew();
         initFinder();
     }
+    function createValidationObject(value) {
+        // Initialize the validationObject
+        var validationObject = {};
+
+        // Add presence and length validation if field is required
+        if (value.IsRequired) {
+            validationObject.presence = true;
+            if (value.MaxLength > 0) {
+                validationObject.length = validationObject.length || {}; // Ensure the length object exists
+                validationObject.length.maximum = value.MaxLength; // Set the maximum length
+            }
+        }
+
+        // Add MinRange validation if available
+        if (value.MinRange) {
+            validationObject.numericality = validationObject.numericality || {}; // Ensure the numericality object exists
+            validationObject.numericality.greaterThanOrEqualTo = parseFloat(value.MinRange); // Ensure it's a number
+        }
+
+        // Add MaxRange validation if available
+        if (value.MaxRange) {
+            validationObject.numericality = validationObject.numericality || {}; // Ensure the numericality object exists
+            validationObject.numericality.lessThanOrEqualTo = parseFloat(value.MaxRange); // Ensure it's a number
+        }
+
+        return validationObject;
+    }
+
+ 
+
     function getSysColumn() {
 
         var colName = interfaceConfigs.Childs.find(x => x.IsSys === true).ColumnName;
@@ -1033,7 +1062,7 @@
 
     // #region Save
     function saveMaster(e) {
-
+        debugger;
         e.preventDefault();
         if (!validateMasterForm()) return;
         $formEl.find(':checkbox').each(function () {

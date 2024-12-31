@@ -4633,7 +4633,8 @@ namespace EPYSLTEXCore.Application.Services.RND
                 {
                     if (entity.UpdatedBy.IsNull()) entity.UpdatedBy = 0;
                     int userId = entity.EntityState == EntityState.Added ? entity.AddedBy : (int)entity.UpdatedBy;
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_KnittingPlanYarn", item.EntityState, userId, item.KPYarnID);
+                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_KnittingPlanYarn", item.EntityState, userId, item.KPYarnID);
+                    await _connection.ExecuteAsync("sp_Validation_KnittingPlanYarn", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.KPYarnID }, transaction, 30, CommandType.StoredProcedure);
                 }
                 await _service.SaveAsync(yarnChilds, transaction);
 
@@ -4708,7 +4709,9 @@ namespace EPYSLTEXCore.Application.Services.RND
                 {
                     if (entity.UpdatedBy.IsNull()) entity.UpdatedBy = 0;
                     int userId1 = entity.EntityState == EntityState.Added ? entity.AddedBy : (int)entity.UpdatedBy;
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_KnittingPlanYarn", item.EntityState, userId1, item.KPYarnID);
+                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_KnittingPlanYarn", item.EntityState, userId1, item.KPYarnID);
+                    await _connection.ExecuteAsync("sp_Validation_KnittingPlanYarn", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.KPYarnID }, transaction, 30, CommandType.StoredProcedure);
+
                 }
 
                 List<KJobCardMaster> jobCards = new List<KJobCardMaster>();
@@ -5388,14 +5391,18 @@ namespace EPYSLTEXCore.Application.Services.RND
                 int userId = entity.EntityState == EntityState.Added ? entity.AddedBy : (int)entity.UpdatedBy;
                 await _service.SaveSingleAsync(entity.KPGroup, transaction);
                 await _service.SaveSingleAsync(entity, transaction);
-                await _service.ValidationSingleAsync(entity, transaction, "sp_UpdateFreeConceptMRMaster_IsNeedRevision", entity.EntityState, userId, entity.ConceptID);
+                //await _service.ValidationSingleAsync(entity, transaction, "sp_UpdateFreeConceptMRMaster_IsNeedRevision", entity.EntityState, userId, entity.ConceptID);
+                await _connection.ExecuteAsync("sp_UpdateFreeConceptMRMaster_IsNeedRevision", new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.ConceptID }, transaction, 30, CommandType.StoredProcedure);
+
                 await _service.SaveAsync(entity.Childs, transaction);
                 await _service.SaveAsync(entity.Yarns, transaction);
                 foreach (KnittingPlanYarn item in entity.Yarns.Where(x => x.EntityState == EntityState.Added || x.EntityState == EntityState.Modified))
                 {
                     if (entity.UpdatedBy.IsNull()) entity.UpdatedBy = 0;
                     //int userId = entity.EntityState == EntityState.Added ? entity.AddedBy : (int)entity.UpdatedBy;
-                    await _service.ValidationSingleAsync(item, transaction, "sp_Validation_KnittingPlanYarn", item.EntityState, userId, item.KPYarnID);
+                    //await _service.ValidationSingleAsync(item, transaction, "sp_Validation_KnittingPlanYarn", item.EntityState, userId, item.KPYarnID);
+                    await _connection.ExecuteAsync("sp_Validation_KnittingPlanYarn", new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.KPYarnID }, transaction, 30, CommandType.StoredProcedure);
+
                 }
                 await _service.SaveAsync(yarnChilds, transaction);
 

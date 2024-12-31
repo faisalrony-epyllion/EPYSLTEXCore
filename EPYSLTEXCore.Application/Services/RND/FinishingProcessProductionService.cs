@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
@@ -38,9 +39,9 @@ namespace EPYSLTEXCore.Application.Services.RND
                 FinalList AS
                 (
 	                SELECT FP.FPMasterID, FP.ConceptID, FP.BookingID, FP.TrialNo, FP.TrialDate, CM.ConceptNo, CM.ConceptDate,FP.PFBatchNo,FP.PFBatchDate,FP.BatchQty
-	                FROM FinishingProcessChild FPC
-	                INNER JOIN FinishingProcessMaster FP ON FP.FPMasterID = FPC.FPMasterID
-	                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = FP.ConceptID
+	                FROM  {TableNames.FINISHING_PROCESS_CHILD} FPC
+	                INNER JOIN {TableNames.FINISHING_PROCESS_MASTER} FP ON FP.FPMasterID = FPC.FPMasterID
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = FP.ConceptID 
 	                WHERE FP.PDProductionComplete = 0 AND FPC.IsPreProcess = 1
 	                GROUP BY FP.FPMasterID, FP.ConceptID, FP.BookingID, FP.TrialNo, FP.TrialDate, CM.ConceptNo, CM.ConceptDate,FP.PFBatchNo,FP.PFBatchDate,FP.BatchQty
                 )
@@ -53,9 +54,9 @@ namespace EPYSLTEXCore.Application.Services.RND
                 FinalList AS
                 (
 	                SELECT FP.FPMasterID, FP.ConceptID, FP.BookingID, FP.TrialNo, FP.TrialDate, CM.ConceptNo, CM.ConceptDate,FP.PFBatchNo,FP.PFBatchDate,FP.BatchQty
-	                FROM FinishingProcessChild FPC
-	                INNER JOIN FinishingProcessMaster FP ON FP.FPMasterID = FPC.FPMasterID
-	                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = FP.ConceptID
+	                FROM  {TableNames.FINISHING_PROCESS_CHILD} FPC
+	                INNER JOIN {TableNames.FINISHING_PROCESS_MASTER} FP ON FP.FPMasterID = FPC.FPMasterID 
+	                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = FP.ConceptID
 	                WHERE FP.PDProductionComplete = 1 AND FPC.IsPreProcess = 1
 	                GROUP BY FP.FPMasterID, FP.ConceptID, FP.BookingID, FP.TrialNo, FP.TrialDate, CM.ConceptNo, CM.ConceptDate,FP.PFBatchNo,FP.PFBatchDate,FP.BatchQty
                 )
@@ -75,9 +76,9 @@ namespace EPYSLTEXCore.Application.Services.RND
             var query =
                 $@"
                 ;SELECT FP.FPMasterID, FP.ConceptID, FP.BookingID, FP.TrialNo, FP.TrialDate, CM.ConceptNo, CM.ConceptDate, KP.NeedPreFinishingProcess,FP.PFBatchNo,FP.PFBatchDate,FP.BatchQty
-                FROM FinishingProcessMaster FP
-                LEFT JOIN KnittingPlanMaster KP ON KP.ConceptID = FP.ConceptID
-                LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = FP.ConceptID
+                FROM {TableNames.FINISHING_PROCESS_MASTER} FP
+                LEFT JOIN  {TableNames.Knitting_Plan_Master} KP ON KP.ConceptID = FP.ConceptID 
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = FP.ConceptID
                 WHERE FP.FPMasterID = {id};
 
                 ----Child Pre-Process
@@ -90,16 +91,16 @@ namespace EPYSLTEXCore.Application.Services.RND
                 FPC.PParam5Value, FPC.PParam6Value, FPC.PParam7Value, FPC.PParam8Value, FPC.PParam9Value, FPC.PParam10Value, FPC.PParam11Value,
                 FPC.PParam12Value, FPC.PParam13Value, FPC.PParam14Value, FPC.PParam15Value, FPC.PParam16Value,
                 FPC.PParam17Value, FPC.PParam18Value, FPC.PParam19Value, FPC.PParam20Value
-                FROM FinishingProcessChild FPC
+                FROM  {TableNames.FINISHING_PROCESS_CHILD} FPC
                 INNER JOIN FinishingMachineProcess_HK FMP On FMP.FMProcessID = FPC.ProcessID
-                INNER JOIN FinishingMachineConfigurationMaster FMC ON FMC.FMCMasterID = FMP.FMCMasterID
+                INNER JOIN   {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} FMC ON FMC.FMCMasterID = FMP.FMCMasterID
                 LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = FPC.ProcessTypeID
-                LEFT JOIN FinishingMachineSetup FMS On FMS.FMSID = FPC.FMSID
-                LEFT JOIN FinishingMachineSetup PFMS On PFMS.FMSID = FPC.PFMSID
+                LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP}  FMS On FMS.FMSID = FPC.FMSID
+                LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} PFMS On PFMS.FMSID = FPC.PFMSID
                 Left Join {DbNames.EPYSL}..EntityTypeValue b on b.ValueID = FMS.BrandID
 		        Left Join {DbNames.EPYSL}..EntityTypeValue pb on pb.ValueID = PFMS.BrandID
-                Left Join KnittingUnit c on c.KnittingUnitID = FMS.UnitID
-                Left Join KnittingUnit pc on pc.KnittingUnitID = PFMS.UnitID
+                Left Join {TableNames.KNITTING_UNIT} c on c.KnittingUnitID = FMS.UnitID
+                Left Join {TableNames.KNITTING_UNIT} pc on pc.KnittingUnitID = PFMS.UnitID
                 WHERE FPC.FPMasterID = {id} AND FPC.IsPreProcess = 1 ORDER BY FPC.SeqNo ASC;
 
                 --Operators
@@ -117,7 +118,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
                 ----FinishingMachineConfigurationChild
                 ;SELECT *
-                From FinishingMachineConfigurationChild FMC;";
+                From   {TableNames.FINISHING_MACHINE_CONFIGURATION_CHILD}  FMC;";
 
             try
             {
@@ -164,7 +165,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 -- Process Machine param List
                     ;WITH FMS AS(
                     SELECT FMSID,FMCMasterID,REPLACE(REPLACE(ParamName, 'Param', ''),'Value','') AS SerialNo, MachineNo, BrandID, UnitID, Capacity,ParamName, ParamValue
-                    FROM (SELECT * FROM FinishingMachineSetup
+                    FROM (SELECT * FROM {TableNames.FINISHING_MACHINE_SETUP}
                     WHERE FMSID = {fmsId}
                     ) p
                     UNPIVOT
@@ -172,7 +173,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     )AS unpvt
                     ), FP AS(
                     SELECT FMSID,REPLACE(REPLACE(ParamName, 'Param', ''),'Value','') AS SerialNo, ParamName, ParamValue
-                    FROM (Select * From FinishingProcessChild
+                    FROM (Select * From  {TableNames.FINISHING_PROCESS_CHILD}
                     Where FMSID = {fmsId} And FPChildID = {fpChildId} AND IsPreProcess = 1
                     ) p
                     UNPIVOT
@@ -185,7 +186,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                     ISNULL(PParam6Value,'') PParam6Value, ISNULL(PParam7Value,'') PParam7Value, ISNULL(PParam8Value,'') PParam8Value, ISNULL(PParam9Value,'') PParam9Value, ISNULL(PParam10Value,'') PParam10Value,
                     ISNULL(PParam11Value,'') PParam11Value, ISNULL(PParam12Value,'') PParam12Value, ISNULL(PParam13Value,'') PParam13Value, ISNULL(PParam14Value,'') PParam14Value, ISNULL(PParam15Value,'') PParam15Value,
                     ISNULL(PParam16Value,'') PParam16Value, ISNULL(PParam17Value,'') PParam17Value, ISNULL(PParam18Value,'') PParam18Value, ISNULL(PParam19Value,'') PParam19Value, ISNULL(PParam20Value,'') PParam20Value
-                    From FinishingProcessChild
+                    From  {TableNames.FINISHING_PROCESS_CHILD}
                     Where FMSID = {fmsId} And FPChildID = {fpChildId} AND IsPreProcess = 1
                     ) p
                     UNPIVOT
@@ -196,14 +197,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                     ,M AS(
                     SELECT ETV.ValueName, FMS.FMSID,FMS.FMCMasterID,FMS.SerialNo, FMS.MachineNo, FMS.BrandID, FMS.UnitID,FMS.Capacity,FMS.ParamName, FMS.ParamValue,FMCC.ParamName AS ParamDispalyName, FMCC.NeedItem, FP.ParamValue PlanParamValue, AFP.ParamValue ActulaPlanParamValue, AFP.PFMSID, AFMS.BrandID ABrandID, AFMS.UnitID AUnitID
                     ,pb.ValueName PBrandName, pc.ShortName PUnitName, AFP.FPChildID
-                    FROM FinishingMachineConfigurationChild FMCC
+                    FROM {TableNames.FINISHING_MACHINE_CONFIGURATION_CHILD}  FMCC
                     INNER JOIN FMS ON FMS.FMCMasterID=FMCC.FMCMasterID AND FMS.SerialNo=FMCC.Sequence
                     LEFT JOIN FP ON FP.FMSID=FMS.FMSID AND FP.SerialNo=FMS.SerialNo
                     LEFT JOIN AFP ON AFP.FMSID=FMS.FMSID AND AFP.SerialNo=FMS.SerialNo
                     INNER JOIN {DbNames.EPYSL}..EntityTypeValue ETV On ETV.ValueID = FMCC.ProcessTypeID
-                    LEFT JOIN FinishingMachineSetup AFMS On AFMS.FMSID = AFP.PFMSID
+                    LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} AFMS On AFMS.FMSID = AFP.PFMSID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue pb on pb.ValueID = AFMS.BrandID
-                    LEFT JOIN KnittingUnit pc on pc.KnittingUnitID = AFMS.UnitID
+                    LEFT JOIN {TableNames.KNITTING_UNIT} pc on pc.KnittingUnitID = AFMS.UnitID
                     Where ETV.ValueName in ('Pre/Post Set','Pre Set')
                     )
                     SELECT * FROM M
@@ -233,7 +234,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             var query = $@"
                 -- Process Machine param List
                 ;WITH FMS AS( SELECT FMSID,FMCMasterID,REPLACE(REPLACE(ParamName, 'Param', ''),'Value','') AS SerialNo, MachineNo, BrandID, UnitID, Capacity,ParamName, ParamValue
-                FROM (SELECT * FROM FinishingMachineSetup
+                FROM (SELECT * FROM {TableNames.FINISHING_MACHINE_SETUP}
                 WHERE FMSID = {fmsId}
                 ) p
                 UNPIVOT
@@ -259,7 +260,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 --Select * From FP
                 ,M AS(
                 SELECT ETV.ValueName, FMS.FMSID,FMS.FMCMasterID,FMS.SerialNo, FMS.MachineNo, FMS.BrandID, FMS.UnitID,FMS.Capacity,FMS.ParamName, FMS.ParamValue,FMCC.ParamName AS ParamDispalyName, FMCC.NeedItem, FP.ParamValue PlanParamValue, AFP.ParamValue ActulaPlanParamValue
-                FROM FinishingMachineConfigurationChild FMCC
+                FROM {TableNames.FINISHING_MACHINE_CONFIGURATION_CHILD}  FMCC
                 INNER JOIN FMS ON FMS.FMCMasterID=FMCC.FMCMasterID AND FMS.SerialNo=FMCC.Sequence
                 LEFT JOIN FP ON FP.FMSID=FMS.FMSID AND FP.SerialNo=FMS.SerialNo
                 LEFT JOIN AFP ON AFP.FMSID=FMS.FMSID AND AFP.SerialNo=FMS.SerialNo
@@ -291,13 +292,13 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             string sql = $@"
             
-            ;SELECT * FROM FinishingProcessMaster WHERE FPMasterID = {id}
+            ;SELECT * FROM {TableNames.FINISHING_PROCESS_MASTER} WHERE FPMasterID = {id}
 			
 			;SELECT *, pb.ValueName PBrandName, pc.ShortName PUnitName
-			FROM FinishingProcessChild FPC
-			LEFT JOIN FinishingMachineSetup PFMS On PFMS.FMSID = FPC.PFMSID
+			FROM  {TableNames.FINISHING_PROCESS_CHILD} FPC
+			LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} PFMS On PFMS.FMSID = FPC.PFMSID
 			LEFT JOIN {DbNames.EPYSL}..EntityTypeValue pb on pb.ValueID = PFMS.BrandID
-			LEFT JOIN KnittingUnit pc on pc.KnittingUnitID = PFMS.UnitID
+			LEFT JOIN {TableNames.KNITTING_UNIT} pc on pc.KnittingUnitID = PFMS.UnitID
 			WHERE FPMasterID = {id} AND IsPreProcess = 1";
 
             try

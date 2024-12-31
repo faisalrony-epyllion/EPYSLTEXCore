@@ -484,7 +484,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                     for (int i = 0; i < childItems.Count(); i++)
                     {
                         var childItem = childItems[i];
-                        await _service.ValidationSingleAsync(childItem, transaction, "sp_Validation_YarnStockAdjustmentChildItem", childItem.EntityState, entity.AddedBy, childItem.YSAChildItemId);
+                        //await _service.ValidationSingleAsync(childItem, transaction, "sp_Validation_YarnStockAdjustmentChildItem", childItem.EntityState, entity.AddedBy, childItem.YSAChildItemId);
+                        await _connection.ExecuteAsync("sp_Validation_YarnStockAdjustmentChildItem", new { EntityState = childItem.EntityState, UserId = UserId, PrimaryKeyId = childItem.YSAChildItemId }, transaction, 30, CommandType.StoredProcedure);
                     }
                     #endregion
 

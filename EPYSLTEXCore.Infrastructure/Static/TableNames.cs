@@ -244,6 +244,7 @@
         public const string YarnBookingReason_New = "T_YarnBookingReason_New";
         //public const string YarnBookingMaster_18_05_17 = "YarnBookingMaster_18_05_17";
         public const string YarnBookingMaster_Bk = "T_YarnBookingMaster_Bk";
+        public const string YarnBookingChild_New_Bk = "T_YarnBookingChild_New_Bk";
         public const string YarnBookingQuery = "T_YarnBookingQuery";
         public const string YarnBookingQuery_Bk = "T_YarnBookingQuery_Bk";
         public const string YarnBookingReason = "T_YarnBookingReason";
@@ -258,6 +259,7 @@
         public const string YarnItemApprovalReason = "T_YarnItemApprovalReason";
         public const string YarnItemPrice = "T_YarnItemPrice";
         public const string YarnItemPrice_Bk = "T_YarnItemPrice_Bk";
+        public const string YarnItemPriceDetails = "T_YarnItemPriceDetails";
         //public const string YarnItemPrice_temp = "YarnItemPrice_temp";
         public const string YarnPIChild = "T_YarnPIChild";
         public const string YarnPIFor = "T_YarnPIFor";

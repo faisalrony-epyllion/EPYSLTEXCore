@@ -703,7 +703,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                L.Segment8ValueDesc, L.YarnLotNo, L.YarnBrandID, L.BatchNo, L.YarnBrand, 
 	                L.PhysicalCount, L.GroupConceptNo, L.ConceptDate, L.KPYarnID, L.ShadeCode,MRC.YarnCategory,  
 	                Sum(MRC.ReqQty) YarnReqQty,isnull(A.ReqQty,0) UsedQty, MRC.ReqQty-isnull(A.ReqQty,0) PendingQty, 
-	                MRC.ReqQty-isnull(A.ReqQty,0) ReqQty,CEILING( MRC.ReqQty-isnull(A.ReqQty,0) )MaxReqQty, Max(MRC.ReqCone) ReqCone,MRC.FCMRChildID,
+	                MRC.ReqQty-isnull(A.ReqQty,0) ReqQty,CEILING( MRC.ReqQty-isnull(A.ReqQty,0) )MaxReqQty, Max(MRC.ReqCone) ReqCone,MRC.FCMRChildID,MRC.FCMRMasterID,
 	                YSM.YarnStockSetId, YSM.SampleStockQty, YSM.AdvanceStockQty, 
                     Spinner = CASE WHEN KPY.YDItem = 1 THEN SP1.ShortName ELSE SP.ShortName END
                 From L
@@ -723,7 +723,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                L.Segment5ValueDesc, L.Segment6ValueDesc, L.Segment7ValueDesc,
 	                L.Segment8ValueDesc, L.YarnLotNo, L.YarnBrandID, L.BatchNo, L.YarnBrand, 
 	                L.PhysicalCount, L.GroupConceptNo, L.ConceptDate, L.KPYarnID, L.ShadeCode,MRC.YarnCategory,
-                    A.ReqQty,MRC.ReqQty,MRC.FCMRChildID,YSM.YarnStockSetId,YSM.SampleStockQty, YSM.AdvanceStockQty,CASE WHEN KPY.YDItem = 1 THEN SP1.ShortName ELSE SP.ShortName END;
+                    A.ReqQty,MRC.ReqQty,MRC.FCMRChildID,MRC.FCMRMasterID,YSM.YarnStockSetId,YSM.SampleStockQty, YSM.AdvanceStockQty,CASE WHEN KPY.YDItem = 1 THEN SP1.ShortName ELSE SP.ShortName END;
                
                     ----Company
                     {CommonQueries.GetCompany()};
@@ -1738,7 +1738,6 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 #region pendingwork
                 //foreach (YarnRnDReqChild item in entity.Childs.Where(x => x.EntityState == EntityState.Added || x.EntityState == EntityState.Modified))
                 //{
-
                 //    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnRnDReqChild, new { PrimaryKeyId = item.RnDReqChildID, SecondParamValue = item.KPYarnID, ThirdParamValue = item.ItemMasterID, UserId = userId, EntityState = item.EntityState }, transaction, 30, CommandType.StoredProcedure);
                 //}
                 

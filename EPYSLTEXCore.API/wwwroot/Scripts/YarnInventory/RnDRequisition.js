@@ -212,7 +212,7 @@
         $toolbarEl.find("#btnCreate").on("click", function (e) {
             _isNewWithoutKnittingInfo = false;
             operationKnittingInfoFields();
-            debugger;
+            
             addAdditionalReq = false;
             if ($tblMasterEl.getSelectedRecords().length == 0) {
                 toastr.error("You must select concept(s)!");
@@ -351,7 +351,11 @@
         $formEl.find("#btnCancel").on("click", backToListWithoutFilter);
 
         $formEl.find("#btnAddItem").on("click", function (e) {
+            
             e.preventDefault();
+            var fcIds = list.map(x => x.GroupID).join(",");
+            $tblFreeConceptMREl.getCurrentViewRecords().map(function (el) { return el.FCMRMasterID }).toString();
+
             /*
             var list = $tblFreeConceptMREl.getCurrentViewRecords();
             var fcIds = list.map(x => x.GroupID).join(",");// $tblFreeConceptMREl.getCurrentViewRecords().map(function (el) { return el.FCMRMasterID }).toString();
@@ -582,7 +586,7 @@
             columnsBtn = {
                 headerText: 'Command', width: 100, commands: [
                     { type: 'Edit', title: 'View this requisition', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-eye' } },
-                    { type: 'Add', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'fa fa-file-pdf-o' } }
+                    { type: 'Add', title: 'View Report', buttonOption: { cssClass: 'e-flat', iconCss: 'e-btn-icon e-pdf e-icons' } }
                 ]
             }
         }
@@ -873,7 +877,7 @@
     }
 
     async function initChildTable(data) {
-        
+       
         var conceptNoText = _isNewWithoutKnittingInfo ? "Concept No / Booking No" : "Concept No";
         data.map(x => {
             x.RnDReqChildID = x.RnDReqChildID == 0 ? _rnDReqChildID++ : x.RnDReqChildID;
@@ -1208,11 +1212,11 @@
                 var totalReqQty = getTotalReqQtyOfCurrentItem(data.Childs, child.YarnStockSetId);
                 var maxReqQty = child.StockQty; //getMaxAllocatedQty(data.Childs, child.YBChildItemID);
 
-                //if (totalReqQty > maxReqQty) {
-                //    toastr.error(`Total req qty (${totalReqQty}) cannot be greater than maximum stock qty (${maxReqQty}). `);
-                //    hasError = true;
-                //    break;
-                //}
+                if (totalReqQty > maxReqQty) {
+                    toastr.error(`Total req qty (${totalReqQty}) cannot be greater than maximum stock qty (${maxReqQty}). `);
+                    hasError = true;
+                    break;
+                }
             }
         }
         if (hasError) return false;
@@ -1224,15 +1228,15 @@
                 if (child.StockTypeId == null) {
                     child.StockTypeId = 0; 
                 }
-                //if (child.StockTypeId == 0) {
-                //    toastr.error(`Select stock type at row ${i + 1}`);
-                //    hasError = true;
-                //    break;
-                //}
-                //if (child.StockQty == 0) {
-                //    toastr.error(`Stock quantity unavailable at row ${i + 1}`);
-                //    hasError = true;
-                //    break;
+                if (child.StockTypeId == 0) {
+                    toastr.error(`Select stock type at row ${i + 1}`);
+                    hasError = true;
+                    break;
+                }
+                if (child.StockQty == 0) {
+                    toastr.error(`Stock quantity unavailable at row ${i + 1}`);
+                    hasError = true;
+                    break;
                 //}
             }
             if (child.ReqQty <= 0) {

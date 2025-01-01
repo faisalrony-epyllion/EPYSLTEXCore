@@ -1396,7 +1396,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 {CommonQueries.GetDayValidDurations()};
 
                 --Fiber-SubProgram-Certifications Mapping Setup
-                Select * FROM {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP}";
+                Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup";
             try
             {
                 await _connection.OpenAsync();
@@ -1552,7 +1552,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 {CommonQueries.GetDayValidDurations()};
 
                 --Fiber - SubProgram - Certifications Mapping Setup
-                Select* FROM {TableNames.FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP}";
+                Select* FROM {DbNames.EPYSL}..FabricComponentMappingSetup";
             try
             {
                 await _connection.OpenAsync();

@@ -186,10 +186,14 @@ namespace EPYSLTEX.Web.Controllers.Apis
             ItemSegmentMappingValuesDTO itemSegmenValues =null ;
             _memoryCache.TryGetValue(cacheKey, out itemSegmenValues);
 
+#if DEBUG
 
+#else
             if (itemSegmenValues is null)
-            {
-                var itemSegmentValueList = _itemMasterService.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetItemSegmentValuesBySegmentNamesWithMapping(), DB_TYPE.textile).ToList();
+            {         
+#endif
+
+            var itemSegmentValueList = _itemMasterService.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetItemSegmentValuesBySegmentNamesWithMapping(), DB_TYPE.textile).ToList();
 
                 itemSegmenValues = new ItemSegmentMappingValuesDTO
                 {
@@ -205,15 +209,19 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     //YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
 
                 };
-         
-                  
-                _memoryCache.Set(cacheKey, CommonFunction.DeepClone(itemSegmenValues), TimeSpan.FromDays(1)); 
+
+
+                _memoryCache.Set(cacheKey, CommonFunction.DeepClone(itemSegmenValues), TimeSpan.FromDays(1));
 
 
 
-            }
+#if DEBUG
 
-            ItemSegmentMappingValuesDTO itemSegmenValuesFinal = CommonFunction.DeepClone(itemSegmenValues);
+#else
+        }          
+#endif
+
+                    ItemSegmentMappingValuesDTO itemSegmenValuesFinal = CommonFunction.DeepClone(itemSegmenValues);
             if (!compositionIds.IsNullOrEmpty())
             {
                 List<int> compositionList = compositionIds.Split(',')

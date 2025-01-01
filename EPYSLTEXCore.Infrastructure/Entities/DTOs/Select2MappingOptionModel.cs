@@ -12,6 +12,7 @@
         public int ColorGradeID { get; set; }
         public int YarnCountID { get; set; }
         public int ShadeReferenceID { get; set; }
+        public string ManufacturingLines { get; set; }
         public bool IsInactive { get; set; }
         public string ManufacturingLine { get; set; }
         public string ManufacturingProcess { get; set; }

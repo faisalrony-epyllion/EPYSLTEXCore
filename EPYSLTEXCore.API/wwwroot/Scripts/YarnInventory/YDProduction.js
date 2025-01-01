@@ -31,7 +31,7 @@
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
 
         status = statusConstants.PENDING;
-        debugger;
+        
         if (menuParam == 'A') {
             YDProductionAcknowledgePage = false; YDProductionApprovePage = true;
         }
@@ -73,7 +73,6 @@
             toggleActiveToolbarBtn(this, $toolbarEl);
             resetTableParams();
             status = statusConstants.PENDING;
-
             initMasterTable();
         });
 
@@ -82,7 +81,6 @@
             toggleActiveToolbarBtn(this, $toolbarEl);
             resetTableParams();
             status = statusConstants.UN_APPROVE;
-
             initMasterTable();
         });
 

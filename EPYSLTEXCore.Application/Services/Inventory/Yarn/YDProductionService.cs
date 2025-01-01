@@ -48,15 +48,15 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //                    --Select YDBCT.YDBookingMasterID, BM.YDBookingNo, BM.YDBookingDate, BM.BuyerID, BM.GroupConceptNo, 
             //                    --BM.Remarks, YDBCT.ColorId, YDBCT.ColorCode, YDBCT.ItemMasterID, YDBCT.UnitID
             //                    --From YDBookingChildTwisting YDBCT
-            //                    --INNER Join YDBookingMaster BM On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
+            //                    --INNER JOIN {TableNames.YD_BOOKING_MASTER} BM On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
             //                    --LEFT JOIN YDProductionChild YDC ON YDC.YDBCTwistingID = YDBCT.YDBCTwistingID
             //                    --Where BM.IsAcknowledge = 1 And YDC.YDBCTwistingID IS NULL
             //		Select YRDM.YDRecipeNo,YRRM.RecipeReqNo,YDBCT.YDBookingMasterID, BM.YDBookingNo, BM.YDBookingDate, BM.BuyerID, YRRM.GroupConceptNo, 
             //                 BM.Remarks, YDBCT.ColorId, YDBCT.ColorCode, YDBCT.ItemMasterID, YDBCT.UnitID
             //                    FROM YDRecipeDefinitionMaster YRDM
-            //		LEFT JOIN YDRecipeRequestMaster YRRM ON YRRM.YDRecipeReqMasterID = YRDM.YDRecipeReqMasterID
-            //		LEFT JOIN YDBookingChild YBC ON YBC.YDBookingChildID = YRRM.YDBookingChildID
-            //		LEFT JOIN YDBookingMaster BM ON BM.YDBookingMasterID = YBC.YDBookingMasterID
+            //		LEFT JOIN {TableNames.YD_RECIPE_REQ_MASTER} YRRM ON YRRM.YDRecipeReqMasterID = YRDM.YDRecipeReqMasterID
+            //		LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingChildID = YRRM.YDBookingChildID
+            //		LEFT JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = YBC.YDBookingMasterID
             //		LEFT JOIN YDBookingChildTwisting YDBCT ON YDBCT.YDBookingMasterID = BM.YDBookingMasterID
             //		LEFT JOIN YDProductionChild YDC ON YDC.YDBCTwistingID = YDBCT.YDBCTwistingID
             //		WHERE YRDM.Acknowledged=1
@@ -72,7 +72,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //                ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
             //                FROM M
             //                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-            //    --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = M.GroupConceptNo
+            //    --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = M.GroupConceptNo
             //                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = M.ColorId
             //    LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = M.ItemMasterID
             //    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -101,7 +101,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             SELECT	PM.YDProductionMasterID, PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, 
             //             PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge,
             //             PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-            //             FROM YDProductionMaster PM WHERE ISNULL(PM.IsApprove,0) = 0 AND ISNULL(PM.IsAcknowledge,0) = 0 
+            //             FROM {TableNames.YD_PRODUCTION_MASTER} PM WHERE ISNULL(PM.IsApprove,0) = 0 AND ISNULL(PM.IsAcknowledge,0) = 0 
             //            ),  
             //            CHILD AS 
             //            (
@@ -111,7 +111,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             ISV5.SegmentValueID Segment5ValueId, ISV6.SegmentValueID Segment6ValueId, ISV7.SegmentValueID Segment7ValueId,
             //             ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc,
             //             ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-            //             FROM YDProductionChild C
+            //             FROM {TableNames.YD_PRODUCTION_CHILD} C
             //             INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
             //             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
             //             LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -137,9 +137,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc	
             //             FROM M
             //             INNER JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
-            //             INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-            //             LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-            //             INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+            //             INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+            //             LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+            //             INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
             //             INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
             //             INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
             //             INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -156,7 +156,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //            (
             //                SELECT	PM.YDProductionMasterID, PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, 
             //                PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge, PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-            //                FROM YDProductionMaster PM 
+            //                FROM {TableNames.YD_PRODUCTION_MASTER} PM 
             //                WHERE ISNULL(PM.IsApprove,0) = 1 AND ISNULL(PM.IsAcknowledge,0) = 0
             //            ),  
             //            CHILD AS 
@@ -167,7 +167,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //                ISV7.SegmentValueID Segment7ValueId, ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, 
             //                ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc, 
             //                ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-            //             FROM YDProductionChild C
+            //             FROM {TableNames.YD_PRODUCTION_CHILD} C
             //             INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
             //             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
             //             LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -194,9 +194,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc
             //             FROM M
             //             INNER JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
-            //             INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-            //             LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-            //             INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+            //             INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+            //             LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+            //             INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
             //             INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
             //             INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
             //             INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -212,7 +212,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //            (
             //                SELECT	PM.YDProductionMasterID, PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, 
             //                PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge, PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-            //                FROM YDProductionMaster PM 
+            //                FROM {TableNames.YD_PRODUCTION_MASTER} PM 
             //                WHERE ISNULL(PM.IsApprove,0) = 1 AND ISNULL(PM.IsAcknowledge,0) = 1
             //            ),  
             //            CHILD AS 
@@ -222,7 +222,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             ISV5.SegmentValueID Segment5ValueId, ISV6.SegmentValueID Segment6ValueId, ISV7.SegmentValueID Segment7ValueId,
             //             ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc,
             //             ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-            //             FROM YDProductionChild C
+            //             FROM {TableNames.YD_PRODUCTION_CHILD} C
             //             INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
             //             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
             //             LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -248,9 +248,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc
             //             FROM M
             //             INNER JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
-            //             INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-            //             LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-            //             INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+            //             INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+            //             LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+            //             INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
             //             INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
             //             INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
             //             INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -266,7 +266,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //            (
             //                SELECT	PM.YDProductionMasterID, PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge,
             //             PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-            //                FROM YDProductionMaster PM 
+            //                FROM {TableNames.YD_PRODUCTION_MASTER} PM 
             //                WHERE ISNULL(PM.IsApprove,0) = 1 AND ISNULL(PM.IsAcknowledge,0) = 1
             //            ),  
             //            CHILD AS 
@@ -276,7 +276,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             ISV5.SegmentValueID Segment5ValueId, ISV6.SegmentValueID Segment6ValueId, ISV7.SegmentValueID Segment7ValueId,
             //             ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc,
             //             ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-            //             FROM YDProductionChild C
+            //             FROM {TableNames.YD_PRODUCTION_CHILD} C
             //             INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
             //             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
             //             LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -302,9 +302,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //             STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc
             //             FROM M
             //             INNER JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
-            //             INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-            //             LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-            //             INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+            //             INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+            //             LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+            //             INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
             //             INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
             //             INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
             //             INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -325,14 +325,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                         YDBM.YDDBatchNo,YDBM.YDDBatchID,
                         YBC.YDBookingMasterID, BM.YDBookingNo, BM.YDBookingDate, BM.BuyerID, YRRM.GroupConceptNo, 
                         BM.Remarks, YBC.ColorId, YBC.ColorCode, YBC.ItemMasterID, YBC.UnitID 
-                        FROM YDBookingMaster BM
-                        INNER JOIN YDBookingChild YBC ON YBC.YDBookingMasterID = BM.YDBookingMasterID
-                        INNER JOIN YDRecipeRequestMaster YRRM ON YRRM.YDBookingChildID = YBC.YDBookingChildID
-                        INNER JOIN YDRecipeDefinitionMaster YRDM ON YRDM.YDRecipeReqMasterID = YRRM.YDRecipeReqMasterID
-                        INNER JOIN YDBatchItemRequirement YDBIR ON YDBIR.YDBookingChildID=YBC.YDBookingChildID
-                        INNER JOIN YDDyeingBatchItem YDDBI ON YDDBI.YDBItemReqID=YDBIR.YDBItemReqID
-                        INNER JOIN YDDyeingBatchMaster YDBM ON YDBM.YDDBatchID = YDDBI.YDDBatchID
-                        LEFT JOIN YDProductionMaster YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
+                        FROM {TableNames.YD_BOOKING_MASTER} BM
+                        INNER JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID = BM.YDBookingMasterID
+                        INNER JOIN {TableNames.YD_RECIPE_REQ_MASTER} YRRM ON YRRM.YDBookingChildID = YBC.YDBookingChildID
+                        INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} YRDM ON YRDM.YDRecipeReqMasterID = YRRM.YDRecipeReqMasterID
+                        INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} YDBIR ON YDBIR.YDBookingChildID=YBC.YDBookingChildID
+                        INNER JOIN {TableNames.YD_DYEING_BATCH_ITEM} YDDBI ON YDDBI.YDBItemReqID=YDBIR.YDBItemReqID
+                        INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} YDBM ON YDBM.YDDBatchID = YDDBI.YDDBatchID
+                        LEFT JOIN {TableNames.YD_PRODUCTION_MASTER} YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
                         WHERE YRDM.Acknowledged=1 AND YDM.YDProductionMasterID IS NULL
                 ),
                 A AS
@@ -346,7 +346,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                     ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
                     FROM M
                     LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-				    --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = M.GroupConceptNo
+				    --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = M.GroupConceptNo
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = M.ColorId
 				    LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = M.ItemMasterID
 				    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -377,11 +377,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 					PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, 
 	                PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge,
 	                PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-	                FROM YDProductionMaster PM 
-					--INNER JOIN YDBookingChild YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
-					INNER JOIN YDRecipeDefinitionMaster YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
-					INNER JOIN YDDyeingBatchMaster YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
-					INNER JOIN YDProductionMaster YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
+	                FROM {TableNames.YD_PRODUCTION_MASTER} PM 
+					--INNER JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
+					INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
+					INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
+					INNER JOIN {TableNames.YD_PRODUCTION_MASTER} YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
 					WHERE ISNULL(PM.IsApprove,0) = 0 AND ISNULL(PM.IsAcknowledge,0) = 0 
                 ),  
                 CHILD AS 
@@ -392,7 +392,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                ISV5.SegmentValueID Segment5ValueId, ISV6.SegmentValueID Segment6ValueId, ISV7.SegmentValueID Segment7ValueId,
 	                ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc,
 	                ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-	                FROM YDProductionChild C
+	                FROM {TableNames.YD_PRODUCTION_CHILD} C
 	                INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
 	                LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -420,9 +420,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc	
 	                FROM M
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-	                INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-	                --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-	                INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+	                INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+	                --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+	                INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
 	                INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
 	                INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
 	                INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -442,11 +442,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 					PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, 
 	                PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge,
 	                PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-	                FROM YDProductionMaster PM 
-					--INNER JOIN YDBookingChild YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
-					INNER JOIN YDRecipeDefinitionMaster YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
-					INNER JOIN YDDyeingBatchMaster YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
-					INNER JOIN YDProductionMaster YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
+	                FROM {TableNames.YD_PRODUCTION_MASTER} PM 
+					--INNER JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
+					INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
+					INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
+					INNER JOIN {TableNames.YD_PRODUCTION_MASTER} YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
 					WHERE ISNULL(PM.IsApprove,0) = 1 AND ISNULL(PM.IsAcknowledge,0) = 0 
                 ),  
                 CHILD AS 
@@ -457,7 +457,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                ISV5.SegmentValueID Segment5ValueId, ISV6.SegmentValueID Segment6ValueId, ISV7.SegmentValueID Segment7ValueId,
 	                ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc,
 	                ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-	                FROM YDProductionChild C
+	                FROM {TableNames.YD_PRODUCTION_CHILD} C
 	                INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
 	                LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -485,9 +485,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc	
 	                FROM M
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-	                INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-	                --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-	                INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+	                INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+	                --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+	                INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
 	                INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
 	                INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
 	                INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -507,11 +507,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 					PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, 
 	                PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge,
 	                PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-	                FROM YDProductionMaster PM 
-					--INNER JOIN YDBookingChild YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
-					INNER JOIN YDRecipeDefinitionMaster YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
-					INNER JOIN YDDyeingBatchMaster YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
-					INNER JOIN YDProductionMaster YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
+	                FROM {TableNames.YD_PRODUCTION_MASTER} PM 
+					--INNER JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
+					INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
+					INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
+					INNER JOIN {TableNames.YD_PRODUCTION_MASTER} YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
 					WHERE ISNULL(PM.IsApprove,0) = 1 AND ISNULL(PM.IsAcknowledge,0) = 1
                 ),  
                 CHILD AS 
@@ -522,7 +522,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                ISV5.SegmentValueID Segment5ValueId, ISV6.SegmentValueID Segment6ValueId, ISV7.SegmentValueID Segment7ValueId,
 	                ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc,
 	                ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-	                FROM YDProductionChild C
+	                FROM {TableNames.YD_PRODUCTION_CHILD} C
 	                INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
 	                LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -550,9 +550,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc	
 	                FROM M
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-	                INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-	                --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-	                INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+	                INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+	                --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+	                INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
 	                INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
 	                INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
 	                INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -572,11 +572,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 					PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, 
 	                PM.BuyerID, PM.Remarks, PM.IsApprove, PM.IsAcknowledge,
 	                PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-	                FROM YDProductionMaster PM 
-					--INNER JOIN YDBookingChild YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
-					INNER JOIN YDRecipeDefinitionMaster YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
-					INNER JOIN YDDyeingBatchMaster YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
-					INNER JOIN YDProductionMaster YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
+	                FROM {TableNames.YD_PRODUCTION_MASTER} PM 
+					--INNER JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
+					INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
+					INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
+					INNER JOIN {TableNames.YD_PRODUCTION_MASTER} YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
 					WHERE ISNULL(PM.IsApprove,0) = 1 AND ISNULL(PM.IsAcknowledge,0) = 1
                 ),  
                 CHILD AS 
@@ -587,7 +587,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                ISV5.SegmentValueID Segment5ValueId, ISV6.SegmentValueID Segment6ValueId, ISV7.SegmentValueID Segment7ValueId,
 	                ISV1.SegmentValue Segment1ValueDesc, ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc,
 	                ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc
-	                FROM YDProductionChild C
+	                FROM {TableNames.YD_PRODUCTION_CHILD} C
 	                INNER JOIN M ON M.YDProductionMasterID = C.YDProductionMasterID
 	                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
 	                LEFT JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
@@ -615,9 +615,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 	                STRING_AGG(CHILD.Segment6ValueDesc,',') Segment6ValueDesc, STRING_AGG(CHILD.Segment7ValueDesc,',') Segment7ValueDesc	
 	                FROM M
 	                LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-	                INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-	                --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
-	                INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+	                INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+	                --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
+	                INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
 	                INNER JOIN {DbNames.EPYSL}..Employee E ON E.EmployeeCode = M.OperatorID
 	                INNER JOIN {DbNames.EPYSL}..ShiftInfo S ON S.ShiftId = M.ShiftID
 	                INNER JOIN CHILD ON CHILD.YDProductionMasterID = M.YDProductionMasterID
@@ -644,16 +644,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //var sql = $@"
             //    ;WITH M AS (
             //     SELECT	BM.YDBookingMasterID, BM.YDBookingNo, BM.YDBookingDate, BM.BuyerID, BM.GroupConceptNo
-            //     FROM YDBookingMaster BM
-            //        INNER Join YDBookingChild YDBCT On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
+            //     FROM {TableNames.YD_BOOKING_MASTER} BM
+            //        INNER JOIN {TableNames.YDBookingChild} YDBCT On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
             //        --INNER Join YDBookingChildTwisting YDBCT On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
             //        WHERE BM.YDBookingMasterID = {newId} AND YDBCT.ItemMasterID={itemMasterID}
             //    )
             //    SELECT M.YDBookingMasterID, M.YDBookingNo, M.YDBookingDate, M.BuyerID, CTO.Name Buyer,M.GroupConceptNo--,FC.ColorName
             //    FROM M
             //    LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-            //    --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = M.GroupConceptNo
-            //    --LEFT JOIN FreeConceptChildColor FC ON FC.ConceptID = FM.ConceptID
+            //    --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = M.GroupConceptNo
+            //    --LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FC ON FC.ConceptID = FM.ConceptID
             //    GROUP BY M.YDBookingMasterID, M.YDBookingNo, M.YDBookingDate, M.BuyerID, CTO.Name,M.GroupConceptNo; --,FC.ColorName;
 
             //    -- Childs
@@ -665,9 +665,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             //    ISV5.SegmentValue Segment5ValueDesc, ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc,
             //    YDBC.ShadeCode ShadeCode,Color.SegmentValue AS ColorName,YDBC.ColorId,YDBC.ColorCode,YDBC.DPID, YDBC.DPProcessInfo,
             //    DP.DPName, YDBC.NoOfCone BookingConeQty
-            //    FROM YDBookingChild YDBC
-            //    INNER JOIN YDBookingMaster YDBM ON YDBC.YDBookingMasterID=YDBM.YDBookingMasterID
-            //    LEFT JOIN DyeingProcessPart_HK DP ON DP.DPID=YDBC.DPID
+            //    JOIN {TableNames.YDBookingChild} YDBC
+            //    INNER JOIN {TableNames.YD_BOOKING_MASTER} YDBM ON YDBC.YDBookingMasterID=YDBM.YDBookingMasterID
+            //    LEFT JOIN {TableNames.DyeingProcessPart_HK} DP ON DP.DPID=YDBC.DPID
             //    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = YDBC.ColorId
             //    INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YDBC.ItemMasterID
             //    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -697,21 +697,21 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             var sql = $@"
                 ;WITH M AS (
 	                SELECT	YRDM.YDRecipeID,YDBM.YDDBatchID,BM.YDBookingMasterID, YRDM.YDRecipeNo,YDBM.YDDBatchNo,BM.YDBookingNo, BM.YDBookingDate, BM.BuyerID, BM.GroupConceptNo
-	                FROM YDBookingMaster BM
-                    INNER Join YDBookingChild YDBCT On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
-					INNER JOIN YDRecipeRequestMaster YRRM ON YRRM.YDBookingChildID = YDBCT.YDBookingChildID
-					INNER JOIN YDRecipeDefinitionMaster YRDM ON YRDM.YDRecipeReqMasterID = YRRM.YDRecipeReqMasterID
-					INNER JOIN YDBatchItemRequirement YDBIR ON YDBIR.YDBookingChildID=YDBCT.YDBookingChildID
-					INNER JOIN YDDyeingBatchItem YDDBI ON YDDBI.YDBItemReqID=YDBIR.YDBItemReqID
-					INNER JOIN YDDyeingBatchMaster YDBM ON YDBM.YDDBatchID = YDDBI.YDDBatchID
+	                FROM {TableNames.YD_BOOKING_MASTER} BM
+                    INNER JOIN {TableNames.YDBookingChild} YDBCT On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
+					INNER JOIN {TableNames.YD_RECIPE_REQ_MASTER} YRRM ON YRRM.YDBookingChildID = YDBCT.YDBookingChildID
+					INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} YRDM ON YRDM.YDRecipeReqMasterID = YRRM.YDRecipeReqMasterID
+					INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} YDBIR ON YDBIR.YDBookingChildID=YDBCT.YDBookingChildID
+					INNER JOIN {TableNames.YD_DYEING_BATCH_ITEM} YDDBI ON YDDBI.YDBItemReqID=YDBIR.YDBItemReqID
+					INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} YDBM ON YDBM.YDDBatchID = YDDBI.YDDBatchID
 					--YDBookingChildTwisting YDBCT On BM.YDBookingMasterID = YDBCT.YDBookingMasterID
                     WHERE BM.YDBookingMasterID = {newId} AND YDBCT.ItemMasterID={itemMasterID} AND YDBM.YDDBatchID={ydDBatchID}
                 )
                 SELECT M.YDRecipeID,M.YDDBatchID,M.YDBookingMasterID,M.YDRecipeNo,M.YDDBatchNo, M.YDBookingNo, M.YDBookingDate, M.BuyerID, CTO.Name Buyer,M.GroupConceptNo--,FC.ColorName
                 FROM M
                 LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID AND CTO.ContactID > 0
-                --LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = M.GroupConceptNo
-                --LEFT JOIN FreeConceptChildColor FC ON FC.ConceptID = FM.ConceptID
+                --LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = M.GroupConceptNo
+                --LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FC ON FC.ConceptID = FM.ConceptID
                 GROUP BY M.YDRecipeID,M.YDDBatchID,M.YDBookingMasterID, M.YDRecipeNo,M.YDDBatchNo,M.YDBookingNo, M.YDBookingDate, M.BuyerID, CTO.Name,M.GroupConceptNo; --,FC.ColorName;
                    
                 -- Childs
@@ -726,10 +726,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 FROM
 				YDBookingChild YDBC
 				--YDBookingChildTwisting YDBC
-				INNER JOIN YDBatchItemRequirement YDBIR ON YDBIR.YDBookingChildID=YDBC.YDBookingChildID
-				INNER JOIN YDDyeingBatchItem YDDBI ON YDDBI.YDBItemReqID=YDBIR.YDBItemReqID
-                INNER JOIN YDBookingMaster YDBM ON YDBC.YDBookingMasterID=YDBM.YDBookingMasterID
-                LEFT JOIN DyeingProcessPart_HK DP ON DP.DPID=YDBC.DPID
+				INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} YDBIR ON YDBIR.YDBookingChildID=YDBC.YDBookingChildID
+				INNER JOIN {TableNames.YD_DYEING_BATCH_ITEM} YDDBI ON YDDBI.YDBItemReqID=YDBIR.YDBItemReqID
+                INNER JOIN {TableNames.YD_BOOKING_MASTER} YDBM ON YDBC.YDBookingMasterID=YDBM.YDBookingMasterID
+                LEFT JOIN {TableNames.DyeingProcessPart_HK} DP ON DP.DPID=YDBC.DPID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = YDBC.ColorId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YDBC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -791,21 +791,21 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 				YRDM.YDRecipeNo,YRDM.YDRecipeID,YDBM.YDDBatchNo,PM.YDDBatchID,
 				PM.YDProductionNo, PM.YDProductionDate, PM.YDBookingMasterID, PM.BuyerID, 
 	            PM.Remarks, PM.IsApprove, PM.IsAcknowledge, PM.ShiftID, PM.DMID, PM.OperatorID, PM.BatchNo
-                FROM YDProductionMaster PM
-				--INNER JOIN YDBookingChild YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
-				INNER JOIN YDRecipeDefinitionMaster YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
-				INNER JOIN YDDyeingBatchMaster YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
-				INNER JOIN YDProductionMaster YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
+                FROM {TableNames.YD_PRODUCTION_MASTER} PM
+				--INNER JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID = PM.YDBookingMasterID
+				INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} YRDM ON YRDM.YDRecipeID= PM.YDRecipeID
+				INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} YDBM ON YDBM.YDDBatchID = PM.YDDBatchID
+				INNER JOIN {TableNames.YD_PRODUCTION_MASTER} YDM ON YDM.YDDBatchID = YDBM.YDDBatchID
 	            WHERE PM.YDProductionMasterID = {id}
             )
             SELECT M.YDProductionMasterID, M.YDRecipeNo,M.YDRecipeID,M.YDDBatchNo,M.YDDBatchID,M.YDProductionNo, M.YDProductionDate, M.YDBookingMasterID, M.BuyerID, 
             M.Remarks, M.IsApprove, M.IsAcknowledge, M.ShiftID, M.DMID, M.OperatorID, M.BatchNo, DM.DyeingMcslNo MCSLNo, 
             BM.YDBookingNo, BM.YDBookingDate, CTO.Name Buyer,FM.GroupConceptNo,Count(*) Over() TotalRows
             FROM M
-            INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
+            INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
             INNER JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
-            INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
-            LEFT JOIN FreeConceptMaster FM ON FM.GroupConceptNo = BM.GroupConceptNo
+            INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+            LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.GroupConceptNo = BM.GroupConceptNo
             Group By M.YDProductionMasterID,M.YDRecipeNo,M.YDRecipeID,M.YDDBatchNo,M.YDDBatchID, M.YDProductionNo, M.YDProductionDate, M.YDBookingMasterID, M.BuyerID, 
             M.Remarks, M.IsApprove, M.IsAcknowledge, M.ShiftID, M.DMID, M.OperatorID, M.BatchNo, DM.DyeingMcslNo, 
             BM.YDBookingNo, BM.YDBookingDate, CTO.Name,FM.GroupConceptNo; 
@@ -817,10 +817,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             ISV2.SegmentValue Segment2ValueDesc, ISV3.SegmentValue Segment3ValueDesc, ISV4.SegmentValue Segment4ValueDesc, ISV5.SegmentValue Segment5ValueDesc,
             ISV6.SegmentValue Segment6ValueDesc, ISV7.SegmentValue Segment7ValueDesc, YDBC.ShadeCode ShadeCode,Color.SegmentValue ColorName,YDBC.ColorId,
             YDBC.ColorCode,YDBC.DPID,YDBC.DPProcessInfo,DP.DPName,YDBC.ProducedQty,YDBC.ProducedCone, YDBCT.NoOfCone BookingConeQty,YDBC.YDRICRBId
-            FROM YDProductionChild YDBC
-            INNER JOIN YDProductionMaster YDBM ON YDBC.YDProductionMasterID = YDBM.YDProductionMasterID
-            INNER JOIN YDBookingChild YDBCT ON YDBCT.YDBookingChildID = YDBC.YDBookingChildID
-            LEFT JOIN DyeingProcessPart_HK DP ON DP.DPID = YDBC.DPID
+            FROM {TableNames.YD_PRODUCTION_CHILD} YDBC
+            INNER JOIN {TableNames.YD_PRODUCTION_MASTER} YDBM ON YDBC.YDProductionMasterID = YDBM.YDProductionMasterID
+            INNER JOIN {TableNames.YDBookingChild} YDBCT ON YDBCT.YDBookingChildID = YDBC.YDBookingChildID
+            LEFT JOIN {TableNames.DyeingProcessPart_HK} DP ON DP.DPID = YDBC.DPID
             Left JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = YDBC.ColorId
             INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON YDBC.ItemMasterID = IM.ItemMasterID
             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
@@ -870,9 +870,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
         public async Task<YDProductionMaster> GetAllAsync(int id)
         {
             var sql = $@"
-            ;Select * From YDProductionMaster Where YDProductionMasterID = {id}
+            ;Select * FROM {TableNames.YD_PRODUCTION_MASTER} Where YDProductionMasterID = {id}
 
-            ;Select * From YDProductionChild Where YDProductionMasterID = {id}";
+            ;Select * FROM {TableNames.YD_PRODUCTION_CHILD} Where YDProductionMasterID = {id}";
 
             try
             {

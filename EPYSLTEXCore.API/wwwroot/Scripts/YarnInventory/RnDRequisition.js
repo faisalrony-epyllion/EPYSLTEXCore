@@ -48,7 +48,7 @@
         //isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
         //isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
         //isYDAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#YDAcknowledgePage").val());
-
+        
         if ( menuParam == "Ack") isAcknowledgePage = true;
         else if ( menuParam == "A") isApprovePage = true;
         else if ( menuParam == "YDAck") isYDAcknowledgePage = true;

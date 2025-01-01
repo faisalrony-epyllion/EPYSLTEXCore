@@ -45,7 +45,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="form-horizontal">
-                                <div class="col-sm-4">
+                                @* <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="control-label col-sm-4 small">Fiber Type</label>
                                         <div class="col-sm-8">
@@ -76,18 +76,12 @@
                                             <select id="SubProgramID" name="SubProgramID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
-                                </div>
-								<div class="col-sm-4">
-                                    <div class="form-group">
+                                </div> *@
+								<div class="col-sm-6">
+                                    @* <div class="form-group">
                                         <label class="control-label col-sm-4 small">Certification</label>
                                         <div class="col-sm-8">
                                             <select id="CertificationID" name="CertificationID" class="form-control form-control-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Technical Parameter</label>
-                                        <div class="col-sm-8">
-                                            <select id="TechnicalParameterID" name="TechnicalParameterID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -95,33 +89,33 @@
                                         <div class="col-sm-8">
                                             <select id="YarnCompositionID" name="YarnCompositionID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
-                                    </div>
-									<div class="form-group">
-                                        <label class="control-label col-sm-4 small">Shade Reference</label>
-                                        <div class="col-sm-8">
-                                            <select id="ShadeReferenceID" name="ShadeReferenceID" class="form-control form-control-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
+                                    </div> *@
 									<div class="form-group">
                                         <label class="control-label col-sm-4 small">Manufacturing Line</label>
                                         <div class="col-sm-8">
                                             <select id="ManufacturingLineID" name="ManufacturingLineID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Manufacturing Process</label>
+										<div class="col-sm-8">
+											<select id="ManufacturingProcessID" name="ManufacturingProcessID" class="form-control form-control-sm" style="width:100%"></select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Manufacturing Sub-Process</label>
+										<div class="col-sm-8">
+											<select id="ManufacturingSubProcessID" name="ManufacturingSubProcessID" class="form-control form-control-sm" style="width:100%"></select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Technical Parameter</label>
+										<div class="col-sm-8">
+											<select id="TechnicalParameterID" name="TechnicalParameterID" class="form-control form-control-sm" style="width:100%"></select>
+										</div>
+									</div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Manufacturing Process</label>
-                                        <div class="col-sm-8">
-                                            <select id="ManufacturingProcessID" name="ManufacturingProcessID" class="form-control form-control-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-4 small">Manufacturing Sub-Process</label>
-                                        <div class="col-sm-8">
-                                            <select id="ManufacturingSubProcessID" name="ManufacturingSubProcessID" class="form-control form-control-sm" style="width:100%"></select>
-                                        </div>
-                                    </div>
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="control-label col-sm-4 small">Color</label>
                                         <div class="col-sm-8">
@@ -140,6 +134,12 @@
                                             <select id="YarnCountID" name="YarnCountID" class="form-control form-control-sm" style="width:100%"></select>
                                         </div>
                                     </div>
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Shade Reference</label>
+										<div class="col-sm-8">
+											<select id="ShadeReferenceID" name="ShadeReferenceID" class="form-control form-control-sm" style="width:100%"></select>
+										</div>
+									</div>
                                 </div>
                             </div>
                         </div>

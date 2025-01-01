@@ -38,14 +38,14 @@
             e.preventDefault();
             _isEdit = false;
             status = statusConstants.NEW;
-            $formEl.find('#FiberTypeID').prop('disabled', false);
-            $formEl.find('#BlendTypeID').prop('disabled', false);
-            $formEl.find('#YarnTypeID').prop('disabled', false);
-            $formEl.find('#ProgramID').prop('disabled', false);
-            $formEl.find('#SubProgramID').prop('disabled', false);
-            $formEl.find('#CertificationID').prop('disabled', false);
+            //$formEl.find('#FiberTypeID').prop('disabled', false);
+            //$formEl.find('#BlendTypeID').prop('disabled', false);
+            //$formEl.find('#YarnTypeID').prop('disabled', false);
+            //$formEl.find('#ProgramID').prop('disabled', false);
+            //$formEl.find('#SubProgramID').prop('disabled', false);
+            //$formEl.find('#CertificationID').prop('disabled', false);
             $formEl.find('#TechnicalParameterID').prop('disabled', false);
-            $formEl.find('#YarnCompositionID').prop('disabled', false);
+            //$formEl.find('#YarnCompositionID').prop('disabled', false);
             $formEl.find('#ShadeReferenceID').prop('disabled', false);
             $formEl.find('#ManufacturingLineID').prop('disabled', false);
             $formEl.find('#ManufacturingProcessID').prop('disabled', false);
@@ -110,33 +110,27 @@
             { field: 'YRMPChildID', headerText: 'YRMPChildID', visible: false },
             { field: 'SupplierID', headerText: 'SupplierID', visible: false },
             { field: 'SpinnerID', headerText: 'SpinnerID', visible: false },
-            {
-                field: 'FiberType', headerText: 'Fiber Type'
-            },
-            {
-                field: 'BlendType', headerText: 'Blend Type'
-            },
-            {
-                field: 'YarnType', headerText: 'Yarn Type'
-            },
-            {
-                field: 'Program', headerText: 'Program'
-            },
-            {
-                field: 'SubProgram', headerText: 'Sub-Program'
-            },
-            {
-                field: 'Certification', headerText: 'Certification'
-            },
-            {
-                field: 'TechnicalParameter', headerText: 'Technical Parameter'
-            },
-            {
-                field: 'YarnComposition', headerText: 'Yarn Composition'
-            },
-            {
-                field: 'ShadeReference', headerText: 'Shade Reference'
-            },
+            //{
+            //    field: 'FiberType', headerText: 'Fiber Type'
+            //},
+            //{
+            //    field: 'BlendType', headerText: 'Blend Type'
+            //},
+            //{
+            //    field: 'YarnType', headerText: 'Yarn Type'
+            //},
+            //{
+            //    field: 'Program', headerText: 'Program'
+            //},
+            //{
+            //    field: 'SubProgram', headerText: 'Sub-Program'
+            //},
+            //{
+            //    field: 'Certification', headerText: 'Certification'
+            //},
+            //{
+            //    field: 'YarnComposition', headerText: 'Yarn Composition'
+            //},
             {
                 field: 'ManufacturingLine', headerText: 'Manufacturing Line'
             },
@@ -147,6 +141,9 @@
                 field: 'ManufacturingSubProcess', headerText: 'Manufacturing Sub-Process'
             },
             {
+                field: 'TechnicalParameter', headerText: 'Technical Parameter'
+            },
+            {
                 field: 'Color', headerText: 'Color'
             },
             {
@@ -154,6 +151,9 @@
             },
             {
                 field: 'YarnCount', headerText: 'Yarn Count'
+            },
+            {
+                field: 'ShadeReference', headerText: 'Shade Reference'
             },
             {
                 field: 'Supplier', headerText: 'Supplier'
@@ -176,14 +176,14 @@
     function handleCommands(args) {
         if (args.commandColumn.type == 'Edit') {
             _isEdit = true;
-            $formEl.find('#FiberTypeID').prop('disabled', true);
-            $formEl.find('#BlendTypeID').prop('disabled', true);
-            $formEl.find('#YarnTypeID').prop('disabled', true);
-            $formEl.find('#ProgramID').prop('disabled', true);
-            $formEl.find('#SubProgramID').prop('disabled', true);
-            $formEl.find('#CertificationID').prop('disabled', true);
+            //$formEl.find('#FiberTypeID').prop('disabled', true);
+            //$formEl.find('#BlendTypeID').prop('disabled', true);
+            //$formEl.find('#YarnTypeID').prop('disabled', true);
+            //$formEl.find('#ProgramID').prop('disabled', true);
+            //$formEl.find('#SubProgramID').prop('disabled', true);
+            //$formEl.find('#CertificationID').prop('disabled', true);
             $formEl.find('#TechnicalParameterID').prop('disabled', true);
-            $formEl.find('#YarnCompositionID').prop('disabled', true);
+            //$formEl.find('#YarnCompositionID').prop('disabled', true);
             $formEl.find('#ShadeReferenceID').prop('disabled', true);
             $formEl.find('#ManufacturingLineID').prop('disabled', true);
             $formEl.find('#ManufacturingProcessID').prop('disabled', true);
@@ -268,14 +268,14 @@
 
         var data = formDataToJson($formEl.serializeArray());
 
-        data.FiberTypeID = getDefaultValueWhenInvalidN($formEl.find('#FiberTypeID').val());
-        data.BlendTypeID = getDefaultValueWhenInvalidN($formEl.find('#BlendTypeID').val());
-        data.YarnTypeID = getDefaultValueWhenInvalidN($formEl.find('#YarnTypeID').val());
-        data.ProgramID = getDefaultValueWhenInvalidN($formEl.find('#ProgramID').val());
-        data.SubProgramID = getDefaultValueWhenInvalidN($formEl.find('#SubProgramID').val());
-        data.CertificationID = getDefaultValueWhenInvalidN($formEl.find('#CertificationID').val());
+        //data.FiberTypeID = getDefaultValueWhenInvalidN($formEl.find('#FiberTypeID').val());
+        //data.BlendTypeID = getDefaultValueWhenInvalidN($formEl.find('#BlendTypeID').val());
+        //data.YarnTypeID = getDefaultValueWhenInvalidN($formEl.find('#YarnTypeID').val());
+        //data.ProgramID = getDefaultValueWhenInvalidN($formEl.find('#ProgramID').val());
+        //data.SubProgramID = getDefaultValueWhenInvalidN($formEl.find('#SubProgramID').val());
+        //data.CertificationID = getDefaultValueWhenInvalidN($formEl.find('#CertificationID').val());
         data.TechnicalParameterID = getDefaultValueWhenInvalidN($formEl.find('#TechnicalParameterID').val());
-        data.YarnCompositionID = getDefaultValueWhenInvalidN($formEl.find('#YarnCompositionID').val());
+        //data.YarnCompositionID = getDefaultValueWhenInvalidN($formEl.find('#YarnCompositionID').val());
         data.ShadeReferenceID = getDefaultValueWhenInvalidN($formEl.find('#ShadeReferenceID').val());
         data.ManufacturingLineID = getDefaultValueWhenInvalidN($formEl.find('#ManufacturingLineID').val());
         data.ManufacturingProcessID = getDefaultValueWhenInvalidN($formEl.find('#ManufacturingProcessID').val());
@@ -285,6 +285,30 @@
         data.YarnCountID = getDefaultValueWhenInvalidN($formEl.find('#YarnCountID').val());
         data.Childs = DeepClone($tblChildEl.getCurrentViewRecords());
         var childs = DeepClone(data.Childs);
+        if (data.ManufacturingLineID == 0) {
+            toastr.error('Select Manufacturing Line !!!');
+            return false;
+        }
+        if (data.ManufacturingProcessID == 0) {
+            toastr.error('Select Manufacturing Process !!!');
+            return false;
+        }
+        if (data.ManufacturingSubProcessID == 0) {
+            toastr.error('Select Manufacturing Sub-Process !!!');
+            return false;
+        }
+        if (data.TechnicalParameterID == 0) {
+            toastr.error('Select Technical Parameter !!!');
+            return false;
+        }
+        if (data.ColorID == 0) {
+            toastr.error('Select Color !!!');
+            return false;
+        }
+        if (data.ColorGradeID == 0) {
+            toastr.error('Select Color Grade !!!');
+            return false;
+        }
         if (data.YarnCountID == 0) {
             toastr.error('Select Yarn Count !!!');
             return false;
@@ -294,9 +318,17 @@
                 toastr.success("Saved successfully.");
                 backToList();
             })
-            .catch(function (error) {
-                toastr.error(error.response.data.Message);
+            .catch(error => {
+                if (error.response.data.Message === undefined) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+                args.cancel = true;
             });
+        //.catch(function (error) {
+        //    toastr.error(error.response.data.Message);
+        //});
     }
 })();
 

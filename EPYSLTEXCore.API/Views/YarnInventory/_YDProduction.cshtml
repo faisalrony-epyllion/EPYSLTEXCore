@@ -1,0 +1,190 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="YDProductionApprovePage" value="@ViewBag.YDProductionApprovePage" />
+    <input type="hidden" id="YDProductionAcknowledgePage" value="@ViewBag.YDProductionAcknowledgePage" />
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;Pending
+                </button>
+                <button id="btnAwaitingApproveList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Awaiting For Approve
+                </button>
+                <button id="btnApproveList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Approve List
+                </button>
+                <button id="btnAcknowledgeList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledge List
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YDProductionMasterID" name="YDProductionMasterID" value="-1111" />
+            <input type="hidden" name="YDBookingMasterID" id="YDBookingMasterID" />
+            <input type="hidden" name="YDDBatchID" id="YDDBatchID" />
+            <input type="hidden" name="YDRecipeID" id="YDRecipeID" />
+            <input type="hidden" name="BuyerID" id="BuyerID" />
+            <input type="hidden" name="DMID" id="DMID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Poduction No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDProductionNo" name="YDProductionNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDBookingNo" name="YDBookingNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">YD Recipe Definition No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDRecipeNo" name="YDRecipeNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">YD Dyeing Batch No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDDBatchNo" name="YDDBatchNo" type="text" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">M/C No</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-sm">
+                                                <input id="MCSLNo" name="MCSLNo" type="text" class="form-control input-sm" style="width: 98%" readonly />
+                                                <span class="input-group-btn">
+                                                    <button id="btnAddDMNo" class="btn btn-default" type="button" style="height: 30px"><i class="fa fa-search"></i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Production Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDProductionDate" name="YDProductionDate" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Booking Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDBookingDate" name="YDBookingDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Shift</label>
+                                        <div class="col-sm-8">
+                                            <select id="ShiftID" name="ShiftID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Batch No</label>
+                                        <div class="col-sm-8">
+                                            <input id="BatchNo" name="BatchNo" type="text" class="form-control input-sm" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Operator</label>
+                                        <div class="col-sm-8">
+                                            <select id="OperatorID" name="OperatorID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer</label>
+                                        <div class="col-sm-8">
+                                            <input id="Buyer" name="Buyer" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <textarea rows="2" id="Remarks" name="Remarks" class="form-control" placeholder="Enter Remarks"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Group Concept No</label>
+                                        <div class="col-sm-8">
+                                            <input id="GroupConceptNo" name="GroupConceptNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-12">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnApprove"><i class="fa fa-angle-double-right"></i>&nbsp;&nbsp;Approve</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnAcknowledge"><i class="fa fa-angle-double-right"></i>&nbsp;&nbsp;Acknowledge</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

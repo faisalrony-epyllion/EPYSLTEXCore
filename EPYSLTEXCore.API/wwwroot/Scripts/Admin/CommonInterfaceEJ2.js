@@ -728,7 +728,7 @@
     function openSingleSelectFinder() {
 
         var finder = new commonFinder({
-            title: "Select " + selectedChild.Label,
+            title: "Select Value"  ,
             pageId: "divCommonInterface-" + menuId,
             height: 220,
             modalSize: "modal-lg",

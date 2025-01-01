@@ -164,7 +164,7 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<dynamic> GetFinderData(string sqlQuery, string conKey, string primaryKeyColumn, PaginationInfo paginationInfo)
         {
             var query = sqlQuery;
-            string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By LEN({primaryKeyColumn}), {primaryKeyColumn} DESC" : paginationInfo.OrderBy;
+            string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By  {primaryKeyColumn} DESC" : paginationInfo.OrderBy;
             var isSp = sqlQuery.ToLower().Contains("sp_");
             query = isSp ? sqlQuery : $@"
                  {sqlQuery}

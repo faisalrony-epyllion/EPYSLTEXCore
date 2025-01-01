@@ -923,16 +923,16 @@
         public const string YarnStockMaster_New = "YarnStockMaster_New";
 
         public const string FabricConstructionSubClassTechnicalName = "T_FabricConstructionSubClassTechnicalName";
-        public const string CertificationsBasicSetup = "T_CertificationsBasicSetup";
-        public const string FiberBasicSetup = "T_FiberBasicSetup";
-        public const string SubProgramBasicSetup = "T_SubProgramBasicSetup";
+        public const string CertificationsBasicSetup = "CertificationsBasicSetup";
+        public const string FiberBasicSetup = "FiberBasicSetup";
+        public const string SubProgramBasicSetup = "SubProgramBasicSetup";
         public const string DayValidDuration = "T_DayValidDuration";
         public const string YarnPRFrom_HK = "YarnPRFrom_HK";
         public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
         public const string YarnRMProperties = "YarnRMProperties";
         public const string YarnRMPropertiesChild = "YarnRMPropertiesChild";
 
-        public const string CompositionBlendType = "T_CompositionBlendType";
+        public const string CompositionBlendType = "CompositionBlendType";
         public const string YarnCompositionBasicSetup = "YarnCompositionBasicSetup";
         public const string YarnCountBasicSetup = "YarnCountBasicSetup";
         public const string YDBookingChild = "T_YDBookingChild";

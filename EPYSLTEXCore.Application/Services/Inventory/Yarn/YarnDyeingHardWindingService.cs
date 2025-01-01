@@ -114,14 +114,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                             SELECT	YDBM.YDBatchID, YDBM.YDBatchNo, YDBM.YDBatchDate, YBM.YDBookingMasterID, YBM.BuyerID, YDBM.Remarks, YDBM.IsApproved,
 					        YBM.YDBookingNo,YBM.YDBookingDate,FM.ConceptNo,YBM.ConceptID,TotalBookingQty = ISNULL(YDBC.TotalBookingQty,0),
 					        ProducedQty = ISNULL(YDRC.ProducedQty,0), Qty= SUM(ISNULL(HWC.HardWindingQty,0))
-                            FROM YDBatchMaster YDBM
-					        --INNER JOIN YDBatchItemRequirement IR ON IR.YDBatchID = YDBM.YDBatchID
-					        INNER JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
-					        INNER JOIN FreeConceptMaster FM ON FM.ConceptID = YBM.ConceptID
+                            FROM {TableNames.YD_BATCH_MASTER} YDBM
+					        --INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} IR ON IR.YDBatchID = YDBM.YDBatchID
+					        INNER JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
+					        INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = YBM.ConceptID
 					        INNER JOIN YDBC ON YDBC.YDBookingMasterID = YBM.YDBookingMasterID 
 					        INNER JOIN YDRC ON YDRC.YDBatchID = YDBM.YDBatchID
-					        INNER JOIN YDDryerFinishingMaster YDDFM ON YDDFM.YDBatchID = YDBM.YDBatchID
-					        LEFT JOIN HardWindingMaster HWM ON HWM.YDBatchID = YDBM.YDBatchID
+					        INNER JOIN {TableNames.YD_DRYER_FINISHING_MASTER} YDDFM ON YDDFM.YDBatchID = YDBM.YDBatchID
+					        LEFT JOIN {TableNames.HardWindingMaster} HWM ON HWM.YDBatchID = YDBM.YDBatchID
 					        LEFT JOIN HWC ON HWC.HardWindingMasterID = HWM.HardWindingMasterID
 					        WHERE ISNULL(YDBM.IsApproved,0) = 1 AND HWM.HardWindingMasterID IS NULL
 					        GROUP BY YDBM.YDBatchID, YDBM.YDBatchNo, YDBM.YDBatchDate, YBM.YDBookingMasterID, YBM.BuyerID, YDBM.Remarks, YDBM.IsApproved,
@@ -132,7 +132,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				    Count(*) Over() TotalRows
                     FROM M
                     INNER JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
-                    INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID
+                    INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID
                 ";
 
                 orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By YDBookingMasterID Desc" : paginationInfo.OrderBy;
@@ -160,7 +160,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					   YRM As 
 						(
 							Select *
-							From HardWindingMaster 
+							FROM {TableNames.HardWindingMaster} 
 							Where IsSendForApprove = (Case when {IsSendForApprove} = -1 Then IsSendForApprove Else {IsSendForApprove} End)
 							AND IsApprove = (Case when {IsApprove} = -1 Then IsApprove Else {IsApprove} End) 
 							AND IsReject = (Case when {IsReject} = -1 Then IsReject Else {IsReject} End) 
@@ -173,12 +173,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 							HWM.RejectDate,HWM.IsApprove,HWM.ApproveDate
                             FROM YRM HWM
 							INNER JOIN HWC ON HWC.HardWindingMasterID=HWM.HardWindingMasterID
-					        INNER JOIN YDBatchMaster YDBM ON YDBM.YDBatchID = HWM.YDBatchID
-					        INNER JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
-					        INNER JOIN FreeConceptMaster FM ON FM.ConceptID = YBM.ConceptID
+					        INNER JOIN {TableNames.YD_BATCH_MASTER} YDBM ON YDBM.YDBatchID = HWM.YDBatchID
+					        INNER JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
+					        INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = YBM.ConceptID
 					        INNER JOIN YDBC ON YDBC.YDBookingMasterID = YBM.YDBookingMasterID 
 					        INNER JOIN YDRC ON YDRC.YDBatchID = YDBM.YDBatchID
-					        INNER JOIN YDDryerFinishingMaster YDDFM ON YDDFM.YDBatchID = YDBM.YDBatchID
+					        INNER JOIN {TableNames.YD_DRYER_FINISHING_MASTER} YDDFM ON YDDFM.YDBatchID = YDBM.YDBatchID
 							Left join  {DbNames.EPYSL}..Contacts C ON c.ContactID = YDBM.BuyerID 
 							LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = HWM.SendForApproveBy 
 							LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = HWM.ApproveBy
@@ -194,7 +194,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 				    Count(*) Over() TotalRows
                     FROM M
                     INNER JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = M.BuyerID
-                    INNER JOIN YDBookingMaster BM ON BM.YDBookingMasterID = M.YDBookingMasterID";
+                    INNER JOIN {TableNames.YD_BOOKING_MASTER} BM ON BM.YDBookingMasterID = M.YDBookingMasterID";
 
                 orderBy = paginationInfo.OrderBy.NullOrEmpty() ? "Order By M.HardWindingMasterID Desc" : paginationInfo.OrderBy;
             }
@@ -210,10 +210,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             var sql =
                 $@"
                 SELECT DISTINCT YDBM.YDBatchID,YDBatchNo,YDBM.YDBookingMasterID, YBM.YDBookingDate, YDBM.BuyerID, C.ShortName BuyerName, FCM.CompanyID As ReqFromID, CE.ShortName As Company
-                FROM YDBatchMaster YDBM
-				INNER JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
+                FROM {TableNames.YD_BATCH_MASTER} YDBM
+				INNER JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
 				LEFT JOIN {DbNames.EPYSL}..Contacts C ON YDBM.BuyerID=C.ContactID
-                Inner Join FreeConceptMaster FCM on FCM.ConceptID = YDBM.ConceptID 
+                Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = YDBM.ConceptID 
 				Inner Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = FCM.CompanyID
                 WHERE --YDBM.YDBookingMasterID = 2923 AND 
 				YDBM.YDBatchID = {YDBatchID};
@@ -222,18 +222,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;With 
                 YDBC As (
 	                Select C.* FROM {TableNames.YDBookingChild} C
-					INNER JOIN YDBatchItemRequirement R ON C.YDBookingChildID=R.YDBookingChildID
+					INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} R ON C.YDBookingChildID=R.YDBookingChildID
 					Where R.YDBatchID = {YDBatchID}
                 ),
 				IR As (
 	                Select R.* FROM {TableNames.YD_BATCH_ITEM_REQUIREMENT} R 
-					INNER JOIN YDBookingChild C ON C.YDBookingChildID=R.YDBookingChildID
+					INNER JOIN {TableNames.YDBookingChild} C ON C.YDBookingChildID=R.YDBookingChildID
 					Where --C.YDBookingMasterID = 2923 AND 
 					R.YDBatchID = {YDBatchID}
                 )
 				--DF As (
 				--             Select M.YDBatchID,M.YDBookingMasterID,C.* From YDDryerFinishingChild C 
-				--	INNER JOIN YDDryerFinishingMaster M ON M.YDDryerFinishingMasterID=C.YDDryerFinishingMasterID
+				--	INNER JOIN {TableNames.YD_DRYER_FINISHING_MASTER} M ON M.YDDryerFinishingMasterID=C.YDDryerFinishingMasterID
 				--	Where --C.YDBookingMasterID = 2923 AND 
 				--	M.YDBatchID = {YDBatchID}
 				--            )
@@ -263,14 +263,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 FROM YDBC
 				INNER JOIN IR ON IR.YDBookingChildID = YDBC.YDBookingChildID
 				--INNER JOIN YDBC ON YDBC.YDBookingChildID=IR.YDBookingChildID
-				INNER JOIN YDDryerFinishingChild DF ON DF.YDBItemReqID=IR.YDBItemReqID
-				--INNER JOIN YDReqIssueChild YDRIC ON YDRIC.YDReqChildID = YDRQC.YDReqChildID
-				--INNER JOIN YDReceiveChild YDRVC ON YDRVC.YDReqIssueChildID = YDRIC.YDReqIssueChildID
-                --LEFT JOIN DyeingProcessPart_HK DP ON DP.DPID = YDBC.DPID
+				INNER JOIN {TableNames.YD_DRYER_FINISHING_CHILD} DF ON DF.YDBItemReqID=IR.YDBItemReqID
+				--INNER JOIN {TableNames.YD_REQ_ISSUE_CHILD} YDRIC ON YDRIC.YDReqChildID = YDRQC.YDReqChildID
+				--INNER JOIN {TableNames.YD_RECEIVE_CHILD} YDRVC ON YDRVC.YDReqIssueChildID = YDRIC.YDReqIssueChildID
+                --LEFT JOIN {TableNames.DyeingProcessPart_HK} DP ON DP.DPID = YDBC.DPID
                 INNER JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = YDBC.ColorId
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YDBC.ItemMasterID
 
-                Left Join YarnDyeingFor_HK YDF On YDF.YDyeingForID = YDBC.BookingFor
+                Left JOIN {TableNames.YarnDyeingFor_HK} YDF On YDF.YDyeingForID = YDBC.BookingFor
                 LEFT Join {DbNames.EPYSL}..EntityTypeValue EV On YDBC.YarnProgramId = EV.ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -318,9 +318,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
             var query = $@"---- Master ----
                             Select YRM.HardWindingMasterID, YRM.YDBatchID,YRM.YDBookingMasterID, YRM.HardWindingNo, YRM.HardWindingDate, C.ShortName, YRM.Remarks, FCM.CompanyID As ReqFromID, CE.ShortName As Company 
-                            From HardWindingMaster YRM 
-                            Inner Join YDBookingMaster YDBM ON YDBM.YDBookingMasterID = YRM.YDBookingMasterID  
-                            Inner Join FreeConceptMaster FCM on FCM.ConceptID = YDBM.ConceptID 
+                            FROM {TableNames.HardWindingMaster} YRM 
+                            Inner JOIN {TableNames.YD_BOOKING_MASTER} YDBM ON YDBM.YDBookingMasterID = YRM.YDBookingMasterID  
+                            Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = YDBM.ConceptID 
                             Left join {DbNames.EPYSL}..Contacts C ON c.ContactID = FCM.CompanyID 
                             Inner Join {DbNames.EPYSL}..CompanyEntity CE On CE.CompanyID = FCM.CompanyID
                             Where YRM.HardWindingMasterID = {id};
@@ -342,12 +342,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                             DryerFinishCone = SUM(ISNULL(DF.Cone,0)),ReceiveCarton = 0,
                             DF.YDDryerFinishingChildID, DF.YDRICRBId
                             FROM {TableNames.HardWindingChild} C 
-                            INNER JOIN HardWindingMaster M ON C.HardWindingMasterID=M.HardWindingMasterID
+                            INNER JOIN {TableNames.HardWindingMaster} M ON C.HardWindingMasterID=M.HardWindingMasterID
                             INNER JOIN {DbNames.EPYSL}..ItemSegmentValue Color ON Color.SegmentValueID = C.ColorId
-                            INNER JOIN YDBookingChild YDBC ON YDBC.YDBookingChildID = C.YDBookingChildID
-                            INNER JOIN YDBookingMaster YDBM ON YDBM.YDBookingMasterID = YDBC.YDBookingMasterID
-                                INNER JOIN YDBatchItemRequirement IR ON IR.YDBItemReqID=C.YDBItemReqID
-                            INNER JOIN YDDryerFinishingChild DF ON DF.YDBItemReqID=IR.YDBItemReqID
+                            INNER JOIN {TableNames.YDBookingChild} YDBC ON YDBC.YDBookingChildID = C.YDBookingChildID
+                            INNER JOIN {TableNames.YD_BOOKING_MASTER} YDBM ON YDBM.YDBookingMasterID = YDBC.YDBookingMasterID
+                            INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} IR ON IR.YDBItemReqID=C.YDBItemReqID
+                            INNER JOIN {TableNames.YD_DRYER_FINISHING_CHILD} DF ON DF.YDBItemReqID=IR.YDBItemReqID
                             INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = C.ItemMasterID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 On ISV1.SegmentValueID = IM.Segment1ValueID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -388,7 +388,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         public async Task<HardWindingMaster> GetAllAsync(int id)
         {
             var sql = $@"
-            ;Select * From HardWindingMaster Where HardWindingMasterID = {id}
+            ;Select * FROM {TableNames.HardWindingMaster} Where HardWindingMasterID = {id}
 
             ;Select * FROM {TableNames.HardWindingChild} Where HardWindingMasterID = {id}";
 

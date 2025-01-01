@@ -8,6 +8,7 @@ using EPYSLTEXCore.Application.Interfaces.RND;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
+using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.RND;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
@@ -322,26 +323,27 @@ namespace EPYSLTEXCore.API.Contollers.RND
         [ValidateModel]
         public async Task<IActionResult> SaveComposition(dynamic jsonString)
         {
-                ItemSegmentValue model = JsonConvert.DeserializeObject<ItemSegmentValue>(Convert.ToString(jsonString));
+            ItemSegmentDTO model = JsonConvert.DeserializeObject<ItemSegmentDTO>(Convert.ToString(jsonString));
                 //ItemSegmentName itemSegmentName = await _service.FindAsync(a => a.SegmentName == ItemSegmentNameConstants.YARN_COMPOSITION);
                 ItemSegmentName itemSegmentName = await _service.FindAsync(ItemSegmentNameConstants.YARN_COMPOSITION);
 
             if (itemSegmentName.IsNull())
                 return BadRequest("Yarn Composition Segment Not Found");
-
-            if (await _service.ExistsAsync(model.SegmentNameID, model.SegmentValue))
+            bool y = await _service.ExistsAsync(itemSegmentName.SegmentNameID, model.SegmentValue);
+            if (y)
                 return BadRequest("This composition is already exists.");
 
             ItemSegmentValue entity = new ItemSegmentValue
             {
                 SegmentValue = model.SegmentValue,
-                SegmentNameID = itemSegmentName.Id
+                SegmentNameID = itemSegmentName.SegmentNameID
             };
 
-            await _itemSegmentValueRepository.AddAsync(entity, TableNames.ITEM_SEGMENT_VALUE);
+            await _service.AddAsync(entity, TableNames.ITEM_SEGMENT_VALUE);
+
 
             #region Update Cache
-            
+
             string cacheKey = CacheKeys.Yarn_Item_Segments;
 
             _memoryCache.Remove(cacheKey);
@@ -371,7 +373,17 @@ namespace EPYSLTEXCore.API.Contollers.RND
             //}
             #endregion
             //var responseData = _mapper.Map<ItemSegmentValue>(entity);
+            #region Save BlendTypeName
+            CompositionBlendType obj = new CompositionBlendType();
+            obj.CompositionID = entity.SegmentValueID;
+            obj.BlendTypeName = model.BlendTypeName;
+            obj.ProgramTypeName = model.ProgramTypeName;
+            if (obj.BlendTypeName.IsNotNullOrEmpty())
+            {
+                await _service.SaveBlendTypeName(obj);
+            }
 
+            #endregion
             //return Ok(responseData);
             return Ok();
         }

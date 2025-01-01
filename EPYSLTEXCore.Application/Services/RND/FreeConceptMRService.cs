@@ -1619,9 +1619,9 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
         public async Task<bool> ExistsAsync(int SegmentNameID, string SegmentValue)
         {
-            string sql = $@"Select * from EPYSL..ItemSegmentValue where SegmentNameID = {SegmentNameID} and SegmentValue = {SegmentValue}";
+            string sql = $@"Select * from EPYSL..ItemSegmentValue where SegmentNameID = {SegmentNameID} and SegmentValue = '{SegmentValue}'";
             var record = await _connection.QueryAsync(sql);
-            return record != null;
+            return record.Any();
 
         }
         //public async Task<bool> FindAsync(string SegmentName)
@@ -1636,6 +1636,13 @@ namespace EPYSLTEX.Core.Interfaces.Services
             string sql = @"SELECT * FROM EPYSL..ItemSegmentName WHERE SegmentName = @SegmentName";
             var record = await _connection.QueryFirstOrDefaultAsync<ItemSegmentName>(sql, new { SegmentName = segmentName });
             return record;
+        }
+
+        public async Task AddAsync(ItemSegmentValue entity, string table)
+        {
+         
+
+           await  _service.AddAsync(entity, table);
         }
 
         //public Task<ItemSegmentName> FindAsync(Func<object, bool> value)

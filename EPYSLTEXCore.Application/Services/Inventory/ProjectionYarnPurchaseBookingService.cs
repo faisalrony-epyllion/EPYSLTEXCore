@@ -1384,7 +1384,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 {CommonQueries.GetCertifications()};
 
                 -- Fabric Components
-                {CommonQueries.GetFabricComponents(EntityTypeNameConstants.FABRIC_TYPE)};
+                {CommonQueries.GetFabricComponentsWithManufactureLine(EntityTypeNameConstants.FABRIC_TYPE)};
 
                 -- Shade book
                 {CommonQueries.GetYarnShadeBooks()}

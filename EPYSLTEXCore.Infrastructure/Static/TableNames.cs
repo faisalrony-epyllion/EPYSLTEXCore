@@ -944,6 +944,9 @@
         public const string HardWindingMaster = "T_HardWindingMaster";
         public const string HardWindingChild = "T_HardWindingChild";
         public const string HardWindingNo = "HardWindingNo";
+        public const string SendToYDStoreMaster = "T_SendToYDStoreMaster";
+        public const string SendToYDStoreChild = "T_SendToYDStoreChild";
+        public const string SendToYDStoreNo = "SendToYDStoreNo";
     }
 
 }

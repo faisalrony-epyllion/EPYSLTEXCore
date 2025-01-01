@@ -17220,10 +17220,10 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 if (!isAddition)
                 {
-                    await _service.SaveSingleAsync(entity, transaction);
+                    await _service.SaveSingleAsync(entity,_connection ,transaction);
                     await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
-                    await _service.SaveAsync(entity.FBookingChild, transaction);
+                    await _service.SaveAsync(entity.FBookingChild, _connection, transaction);
                     foreach (FBookingAcknowledgeChild item in entity.FBookingChild)
                     {
                         await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledgeChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.BookingChildID, SecondParamValue = item.ConsumptionID, ThirdParamValue = item.BookingID, ForthParamValue = item.ItemMasterID, FifthParamValue = item.AcknowledgeID }, transaction, 30, CommandType.StoredProcedure);
@@ -17263,12 +17263,12 @@ namespace EPYSLTEXCore.Application.Services.Booking
                         */
                     });
                 }
-                await _service.SaveAsync(yarnBookings, transaction);
+                await _service.SaveAsync(yarnBookings, _connection, transaction);
                 foreach (YarnBookingMaster item in yarnBookings)
                 {
                     await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
                 }
-                await _service.SaveAsync(yarnBookingChilds, transaction);
+                await _service.SaveAsync(yarnBookingChilds, _connection, transaction);
                 foreach (YarnBookingChild item in yarnBookingChilds)
                 {
                     if (item.EntityState != EntityState.Deleted)
@@ -17290,7 +17290,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     }
                     await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChild_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildID }, transaction, 30, CommandType.StoredProcedure);
                 }
-                await _service.SaveAsync(yarnBookingChildItems, transaction);
+                await _service.SaveAsync(yarnBookingChildItems, _connection, transaction);
                 foreach (YarnBookingChildItem item in yarnBookingChildItems)
                 {
                     await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingChildItem_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBChildItemID }, transaction, 30, CommandType.StoredProcedure);
@@ -17312,7 +17312,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             */
                         });
                     }
-                    await _service.SaveAsync(entitiesYB, transaction);
+                    await _service.SaveAsync(entitiesYB, _connection, transaction);
                     foreach (YarnBookingMaster item in entitiesYB)
                     {
                         await _connection.ExecuteAsync(SPNames.sp_Validation_YarnBookingMaster_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.YBookingID }, transaction, 30, CommandType.StoredProcedure);
@@ -17339,14 +17339,14 @@ namespace EPYSLTEXCore.Application.Services.Booking
                             FPChildItems.AddRange(fpc.FinishingProcessChildItems);
                         });
                     });
-                    await _service.SaveAsync(FPChilds, transaction);
-                    await _service.SaveAsync(FPChildItems, transaction);
+                    await _service.SaveAsync(FPChilds, _connection, transaction);
+                    await _service.SaveAsync(FPChildItems, _connection, transaction);
 
                     #endregion
 
                     if (entities.Count() > 0) //Use only for knitting head check or reject
                     {
-                        await _service.SaveAsync(entities, transaction);
+                        await _service.SaveAsync(entities, _connection, transaction);
                         foreach (FBookingAcknowledge item in entities)
                         {
                             await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = item.EntityState, UserId = userId, PrimaryKeyId = item.FBAckID }, transaction, 30, CommandType.StoredProcedure);
@@ -18000,7 +18000,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
 
                 if (!isAddition)
                 {
-                    await _service.SaveSingleAsync(entity, transaction);
+                    await _service.SaveSingleAsync(entity,  _connection ,transaction);
                     await _connection.ExecuteAsync(SPNames.sp_Validation_FBookingAcknowledge_1, new { EntityState = entity.EntityState, UserId = userId, PrimaryKeyId = entity.FBAckID }, transaction, 30, CommandType.StoredProcedure);
 
                     await _service.SaveAsync(entity.FBookingChild, transaction);
@@ -19515,7 +19515,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     conChilds.AddRange(c.Childs);
                 });
 
-                await _gmtservice.SaveSingleAsync(entity, transaction);
+                await _gmtservice.SaveSingleAsync(entity, _connection , transaction);
                 await _gmtservice.SaveAsync(entity.Childs, transaction);
                 await _gmtservice.SaveAsync(conChilds, transaction);
 
@@ -19556,7 +19556,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     x.BookingID = entity.BookingID;
                 });
 
-                await _service.SaveSingleAsync(entity, transaction);
+                await _service.SaveSingleAsync(entity,  _connection ,transaction);
                 await _service.SaveAsync(entity.FBookingChild, transaction);
 
                 #region Sample Booking Consumption Update
@@ -19718,7 +19718,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _gmtservice.Connection.OpenAsync();
                 transaction = _gmtservice.Connection.BeginTransaction();
 
-                await _gmtservice.SaveSingleAsync(entity, transaction);
+                await _gmtservice.SaveSingleAsync(entity, _connection , transaction);
 
                 transaction.Commit();
             }
@@ -19740,7 +19740,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
 
-                await _service.SaveSingleAsync(entity, transaction);
+                await _service.SaveSingleAsync(entity, _connection, transaction);
 
                 transaction.Commit();
             }

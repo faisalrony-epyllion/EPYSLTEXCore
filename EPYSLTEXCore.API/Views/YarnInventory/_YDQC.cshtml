@@ -1,0 +1,161 @@
+﻿<script type="text/javascript">
+	localStorage.setItem("pageName", "@ViewBag.PageName");
+	localStorage.setItem("menuId", "@ViewBag.MenuId");
+	localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+	var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+	var divTblId = "divtbl" + pageId;
+	var toolbarId = "toolbar" + pageId;
+	var tblMasterId = "tbl" + pageId;
+	var tblChildId = "tblChild" + pageId;
+	var tblYarnChildId = "tblYarnChild" + pageId;
+	var tblChildFabricInfoId = "tblChildFabricInfoId" + pageId;
+	var formId = "form" + pageId;
+	var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+	<input type="hidden" id="RequisitionPage" value="@ViewBag.RequisitionPage" />
+	<input type="hidden" id="ApprovePage" value="@ViewBag.ApprovePage" />
+
+	<div class="row" id="@divTblId">
+		<div class="col-sm-12">
+			<div id="@toolbarId">
+				<button id="btnPendingList" class="btn btn-success text-white btn-sm">
+					<i class="fa fa-plus"></i>&nbsp;Pending
+				</button>
+				@*<button id="btnList" class="btn btn-default text-grey btn-sm">
+                        <i class="fa fa-list"></i>&nbsp;Complete List
+                    </button>*@
+				<button id="btnDraftList" class="btn btn-default text-grey btn-sm">
+					<i class="fa fa-list"></i>&nbsp;Draft List
+				</button>
+				<button id="btnPendingApprovalList" class="btn btn-default text-grey btn-sm">
+					<i class="fa fa-list"></i>&nbsp;Pending Approval
+				</button>
+				<button id="btnApproveList" class="btn btn-default text-grey btn-sm">
+					<i class="fa fa-list"></i>&nbsp;Approved List
+				</button>
+				<button id="btnRejectList" class="btn btn-default text-grey btn-sm">
+					<i class="fa fa-list"></i>&nbsp;Reject List
+				</button>
+			</div>
+		</div>
+		<div class="col-sm-12" style="font-size:12px">
+			<table id="@tblMasterId"></table>
+		</div>
+	</div>
+	<div class="row">
+		<form class="form-horizontal" id="@formId">
+			<input type="hidden" id="YDQCMasterID" name="YDQCMasterID" value="-1111" />
+			<input type="hidden" name="YDBookingMasterID" id="YDBookingMasterID" />
+			<input type="hidden" name="YDBatchID" id="YDBatchID" />
+
+			<div class="box-body" id="@divDetailsId" style="display:none">
+				<div class="col-sm-12">
+					<div class="panel panel-success" style="border-color:transparent; border-style:none;">
+						<div class="panel-heading">
+							General/Commercial Information
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-4">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">QC No</label>
+										<div class="col-sm-8">
+											<input id="YDQCNo" name="YDQCNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Batch Date</label>
+										<div class="col-sm-8">
+											<input id="YDBatchDate" name="YDBatchDate" class="form-control input-sm ej2-datepicker" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">QC Date</label>
+										<div class="col-sm-8">
+											<input id="YDQCDate" name="YDQCDate" class="form-control input-sm ej2-datepicker" />
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Booking No</label>
+										<div class="col-sm-8">
+											<input id="YDBookingNo" name="YDBookingNo" class="form-control input-sm" readonly />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Batch No</label>
+										<div class="col-sm-8">
+											<input id="YDBatchNo" name="YDBatchNo" class="form-control input-sm" readonly />
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-sm-4 small">Booking Date</label>
+										<div class="col-sm-8">
+											<input id="YDBookingDate" name="YDBookingDate" class="form-control input-sm ej2-datepicker" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-12">
+									<div class="form-group" id="pnlRemarks">
+										<label class="control-label col-sm-1 small">Remarks</label>
+										<div class="col-sm-11" style="padding-left:44px;">
+											<textarea rows="1" id="Remarks" name="Remarks" class="form-control" placeholder="Enter Remarks"></textarea>
+										</div>
+									</div>
+									<div class="form-group d-none" id="pnlRejectReason">
+										<label class="control-label col-sm-1 small">Reject Reason</label>
+										<div class="col-sm-11" style="padding-left:44px;">
+											<textarea rows="2" id="RejectReason" name="RejectReason" class="form-control" placeholder="Enter additional notes"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="panel panel-success" style="border-color:transparent; border-style:none;">
+						<div class="panel-heading">
+							Item Information
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<table id="@tblChildId"></table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="box-footer btn-e-float-margin" id="divFormButtons">
+					<div class="col-md-offset-2 col-md-10">
+						<div class="pull-right">
+							<button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+							<button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+							<button type="button" class="btn btn-success m-w-120" id="btnSaveAndSend"><i class="fa fa-check-square-o"></i>&nbsp;Save & Send for Approve</button>
+							<button type="button" class="btn btn-primary m-w-120" id="btnApprove"><i class="fa fa-save"></i>&nbsp;&nbsp;Approve</button>
+							<button type="button" class="btn btn-primary m-w-120" id="btnReject"><i class="fa fa-save"></i>&nbsp;&nbsp;Reject</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

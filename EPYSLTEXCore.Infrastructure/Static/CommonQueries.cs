@@ -321,6 +321,22 @@ namespace EPYSLTEXCore.Infrastructure.Static
 		        LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
                 Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
                 Group By EV.ValueID,EV.ValueName";
+
+
+        }
+        public static string GetFabricComponentsWithManufactureLine(string entityTypeName)
+        {
+            return $@"
+                 Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text],isv.SegmentValue [desc]
+                From {DbNames.EPYSL}..EntityTypeValue EV
+                Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+		        LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
+                LEFT join FiberAndFiberTypeMapping map on map.FiberID=ev.ValueID
+				LEFT join  {DbNames.EPYSL}..ItemSegmentValue isv on isv.SegmentValueID=map.ManufacturingLineID
+                Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
+                Group By EV.ValueID,EV.ValueName,isv.SegmentValue";
+
+
         }
         public static string GetYarnShadeBooks()
         {

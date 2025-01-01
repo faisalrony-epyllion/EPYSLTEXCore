@@ -1,5 +1,5 @@
 ﻿(function () {
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $formEl, $tblChildFabricInfoId, tblMasterId;
     var status = statusConstants.PENDING;
@@ -25,6 +25,8 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
+        if (!menuParam)
+            menuParam = localStorage.getItem("menuParam");
         var pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
         toolbarId = pageConstants.TOOLBAR_ID_PREFIX + pageId;
@@ -36,9 +38,11 @@
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
 
 
-        //Get data ViewBag variable wise 
-        isRequisitionPage = convertToBoolean($(`#${pageId}`).find("#RequisitionPage").val());
-        isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
+        //Get data ViewBag variable wise
+        //isRequisitionPage = convertToBoolean($(`#${pageId}`).find("#RequisitionPage").val());
+        //isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
+        isRequisitionPage = menuParam === "R" ? true : false;
+        isApprovePage = menuParam === "A" ? true : false;
 
         if (isRequisitionPage) {
             $toolbarEl.find("#btnPendingList,#btnDraftList,#btnPendingApprovalList,#btnApproveList,#btnRejectList").show();

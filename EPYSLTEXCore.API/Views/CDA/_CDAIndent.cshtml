@@ -1,0 +1,235 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblCompanyModalId = "tblCompanyModal" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+<style>
+    .row-highlight {
+        background-color: #ffe5e5;
+    }
+    .row-default {
+        background-color: white;
+    }
+</style>
+
+<div id="@pageId">
+    <input type="hidden" id="CDAIndentPage" value="@ViewBag.CDAIndentPage" />
+    <input type="hidden" id="AcknowledgePage" value="@ViewBag.AcknowledgePage" />
+    <input type="hidden" id="TexAcknowledgePage" value="@ViewBag.TexAcknowledgePage" />
+    <input type="hidden" id="ApprovePage" value="@ViewBag.ApprovePage" />
+    <input type="hidden" id="CheckPage" value="@ViewBag.CheckPage" />
+
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <button id="btnNew" class="btn btn-default btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;New
+                </button>
+                <button id="btnIndentList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Indent List
+                </button>
+                <button id="btnPendingCheckList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Pending For Checking
+                </button>
+                <button id="btnCheckList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Checked List
+                </button>
+                <button id="btnPendingForApproval" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending For Approval
+                </button>
+                <button id="btnApprovalList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Approved List
+                </button>
+                <button id="btnPendingForAcknowledge" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending For Commercial Acknowledge
+                </button>
+                <button id="btnAcknowledgeList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Commercial Acknowledge List
+                </button>
+                <button id="btnPendingForTexAcknowledge" class="btn btn-default btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending For Acknowledgement
+                </button>
+                <button id="btnTexAcknowledgeList" class="btn btn-default btn-sm">
+                    <i class="fa fa-list-ul"></i>&nbsp;Acknowledged List
+                </button>
+            </div>
+            <div>
+                <table id="@tblMasterId"></table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="CDAIndentMasterID" name="CDAIndentMasterID" value="-1111" />
+            <input type="hidden" id="SubGroupID" name="SubGroupID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
+                            <span class="pull-right"><span id="lblSubGroup"></span>&nbsp;<a class="text-sm" role="button" id="btnChangeSubGroup"><i class="fa fa-exchange"></i> Change</a></span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Indent No</label>
+                                            <div class="col-sm-8">
+                                                <input id="IndentNo" name="IndentNo" type="text" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Indent Date</label>
+                                            <div class="col-sm-8">
+                                                <input id="IndentDate" name="IndentDate" class="form-control input-sm ej2-datepicker" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        @*<div class="form-group">
+                                                <label class="control-label col-sm-4 small">Trigger Point</label>
+                                                <div class="col-sm-8">
+                                                    <select id="TriggerPointID" name="TriggerPointID" class="form-control input-sm" style="width:100%"></select>
+                                                </div>
+                                            </div>*@
+                                        <div class="form-group" id="divRemarks">
+                                            <label class="control-label col-sm-4 small">Remarks</label>
+                                            <div class="col-sm-8">
+                                                <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control input-sm"></textarea>
+                                            </div>
+                                        </div>
+                                        @*<div class="form-group" id="divCheckRejectReason">
+                                                <label class="control-label col-sm-4 small">Rejected Reason</label>
+                                                <div class="col-sm-8">
+                                                    <textarea id="CheckRejectReason" rows="2" name="CheckRejectReason" type="text" class="form-control input-sm"></textarea>
+                                                </div>
+                                            </div>*@
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Indent By</label>
+                                            <div class="col-sm-8">
+                                                <select id="CIndentBy" name="CIndentBy" class="form-control input-sm" style="width:100%"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Indent Strat (Month)</label>
+                                            <div class="col-sm-8">
+                                                <input id="IndentStartMonth" name="IndentStartMonth" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4 small">Indent End (Month)</label>
+                                            <div class="col-sm-8">
+                                                <input id="IndentEndMonth" name="IndentEndMonth" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="divRejectReason" style="display:none;">
+                                            <label class="control-label col-sm-4 small">Rejct Reason</label>
+                                            <div class="col-sm-8">
+                                                <textarea id="RejectReason" rows="2" name="RejectReason" type="text" class="form-control input-sm" readonly></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="divUnAcknowledgeReason" style="display:none;">
+                                            <label class="control-label col-sm-4 small">UnAcknowledge Reason</label>
+                                            <div class="col-sm-8">
+                                                <textarea id="UnAcknowledgeReason" rows="2" name="UnAcknowledgeReason" type="text" class="form-control input-sm" readonly></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                            <button type="button" id="btnAddItems" class="btn btn-success btn-xs">
+                                <i class="fa fa-search"></i>&nbsp;&nbsp;Add Item
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modal-child">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="childTitle"></h4>
+                                Purchase Requisition
+                            </div>
+                            <div class="modal-body">
+                                <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                    <div class="panel-heading">
+                                        Commercial Company Information
+                                    </div>
+                                    <div class="panel-body">
+
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblCompanyModalId"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                @*<button type="button" class="btn btn-primary" id="btnOkSearch">Ok</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="box-footer btn-e-float-margin">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnSaveAndSendForApprove"><i class="fa fa-check-square-o"></i>&nbsp;Save & Send for Check</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnCheck"><i class="fa fa-check-square-o"></i>&nbsp;Check</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnApprove"><i class="fa fa-check-square-o"></i>&nbsp;Approve</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnAcknowledge"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnTexAcknowledge"><i class="fa fa-check-square-o"></i>&nbsp;Acknowledge</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+

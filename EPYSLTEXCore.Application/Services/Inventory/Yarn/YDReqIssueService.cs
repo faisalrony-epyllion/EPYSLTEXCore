@@ -1,22 +1,16 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
-using System.Transactions;
 using EPYSLTEXCore.Application.Interfaces;
 
 namespace EPYSLTEXCore.Application.Services.Inventory
@@ -27,7 +21,6 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         private readonly SqlConnection _connection;
         private readonly SqlConnection _connectionGmt;
         private readonly IItemMasterService<YDReqIssueChild> _itemMasterRepository;
-        //private SqlTransaction transaction;
         public YDReqIssueService(
             IDapperCRUDService<YDReqIssueMaster> service,
             IItemMasterService<YDReqIssueChild> itemMasterRepository)
@@ -52,11 +45,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                ;With M As 
                 (
 	                Select M.YDReqMasterID, YDReqNo, BM.YDBookingNo, LU.Name ReqByUser, YDReqDate, CT.ShortName BuyerName, SUM(C.ReqQty) ReqQty
-	                From YDReqMaster M Inner Join YDReqChild C On M.YDReqMasterID = C.YDReqMasterID
-	                Inner Join YDBookingMaster BM ON M.YDBookingMasterID = BM.YDBookingMasterID
+	                FROM {TableNames.YD_REQ_MASTER} M Inner JOIN {TableNames.YD_REQ_CHILD} C On M.YDReqMasterID = C.YDReqMasterID
+	                Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON M.YDBookingMasterID = BM.YDBookingMasterID
 	                Inner Join {DbNames.EPYSL}..LoginUser LU On M.YDReqBy = LU.UserCode
 	                Left Join {DbNames.EPYSL}..Contacts CT On M.BuyerID = CT.ContactID 
-	                Where M.YDReqMasterID Not In (Select YDReqMasterID From YDReqIssueMaster)
+	                Where M.YDReqMasterID Not In (Select YDReqMasterID FROM {TableNames.YD_REQ_ISSUE_MASTER})
 	                Group By M.YDReqMasterID, YDReqNo, BM.YDBookingNo, LU.Name, YDReqDate, CT.ShortName
                 ) 
                 Select YDReqMasterID, YDReqNo, YDBookingNo, ReqByUser, YDReqDate, BuyerName, ReqQty
@@ -73,14 +66,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        Where IsSendForApprove = 0
                         )
                         Select YRM.YDReqIssueMasterID, YRM.YDReqIssueNo, YRM.YDReqIssueDate, YRM.YDReqIssueBy, YRM.YDReqMasterID,
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -96,7 +89,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsSendForApprove = 1
 	                        AND IsApprove = 0
 	                        AND IsReject = 0
@@ -105,7 +98,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -121,7 +114,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 0
                         )
@@ -129,7 +122,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -145,14 +138,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER}
 	                        WHERE IsReject = 1
                         )
                         Select YRM.YDReqIssueMasterID, YRM.YDReqIssueNo, YRM.YDReqIssueDate, YRM.YDReqIssueBy, YRM.YDReqMasterID,
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -171,7 +164,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsSendForApprove = 1
 	                        AND IsApprove = 0
 	                        AND IsReject = 0
@@ -180,7 +173,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -196,7 +189,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 0
                         )
@@ -204,7 +197,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -220,14 +213,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsReject = 1
                         )
                         Select YRM.YDReqIssueMasterID, YRM.YDReqIssueNo, YRM.YDReqIssueDate, YRM.YDReqIssueBy, YRM.YDReqMasterID,
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -246,7 +239,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 0
                         )
@@ -254,7 +247,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -270,7 +263,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 1
                         )
@@ -278,7 +271,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -310,11 +303,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                ;With M As 
                 (
 	                Select M.YDReqMasterID, YDReqNo, BM.YDBookingNo, LU.Name ReqByUser, YDReqDate, CT.ShortName BuyerName, SUM(C.ReqQty) ReqQty
-	                From YDReqMaster M Inner Join YDReqChild C On M.YDReqMasterID = C.YDReqMasterID
-	                Inner Join YDBookingMaster BM ON M.YDBookingMasterID = BM.YDBookingMasterID
+	                FROM {TableNames.YD_REQ_MASTER} M Inner JOIN {TableNames.YD_REQ_CHILD} C On M.YDReqMasterID = C.YDReqMasterID
+	                Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON M.YDBookingMasterID = BM.YDBookingMasterID
 	                Inner Join {DbNames.EPYSL}..LoginUser LU On M.YDReqBy = LU.UserCode
 	                Left Join {DbNames.EPYSL}..Contacts CT On BM.BuyerID = CT.ContactID 
-	                Where M.YDReqMasterID Not In (Select YDReqMasterID From YDReqIssueMaster)  AND M.IsAcknowledge=1
+	                Where M.YDReqMasterID Not In (Select YDReqMasterID FROM {TableNames.YD_REQ_ISSUE_MASTER})  AND M.IsAcknowledge=1
 	                Group By M.YDReqMasterID, YDReqNo, BM.YDBookingNo, LU.Name, YDReqDate, CT.ShortName
                 ) 
                 Select YDReqMasterID, YDReqNo, YDBookingNo, ReqByUser, YDReqDate, BuyerName, ReqQty
@@ -331,7 +324,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        Where IsSendForApprove = 0
                         )
                         Select YRM.YDReqIssueMasterID, YRM.YDReqIssueNo, YRM.YDReqIssueDate, YRM.YDReqIssueBy, YRM.YDReqMasterID,
@@ -339,10 +332,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone,  
 						BM.YDBookingNo, CT.ShortName BuyerName, FM.CompanyID,FM.ConceptNo,YDRM.YDReqNo,BU.Name BookingByUser, LU.Name ReqByUser
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
-						INNER JOIN YDReqMaster YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
-						Inner Join YDBookingMaster BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
-						Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+						INNER JOIN {TableNames.YD_REQ_MASTER} YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
+						Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
+						Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
 						Inner Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = BM.BuyerID
 						Inner Join {DbNames.EPYSL}..LoginUser BU On BM.YDBookingBy = BU.UserCode
 						Inner Join {DbNames.EPYSL}..LoginUser LU On YDRM.YDReqBy = LU.UserCode
@@ -362,7 +355,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsSendForApprove = 1
 	                        AND IsApprove = 0
 	                        AND IsReject = 0
@@ -372,10 +365,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone,  
                         BM.YDBookingNo, CT.ShortName BuyerName, FM.CompanyID,FM.ConceptNo,YDRM.YDReqNo,BU.Name BookingByUser, LU.Name ReqByUser
-						From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID 
-						INNER JOIN YDReqMaster YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
-						Inner Join YDBookingMaster BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
-						Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+						From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID 
+						INNER JOIN {TableNames.YD_REQ_MASTER} YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
+						Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
+						Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
 						Inner Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = BM.BuyerID
 						Inner Join {DbNames.EPYSL}..LoginUser BU On BM.YDBookingBy = BU.UserCode
 						Inner Join {DbNames.EPYSL}..LoginUser LU On YDRM.YDReqBy = LU.UserCode
@@ -395,7 +388,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 0
                         )
@@ -404,10 +397,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YDRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone,  
                         BM.YDBookingNo, CT.ShortName BuyerName, FM.CompanyID,FM.ConceptNo,YDRM.YDReqNo,BU.Name BookingByUser, LU.Name ReqByUser  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
-						INNER JOIN YDReqMaster YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
-						Inner Join YDBookingMaster BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
-						Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+						INNER JOIN {TableNames.YD_REQ_MASTER} YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
+						Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
+						Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
 						Inner Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = BM.BuyerID
 						Inner Join {DbNames.EPYSL}..LoginUser BU On BM.YDBookingBy = BU.UserCode
 						Inner Join {DbNames.EPYSL}..LoginUser LU On YDRM.YDReqBy = LU.UserCode
@@ -427,7 +420,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER}
 	                        WHERE IsReject = 1
                         )
                         Select YRM.YDReqIssueMasterID, YRM.YDReqIssueNo, YRM.YDReqIssueDate, YRM.YDReqIssueBy, YRM.YDReqMasterID,
@@ -435,10 +428,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone,  
                         BM.YDBookingNo, CT.ShortName BuyerName, FM.CompanyID,FM.ConceptNo,YDRM.YDReqNo,BU.Name BookingByUser, LU.Name ReqByUser   
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID 
-						INNER JOIN YDReqMaster YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
-						Inner Join YDBookingMaster BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
-						Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID 
+						INNER JOIN {TableNames.YD_REQ_MASTER} YDRM ON YDRM.YDReqMasterID=YRM.YDReqMasterID
+						Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON YDRM.YDBookingMasterID = BM.YDBookingMasterID
+						Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
 						Inner Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = BM.BuyerID
 						Inner Join {DbNames.EPYSL}..LoginUser BU On BM.YDBookingBy = BU.UserCode
 						Inner Join {DbNames.EPYSL}..LoginUser LU On YDRM.YDReqBy = LU.UserCode
@@ -461,7 +454,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsSendForApprove = 1
 	                        AND IsApprove = 0
 	                        AND IsReject = 0
@@ -470,7 +463,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -486,7 +479,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 0
                         )
@@ -494,7 +487,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -510,14 +503,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         ;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsReject = 1
                         )
                         Select YRM.YDReqIssueMasterID, YRM.YDReqIssueNo, YRM.YDReqIssueDate, YRM.YDReqIssueBy, YRM.YDReqMasterID,
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -536,7 +529,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         /*;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 0
                         )
@@ -544,7 +537,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -556,12 +549,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         ;With
                         M As (
 	                    Select M.YDReqMasterID, YDReqNo, LU.Name ReqByUser, YDReqDate, BM.YDBookingNo,BU.Name BookingByUser, CT.ShortName BuyerName, SUM(C.ReqQty) ReqQty,FM.ConceptNo,BM.YDBookingDate 
-	                    From YDReqMaster M
+	                    FROM {TableNames.YD_REQ_MASTER} M
 						Inner Join {DbNames.EPYSL}..LoginUser LU On M.YDReqBy = LU.UserCode
-	                    Inner Join YDReqChild C On M.YDReqMasterID = C.YDReqMasterID
-	                    Inner Join YDBookingMaster BM On M.YDBookingMasterID = BM.YDBookingMasterID
+	                    Inner JOIN {TableNames.YD_REQ_CHILD} C On M.YDReqMasterID = C.YDReqMasterID
+	                    Inner JOIN {TableNames.YD_BOOKING_MASTER} BM On M.YDBookingMasterID = BM.YDBookingMasterID
                         Inner Join {DbNames.EPYSL}..LoginUser BU On BM.YDBookingBy = BU.UserCode
-						Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+						Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
 	                    Inner Join {DbNames.EPYSL}..Contacts CT On BM.BuyerID = CT.ContactID
 						Where M.IsAcknowledge=0
 	                    Group By M.YDReqMasterID, YDReqNo, LU.Name,  YDReqDate, BM.YDBookingNo,BU.Name, CT.ShortName,FM.ConceptNo,BM.YDBookingDate
@@ -579,7 +572,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         sql = $@"
                         /*;With YRM As 
                         (
-	                        Select * From YDReqIssueMaster 
+	                        Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                        WHERE IsApprove = 1
 	                        AND IsAcknowledge = 1
                         )
@@ -587,7 +580,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         YRM.IsSendForApprove, RL.Name As SendForApproveName,  YRM.SendForApproveDate, YRM.IsApprove, A.Name As ApproveName, YRM.ApproveDate, 
                         YRM.IsAcknowledge, AcW.Name As AcknowledgeName, YRM.AcknowledgeDate, YRM.IsReject, R.Name As RejectName, YRM.RejectDate, YRM.AddedBy,
                         Sum(YRC.ReqQty)ReqQty, Sum(YRC.IssueQty)IssueQty, Sum(YRC.IssueQtyCarton)IssueQtyCarton, Sum(YRC.IssueQtyCone)IssueQtyCone  
-                        From YRM Inner Join YDReqIssueChild YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
+                        From YRM Inner JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRC ON YRC.YDReqIssueMasterID = YRM.YDReqIssueMasterID  
                         LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                         LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
                         LEFT Join  {DbNames.EPYSL}..LoginUser AcW On AcW.UserCode = YRM.AcknowledgeBy
@@ -599,12 +592,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                         ;With
                         M As (
 	                    Select M.YDReqMasterID, YDReqNo, LU.Name ReqByUser, YDReqDate, BM.YDBookingNo,BU.Name BookingByUser, CT.ShortName BuyerName, SUM(C.ReqQty) ReqQty,FM.ConceptNo,BM.YDBookingDate 
-	                    From YDReqMaster M
+	                    FROM {TableNames.YD_REQ_MASTER} M
 						Inner Join {DbNames.EPYSL}..LoginUser LU On M.YDReqBy = LU.UserCode
-	                    Inner Join YDReqChild C On M.YDReqMasterID = C.YDReqMasterID
-	                    Inner Join YDBookingMaster BM On M.YDBookingMasterID = BM.YDBookingMasterID
+	                    Inner JOIN {TableNames.YD_REQ_CHILD} C On M.YDReqMasterID = C.YDReqMasterID
+	                    Inner JOIN {TableNames.YD_BOOKING_MASTER} BM On M.YDBookingMasterID = BM.YDBookingMasterID
                         Inner Join {DbNames.EPYSL}..LoginUser BU On BM.YDBookingBy = BU.UserCode
-						Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+						Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
 	                    Inner Join {DbNames.EPYSL}..Contacts CT On BM.BuyerID = CT.ContactID
 						Where M.IsAcknowledge=1
 	                    Group By M.YDReqMasterID, YDReqNo, LU.Name,  YDReqDate, BM.YDBookingNo,BU.Name, CT.ShortName,FM.ConceptNo,BM.YDBookingDate
@@ -640,8 +633,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 -- Master Data
                 Select M.YDReqMasterID, M.YDReqNo, YDReqDate, M.YDBookingMasterID, BM.BuyerID, M.Remarks, BM.YDBookingDate, 
                 BM.YDBookingNo, CT.ShortName BuyerName, FM.CompanyID,FM.ConceptNo
-                From YDReqMaster M Inner Join YDBookingMaster BM ON M.YDBookingMasterID = BM.YDBookingMasterID
-				Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+                FROM {TableNames.YD_REQ_MASTER} M Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON M.YDBookingMasterID = BM.YDBookingMasterID
+				Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
                 Inner Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = BM.BuyerID
                 Where M.YDReqMasterID = {YDReqMasterID};
 
@@ -742,10 +735,10 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 $@"
                 -- Master Data
                  Select IM.*,M.YDReqMasterID, M.YDReqNo, YDReqDate, M.YDBookingMasterID, BM.BuyerID, M.Remarks, BM.YDBookingDate, 
-                BM.YDBookingNo, CT.ShortName BuyerName, FM.CompanyID,FM.ConceptNo From YDReqIssueMaster IM
-				INNER JOIN YDReqMaster M ON M.YDReqMasterID=IM.YDReqMasterID 
-				Inner Join YDBookingMaster BM ON M.YDBookingMasterID = BM.YDBookingMasterID
-				Inner Join FreeConceptMaster FM ON FM.ConceptID = BM.ConceptID
+                BM.YDBookingNo, CT.ShortName BuyerName, FM.CompanyID,FM.ConceptNo FROM {TableNames.YD_REQ_ISSUE_MASTER} IM
+				INNER JOIN {TableNames.YD_REQ_MASTER} M ON M.YDReqMasterID=IM.YDReqMasterID 
+				Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON M.YDBookingMasterID = BM.YDBookingMasterID
+				Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FM ON FM.ConceptID = BM.ConceptID
                 Inner Join {DbNames.EPYSL}..Contacts CT On CT.ContactID = BM.BuyerID
 				Where IM.YDReqIssueMasterID  = {id};
 
@@ -755,7 +748,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 (
 	                Select YDReqIssueChildID, YDReqIssueMasterID, YarnProgramID, ItemMasterID, UnitID, ReqQty, IssueQty, IssueQtyCone, IssueQtyCarton,
 	                Remarks, YarnCategory, NoOfThread, LotNo, PhysicalCount, YarnBrandID, Rate, ShadeCode 
-	                From YDReqIssueChild
+	                FROM {TableNames.YD_REQ_ISSUE_CHILD}
 	                Where YDReqIssueMasterID = {id}
                 )
 
@@ -851,12 +844,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
         public async Task<YDReqIssueMaster> GetAllAsync(int id)
         {
             var sql = $@"
-            ;Select * From YDReqIssueMaster Where YDReqIssueMasterID = {id}
+            ;Select * FROM {TableNames.YD_REQ_ISSUE_MASTER} Where YDReqIssueMasterID = {id}
 
-            ;Select * From YDReqIssueChild Where YDReqIssueMasterID = {id}
+            ;Select * FROM {TableNames.YD_REQ_ISSUE_CHILD} Where YDReqIssueMasterID = {id}
 
-            ;Select RBM.* FROM YDReqIssueChildRackBinMapping RBM
-            INNER JOIN YDReqIssueChild RIC ON RIC.YDReqIssueChildID = RBM.YDReqIssueChildID 
+            ;Select RBM.* FROM {TableNames.YD_REQ_ISSUE_CHILD}RackBinMapping RBM
+            INNER JOIN {TableNames.YD_REQ_ISSUE_CHILD} RIC ON RIC.YDReqIssueChildID = RBM.YDReqIssueChildID 
             Where RIC.YDReqIssueMasterID = {id}";
 
             try
@@ -958,12 +951,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 */
                 #endregion Stock Operation
                 #region Stock Operation
-                if (entity.IsApprove && entity.IsGPApprove == false)
-                {
-                    if (entity.ApproveBy.IsNull()) entity.ApproveBy = 0;
-                    int userId = entity.EntityState == EntityState.Added ? entity.AddedBy : entity.ApproveBy;
-                    await _connection.ExecuteAsync("spYarnStockOperation", new { MasterID = entity.YDReqIssueMasterID, FromMenuType = EnumFromMenuType.YDIssueApp, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
-                }
+                //if (entity.IsApprove && entity.IsGPApprove == false)
+                //{
+                //    if (entity.ApproveBy.IsNull()) entity.ApproveBy = 0;
+                //    int userId = entity.EntityState == EntityState.Added ? entity.AddedBy : entity.ApproveBy;
+                //    await _connection.ExecuteAsync("spYarnStockOperation", new { MasterID = entity.YDReqIssueMasterID, FromMenuType = EnumFromMenuType.YDIssueApp, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
+                //}
                 #endregion Stock Operation
 
                 transaction.Commit();

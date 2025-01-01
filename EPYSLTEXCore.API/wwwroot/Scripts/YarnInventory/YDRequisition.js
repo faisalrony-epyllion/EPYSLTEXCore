@@ -45,8 +45,7 @@
             $toolbarEl.find("#btnPendingApprovalList").hide();
             $toolbarEl.find("#btnApprovedList").show();
 
-            toggleActiveToolbarBtn($(pageIdWithHash).find("#btnPending"), $toolbarEl);
-            status = statusConstants.PENDING;
+        
             $divDetailsEl.find("#btnSave").show();
             $divDetailsEl.find("#btnApprove").hide();
             $divDetailsEl.find("#btnReject").hide();
@@ -96,7 +95,7 @@
                 e.preventDefault();
                 save(false, false);
             });
-
+            $(pageIdWithHash).find("#btnPending").click();
         }
         else if (menuType == _paramType.YDReqAppr) {
             $toolbarEl.find("#btnPending").hide();

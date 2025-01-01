@@ -67,8 +67,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         }
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(YDRecipeRequestMaster model)
+        public async Task<IActionResult> Save(dynamic jsonString)
         {
+            YDRecipeRequestMaster model = JsonConvert.DeserializeObject<YDRecipeRequestMaster>(Convert.ToString(jsonString));
             YDRecipeRequestMaster entity;
             bool isRework = model.IsRework;
             string recipeFor = string.Join(",", model.YDRecipeDefinitionDyeingInfos.Where(x => x.RecipeOn && x.FiberPart != "Empty").Select(x => x.FiberPart).Distinct());
@@ -179,8 +180,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         }
         [Route("acknowledge")]
         [HttpPost]
-        public async Task<IActionResult> Acknowledge(YDRecipeRequestMaster model)
+        public async Task<IActionResult> Acknowledge(dynamic jsonString)
         {
+            YDRecipeRequestMaster model = JsonConvert.DeserializeObject<YDRecipeRequestMaster>(Convert.ToString(jsonString));
             YDRecipeRequestMaster entity;
             entity = await _service.GetAllByIDAsync(model.YDRecipeReqMasterID);
 

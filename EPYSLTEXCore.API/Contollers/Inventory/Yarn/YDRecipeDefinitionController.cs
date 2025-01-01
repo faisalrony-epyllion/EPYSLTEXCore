@@ -60,8 +60,9 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [Route("save")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Save(YDRecipeDefinitionMaster model)
+        public async Task<IActionResult> Save(dynamic jsonString)
         {
+            YDRecipeDefinitionMaster model = JsonConvert.DeserializeObject<YDRecipeDefinitionMaster>(Convert.ToString(jsonString));
             YDRecipeDefinitionMaster entity;
             if (model.IsModified)
             {

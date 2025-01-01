@@ -20,16 +20,16 @@ using NLog;
 using System.Data.Entity;
 using System.Reflection;
 
-namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
+namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn.Knitting
 {
     [Route("api/ksc-issue")]
     public class KnittingSubContractIssueController : ApiBaseController
     {
         private readonly IKnittingSubContractIssueService _service;
-        private readonly YDReqIssueService _yDservice;
+        private readonly IYDReqIssueService _yDservice;
         private readonly IItemMasterService<KnittingSubContractIssueChild> _itemMasterRepository;
         private readonly IYarnRackBinAllocationService _serviceRackBin;
-        public KnittingSubContractIssueController(IUserService userService, IKnittingSubContractIssueService service, YDReqIssueService yDservice, IItemMasterService<KnittingSubContractIssueChild> itemMasterRepository, IYarnRackBinAllocationService serviceRackBin): base(userService)
+        public KnittingSubContractIssueController(IUserService userService, IKnittingSubContractIssueService service, IYDReqIssueService yDservice, IItemMasterService<KnittingSubContractIssueChild> itemMasterRepository, IYarnRackBinAllocationService serviceRackBin): base(userService)
         {
             _service = service;
             _yDservice = yDservice;

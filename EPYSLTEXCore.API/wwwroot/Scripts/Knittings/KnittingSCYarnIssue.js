@@ -1,5 +1,5 @@
 ﻿(function () {
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $formEl, tblMasterId, tblChildId, $modalPlanningEl, $tblStockInfoEl, tblStockInfoId;
     var status;
@@ -21,6 +21,8 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
+        if (!menuParam)
+            menuParam = localStorage.getItem("menuParam");
 
         var pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -33,8 +35,9 @@
         $modalPlanningEl = $("#modalPlanning" + pageId);
         tblStockInfoId = pageConstants.STOCK_INFO_PREFIX + pageId;
         pageIdWithHash = "#" + pageId;
-        menuType = localStorage.getItem("SCYDYarnReqPage");
-        menuType = parseInt(menuType);
+        //menuType = localStorage.getItem("SCYDYarnReqPage");
+        //menuType = parseInt(menuType);
+        menuType = menuParam === "SCYDYR" ? 0 : 1;
         debugger;
         $divDetailsEl.find('#Req-Complete').prop('checked', true);
         if (menuType == _paramType.SCYDYarnReq) {
@@ -419,7 +422,7 @@
             }*/
 
         ];
-
+        debugger;
         if ($tblMasterEl) $tblMasterEl.destroy();
         $tblMasterEl = new initEJ2Grid({
             tableId: tblMasterId,

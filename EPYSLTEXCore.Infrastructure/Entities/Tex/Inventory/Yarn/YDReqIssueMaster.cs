@@ -1,6 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Static;
 using System;
 using System.Collections.Generic;
 using System.Linq;

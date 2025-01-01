@@ -1924,6 +1924,34 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             return maxNo;
         }
+        public async Task<int> GetMaxNoAsync(string tableName, string columnName, string replacedValue, int length, SqlConnection connectionGmt)
+        {
+            var queryString = $"SELECT MaxValue = (ISNULL(MAX(CONVERT(int, REPLACE({columnName}, '{replacedValue}', ''))), 0) + 1) " +
+                              $"FROM {tableName} WHERE {columnName} LIKE '{replacedValue}%'";
+
+            if (length > 0)
+            {
+                queryString += $" AND LEN({columnName}) = {length}";
+            }
+
+            int maxNo = 0;
+
+            if (connectionGmt.State != System.Data.ConnectionState.Open)
+            {
+                await connectionGmt.OpenAsync();
+            }
+
+            using (SqlCommand command = new SqlCommand(queryString, connectionGmt))
+            using (SqlDataReader reader = await command.ExecuteReaderAsync())
+            {
+                if (await reader.ReadAsync())
+                {
+                    maxNo = Convert.ToInt32(reader["MaxValue"]);
+                }
+            }
+
+            return maxNo;
+        }
         #endregion
 
 

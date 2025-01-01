@@ -1,22 +1,14 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
-using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data;
 using System.Data.Entity;
 using Microsoft.Data.SqlClient;
-using System.Transactions;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn.Knitting;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn.Knitting;
 
@@ -49,11 +41,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                     sql += $@"
                       ;With M As (
 	                    Select KSCIssueMasterID, KSCIssueNo, KSCIssueDate, KSCIssueByID, KSCMasterID, KSCReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                    From KnittingSubContractIssueMaster Where IsSendForApprove=0
+	                    FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} Where IsSendForApprove=0
                     ),
 					RQ As(
 					Select M.*, ReqQty = SUM(KSCRC.ReqQty) 
-					FROM KnittingSubContractReqChild KSCRC
+					FROM {TableNames.KNITTING_SUB_CONTRACT_REQ_CHILD} KSCRC
 					INNER JOIN M ON M.KSCReqMasterID = KSCRC.KSCReqMasterID
 					GROUP BY M.KSCIssueMasterID, M.KSCIssueNo, M.KSCIssueDate, M.KSCIssueByID, M.KSCMasterID, M.KSCReqMasterID, M.Remarks, M.ChallanNo, M.GPNo
 					),
@@ -68,21 +60,21 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					CE2.ShortName KSCUnit, Company = Case when CM.ShortName is not null then CM.ShortName else CM2.ShortName end,
 					RQ.ChallanNo, RQ.GPNo, RQ.ReqQty
                     From RQ
-					Inner Join KnittingSubContractReqMaster KSRC On KSRC.KSCReqMasterID = RQ.KSCReqMasterID
-                    INNER JOIN KnittingSubContractReqChild RC ON RC.KSCReqMasterID = KSRC.KSCReqMasterID AND KSRC.IsApprove = 1 AND KSRC.IsReject = 0 
-					LEFT JOIN KnittingSubContractChild KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
-                    LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-					LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-					LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                    LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} KSRC On KSRC.KSCReqMasterID = RQ.KSCReqMasterID
+                    INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_CHILD} RC ON RC.KSCReqMasterID = KSRC.KSCReqMasterID AND KSRC.IsApprove = 1 AND KSRC.IsReject = 0 
+					LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
+                    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+					LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                    LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
 	                Inner Join {DbNames.EPYSL}..LoginUser LU On KSRC.KSCReqByID = LU.UserCode
-                    LEFT JOIN KnittingMachine KM ON KM.KnittingMachineID = KSM.KnittingMachineID
-	                LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                    LEFT JOIN {TableNames.KNITTING_MACHINE} KM ON KM.KnittingMachineID = KSM.KnittingMachineID
+	                LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 					Left Join {DbNames.EPYSL}..BookingMaster BM On BM.BookingNo = KSM.BookingNo
 					Left Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingNo = KSM.BookingNo
 					LEFT JOIN {DbNames.EPYSL}..Contacts CM ON CM.ContactID = BM.SupplierID
@@ -101,11 +93,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					),
 					MY As (
 	                    Select YDReqIssueMasterID, YDReqIssueNo, YDReqIssueDate, YDReqIssueBy, YDReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                   From YDReqIssueMaster Where IsSendForApprove=0
+	                   FROM {TableNames.YD_REQ_ISSUE_MASTER} Where IsSendForApprove=0
                     ),
 					RQY As(
 					Select MY.*, ReqQty = SUM(KSCRC.ReqQty) 
-					FROM YDReqChild KSCRC
+					FROM {TableNames.YD_REQ_CHILD} KSCRC
 					INNER JOIN MY ON MY.YDReqMasterID = KSCRC.YDReqMasterID
 					GROUP BY MY.YDReqIssueMasterID, MY.YDReqIssueNo, MY.YDReqIssueDate, MY.YDReqIssueBy, MY.YDReqMasterID, MY.Remarks, MY.ChallanNo, MY.GPNo
 					),
@@ -119,15 +111,15 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					'' KSCUnit, Company = Case when FCM.IsBDS=0 then 'EFL' else Case when isnull(CM.ShortName,'')<>'' then CM.ShortName else CM2.ShortName end end,
 					RQY.ChallanNo, RQY.GPNo, RQY.ReqQty TReqQty
                     From RQY
-					Inner Join YDReqMaster YRM On YRM.YDReqMasterID = RQY.YDReqMasterID
-					Inner Join YDReqChild YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
-					LEFT JOIN YDBookingChild YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
-					LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
-					LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-					--LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					--LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                    LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					Inner JOIN {TableNames.YD_REQ_MASTER} YRM On YRM.YDReqMasterID = RQY.YDReqMasterID
+					Inner JOIN {TableNames.YD_REQ_CHILD} YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
+					LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
+					LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+					--LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					--LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                    LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
@@ -153,7 +145,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                     sql += $@"
                     ;With M As (
 	                    Select KSCIssueMasterID, KSCIssueNo, KSCIssueDate, KSCIssueByID, KSCMasterID, KSCReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                    From KnittingSubContractIssueMaster 
+	                    FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} 
                         Where IsSendForApprove=1 AND IsApprove=0 AND IsReject=0
                     ),
 					MD AS(
@@ -168,20 +160,20 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					    Case when CM.ShortName is not null then CM.ShortName else CM2.ShortName end Company,
 						M.ChallanNo, M.GPNo
                         From M
-					    Inner Join KnittingSubContractReqMaster KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
-					    LEFT JOIN KnittingSubContractChild KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
-                        LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-					    LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
+					    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
+                        LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+					    LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
 	                    Inner Join {DbNames.EPYSL}..LoginUser LU On KSRC.KSCReqByID = LU.UserCode
-                        LEFT JOIN KnittingMachine KM ON KM.KnittingMachineID = KSM.KnittingMachineID
-	                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE} KM ON KM.KnittingMachineID = KSM.KnittingMachineID
+	                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 						Left Join {DbNames.EPYSL}..BookingMaster BM On BM.BookingNo = KSM.BookingNo
 						Left Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingNo = KSM.BookingNo
 						LEFT JOIN {DbNames.EPYSL}..Contacts CM ON CM.ContactID = BM.SupplierID
@@ -198,7 +190,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					),
 					MY As (
 	                    Select YDReqIssueMasterID, YDReqIssueNo, YDReqIssueDate, YDReqIssueBy, YDReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                    From YDReqIssueMaster 
+	                    FROM {TableNames.YD_REQ_ISSUE_MASTER} 
                         Where IsSendForApprove=1 AND IsApprove=0 AND IsReject=0
                     ),
 					MDY AS(
@@ -212,15 +204,15 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 						Company = Case when FCM.IsBDS=0 then 'EFL' else Case when isnull(CM.ShortName,'')<>'' then CM.ShortName else CM2.ShortName end end  ,
 						MY.ChallanNo, MY.GPNo
                         From MY
-					    Inner Join YDReqMaster YRM On YRM.YDReqMasterID = MY.YDReqMasterID
-					    Inner Join YDReqChild YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
-					    LEFT JOIN YDBookingChild YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
-					    LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-					    --LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    --LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.YD_REQ_MASTER} YRM On YRM.YDReqMasterID = MY.YDReqMasterID
+					    Inner JOIN {TableNames.YD_REQ_CHILD} YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
+					    LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
+					    LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
@@ -246,7 +238,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                     sql += $@"
                     ;With M As (
 	                    Select KSCIssueMasterID, KSCIssueNo, KSCIssueDate, KSCIssueByID, KSCMasterID, KSCReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                    From KnittingSubContractIssueMaster 
+	                    FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} 
                         Where IsSendForApprove=1 AND IsApprove=1 AND IsReject=0 AND IsGPApprove=0
                     ),
 					MD AS(
@@ -260,20 +252,20 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					    Case when CM.ShortName is not null then CM.ShortName else CM2.ShortName end Company,
 						M.ChallanNo, M.GPNo
                         From M
-					    Inner Join KnittingSubContractReqMaster KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
-					    LEFT JOIN KnittingSubContractChild KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
-                        LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-					    LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
+					    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
+                        LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+					    LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
 	                    Inner Join {DbNames.EPYSL}..LoginUser LU On KSRC.KSCReqByID = LU.UserCode
-                        LEFT JOIN KnittingMachine KM ON KM.KnittingMachineID = KSM.KnittingMachineID
-	                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE} KM ON KM.KnittingMachineID = KSM.KnittingMachineID
+	                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 						Left Join {DbNames.EPYSL}..BookingMaster BM On BM.BookingNo = KSM.BookingNo
 						Left Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingNo = KSM.BookingNo
 						LEFT JOIN {DbNames.EPYSL}..Contacts CM ON CM.ContactID = BM.SupplierID
@@ -282,7 +274,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					),
 					MY As (
 	                    Select YDReqIssueMasterID, YDReqIssueNo, YDReqIssueDate, YDReqIssueBy, YDReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                    From YDReqIssueMaster 
+	                    FROM {TableNames.YD_REQ_ISSUE_MASTER} 
                         Where IsApprove=1 AND IsReject=0 AND IsGPApprove=0
                     ),
 					MDY AS(
@@ -295,15 +287,15 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 						Company = Case when FCM.IsBDS=0 then 'EFL' else Case when isnull(CM.ShortName,'')<>'' then CM.ShortName else CM2.ShortName end end,
 						MY.ChallanNo, MY.GPNo
                         From MY
-					    Inner Join YDReqMaster YRM On YRM.YDReqMasterID = MY.YDReqMasterID
-					    Inner Join YDReqChild YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
-					    LEFT JOIN YDBookingChild YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
-					    LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-					    --LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    --LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.YD_REQ_MASTER} YRM On YRM.YDReqMasterID = MY.YDReqMasterID
+					    Inner JOIN {TableNames.YD_REQ_CHILD} YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
+					    LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
+					    LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
@@ -328,7 +320,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                     sql += $@"
                     ;With M As (
 	                    Select KSCIssueMasterID, KSCIssueNo, KSCIssueDate, KSCIssueByID, KSCMasterID, KSCReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                    From KnittingSubContractIssueMaster 
+	                    FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} 
                         Where IsSendForApprove=1 AND IsApprove=0 AND IsReject=1
                     ),
 					MD AS(
@@ -342,20 +334,20 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					    Case when CM.ShortName is not null then CM.ShortName else CM2.ShortName end Company,
 						M.ChallanNo, M.GPNo
                         From M
-					    Inner Join KnittingSubContractReqMaster KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
-					    LEFT JOIN KnittingSubContractChild KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
-                        LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-					    LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
+					    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
+                        LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+					    LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID 
 	                    Inner Join {DbNames.EPYSL}..LoginUser LU On KSRC.KSCReqByID = LU.UserCode
-                        LEFT JOIN KnittingMachine KM ON KM.KnittingMachineID = KSM.KnittingMachineID
-	                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE} KM ON KM.KnittingMachineID = KSM.KnittingMachineID
+	                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 						Left Join {DbNames.EPYSL}..BookingMaster BM On BM.BookingNo = KSM.BookingNo
 						Left Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingNo = KSM.BookingNo
 						LEFT JOIN {DbNames.EPYSL}..Contacts CM ON CM.ContactID = BM.SupplierID
@@ -364,7 +356,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					),
 					MY As (
 	                    Select YDReqIssueMasterID, YDReqIssueNo, YDReqIssueDate, YDReqIssueBy, YDReqMasterID, Remarks, ChallanNo, GPNo = ''
-	                    From YDReqIssueMaster 
+	                    FROM {TableNames.YD_REQ_ISSUE_MASTER} 
                         Where IsSendForApprove=1 AND IsApprove=0 AND IsReject=1
                     ),
 					MDY AS(
@@ -377,15 +369,15 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 						Company = Case when FCM.IsBDS=0 then 'EFL' else Case when isnull(CM.ShortName,'')<>'' then CM.ShortName else CM2.ShortName end end,
 						MY.ChallanNo, MY.GPNo
                         From MY
-					    Inner Join YDReqMaster YRM On YRM.YDReqMasterID = MY.YDReqMasterID
-					    Inner Join YDReqChild YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
-					    LEFT JOIN YDBookingChild YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
-					    LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-					    --LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    --LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.YD_REQ_MASTER} YRM On YRM.YDReqMasterID = MY.YDReqMasterID
+					    Inner JOIN {TableNames.YD_REQ_CHILD} YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
+					    LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
+					    LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
@@ -410,7 +402,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                     sql += $@"
                     ;With M As (
 	                    Select KSCIssueMasterID, KSCIssueNo, KSCIssueDate, KSCIssueByID, KSCMasterID, KSCReqMasterID, Remarks, ChallanNo, GPNo
-	                    From KnittingSubContractIssueMaster 
+	                    FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} 
                         Where IsSendForApprove=1 AND IsApprove=1 AND IsReject=0 AND IsGPApprove=1
                     ),
 					MD AS(
@@ -424,20 +416,20 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					    Case when CM.ShortName is not null then CM.ShortName else CM2.ShortName end Company,
                         M.ChallanNo, M.GPNo
                         From M
-					    Inner Join KnittingSubContractReqMaster KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
-					    LEFT JOIN KnittingSubContractChild KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
-                        LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-					    LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} KSRC On KSRC.KSCReqMasterID = M.KSCReqMasterID
+					    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON KSRC.KSCMasterID=KSC.KSCMasterID
+                        LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+					    LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
 	                    Inner Join {DbNames.EPYSL}..LoginUser LU On KSRC.KSCReqByID = LU.UserCode
-                        LEFT JOIN KnittingMachine KM ON KM.KnittingMachineID = KSM.KnittingMachineID
-	                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE} KM ON KM.KnittingMachineID = KSM.KnittingMachineID
+	                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 						Left Join {DbNames.EPYSL}..BookingMaster BM On BM.BookingNo = KSM.BookingNo
 						Left Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingNo = KSM.BookingNo
 						LEFT JOIN {DbNames.EPYSL}..Contacts CM ON CM.ContactID = BM.SupplierID
@@ -446,7 +438,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 					),
 					MY As (
 	                    Select YDReqIssueMasterID, YDReqIssueNo, YDReqIssueDate, YDReqIssueBy, YDReqMasterID, Remarks, ChallanNo, GPNo
-	                    From YDReqIssueMaster 
+	                    FROM {TableNames.YD_REQ_ISSUE_MASTER} 
                         Where IsSendForApprove=1 AND IsApprove=1 AND IsReject=0 AND IsGPApprove=1
                     ),
 					MDY AS(
@@ -459,15 +451,15 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 						Company = Case when FCM.IsBDS=0 then 'EFL' else Case when isnull(CM.ShortName,'')<>'' then CM.ShortName else CM2.ShortName end end,
                         MY.ChallanNo, MY.GPNo
                         From MY
-					    Inner Join YDReqMaster YRM On YRM.YDReqMasterID = MY.YDReqMasterID
-					    Inner Join YDReqChild YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
-					    LEFT JOIN YDBookingChild YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
-					    LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
-					    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-					    --LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					    --LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					    Inner JOIN {TableNames.YD_REQ_MASTER} YRM On YRM.YDReqMasterID = MY.YDReqMasterID
+					    Inner JOIN {TableNames.YD_REQ_CHILD} YRC On YRC.YDReqMasterID = YRM.YDReqMasterID
+					    LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingMasterID=YRM.YDBookingMasterID
+					    LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
+					    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					    --LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                         LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
@@ -500,19 +492,19 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 	                    ISV.SegmentValue Composition, GSV.SegmentValue Gsm, FCM.Length, FCM.Width,KSM.KSCNo,LU.UserName ReqByUser,CT.ShortName SCByUser,
 						Case when CM.ShortName is not null then CM.ShortName else CM2.ShortName end Company,
 	                    IM.IsCompleted
-	                    FROM KnittingSubContractReqMaster RM 
-	                    INNER JOIN KnittingSubContractReqChild RC ON RC.KSCReqMasterID = RM.KSCReqMasterID AND RM.IsApprove = 1 AND RM.IsReject = 0 
-	                    LEFT JOIN KnittingSubContractIssueMaster IM ON IM.KSCReqMasterID = RM.KSCReqMasterID
-	                    LEFT JOIN KnittingSubContractIssueChild IC ON IC.KSCIssueMasterID = IM.KSCIssueMasterID
-	                    LEFT JOIN KnittingSubContractChild KSC ON RM.KSCMasterID=KSC.KSCMasterID
-	                    LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-	                    LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-	                    LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-	                    LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-	                    LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
-						LEFT JOIN KnittingMachine KM ON KM.KnittingMachineID = KSM.KnittingMachineID
-	                    LEFT JOIN KnittingUnit KU ON KU.KnittingUnitID = KM.KnittingUnitID
+	                    FROM {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} RM 
+	                    INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_CHILD} RC ON RC.KSCReqMasterID = RM.KSCReqMasterID AND RM.IsApprove = 1 AND RM.IsReject = 0 
+	                    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} IM ON IM.KSCReqMasterID = RM.KSCReqMasterID
+	                    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_ISSUE_CHILD} IC ON IC.KSCIssueMasterID = IM.KSCIssueMasterID
+	                    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON RM.KSCMasterID=KSC.KSCMasterID
+	                    LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+	                    LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+	                    LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+	                    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+	                    LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+						LEFT JOIN {TableNames.KNITTING_MACHINE} KM ON KM.KnittingMachineID = KSM.KnittingMachineID
+	                    LEFT JOIN {TableNames.KNITTING_UNIT} KU ON KU.KnittingUnitID = KM.KnittingUnitID
 						Left Join {DbNames.EPYSL}..BookingMaster BM On BM.BookingNo = KSM.BookingNo
 						Left Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingNo = KSM.BookingNo
 	                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
@@ -543,7 +535,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 	                    SELECT B.KSCReqMasterID, B.KSCReqNo, B.KSCReqDate,ReqQty = B.TotalReqQty,
 	                    ConceptNo = B.GroupConceptNo,B.ProgramName,B.ReqType,B.KSCNo,B.ReqByUser,B.SCByUser,B.Company,KSCUnit
 	                    FROM B
-	                    Left Join KnittingSubContractLOReturnMaster LOR ON LOR.KSCReqMasterID = B.KSCReqMasterID
+	                    Left JOIN {TableNames.KNITTING_SUB_CONTRACT_LOR_MASTER} LOR ON LOR.KSCReqMasterID = B.KSCReqMasterID
 	                    WHERE (isnull(TotalReqQty,0) > isnull(TotalIssueQty,0) AND isnull(IsCompleted,0)=0) AND  LOR.KSCReqMasterID IS NULL
                     ),
                     M As 
@@ -552,14 +544,14 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 	                    SUM(YRC.ReqQty) ReqQty,sum(YRIC.IssueQty)IssueQty,BM.GroupConceptNo,
 						Company = Case when FCM.IsBDS=0 then 'EFL' else Case when isnull(CM.ShortName,'')<>'' then CM.ShortName else CM2.ShortName end end ,
 						YRIM.IsCompleted, BM.ConceptID, BM.ExportOrderID
-	                    From YDReqMaster M 
-	                    Inner Join YDReqChild YRC On M.YDReqMasterID = YRC.YDReqMasterID
-	                    Left Join YDReqIssueMaster YRIM ON YRIM.YDReqMasterID=M.YDReqMasterID
-	                    Left Join YDReqIssueChild YRIC ON YRIC.YDReqIssueMasterID=YRIM.YDReqIssueMasterID
-	                    Inner Join YDBookingMaster BM ON M.YDBookingMasterID = BM.YDBookingMasterID
+	                    FROM {TableNames.YD_REQ_MASTER} M 
+	                    Inner JOIN {TableNames.YD_REQ_CHILD} YRC On M.YDReqMasterID = YRC.YDReqMasterID
+	                    Left JOIN {TableNames.YD_REQ_ISSUE_MASTER} YRIM ON YRIM.YDReqMasterID=M.YDReqMasterID
+	                    Left JOIN {TableNames.YD_REQ_ISSUE_CHILD} YRIC ON YRIC.YDReqIssueMasterID=YRIM.YDReqIssueMasterID
+	                    Inner JOIN {TableNames.YD_BOOKING_MASTER} BM ON M.YDBookingMasterID = BM.YDBookingMasterID
 						Left Join {DbNames.EPYSL}..BookingMaster BOM On BOM.BookingNo = BM.GroupConceptNo
 						Left Join {DbNames.EPYSL}..SampleBookingMaster SBM On SBM.BookingNo = BM.GroupConceptNo
-						Left Join FreeConceptMaster FCM On FCM.ConceptID = BM.ConceptID
+						Left JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM On FCM.ConceptID = BM.ConceptID
 						LEFT JOIN {DbNames.EPYSL}..Contacts CM ON CM.ContactID = BOM.SupplierID
 						LEFT JOIN {DbNames.EPYSL}..Contacts CM2 ON CM2.ContactID = SBM.SupplierID
 	                    Inner Join {DbNames.EPYSL}..LoginUser LU On M.YDReqBy = LU.UserCode
@@ -574,7 +566,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 	                    ProgrammeName = CASE WHEN M.ExportOrderID > 0 THEN 'BULK' ELSE 'RND' END,
                         ReqType = 'YD', YDBookingNo, ReqByUser, '' SCBy,Company,'' KSCUnit
 	                    From M 
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = M.ConceptID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = M.ConceptID
 	                    LEFT JOIN {DbNames.EPYSL}..ExportOrderMaster EOM ON EOM.ExportOrderID = M.ExportOrderID
 	                    Where (isnull(IsCompleted,0)=0 OR isnull(ReqQty,0)>isnull(IssueQty,0))
                     ),
@@ -609,16 +601,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 				(CASE WHEN FCM.ConceptID > 0 THEN FCM.ConceptNo  ELSE KPM.YBookingNo END) AS CorBookingNo,
 				FCM.SubGroupID, ISG.SubGroupName, KT.TypeName KnittingType, Technical.TechnicalName, 
                 ISV.SegmentValue Composition, GSV.SegmentValue Gsm, FCM.Length, FCM.Width,CO.ShortName AS ServiceProvider,CE.ShortName Company  
-	            From KnittingSubContractReqMaster RM
-				LEFT JOIN KnittingSubContractChild KSC ON RM.KSCMasterID=KSC.KSCMasterID
-				LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-				LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-				LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID
-				LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID
-				LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-				LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-				LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+	            FROM {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} RM
+				LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON RM.KSCMasterID=KSC.KSCMasterID
+				LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+				LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.BookingChildID = FCM.BookingChildID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBAC.AcknowledgeID
+				LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+				LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+				LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                 LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID 
@@ -630,7 +622,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 -- Child Info
                 ;WITH M As (
 	                Select KSCReqMasterID,KSCMasterID
-	                From KnittingSubContractReqMaster 
+	                FROM {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} 
 	                Where KSCReqMasterID = {id}
                 ), 
                 BD As(
@@ -643,23 +635,23 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 				StockFromTableId = 20, --KnittingSubContractReqChild
 				StockFromPKId = KSCRC.KSCReqChildID, KSCRC.StockTypeId
                 from M
-                Inner Join KnittingSubContractReqChild KSCRC ON KSCRC.KSCReqMasterID = M.KSCReqMasterID
-				INNER JOIN KnittingSubContractChildItem KSCI ON KSCI.KSCChildItemID = KSCRC.KSCChildItemID
-				INNER JOIN KnittingSubContractChild KSC ON M.KSCMasterID=KSC.KSCMasterID
-				INNER JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-				INNER JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID = KSCRC.YBChildItemID AND YBCI.YBChildItemID <> 0
-                INNER JOIN YarnBookingChild_New YBC ON YBC.YBChildID = YBCI.YBChildID
-                INNER JOIN YarnBookingMaster_New YBM ON YBM.YBookingID = YBC.YBookingID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.BookingChildID = YBC.BookingChildID AND FCM.BookingID = YBM.BookingID
-				--LEFT JOIN FreeConceptMRChild FCMRC ON FCMRC.FCMRChildID = KSCRC.FCMRChildID
-				LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID AND FBAC.ItemMasterID=FCM.ItemMasterID
-				LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID
-				LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-				LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
+                Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_CHILD} KSCRC ON KSCRC.KSCReqMasterID = M.KSCReqMasterID
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD}Item KSCI ON KSCI.KSCChildItemID = KSCRC.KSCChildItemID
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON M.KSCMasterID=KSC.KSCMasterID
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+				INNER JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID = KSCRC.YBChildItemID AND YBCI.YBChildItemID <> 0
+                INNER JOIN {TableNames.YarnBookingChild_New} YBC ON YBC.YBChildID = YBCI.YBChildID
+                INNER JOIN {TableNames.YarnBookingMaster_New} YBM ON YBM.YBookingID = YBC.YBookingID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.BookingChildID = YBC.BookingChildID AND FCM.BookingID = YBM.BookingID
+				--LEFT JOIN {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCMRC ON FCMRC.FCMRChildID = KSCRC.FCMRChildID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.BookingChildID = FCM.BookingChildID AND FBAC.ItemMasterID=FCM.ItemMasterID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBAC.AcknowledgeID
+				LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+				LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
 				Left Join {DbNames.EPYSL}..Contacts C ON C.ContactID = YBCI.SpinnerID
-				LEFT JOIN YarnAllocationChildItem YACI ON YACI.AllocationChildItemID = KSCI.AllocationChildItemID
-				LEFT JOIN YarnAllocationChild YAC ON YAC.AllocationChildID = YACI.AllocationChildID
-				LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD_ITEM} YACI ON YACI.AllocationChildItemID = KSCI.AllocationChildItemID
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD} YAC ON YAC.AllocationChildID = YACI.AllocationChildID
+				LEFT JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
 				 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -684,17 +676,17 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 				StockFromTableId = 20, --KnittingSubContractReqChild
 				StockFromPKId = KSCRC.KSCReqChildID, KSCRC.StockTypeId
                 from M
-                Inner Join KnittingSubContractReqChild KSCRC ON KSCRC.KSCReqMasterID = M.KSCReqMasterID
-				INNER JOIN KnittingSubContractChildItem KSCI ON KSCI.KSCChildItemID = KSCRC.KSCChildItemID
-				INNER JOIN KnittingSubContractChild KSC ON M.KSCMasterID=KSC.KSCMasterID
-				INNER JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-				INNER JOIN FreeConceptMRChild FCMRC ON FCMRC.FCMRChildID = KSCRC.FCMRChildID AND FCMRC.FCMRChildID <> 0
-				LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-				LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID AND FBAC.ItemMasterID=FCM.ItemMasterID
-				LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID
-				LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-				LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-				INNER JOIN KnittingPlanYarn KPY ON KPY.KPYarnID = KSCRC.KPYarnID
+                Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_CHILD} KSCRC ON KSCRC.KSCReqMasterID = M.KSCReqMasterID
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD}Item KSCI ON KSCI.KSCChildItemID = KSCRC.KSCChildItemID
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON M.KSCMasterID=KSC.KSCMasterID
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+				INNER JOIN {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCMRC ON FCMRC.FCMRChildID = KSCRC.FCMRChildID AND FCMRC.FCMRChildID <> 0
+				LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.BookingChildID = FCM.BookingChildID AND FBAC.ItemMasterID=FCM.ItemMasterID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBAC.AcknowledgeID
+				LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+				LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+				INNER JOIN {TableNames.Knitting_Plan_Yarn} KPY ON KPY.KPYarnID = KSCRC.KPYarnID
 				LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = KPY.YarnBrandID
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = FCMRC.ItemMasterId
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
@@ -744,18 +736,18 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 				YBM.GroupConceptNo CorBookingNo,
 				IM.SubGroupID, ISG.SubGroupName, KT.TypeName KnittingType, Technical.TechnicalName, 
                 ISV.SegmentValue Composition, GSV.SegmentValue Gsm, FCM.Length, FCM.Width,CE.ServiceProvider,COE.ShortName Company 
-	            From YDReqMaster RM
-				LEFT JOIN YDReqChild YRC ON YRC.YDReqMasterID=RM.YDReqMasterID
-				LEFT JOIN YDBookingChild YBC ON YBC.YDBookingChildID=YRC.YDBookingChildID
-				LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
-				LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-				LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID
-				LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID
+	            FROM {TableNames.YD_REQ_MASTER} RM
+				LEFT JOIN {TableNames.YD_REQ_CHILD} YRC ON YRC.YDReqMasterID=RM.YDReqMasterID
+				LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingChildID=YRC.YDBookingChildID
+				LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
+				LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.BookingChildID = FCM.BookingChildID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBAC.AcknowledgeID
 				INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YRC.ItemMasterID
-				--LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-				--LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-				LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+				--LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+				--LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+				LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                 LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = IM.SubGroupID
@@ -769,7 +761,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 -- Child Info
                 ;WITH M As (
 	                Select YDReqMasterID
-	                From YDReqMaster 
+	                FROM {TableNames.YD_REQ_MASTER} 
 	                Where YDReqMasterID = {id}
                 ) 
                 Select KSCRC.YDReqChildID KSCReqChildID, KSCRC.SpinnerID, 
@@ -781,12 +773,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 StockFromTableId = 21, --YDReqChild
 				StockFromPKId = KSCRC.YDReqChildID, KSCRC.StockTypeId
 				from M
-                Inner Join YDReqChild KSCRC ON KSCRC.YDReqMasterID = M.YDReqMasterID
-				LEFT JOIN YDBookingChild YDBC ON YDBC.YDBookingChildID=KSCRC.YDBookingChildID
-				LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YDBC.YDBookingMasterID
-				LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-				LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID AND FBAC.ItemMasterID=FCM.ItemMasterID
-				LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID
+                Inner JOIN {TableNames.YD_REQ_CHILD} KSCRC ON KSCRC.YDReqMasterID = M.YDReqMasterID
+				LEFT JOIN {TableNames.YDBookingChild} YDBC ON YDBC.YDBookingChildID=KSCRC.YDBookingChildID
+				LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YDBC.YDBookingMasterID
+				LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.BookingChildID = FCM.BookingChildID AND FBAC.ItemMasterID=FCM.ItemMasterID
+				LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBAC.AcknowledgeID
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = KSCRC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -796,9 +788,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
                 Left Join {DbNames.EPYSL}..Contacts C ON KSCRC.SpinnerID = C.ContactID 
-				LEFT JOIN YarnAllocationChildItem YACI ON YACI.AllocationChildItemID = KSCRC.AllocationChildItemID
-				LEFT JOIN YarnAllocationChild YAC ON YAC.AllocationChildID = YACI.AllocationChildID
-				LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD_ITEM} YACI ON YACI.AllocationChildItemID = KSCRC.AllocationChildItemID
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD} YAC ON YAC.AllocationChildID = YACI.AllocationChildID
+				LEFT JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
 				LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YSS.SpinnerId
 
                 ;Select Cast(C.ContactID As varchar) [id], C.Name [text]
@@ -844,7 +836,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 ;With
                     M As (
 	                    Select KSCIssueMasterID, KSCIssueNo,ChallanNo,ChallanDate,GPNo,GPDate,TransportTypeID,TransportAgencyID,VehicleNo,DriverName,ContactNo,IsCompleted, KSCIssueDate, KSCReqMasterID, Remarks, KSCIssueByID, IsSendForApprove
-	                    From KnittingSubContractIssueMaster  WHERE KSCIssueMasterID ={id}
+	                    FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER}  WHERE KSCIssueMasterID ={id}
                     )
                     Select M.KSCIssueMasterID, M.KSCIssueNo, M.KSCIssueDate, M.KSCIssueByID, M.KSCReqMasterID,M.ChallanNo,M.ChallanDate,M.GPNo,GPDate,M.TransportTypeID,M.TransportAgencyID,M.VehicleNo,M.DriverName,M.ContactNo,M.IsCompleted, M.Remarks,RM.KSCReqNo,RM.KSCReqDate,
 					KSC.BookingQty,KSC.SCQty,KSC.Rate,FCM.ConceptNo, 'SC' ReqType, M.IsSendForApprove,
@@ -853,16 +845,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 				    FCM.SubGroupID, ISG.SubGroupName, KT.TypeName KnittingType, Technical.TechnicalName, 
                     ISV.SegmentValue Composition, GSV.SegmentValue Gsm, FCM.Length, FCM.Width,CE.ShortName ServiceProvider,COE.ShortName Company
                     From M
-					INNER Join KnittingSubContractReqMaster RM On RM.KSCReqMasterID = M.KSCReqMasterID
-					INNER JOIN KnittingSubContractChild KSC ON KSC.KSCMasterID=RM.KSCMasterID
-					LEFT JOIN KnittingSubContractMaster KSM ON KSM.KSCMasterID=KSC.KSCMasterID
-					LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = KSC.ConceptID
-					LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID
-					LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID
-					LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                    LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_MASTER} RM On RM.KSCReqMasterID = M.KSCReqMasterID
+					INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD} KSC ON KSC.KSCMasterID=RM.KSCMasterID
+					LEFT JOIN {TableNames.KNITTING_SUB_CONTRACT_MASTER} KSM ON KSM.KSCMasterID=KSC.KSCMasterID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KSC.ConceptID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.BookingChildID = FCM.BookingChildID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBAC.AcknowledgeID
+					LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                    LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
@@ -872,7 +864,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                  -- Child Info
                ;WITH M As (
 	                Select KSCIssueMasterID
-	                From KnittingSubContractIssueMaster 
+	                FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} 
 	                Where KSCIssueMasterID = {id}
                 )
 
@@ -886,16 +878,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 				ISV6.SegmentValueID YarnCountID, ISV2.SegmentValueID YarnTypeID, ISV2.SegmentValue YarnType, ISV6.SegmentValue YarnCount, KSCIC.IssueQty, 
                 KSCIC.IssueQtyCone, KSCIC.IssueQtyCarton, KSCIC.Remarks, YSS.ItemMasterID, YSS.YarnCategory, KSCRC.YBChildItemID, KSCRC.ReqQty, KSCRC.ReqCone
                 from M
-                Inner Join KnittingSubContractIssueChild KSCIC ON KSCIC.KSCIssueMasterID = M.KSCIssueMasterID
-                Inner Join KnittingSubContractReqChild KSCRC ON KSCRC.KSCReqChildID = KSCIC.KSCReqChildID
-				INNER JOIN KnittingSubContractChildItem CI ON CI.KSCChildItemID = KSCRC.KSCChildItemID
-				LEFT JOIN YarnAllocationChildItem YACI ON YACI.AllocationChildItemID = CI.AllocationChildItemID
-				LEFT JOIN YarnAllocationChild YAC ON YAC.AllocationChildID = YACI.AllocationChildID
-				LEFT JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID=YAC.YBChildItemID
-				LEFT JOIN FreeConceptMRChild FCMRC ON FCMRC.FCMRChildID = KSCRC.FCMRChildID
-				LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = Case When YACI.YarnStockSetId > 0 Then YACI.YarnStockSetId Else FCMRC.YarnStockSetId END
+                Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_ISSUE_CHILD} KSCIC ON KSCIC.KSCIssueMasterID = M.KSCIssueMasterID
+                Inner JOIN {TableNames.KNITTING_SUB_CONTRACT_REQ_CHILD} KSCRC ON KSCRC.KSCReqChildID = KSCIC.KSCReqChildID
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_CHILD}Item CI ON CI.KSCChildItemID = KSCRC.KSCChildItemID
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD_ITEM} YACI ON YACI.AllocationChildItemID = CI.AllocationChildItemID
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD} YAC ON YAC.AllocationChildID = YACI.AllocationChildID
+				LEFT JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID=YAC.YBChildItemID
+				LEFT JOIN {TableNames.RND_FREE_CONCEPT_MR_CHILD} FCMRC ON FCMRC.FCMRChildID = KSCRC.FCMRChildID
+				LEFT JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = Case When YACI.YarnStockSetId > 0 Then YACI.YarnStockSetId Else FCMRC.YarnStockSetId END
 				LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YSS.SpinnerId
-				LEFT JOIN KnittingPlanYarn KPY ON KPY.KPYarnID = KSCRC.KPYarnID
+				LEFT JOIN {TableNames.Knitting_Plan_Yarn} KPY ON KPY.KPYarnID = KSCRC.KPYarnID
 				LEFT JOIN {DbNames.EPYSL}..Contacts SP2 ON SP2.ContactID = KPY.YarnBrandID
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YSS.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
@@ -909,8 +901,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 
                 --Rack bins Mapping
                 SELECT M.*
-				FROM KnittingSubContractIssueChildRackBinMapping M
-				INNER JOIN KnittingSubContractIssueChild PRC ON PRC.KSCIssueChildID = M.KSCIssueChildID
+				FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING} M
+				INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_ISSUE_CHILD} PRC ON PRC.KSCIssueChildID = M.KSCIssueChildID
 				WHERE PRC.KSCIssueMasterID = {id};
 
                 ;Select Cast(C.ContactID As varchar) [id], C.Name [text]
@@ -932,7 +924,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 ;With
                     M As (
 	                    Select YDReqIssueMasterID KSCIssueMasterID, YDReqIssueNo KSCIssueNo,ChallanNo,ChallanDate,GPNo,GPDate,TransportTypeID,TransportAgencyID,VehicleNo,DriverName,ContactNo,IsCompleted, YDReqIssueDate KSCIssueDate, YDReqMasterID KSCReqMasterID, Remarks, YDReqIssueBy KSCIssueByID
-	                    From YDReqIssueMaster  WHERE YDReqIssueMasterID ={id}
+	                    FROM {TableNames.YD_REQ_ISSUE_MASTER}  WHERE YDReqIssueMasterID ={id}
                     )
                     Select M.KSCIssueMasterID, M.KSCIssueNo, M.KSCIssueDate, M.KSCIssueByID, M.KSCReqMasterID,M.ChallanNo,M.ChallanDate,M.GPNo,GPDate,M.TransportTypeID,M.TransportAgencyID,M.VehicleNo,M.DriverName,M.ContactNo,M.IsCompleted, M.Remarks,RM.YDReqNo KSCReqNo,RM.YDReqDate KSCReqDate,
 					sum(YBC.BookingQty)BookingQty,sum(YRC.ReqQty) SCQty,0 Rate,YBM.GroupConceptNo ConceptNo, 'YD' ReqType,
@@ -941,19 +933,19 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
 				    FCM.SubGroupID, ISG.SubGroupName, KT.TypeName KnittingType, Technical.TechnicalName, 
                     ISV.SegmentValue Composition, GSV.SegmentValue Gsm, FCM.Length, FCM.Width,CE.ServiceProvider,COE.ShortName Company
                     From M
-					Inner Join YDReqMaster RM On RM.YDReqMasterID = M.KSCReqMasterID
-					LEFT JOIN YDReqChild YRC ON YRC.YDReqMasterID=RM.YDReqMasterID
-					LEFT JOIN YDBookingChild YBC ON YBC.YDBookingChildID=YRC.YDBookingChildID
-					LEFT JOIN YDBookingMaster YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
-					LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = YBM.ConceptID
-					LEFT JOIN FreeConceptMRMaster FCMRM ON FCMRM.ConceptID = YBM.ConceptID
-					LEFT JOIN FBookingAcknowledgeChild FBAC ON FBAC.BookingChildID = FCM.BookingChildID
-					LEFT JOIN FBookingAcknowledge FBA ON FBA.FBAckID = FBAC.AcknowledgeID
+					Inner JOIN {TableNames.YD_REQ_MASTER} RM On RM.YDReqMasterID = M.KSCReqMasterID
+					LEFT JOIN {TableNames.YD_REQ_CHILD} YRC ON YRC.YDReqMasterID=RM.YDReqMasterID
+					LEFT JOIN {TableNames.YDBookingChild} YBC ON YBC.YDBookingChildID=YRC.YDBookingChildID
+					LEFT JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID=YBC.YDBookingMasterID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = YBM.ConceptID
+					LEFT FROM {TableNames.FreeConceptMRMaster} FCMRM ON FCMRM.ConceptID = YBM.ConceptID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE_CHILD} FBAC ON FBAC.BookingChildID = FCM.BookingChildID
+					LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.FBAckID = FBAC.AcknowledgeID
 					INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = YRC.ItemMasterID
-					--LEFT JOIN KnittingPlanChild KPC ON KPC.KPChildID=KSC.KPChildID
-					--LEFT JOIN KnittingPlanMaster KPM ON KPM.KPMasterID=KSC.KPMasterID
-					LEFT JOIN KnittingMachineType KT ON KT.TypeID = FCM.KnittingTypeID 
-                    LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
+					--LEFT JOIN {TableNames.Knitting_Plan_Child} KPC ON KPC.KPChildID=KSC.KPChildID
+					--LEFT JOIN {TableNames.Knitting_Plan_Master} KPM ON KPM.KPMasterID=KSC.KPMasterID
+					LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KT ON KT.TypeID = FCM.KnittingTypeID 
+                    LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId = FCM.TechnicalNameId
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FCM.CompositionID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue GSV ON GSV.SegmentValueID = FCM.GSMID 
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup ISG ON ISG.SubGroupID = FCM.SubGroupID
@@ -966,7 +958,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                  -- Child Info
                ;WITH M As (
 	                Select YDReqIssueMasterID,YDReqMasterID
-	                From YDReqIssueMaster 
+	                FROM {TableNames.YD_REQ_ISSUE_MASTER} 
 	                Where YDReqIssueMasterID = {id}
                 )
 
@@ -976,9 +968,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 0 As StitchLength, ISV6.SegmentValueID YarnCountID, ISV2.SegmentValueID YarnTypeID, ISV2.SegmentValue YarnType, ISV6.SegmentValue YarnCount, KSCIC.IssueQty, 
                 KSCIC.IssueQtyCone, KSCIC.IssueQtyCarton, KSCIC.Remarks,KSCRC.ReqQty,KSCRC.ReqCone, AllocatedQty = ISNULL(YACI.TotalAllocationQty,0), IM.ItemMasterID, KSCIC.YarnCategory, YDBC.YBChildItemID
                 FROM M
-                INNER JOIN YDReqIssueChild KSCIC ON KSCIC.YDReqIssueMasterID = M.YDReqIssueMasterID
-				INNER JOIN YDReqChild KSCRC ON KSCRC.YDReqChildID = KSCIC.YDReqChildID
-				LEFT JOIN YDBookingChild YDBC ON YDBC.YDBookingChildID = KSCRC.YDBookingChildID
+                INNER JOIN {TableNames.YD_REQ_ISSUE_CHILD} KSCIC ON KSCIC.YDReqIssueMasterID = M.YDReqIssueMasterID
+				INNER JOIN {TableNames.YD_REQ_CHILD} KSCRC ON KSCRC.YDReqChildID = KSCIC.YDReqChildID
+				LEFT JOIN {TableNames.YDBookingChild} YDBC ON YDBC.YDBookingChildID = KSCRC.YDBookingChildID
                 INNER JOIN {DbNames.EPYSL}..ItemMaster IM ON IM.ItemMasterID = KSCRC.ItemMasterID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV1 ON ISV1.SegmentValueID = IM.Segment1ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV2 ON ISV2.SegmentValueID = IM.Segment2ValueID
@@ -988,16 +980,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV6 ON ISV6.SegmentValueID = IM.Segment6ValueID
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV7 ON ISV7.SegmentValueID = IM.Segment7ValueID
 				LEFT JOIN {DbNames.EPYSL}..Contacts C ON KSCRC.SpinnerID = C.ContactID
-				LEFT JOIN YarnAllocationChildItem YACI ON YACI.AllocationChildItemID = KSCRC.AllocationChildItemID
-				LEFT JOIN YarnAllocationChild YAC ON YAC.AllocationChildID = YACI.AllocationChildID
-				LEFT JOIN YarnBookingChildItem_New YBCI ON YBCI.YBChildItemID=YAC.YBChildItemID
-				LEFT JOIN YarnStockSet YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD_ITEM} YACI ON YACI.AllocationChildItemID = KSCRC.AllocationChildItemID
+				LEFT JOIN {TableNames.YARN_ALLOCATION_CHILD} YAC ON YAC.AllocationChildID = YACI.AllocationChildID
+				LEFT JOIN {TableNames.YarnBookingChildItem_New} YBCI ON YBCI.YBChildItemID=YAC.YBChildItemID
+				LEFT JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = YACI.YarnStockSetId
 				LEFT JOIN {DbNames.EPYSL}..Contacts SP ON SP.ContactID = YSS.SpinnerId
 
                 --Rack bins Mapping
                 SELECT M.YDRICRBId AS KSCICRBId,M.YDReqIssueChildID AS KSCIssueChildID,M.ChildRackBinID,M.IssueCartoon,M.IssueQtyCone,M.IssueQtyKg
-				FROM YDReqIssueChildRackBinMapping M
-				INNER JOIN YDReqIssueChild PRC ON PRC.YDReqIssueChildID = M.YDReqIssueChildID
+				FROM {TableNames.YD_REQ_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING} M
+				INNER JOIN {TableNames.YD_REQ_ISSUE_CHILD} PRC ON PRC.YDReqIssueChildID = M.YDReqIssueChildID
 				WHERE PRC.YDReqIssueMasterID = {id};
 
                 ;Select Cast(C.ContactID As varchar) [id], C.Name [text]
@@ -1046,12 +1038,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Knitting
         public async Task<KnittingSubContractIssueMaster> GetAllAsync(int id)
         {
             var sql = $@"
-            ;Select * From KnittingSubContractIssueMaster Where KSCIssueMasterID = {id}
+            ;Select * FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_MASTER} Where KSCIssueMasterID = {id}
 
-            ;Select * From KnittingSubContractIssueChild Where KSCIssueMasterID = {id}
+            ;Select * FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_CHILD} Where KSCIssueMasterID = {id}
 
-            ;Select RBM.*FROm KnittingSubContractIssueChildRackBinMapping RBM
-            INNER JOIN KnittingSubContractIssueChild KSCIC ON KSCIC.KSCIssueChildID = RBM.KSCIssueChildID
+            ;Select RBM.* FROM {TableNames.KNITTING_SUB_CONTRACT_ISSUE_CHILD_CHILD_RACK_BIN_MAPPING} RBM
+            INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_ISSUE_CHILD} KSCIC ON KSCIC.KSCIssueChildID = RBM.KSCIssueChildID
             Where KSCIC.KSCIssueMasterID = {id}";
 
             try

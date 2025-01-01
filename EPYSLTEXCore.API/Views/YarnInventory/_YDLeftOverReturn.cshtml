@@ -1,0 +1,144 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="IsYarnReturnApprovedPage" value="@ViewBag.IsYarnReturnApprovedPage" />
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId" class="master-toolbar">
+                <button id="btnPendingReturnList" class="btn btn-success text-white btn-sm btnToolbar">
+                    <i class="fa fa-list"></i>&nbsp;Pending List
+                </button>
+                <button id="btnDraftReturnList" class="btn btn-sm btnToolbar">
+                    <i class="fa fa-list"></i>&nbsp;Draft List
+                </button>
+                <button id="btnProposedReturnList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Proposed  Return List
+                </button>
+                <button id="btnApprovedReturnList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Approved Return List
+                </button>
+
+                <button id="btnAcknowledgedReturnList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledged Return List
+                </button>
+                <button id="btnPendingReturnConfirmationList" class="btn btn-default btn-sm btnToolbar" style="display:none;">
+                    <i class="fa fa-list"></i>&nbsp;Pending Confirmation List
+                </button>
+                <button id="btnRefreshList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-refresh"></i>&nbsp;
+                </button>
+
+                <div id="divAddForGrouping" style="margin: 5px 0 5px 10px;">
+                    <button id="btnNewCreateReturn" class="btn btn-default btn-sm">
+                        <i class="fa fa-plus"></i>&nbsp;Create new Return
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YDLOReturnMasterID" name="YDLOReturnMasterID" value="-1111" />
+            @*<input type="hidden" id="KYIssueMasterID" name="KYIssueMasterID" />*@
+            <input type="hidden" name="YDReqMasterID" id="YDReqMasterID" />
+            <input type="hidden" id="RCompanyID" name="RCompanyID" />
+            <input type="hidden" id="OCompanyID" name="OCompanyID" />
+            <input type="hidden" id="LocationID" name="LocationID" />
+            <input type="hidden" id="SupplierID" name="SupplierID" />
+            <input type="hidden" id="SpinnerID" name="SpinnerID" />
+            <input type="hidden" id="YDBookingMasterID" name="YDBookingMasterID" />
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Return No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDLOReturnNo" name="YDLOReturnNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Return Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDLOReturnDate" name="YDLOReturnDate" class="form-control input-sm " readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*<div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4 small">Issue No</label>
+                                    <div class="col-sm-8">
+                                        <input id="KYIssueNo" name="KYIssueNo" class="form-control input-sm" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4 small">Issue Date</label>
+                                    <div class="col-sm-8">
+                                        <input id="KYIssueDate" name="KYIssueDate" class="form-control input-sm " readonly />
+                                    </div>
+                                </div>
+                            </div>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="divChildInfo" style="display: none">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            <label id="lblTableTitle">Item Information</label>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-12">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-success m-w-120 btnAction" id="btnSaveAsDraft"><i class="fa fa-save"></i>&nbsp;&nbsp;<span id="spnSaveAsDraft">Save</span></button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnSaveAndSendToMCD"><i class="fa fa-save"></i>&nbsp;&nbsp;Save and send to MCD</button>
+                            <button type="button" class="btn btn-primary m-w-120 btnAction" id="btnApproved"><i class="fa fa-save"></i>&nbsp;&nbsp;Approved</button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+

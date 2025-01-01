@@ -25,10 +25,16 @@
         if (!menuParam)
             menuParam = localStorage.getItem("menuParam");
 
-        if (menuParam == 'R')
+        if (menuParam == 'R') {
+            isApprovePage = false;
             isRequisitionPage = true;
-        if (menuParam == 'A')
-            isApprovePage = true;
+        }
+        else if (menuParam == 'A') { isRequisitionPage = true; isApprovePage = true; }
+            
+        else {
+            isRequisitionPage = false;
+            isApprovePage = false;
+        }
 
         pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -55,7 +61,7 @@
             isEditable = false;
         }
         else if (isApprovePage) {
-            debugger;
+           
             $toolbarEl.find("#btnPendingApprovalList,#btnApproveList,#btnRejectList").show();
             $toolbarEl.find("#btnPendingList,#btnDraftList").hide();
 

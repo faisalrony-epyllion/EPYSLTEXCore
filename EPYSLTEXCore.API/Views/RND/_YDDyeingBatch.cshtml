@@ -1,0 +1,344 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var tblItemChildId = "tblItemChild" + pageId;
+    var tblRecipeChildId = "tblRecipeChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblMachineParamId = "tblMachineParam" + pageId;
+    var tblRollId = "tblRoll" + pageId;
+    var divRollId = "divRoll" + pageId;
+    var tblKProductionId = "tblKProduction" + pageId;
+}
+
+<div id="@pageId">
+
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;Pending
+                </button>
+                <button id="btnList" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;List
+                </button>
+                <br />
+                <button id="btnCreate" class="btn btn-default btn-sm" style="margin: 5px 0 5px 0;">
+                    <i class="fa fa-plus"></i>&nbsp;Create
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <div id="@tblMasterId"></div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YDDBatchID" name="YDDBatchID" value="-1111" />
+            <input type="hidden" id="YDRecipeID" name="YDRecipeID" />
+            <input type="hidden" id="ColorID" name="ColorID" />
+            <input type="hidden" id="DMID" name="DMID" />
+            <input type="hidden" id="CCColorID" name="CCColorID" />
+            <input type="hidden" id="ConceptID" name="ConceptID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">D. Batch No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDDBatchNo" name="YDDBatchNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">D. Batch Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDDBatchDate" name="YDDBatchDate" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Recipe No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDRecipeNo" name="YDRecipeNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Recipe Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDRecipeDate" name="YDRecipeDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Weight (KG)</label>
+                                        <div class="col-sm-8">
+                                            <input id="BatchWeightKG" name="BatchWeightKG" type="number" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Qty (Pcs)</label>
+                                        <div class="col-sm-8">
+                                            <input id="BatchQtyPcs" name="BatchQtyPcs" type="number" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Machine Loading</label>
+                                        <div class="col-sm-8">
+                                            <input id="MachineLoading" name="MachineLoading" type="number" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Plan Start Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="PlanBatchStartTime" name="PlanBatchStartTime" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Plan End Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="PlanBatchEndTime" name="PlanBatchEndTime" class="form-control input-sm ej2-datepicker" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Concept No</label>
+                                        <div class="col-sm-8">
+                                            <input id="ConceptNo" name="ConceptNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Color</label>
+                                        <div class="col-sm-8">
+                                            <input id="ColorName" name="ColorName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Recipe For</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDRecipeForName" name="YDRecipeForName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Nozzle</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-sm">
+                                                <input id="DyeingNozzleQty" name="DyeingNozzleQty" type="number" class="form-control input-sm" style="width: 98%" readonly />
+                                                <span class="input-group-btn">
+                                                    <button id="btnAddNozzle" class="btn btn-default" type="button" style="height: 30px"><i class="fa fa-search"></i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Capacity</label>
+                                        <div class="col-sm-8">
+                                            <input id="DyeingMcCapacity" name="DyeingMcCapacity" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Machine</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-sm">
+                                                <input id="DMNo" name="DMNo" type="number" class="form-control input-sm" readonly />
+                                                <span class="input-group-btn">
+                                                    <button id="btnAddDM" class="btn btn-default" type="button" style="height: 30px"><i class="fa fa-search"></i></button>
+                                                    <button id="btnAddDMWithNozzle" class="btn btn-default" type="button" style="height: 30px"><i class="fa fa-search">M/C With Nozzle</i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <textarea id="Remarks" rows="2" name="Remarks" type="text" placeholder="Remarks" class="form-control input-sm"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Batch Information
+                            <button id="btnAddBatch" type="button" class="btn btn-success btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;Add Batch</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<button id="btnNewItem" type="button" class="btn btn-success btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;New</button>*@
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<button id="btnNewItem" type="button" class="btn btn-success btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;New</button>*@
+                                        <table id="@tblItemChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Recipe Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @*<button id="btnNewItem" type="button" class="btn btn-success btn-sm" style="margin-bottom: 5px;"><i class="fa fa-plus"></i>&nbsp;New</button>*@
+                                        <table id="tblRecipeChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="modal-machine">
+                    <div class="modal-dialog" style="width: 60%; height: 90vh; overflow-y: auto; ">
+                        <div class="modal-content">
+                            <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="childTitle"></h4>
+                                Split Roll
+                            </div>
+                            <div class="modal-body">
+                                <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                    <div class="panel-body">
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblMachineParamId"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                                @*<button type="button" class="btn btn-primary" id="btnSaveKProd">Save</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="modal-child">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="childTitle"></h4>
+                                Split Roll
+                            </div>
+                            <div class="modal-body">
+                                <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                    <div class="panel-heading">
+                                        Roll Information
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3" style="text-align:right;font-style:normal">No Of Split:</label>
+                                            <div class="col-sm-4">
+                                                <input id="NoOfSplit" name="NoOfSplit" class="input-sm col-sm-8" type="number" />
+                                                <button type="button" class="btn btn-default m-w-60 btn-xs" id="btnSplit"><i class="fa fa-check"></i>&nbsp;Split</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-horizontal">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <table id="@tblRollId"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="btnCloseRollSplitted" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="btnSaveKProd">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modal-splitted-roll">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header" onmousedown="if (drag) drag(this.parentNode, event)">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="childTitle"></h4>
+                                Roll Information
+                            </div>
+                            <div class="modal-body">
+                                <div class="row col-sm-12" style="font-family:'Kohinoor Bangla'">
+                                    <div class="form-horizontal">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <table id="@tblKProductionId"></table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

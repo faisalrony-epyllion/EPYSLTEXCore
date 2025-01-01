@@ -176,7 +176,7 @@
                 widths: "30",
                 onSelect: function (res) {
                     finder.hideModal();
-
+   
                     masterData.MCSubClassID = res.rowData.id;
                     $formEl.find("#MCSubClassID").val(masterData.MCSubClassID);
                     $formEl.find("#MCSubClass").val(res.rowData.text);
@@ -235,6 +235,7 @@
                 headerTexts: "GG,Dia,Brand,Unit,MachineNo,Capacity,SubContact?",
                 widths: "30,30,100,70,50,50,50",
                 onSelect: function (res) {
+      
                     finder.hideModal();
                     masterData.Childs[0].KnittingMachineID = res.rowData.KnittingMachineID;
                     masterData.Childs[0].MachineGauge = res.rowData.GG;
@@ -258,6 +259,7 @@
 
         $formEl.find("#btnCopyProgram").on("click", function (e) {
             e.preventDefault();
+  
             var pType;
             if (isConcept) {
                 pType = knittingProgramType.CONCEPT;
@@ -281,7 +283,7 @@
                 headerTexts: "Concept No,Buyer,Technical Name,GSM,Color,Composition",
                 widths: "50,40,50,30,40,50",
                 onSelect: function (res) {
-
+    
                     finder.hideModal();
                     axios.get(`/api/knitting-program/${pType}/${res.rowData.KPMasterID}/${res.rowData.SubGroupName}`)
                         .then(function (response) {
@@ -1747,7 +1749,9 @@
             }
 
             if (!isBulkPage) {
+                debugger
                 if (!isValueTrue(tempYarnArray[i].YDItem) && !isValueTrue(tempYarnArray[i].IsStockItem)) {
+                    debugger
                     toastr.warning(`Please select item from stock where both YD Item and is stock item is "No" ${rowStr}`);
                     return false;
                 }
@@ -1967,6 +1971,7 @@
             }
 
             if (!isBulkPage) {
+                debugger
                 if (!isValueTrue(tempYarnArray[i].YDItem) && !isValueTrue(tempYarnArray[i].IsStockItem)) {
                     toastr.warning(`Please select item from stock where both YD Item and is stock item is "No" ${rowStr}`);
                     return false;

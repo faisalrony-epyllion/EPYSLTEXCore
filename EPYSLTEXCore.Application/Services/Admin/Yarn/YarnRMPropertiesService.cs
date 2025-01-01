@@ -195,7 +195,7 @@ namespace EPYSLTEXCore.Application.Services.General
 					,text = ISV.SegmentValue
 					from {DbNames.EPYSL}..ItemSegmentValue ISV   
 					LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-					WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}') AND ISNULL(ISV.SegmentValue,'') <> ''
+					WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_LINE}') AND ISNULL(ISV.SegmentValue,'') <> ''
 					ORDER BY ISV.SegmentValue;
 
                     --Manufacturing Process
@@ -358,7 +358,7 @@ namespace EPYSLTEXCore.Application.Services.General
 					,text = ISV.SegmentValue
 					from {DbNames.EPYSL}..ItemSegmentValue ISV   
 					LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-					WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_TYPE}') AND ISNULL(ISV.SegmentValue,'') <> ''
+					WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_LINE}') AND ISNULL(ISV.SegmentValue,'') <> ''
 					ORDER BY ISV.SegmentValue;
 
                     --Manufacturing Process

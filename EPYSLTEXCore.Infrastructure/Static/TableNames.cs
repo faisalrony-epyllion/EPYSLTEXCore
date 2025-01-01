@@ -897,7 +897,6 @@
         public const string YarnQCReceiveMaster = "T_YarnQCReceiveMaster";
         public const string YarnQCRemarksChild = "T_YarnQCRemarksChild";
         public const string YarnQCRemarksMaster = "T_YarnQCRemarksMaster";
-        public const string YarnPRChild = "T_YarnPRChild";
         public const string YarnMRIRChild = "T_YarnMRIRChild";
         public const string YarnMRIRMaster = "T_YarnMRIRMaster";
         public const string YarnBookingChildItem_New_Bk = "T_YarnBookingChildItem_New_Bk";
@@ -942,7 +941,7 @@
         public const string DyeingMCStatusSetup = "DyeingMCStatusSetup";
         public const string SizeWiseWeight_HK = "SizeWiseWeight_HK";
         public const string YDBookingRef = "YDBookingRef";
-        public const string YarnDyeingFor_HK = "YarnDyeingFor_HK";
+        public const string YarnDyeingFor_HK = "T_YarnDyeingFor_HK";
     }
 
 }

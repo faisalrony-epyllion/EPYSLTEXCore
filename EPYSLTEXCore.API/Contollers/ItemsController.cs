@@ -196,7 +196,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                 itemSegmenValues = new ItemSegmentMappingValuesDTO
                 {
                     Segment1ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COMPOSITION),
-                    Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_TYPE),
+                    Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_LINE),
                     Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                     Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                     Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),
@@ -268,7 +268,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                 var itemSegmenValues = new ItemSegmentMappingValuesDTO
                 {
                     Segment1ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COMPOSITION),
-                    Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_TYPE),
+                    Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_LINE),
                     Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                     Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                     Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),
@@ -302,7 +302,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
                 SegmentNames = new string[]
                 {
                     ItemSegmentNameConstants.YARN_COMPOSITION,
-                    ItemSegmentNameConstants.YARN_TYPE,
+                    ItemSegmentNameConstants.YARN_MANUFACTURING_LINE,
                     ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS,
                     ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS,
                     ItemSegmentNameConstants.YARN_QUALITY_PARAMETER,
@@ -316,7 +316,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
             var itemSegmenValues = new ItemSegmentMappingValuesDTO
             {
                 Segment1ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COMPOSITION),
-                Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_TYPE),
+                Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_LINE),
                 Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                 Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                 Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),

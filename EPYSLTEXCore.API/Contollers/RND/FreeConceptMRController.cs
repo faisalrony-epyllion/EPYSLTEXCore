@@ -320,10 +320,11 @@ namespace EPYSLTEXCore.API.Contollers.RND
         [Route("save-yarn-composition")]
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SaveComposition(ItemSegmentValue model)
+        public async Task<IActionResult> SaveComposition(dynamic jsonString)
         {
-           //ItemSegmentName itemSegmentName = await _service.FindAsync(a => a.SegmentName == ItemSegmentNameConstants.YARN_COMPOSITION);
-            ItemSegmentName itemSegmentName = await _service.FindAsync(ItemSegmentNameConstants.YARN_COMPOSITION);
+                ItemSegmentValue model = JsonConvert.DeserializeObject<ItemSegmentValue>(Convert.ToString(jsonString));
+                //ItemSegmentName itemSegmentName = await _service.FindAsync(a => a.SegmentName == ItemSegmentNameConstants.YARN_COMPOSITION);
+                ItemSegmentName itemSegmentName = await _service.FindAsync(ItemSegmentNameConstants.YARN_COMPOSITION);
 
             if (itemSegmentName.IsNull())
                 return BadRequest("Yarn Composition Segment Not Found");
@@ -350,7 +351,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             var itemSegmenValues = new ItemSegmentMappingValuesDTO
             {
                 Segment1ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COMPOSITION),
-                Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_TYPE),
+                Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_LINE),
                 Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                 Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                 Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),

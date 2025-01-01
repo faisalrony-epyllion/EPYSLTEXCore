@@ -1310,6 +1310,7 @@
 
     function revise() {
         initializeValidation($formEl, validationConstraints);
+        debugger
         if (!isValidForm($formEl, validationConstraints)) return toastr.error("Please correct all validation errors!");
         else hideValidationErrors($formEl);
 

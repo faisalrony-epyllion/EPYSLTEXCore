@@ -76,7 +76,9 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.SCD
         [Write(false)]
         public string DayValidDurationName { get; set; } = "";
         [Write(false)]
-        public decimal StockQty { get; set; } = 0;
+        public decimal StockQty { get; set; } = 0; 
+        [Write(false)]
+        public decimal PRQty { get; set; } = 0;
         [Write(false)]
         public decimal ROLLocalPurchase { get; set; } = 0;
         [Write(false)]

@@ -1924,7 +1924,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             return maxNo;
         }
-        public async Task<int> GetMaxNoAsync(string tableName, string columnName, string replacedValue, int length, SqlConnection connectionGmt)
+        public async Task<int> GetMaxNoAsync(string tableName, string columnName, string replacedValue, int length, SqlConnection connection)
         {
             var queryString = $"SELECT MaxValue = (ISNULL(MAX(CONVERT(int, REPLACE({columnName}, '{replacedValue}', ''))), 0) + 1) " +
                               $"FROM {tableName} WHERE {columnName} LIKE '{replacedValue}%'";
@@ -1936,12 +1936,12 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
             int maxNo = 0;
 
-            if (connectionGmt.State != System.Data.ConnectionState.Open)
+            if (connection.State != System.Data.ConnectionState.Open)
             {
-                await connectionGmt.OpenAsync();
+                await connection.OpenAsync();
             }
 
-            using (SqlCommand command = new SqlCommand(queryString, connectionGmt))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
             using (SqlDataReader reader = await command.ExecuteReaderAsync())
             {
                 if (await reader.ReadAsync())

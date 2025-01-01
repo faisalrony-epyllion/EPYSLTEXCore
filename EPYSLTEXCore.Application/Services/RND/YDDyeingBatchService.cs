@@ -39,8 +39,8 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                     SELECT DB.YDBatchID, DBM.YDDBatchID, DBM.YDDBatchNo, SUM(DB.BatchUseQtyKG) TotalBatchUseQtyKG, SUM(DB.BatchUseQtyPcs) TotalBatchUseQtyPcs
 	                    ,BatchStatus = ISNULL(DBR.BatchStatus,0), IsNewBatch = ISNULL(DBR.IsNewBatch,0), IsNewRecipe = ISNULL(DBR.IsNewRecipe,0)
 	                    FROM {TableNames.YD_DYEING_BATCH_WITH_BATCH_MASTER} DB
-	                    LEFT JOIN YDDyeingBatchMaster DBM ON DBM.YDDBatchID = DB.YDDBatchID
-	                    LEFT JOIN YDDyeingBatchRework DBR ON DBR.YDDBatchID = DB.YDDBatchID
+	                    LEFT JOIN {TableNames.YD_DYEING_BATCH_MASTER} DBM ON DBM.YDDBatchID = DB.YDDBatchID
+	                    LEFT JOIN {TableNames.YD_DYEING_BATCH_REWORK} DBR ON DBR.YDDBatchID = DB.YDDBatchID
 	                    --WHERE BatchID IS NULL
 	                    GROUP BY DB.YDBatchID, DBM.YDDBatchID, DBM.YDDBatchNo, ISNULL(DBR.BatchStatus,0), ISNULL(DBR.IsNewBatch,0), ISNULL(DBR.IsNewRecipe,0)
                     ),
@@ -49,24 +49,24 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                    BuyerName = CASE WHEN BM.BuyerID = 0 THEN 'R&D' ELSE CTO.ShortName END, 
 	                    BuyerTeamName = CASE WHEN BM.BuyerTeamID = 0 THEN 'R&D' ELSE CCT.TeamName END,
 	                    [Status] = 'New', ExistingDBatchNo = ''
-                        FROM YDBatchMaster BM
-                        LEFT JOIN YDBatchChild BC on BM.YDBatchID=BC.YDBatchID
-						INNER JOIN SoftWindingMaster SWM ON SWM.YDBookingMasterID = BM.YDBookingMasterID
-                        --LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=BM.BookingID
+                        FROM {TableNames.YD_BATCH_MASTER} BM
+                        LEFT JOIN {TableNames.YD_BATCH_CHILD} BC on BM.YDBatchID=BC.YDBatchID
+						INNER JOIN {TableNames.SOFT_WINDING_MASTER} SWM ON SWM.YDBookingMasterID = BM.YDBookingMasterID
+                        --LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=BM.BookingID
 	                    LEFT JOIN YDDyeingBatch ON YDDyeingBatch.YDBatchID = BM.YDBatchID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = BM.BuyerID
 	                    LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = BM.BuyerTeamID
 	                    WHERE (YDDyeingBatch.YDBatchID IS NULL OR YDDyeingBatch.TotalBatchUseQtyKG < BM.BatchWeightKG)
-						--AND BC.GRollID not in (select GRollID from YDDyeingBatchItemRoll)
+						--AND BC.GRollID not in (select GRollID FROM {TableNames.YD_DYEING_BATCH_ITEM_ROLL})
                     ),
                     ReworkYDDyeingBatch AS (
 	                     SELECT DB.YDBatchID, DBM.YDDBatchID, DBM.YDDBatchNo, SUM(DB.BatchUseQtyKG) TotalBatchUseQtyKG, SUM(DB.BatchUseQtyPcs) TotalBatchUseQtyPcs
 	                    ,BatchStatus = ISNULL(DBR.BatchStatus,0), IsNewBatch = ISNULL(DBR.IsNewBatch,0), IsNewRecipe = ISNULL(DBR.IsNewRecipe,0)
 	                    ,[Status] = 'Rework', ExistingDBatchNo = DBM.YDDBatchNo
 	                    FROM {TableNames.YD_DYEING_BATCH_WITH_BATCH_MASTER} DB 
-	                    INNER JOIN YDDyeingBatchMaster DBM ON DBM.YDDBatchID = DB.YDDBatchID
-	                    INNER JOIN YDDyeingBatchRework DBR ON DBR.YDDBatchID = DBM.YDDBatchID
-	                    LEFT JOIN YDDyeingBatchMergeBatch DBB ON DBB.MergeDBatchID = DBM.YDDBatchID
+	                    INNER JOIN {TableNames.YD_DYEING_BATCH_MASTER} DBM ON DBM.YDDBatchID = DB.YDDBatchID
+	                    INNER JOIN {TableNames.YD_DYEING_BATCH_REWORK} DBR ON DBR.YDDBatchID = DBM.YDDBatchID
+	                    LEFT JOIN {TableNames.YD_DYEING_BATCH_MERGE_BATCH} DBB ON DBB.MergeDBatchID = DBM.YDDBatchID
 	                    WHERE DBM.BatchStatus = 3 AND DBM.IsNewBatch = 1
 	                    AND DBB.YDDBMID IS NULL
 	                    GROUP BY DB.YDBatchID, DBM.YDDBatchID, DBM.YDDBatchNo, ISNULL(DBR.BatchStatus,0), ISNULL(DBR.IsNewBatch,0), ISNULL(DBR.IsNewRecipe,0)
@@ -76,8 +76,8 @@ namespace EPYSLTEXCore.Application.Services.RND
 	                    BuyerName = CASE WHEN BM.BuyerID = 0 THEN 'R&D' ELSE CTO.ShortName END, 
 	                    BuyerTeamName = CASE WHEN BM.BuyerTeamID = 0 THEN 'R&D' ELSE CCT.TeamName END,
 	                    RDB.[Status], ExistingDBatchNo
-                        FROM YDBatchMaster BM
-                        --LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID=BM.BookingID
+                        FROM {TableNames.YD_BATCH_MASTER} BM
+                        --LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID=BM.BookingID
 	                    INNER JOIN ReworkYDDyeingBatch RDB ON RDB.YDBatchID = BM.YDBatchID
 	                    LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = BM.BuyerID
 	                    LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = BM.BuyerTeamID
@@ -87,11 +87,11 @@ namespace EPYSLTEXCore.Application.Services.RND
                         M.ExportOrderID, M.BuyerID, M.BuyerTeamID, RDM.RecipeNo, RDM.RecipeDate, RDM.RecipeFor, COL.SegmentValue ColorName, M.BuyerName, M.BuyerTeamName,
                         FR.ValueName RecipeForName, M.TotalBatchUseQtyKG, FCM.GroupConceptNo ConceptNo, M.MachineLoading, M.DyeingNozzleQty, M.DyeingMcCapacity, [Status],ExistingDBatchNo
                         FROM M
-                        LEFT JOIN RecipeDefinitionMaster RDM ON RDM.RecipeID = M.YDRecipeID AND ISNULL(RDM.IsActive,0) = 1
+                        LEFT JOIN {TableNames.RND_RECIPE_DEFINITION_MASTER} RDM ON RDM.RecipeID = M.YDRecipeID AND ISNULL(RDM.IsActive,0) = 1
                         INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor
-	                    LEFT JOIN FreeConceptChildColor FCC ON FCC.CCColorID = M.CCColorID
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = FCC.ConceptID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = M.CCColorID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = FCC.ConceptID
 
 	                    UNION 
 
@@ -99,11 +99,11 @@ namespace EPYSLTEXCore.Application.Services.RND
                         M1.ExportOrderID, M1.BuyerID, M1.BuyerTeamID, RDM.YDRecipeNo, RDM.RecipeDate, RDM.RecipeFor, COL.SegmentValue ColorName, M1.BuyerName, M1.BuyerTeamName,
                         FR.ValueName RecipeForName, M1.TotalBatchUseQtyKG, FCM.GroupConceptNo ConceptNo, M1.MachineLoading, M1.DyeingNozzleQty, M1.DyeingMcCapacity, [Status],ExistingDBatchNo
                         FROM ReworkM M1
-                        LEFT JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeID = M1.YDRecipeID AND ISNULL(RDM.IsActive,0) = 1
+                        LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeID = M1.YDRecipeID AND ISNULL(RDM.IsActive,0) = 1
                         INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M1.ColorID
                         LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor
-	                    LEFT JOIN FreeConceptChildColor FCC ON FCC.CCColorID = M1.CCColorID
-	                    LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = FCC.ConceptID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = M1.CCColorID
+	                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = FCC.ConceptID
                     ) 
                     Select *, Count(*) Over() TotalRows From FFF ";
                 orderBy = paginationInfo.OrderBy.NullOrEmpty() ? " Order By YDBatchID Desc " : paginationInfo.OrderBy;
@@ -112,8 +112,8 @@ namespace EPYSLTEXCore.Application.Services.RND
             {
                 sql += $@";WITH M AS (
                             SELECT DBM.*
-                            FROM YDDyeingBatchMaster DBM
-			                LEFT JOIN YDDyeingBatchMergeBatch DBB ON DBB.MergeDBatchID = DBM.YDDBatchID
+                            FROM {TableNames.YD_DYEING_BATCH_MASTER} DBM
+			                LEFT JOIN {TableNames.YD_DYEING_BATCH_MERGE_BATCH} DBB ON DBB.MergeDBatchID = DBM.YDDBatchID
 			                WHERE DBB.YDDBMID IS NULL
                         ), FFF AS (
                             SELECT M.YDDBatchID, M.YDDBatchNo, M.YDDBatchDate, M.YDRecipeID, M.ColorID, M.CCColorID, M.BatchWeightKG, M.DMID, M.MachineLoading, M.DyeingNozzleQty,
@@ -126,16 +126,16 @@ namespace EPYSLTEXCore.Application.Services.RND
                             (SELECT STUFF((
                             SELECT DISTINCT ', '+ BM.YDBatchNo
                             FROM {TableNames.YD_DYEING_BATCH_WITH_BATCH_MASTER} DB 
-                            LEFT JOIN YDBatchMaster BM ON BM.YDBatchID = DB.YDBatchID
+                            LEFT JOIN {TableNames.YD_BATCH_MASTER} BM ON BM.YDBatchID = DB.YDBatchID
                             WHERE DB.YDDBatchID = M.YDDBatchID
                             FOR XML PATH('')),1,1,'')) YDBatchNo
 
                             FROM M
-                            LEFT JOIN RecipeDefinitionMaster RDM ON RDM.RecipeID = M.YDRecipeID AND ISNULL(RDM.IsActive,0) = 1
+                            LEFT JOIN {TableNames.RND_RECIPE_DEFINITION_MASTER} RDM ON RDM.RecipeID = M.YDRecipeID AND ISNULL(RDM.IsActive,0) = 1
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 						    LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor
-						    LEFT JOIN FreeConceptChildColor FCC ON FCC.CCColorID = M.CCColorID
-						    LEFT JOIN FreeConceptMaster FC ON FC.ConceptID = FCC.ConceptID
+						    LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = M.CCColorID
+						    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FC ON FC.ConceptID = FCC.ConceptID
 	                        LEFT JOIN {DbNames.EPYSL}..Contacts CTO ON CTO.ContactID = FC.BuyerID
 	                        LEFT JOIN {DbNames.EPYSL}..ContactCategoryTeam CCT ON CCT.CategoryTeamID = FC.BuyerTeamID
                         ) 
@@ -154,25 +154,25 @@ namespace EPYSLTEXCore.Application.Services.RND
             var sql = $@"
                         ;WITH M AS (
                             SELECT	Distinct BM.*, FCM.BookingID, SLNo = Case When FCM.IsBDS = 0 Then FCM.GroupConceptNo Else FBA.SLNo End
-                            FROM YDBatchMaster BM 
-							Inner Join FreeConceptMaster FCM On FCM.ConceptID = BM.ConceptID
-							LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID = FCM.BookingID
+                            FROM {TableNames.YD_BATCH_MASTER} BM 
+							Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM On FCM.ConceptID = BM.ConceptID
+							LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = FCM.BookingID
                             WHERE BM.YDBatchID = {newId}
                         )
                         SELECT M.YDBatchID, M.YDBatchNo, M.YDBatchDate, M.YDRecipeID, FCM.ConceptID, M.BookingID, M.ColorID, M.CCColorID, M.BatchWeightKG, M.BatchWeightPcs BatchQtyPcs, M.Remarks,
                         M.ExportOrderID, M.BuyerID, M.BuyerTeamID, RDM.YDRecipeNo, YDRecipeDate = RDM.RecipeDate, YDRecipeFor = RDM.RecipeFor, COL.SegmentValue ColorName,
 						FR.ValueName YDRecipeForName, M.MachineLoading, M.DyeingNozzleQty, M.DyeingMcCapacity, M.DMID, DM.DyeingMcslNo DMNo, FCM.GroupConceptNo ConceptNo, M.SLNo
                         FROM M
-                        LEFT JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeID = M.YDRecipeID
+                        LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeID = M.YDRecipeID
                         INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 						LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor
-						INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
-                        LEFT JOIN FreeConceptChildColor FCC ON FCC.CCColorID = M.CCColorID
-                        LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID=FCC.ConceptID;
+						INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = M.CCColorID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID=FCC.ConceptID;
 
                         -----for YDDyeingBatchItem
                         ;WITH M AS (
-                            SELECT * FROM YDBatchItemRequirement BM WHERE BM.YDBatchID = {newId}
+                            SELECT * FROM {TableNames.YD_BATCH_ITEM_REQUIREMENT} BM WHERE BM.YDBatchID = {newId}
                         ),
                         ItemSegment As
                         (
@@ -185,31 +185,31 @@ namespace EPYSLTEXCore.Application.Services.RND
                         B.YDBatchNo, B.BuyerID, B.BuyerTeamID, B.ExportOrderID, KnittingType.TypeName KnittingType,Composition.text FabricComposition, Construction.text FabricConstruction,
                         Technical.TechnicalName,Gsm.text FabricGsm, SG.SubGroupName ItemSubGroup
                         FROM M
-                        LEFT JOIN YDRecipeDefinitionItemInfo RDM ON RDM.YDRecipeItemInfoID = M.YDRecipeItemInfoID
-                        INNER JOIN YDBatchMaster B ON B.YDBatchID = M.YDBatchID
-                        LEFT JOIN FreeConceptMaster CM ON CM.ConceptID=M.ConceptID
-                        LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
+                        LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_ITEM_INFO} RDM ON RDM.YDRecipeItemInfoID = M.YDRecipeItemInfoID
+                        INNER JOIN {TableNames.YD_BATCH_MASTER} B ON B.YDBatchID = M.YDBatchID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID=M.ConceptID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
                         LEFT JOIN ItemSegment Composition ON Composition.id=CM.CompositionID
                         LEFT JOIN ItemSegment Construction ON Construction.id=CM.ConstructionID
                         LEFT JOIN ItemSegment Gsm ON Gsm.id=CM.GSMID
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup SG ON SG.SubGroupID = CM.SubGroupID
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
 
                         ----for YDDyeingBatchItemRoll
                         ;SELECT C.BItemReqID, C.YDBatchID, C.GRollID, C.ItemMasterID, C.RollQty, C.RollQtyPcs, KP.RollNo
-                        FROM YDBatchChild C
-                        INNER JOIN KnittingProduction KP ON KP.GRollID = C.GRollID
+                        FROM {TableNames.YD_BATCH_CHILD} C
+                        INNER JOIN {TableNames.RND_KNITTING_PRODUCTION} KP ON KP.GRollID = C.GRollID
                         WHERE C.YDBatchID = {newId};
 
                         --Childs
                         WITH M AS (
-                            SELECT BC.*, RD.YDRecipeDInfoID, RD.Temperature FROM YDBatchWiseRecipeChild BC
-							LEFT JOIN YDRecipeDefinitionChild RD ON RD.YDRecipeChildID = BC.YDRecipeChildID
+                            SELECT BC.*, RD.YDRecipeDInfoID, RD.Temperature FROM {TableNames.YD_BATCH_WISE_RECIPE_CHILD} BC
+							LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} RD ON RD.YDRecipeChildID = BC.YDRecipeChildID
 							WHERE BC.YDBatchID = {newId}
                         )
                         SELECT DI.YDRecipeDInfoID, M.TempIn, M.YDBatchID, M.ProcessTime, EV.ValueName FiberPart, ISV.SegmentValue ColorName
 					    FROM M
-						LEFT JOIN YDRecipeDefinitionDyeingInfo DI ON DI.YDRecipeDInfoID = M.YDRecipeDInfoID
+						LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_DYEING_INFO} DI ON DI.YDRecipeDInfoID = M.YDRecipeDInfoID
 						INNER JOIN {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = DI.FiberPartID
 						INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = DI.ColorID
 						GROUP BY DI.YDRecipeDInfoID, M.TempIn, M.YDBatchID, M.ProcessTime, EV.ValueName, ISV.SegmentValue;
@@ -218,14 +218,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                         SELECT B.YDBRecipeChildID, B.YDBatchID, B.YDRecipeChildID, B.ProcessID, B.ParticularsID, B.RawItemID, B.Qty, B.UnitID, B.TempIn,
 						B.TempOut, B.ProcessTime, C.YDRecipeID,I.ItemName, P.ValueName ProcessName,PL.ValueName ParticularsName,R.ItemName RawItemName,
 						UU.DisplayUnitDesc Unit, C.IsPercentage, C.YDRecipeDInfoID, C.Temperature, EV.ValueName FiberPart, ISV.SegmentValue ColorName
-						FROM YDBatchWiseRecipeChild B
-						LEFT JOIN YDRecipeDefinitionChild C ON C.YDRecipeChildID = B.YDRecipeChildID
+						FROM {TableNames.YD_BATCH_WISE_RECIPE_CHILD} B
+						LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} C ON C.YDRecipeChildID = B.YDRecipeChildID
 						LEFT JOIN {DbNames.EPYSL}..ItemMaster I ON I.ItemMasterID=C.RawItemID
 						LEFT JOIN {DbNames.EPYSL}..EntityTypeValue P ON P.ValueID = C.ProcessID
 						LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PL ON PL.ValueID = C.ParticularsID
 						LEFT JOIN {DbNames.EPYSL}..ItemMaster R ON R.ItemMasterID = C.RawItemID
 						LEFT JOIN {DbNames.EPYSL}..Unit UU ON UU.UnitID = C.UnitID
-						LEFT JOIN YDRecipeDefinitionDyeingInfo DI ON DI.YDRecipeDInfoID = C.YDRecipeDInfoID
+						LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_DYEING_INFO} DI ON DI.YDRecipeDInfoID = C.YDRecipeDInfoID
 						INNER JOIN {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = DI.FiberPartID
 						INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = DI.ColorID
 						WHERE B.YDBatchID = {newId};
@@ -256,26 +256,26 @@ namespace EPYSLTEXCore.Application.Services.RND
             var sql = $@"
                         ;WITH M AS (
                             SELECT	Distinct BM.*, SLNo = Case When FCM.IsBDS = 0 Then FCM.GroupConceptNo Else FBA.SLNo End, FCM.BookingID
-                            FROM YDBatchMaster BM 
-							Inner Join FreeConceptMaster FCM On FCM.ConceptID = BM.ConceptID
-							LEFT JOIN FBookingAcknowledge FBA ON FBA.BookingID = FCM.BookingID
+                            FROM {TableNames.YD_BATCH_MASTER} BM 
+							Inner JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM On FCM.ConceptID = BM.ConceptID
+							LEFT JOIN {TableNames.FBBOOKING_ACKNOWLEDGE} FBA ON FBA.BookingID = FCM.BookingID
                             WHERE BM.YDBatchID IN ({batchIDs})
                         )
                         SELECT M.YDBatchID, M.YDBatchNo, M.YDBatchDate, M.YDRecipeID, FCM.ConceptID, M.BookingID, M.ColorID, M.CCColorID, M.BatchWeightKG, M.BatchWeightPcs, M.Remarks,
                         M.ExportOrderID, M.BuyerID, M.BuyerTeamID, RDM.YDRecipeNo, YDRecipeDate = RDM.RecipeDate, YDRecipeFor = RDM.RecipeFor, COL.SegmentValue ColorName,
 						FR.ValueName YDRecipeForName, M.MachineLoading, M.DyeingNozzleQty, M.DyeingMcCapacity, M.DMID, DM.DyeingMcslNo DMNo, FCM.GroupConceptNo ConceptNo, M.SLNo
                         FROM M
-                        LEFT JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeID = M.YDRecipeID
+                        LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeID = M.YDRecipeID
                         INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 						LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor
-						INNER JOIN DyeingMachine DM ON DM.DMID = M.DMID
-                        LEFT JOIN FreeConceptChildColor FCC ON FCC.CCColorID = M.CCColorID
-                        LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID=FCC.ConceptID;
+						INNER JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = M.CCColorID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID=FCC.ConceptID;
 
                         -----for YDDyeingBatchItem
                         ;WITH M AS (
-                            SELECT BM.*, YDBC.YarnCategory FROM YDBatchItemRequirement BM 
-							INNER JOIN YDBookingChild YDBC ON YDBC.YDBookingChildID = BM.YDBookingChildID 
+                            SELECT BM.*, YDBC.YarnCategory FROM {TableNames.YD_BATCH_ITEM_REQUIREMENT} BM 
+							INNER JOIN {TableNames.YDBookingChild} YDBC ON YDBC.YDBookingChildID = BM.YDBookingChildID 
                             WHERE BM.YDBatchID IN ({batchIDs})
                         ),
                         ItemSegment As
@@ -289,26 +289,26 @@ namespace EPYSLTEXCore.Application.Services.RND
                         B.YDBatchNo, B.BuyerID, B.BuyerTeamID, B.ExportOrderID, KnittingType.TypeName KnittingType,Composition.text FabricComposition, Construction.text FabricConstruction,
                         Technical.TechnicalName,Gsm.text FabricGsm, SG.SubGroupName ItemSubGroup, M.YarnCategory, SWC.SoftWindingChildID, SWC.YDRICRBId
                         FROM M
-						INNER JOIN SoftWindingChild SWC ON SWC.YDBItemReqID = M.YDBItemReqID
-                        LEFT JOIN YDRecipeDefinitionItemInfo RDM ON RDM.YDRecipeItemInfoID = M.YDRecipeItemInfoID
-                        INNER JOIN YDBatchMaster B ON B.YDBatchID = M.YDBatchID
-                        LEFT JOIN FreeConceptMaster CM ON CM.ConceptID=M.ConceptID
-                        LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
+						INNER JOIN {TableNames.SOFT_WINDING_CHILD} SWC ON SWC.YDBItemReqID = M.YDBItemReqID
+                        LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_ITEM_INFO} RDM ON RDM.YDRecipeItemInfoID = M.YDRecipeItemInfoID
+                        INNER JOIN {TableNames.YD_BATCH_MASTER} B ON B.YDBatchID = M.YDBatchID
+                        LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID=M.ConceptID
+                        LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
                         LEFT JOIN ItemSegment Composition ON Composition.id=CM.CompositionID
                         LEFT JOIN ItemSegment Construction ON Construction.id=CM.ConstructionID
                         LEFT JOIN ItemSegment Gsm ON Gsm.id=CM.GSMID
                         LEFT JOIN {DbNames.EPYSL}..ItemSubGroup SG ON SG.SubGroupID = CM.SubGroupID
-                        LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
+                        LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
 
                         ;WITH
             PendingRolls AS
             (
 			SELECT FCM.ConceptID,RollID = KP.GRollID, FCM.GroupConceptNo, CR.SFDChildRollID,
 			C.BItemReqID,C.YDBatchID,C.ItemMasterID
-	            FROM KnittingProduction KP 
-	            INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = KP.ConceptID
-	            LEFT JOIN SFDChildRoll CR ON CR.RollID = KP.GRollID
-				LEFT JOIN YDBatchChild C ON C.GRollID = KP.GRollID
+	            FROM {TableNames.RND_KNITTING_PRODUCTION} KP 
+	            INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KP.ConceptID
+	            LEFT JOIN {TableNames.SFD_CHILD_ROLL} CR ON CR.RollID = KP.GRollID
+				LEFT JOIN {TableNames.YD_BATCH_CHILD} C ON C.GRollID = KP.GRollID
 	            WHERE --ISNULL(kP.InActive,0) = 0 AND 
 	            CR.SFDChildRollID IS NULL
 	            AND  C.YDBatchID IN ({batchIDs})
@@ -325,8 +325,8 @@ namespace EPYSLTEXCore.Application.Services.RND
 	            FCM.ItemMasterID, KP.GRollID, KP.ParentGRollID,
 	             CC.CCColorID, CC.ColorName, 
 	            FCM.TechnicalNameId,kP.InActive,PR.BItemReqID,PR.YDBatchID
-	            FROM KnittingProduction KP
-	            INNER JOIN FreeConceptMaster FCM ON FCM.ConceptID = KP.ConceptID
+	            FROM {TableNames.RND_KNITTING_PRODUCTION} KP
+	            INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = KP.ConceptID
 	            INNER JOIN PendingRolls PR ON PR.RollID = KP.GRollID
 				LEFT JOIN CC ON CC.ConceptID = PR.ConceptID
 	            --WHERE ISNULL(kP.InActive,0) = 1 
@@ -345,7 +345,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 ARN.ItemMasterID, KP.GRollID, KP.ParentGRollID,
                 RollID=KP.GRollID, ARN.CCColorID, ARN.ColorName, --ARN.BChildID, 
                 ARN.TechnicalNameId,kP.InActive,ARN.BItemReqID,ARN.YDBatchID
-                From KnittingProduction KP
+                FROM {TableNames.RND_KNITTING_PRODUCTION} KP
                 Inner Join AllRolls ARN  On ARN.ConceptID=KP.ConceptID AND ARN.GRollID=KP.GRollID
                 Where  KP.InActive=0
                 GROUP BY KP.GRollID, ARN.SFDChildID, 
@@ -357,25 +357,25 @@ namespace EPYSLTEXCore.Application.Services.RND
             ) 
 			Select * From ActiveChildRolls ACR
 		    --Where ACR.RollID Not IN(select BC.GRollID from BatchChild BC)
-              Where ACR.RollID Not IN(select GRollID from YDDyeingBatchItemRoll)
+              Where ACR.RollID Not IN(select GRollID FROM {TableNames.YD_DYEING_BATCH_ITEM_ROLL})
             ;	
 
 
                         --Childs
                         WITH M AS (
-                            --SELECT BC.*, RD.YDRecipeDInfoID, RD.Temperature FROM YDBatchWiseRecipeChild BC
-							--LEFT JOIN YDRecipeDefinitionChild RD ON RD.YDRecipeChildID = BC.YDRecipeChildID
+                            --SELECT BC.*, RD.YDRecipeDInfoID, RD.Temperature FROM {TableNames.YD_BATCH_WISE_RECIPE_CHILD} BC
+							--LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} RD ON RD.YDRecipeChildID = BC.YDRecipeChildID
 							--WHERE BC.YDBatchID IN (29)
-							SELECT RD.TempIn, BM.YDBatchID, RD.ProcessTime, RD.YDRecipeDInfoID, RD.Temperature FROM YDBatchMaster BM
-							INNER JOIN YDBatchItemRequirement BC ON BC.YDBatchID = BM.YDBatchID
-							INNER JOIN YDRecipeRequestMaster RR ON RR.YDBookingChildID = BC.YDBookingChildID
-							INNER JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeReqMasterID = RR.YDRecipeReqMasterID
-							LEFT JOIN YDRecipeDefinitionChild RD ON RD.YDRecipeID = RDM.YDRecipeID
+							SELECT RD.TempIn, BM.YDBatchID, RD.ProcessTime, RD.YDRecipeDInfoID, RD.Temperature FROM {TableNames.YD_BATCH_MASTER} BM
+							INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} BC ON BC.YDBatchID = BM.YDBatchID
+							INNER JOIN {TableNames.YD_RECIPE_REQ_MASTER} RR ON RR.YDBookingChildID = BC.YDBookingChildID
+							INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeReqMasterID = RR.YDRecipeReqMasterID
+							LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} RD ON RD.YDRecipeID = RDM.YDRecipeID
 							WHERE BM.YDBatchID IN ({batchIDs})
                         )
                         SELECT DI.YDRecipeDInfoID, M.TempIn, M.YDBatchID, M.ProcessTime, EV.ValueName FiberPart, ISV.SegmentValue ColorName
 					    FROM M
-						LEFT JOIN YDRecipeDefinitionDyeingInfo DI ON DI.YDRecipeDInfoID = M.YDRecipeDInfoID
+						LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_DYEING_INFO} DI ON DI.YDRecipeDInfoID = M.YDRecipeDInfoID
 						INNER JOIN {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = DI.FiberPartID
 						INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = DI.ColorID
 						GROUP BY DI.YDRecipeDInfoID, M.TempIn, M.YDBatchID, M.ProcessTime, EV.ValueName, ISV.SegmentValue;
@@ -384,19 +384,19 @@ namespace EPYSLTEXCore.Application.Services.RND
                         SELECT RCD.YDBRecipeChildID, BM.YDBatchID, C.YDRecipeChildID, C.ProcessID, C.ParticularsID, C.RawItemID, C.Qty, C.UnitID, C.TempIn,
 						C.TempOut, C.ProcessTime, C.YDRecipeID,I.ItemName, P.ValueName ProcessName,PL.ValueName ParticularsName,R.ItemName RawItemName,
 						UU.DisplayUnitDesc Unit, C.IsPercentage, C.YDRecipeDInfoID, C.Temperature, EV.ValueName FiberPart, ISV.SegmentValue ColorName
-						FROM YDBatchMaster BM
-						INNER JOIN YDBatchItemRequirement BC ON BC.YDBatchID = BM.YDBatchID
-						INNER JOIN YDRecipeRequestMaster RR ON RR.YDBookingChildID = BC.YDBookingChildID
-						INNER JOIN YDRecipeRequestChild RC ON RC.YDRecipeReqMasterID = RR.YDRecipeReqMasterID
-						INNER JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeReqMasterID = RR.YDRecipeReqMasterID
-						LEFT JOIN YDRecipeDefinitionChild C ON C.YDRecipeID = RDM.YDRecipeID
-						LEFT JOIN YDBatchWiseRecipeChild RCD ON RCD.YDRecipeChildID = C.YDRecipeChildID
+						FROM {TableNames.YD_BATCH_MASTER} BM
+						INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} BC ON BC.YDBatchID = BM.YDBatchID
+						INNER JOIN {TableNames.YD_RECIPE_REQ_MASTER} RR ON RR.YDBookingChildID = BC.YDBookingChildID
+						INNER JOIN {TableNames.YD_RECIPE_REQ_CHILD} RC ON RC.YDRecipeReqMasterID = RR.YDRecipeReqMasterID
+						INNER JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeReqMasterID = RR.YDRecipeReqMasterID
+						LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} C ON C.YDRecipeID = RDM.YDRecipeID
+						LEFT JOIN {TableNames.YD_BATCH_WISE_RECIPE_CHILD} RCD ON RCD.YDRecipeChildID = C.YDRecipeChildID
 						LEFT JOIN {DbNames.EPYSL}..ItemMaster I ON I.ItemMasterID=C.RawItemID
 						LEFT JOIN {DbNames.EPYSL}..EntityTypeValue P ON P.ValueID = C.ProcessID
 						LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PL ON PL.ValueID = C.ParticularsID
 						LEFT JOIN {DbNames.EPYSL}..ItemMaster R ON R.ItemMasterID = C.RawItemID
 						LEFT JOIN {DbNames.EPYSL}..Unit UU ON UU.UnitID = C.UnitID
-						LEFT JOIN YDRecipeDefinitionDyeingInfo DI ON DI.YDRecipeDInfoID = C.YDRecipeDInfoID
+						LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_DYEING_INFO} DI ON DI.YDRecipeDInfoID = C.YDRecipeDInfoID
 						INNER JOIN {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = DI.FiberPartID
 						INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = DI.ColorID
 						WHERE BM.YDBatchID IN ({batchIDs});
@@ -442,18 +442,18 @@ namespace EPYSLTEXCore.Application.Services.RND
             var sql = $@"
                     ;WITH M AS (
                         SELECT	*
-                        FROM YDDyeingBatchMaster DB WHERE YDDBatchID = {id}
+                        FROM {TableNames.YD_DYEING_BATCH_MASTER} DB WHERE YDDBatchID = {id}
                     )
                     SELECT M.YDDBatchID, M.YDDBatchNo, M.YDDBatchDate, M.YDRecipeID, M.ColorID, M.CCColorID, M.BatchWeightKG, M.BatchQtyPcs, M.DMID, M.MachineLoading, M.DyeingNozzleQty,
                     M.ShiftID, M.OperatorID, M.BatchStatus, M.PlanBatchStartTime, M.PlanBatchEndTime, M.ProductionDate, M.Remarks, RDM.YDRecipeNo, YDRecipeDate = RDM.RecipeDate, YDRecipeFor = RDM.RecipeFor,
 					COL.SegmentValue ColorName, FR.ValueName YDRecipeForName, M.DMID, M.MachineLoading, M.DyeingNozzleQty, M.DyeingMcCapacity, DM.DyeingMcslNo DMNo, FC.GroupConceptNo ConceptNo, FC.GroupConceptNo SLNo
                     FROM M
-                    LEFT JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeID = M.YDRecipeID
+                    LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeID = M.YDRecipeID
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 					LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor
-					LEFT JOIN DyeingMachine DM ON DM.DMID = M.DMID
-					LEFT JOIN FreeConceptChildColor FCC ON FCC.CCColorID = M.CCColorID
-					LEFT JOIN FreeConceptMaster FC ON FC.ConceptID = FCC.ConceptID;
+					LEFT JOIN {TableNames.DYEING_MACHINE} DM ON DM.DMID = M.DMID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = M.CCColorID
+					LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FC ON FC.ConceptID = FCC.ConceptID;
 
                     -----YDDyeingBatchWithBatchMaster
                     ;WITH M AS (
@@ -461,13 +461,13 @@ namespace EPYSLTEXCore.Application.Services.RND
                     )
 		            SELECT M.YDDBBMID, M.YDDBatchID, M.YDBatchID, M.BatchUseQtyKG, M.BatchUseQtyPcs, B.YDBatchNo
 		            FROM M
-		            INNER JOIN YDBatchMaster B ON B.YDBatchID = M.YDBatchID;
+		            INNER JOIN {TableNames.YD_BATCH_MASTER} B ON B.YDBatchID = M.YDBatchID;
 
                     ----for YDDyeingBatchItem
                     ;WITH M AS (
-                        SELECT BM.*, YDBC.YarnCategory FROM YDDyeingBatchItem BM 
-						INNER JOIN YDBatchItemRequirement YDBIR ON YDBIR.YDBItemReqID = BM.YDBItemReqID 
-						INNER JOIN YDBookingChild YDBC ON YDBC.YDBookingChildID = YDBIR.YDBookingChildID
+                        SELECT BM.*, YDBC.YarnCategory FROM {TableNames.YD_DYEING_BATCH_ITEM} BM 
+						INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} YDBIR ON YDBIR.YDBItemReqID = BM.YDBItemReqID 
+						INNER JOIN {TableNames.YDBookingChild} YDBC ON YDBC.YDBookingChildID = YDBIR.YDBookingChildID
                         WHERE BM.YDDBatchID = {id}
                     ),
                     ItemSegment As
@@ -482,32 +482,32 @@ namespace EPYSLTEXCore.Application.Services.RND
                     B.YDBatchNo,  KnittingType.TypeName KnittingType,Composition.text FabricComposition, Construction.text FabricConstruction,
                     Technical.TechnicalName,Gsm.text FabricGsm, SG.SubGroupName ItemSubGroup, M.YarnCategory, M.YDBItemReqID
                     FROM M
-                    INNER JOIN YDBatchMaster B ON B.YDBatchID = M.YDBatchID
-                    LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = M.ConceptID
-                    LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
+                    INNER JOIN {TableNames.YD_BATCH_MASTER} B ON B.YDBatchID = M.YDBatchID
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = M.ConceptID
+                    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
                     LEFT JOIN ItemSegment Composition ON Composition.id=CM.CompositionID
                     LEFT JOIN ItemSegment Construction ON Construction.id=CM.ConstructionID
                     LEFT JOIN ItemSegment Gsm ON Gsm.id=CM.GSMID
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup SG ON SG.SubGroupID = CM.SubGroupID
-                    LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
+                    LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
 
                     ----for YDDyeingBatchItemRoll
                     ;SELECT C.YDDBIRollID, C.YDDBIID, C.YDDBatchID, C.GRollID, C.ItemMasterID, C.RollQty, C.RollQtyPcs, KP.RollNo
-                    FROM YDDyeingBatchItemRoll C
-                    INNER JOIN KnittingProduction KP ON KP.GRollID = C.GRollID
+                    FROM {TableNames.YD_DYEING_BATCH_ITEM_ROLL} C
+                    INNER JOIN {TableNames.RND_KNITTING_PRODUCTION} KP ON KP.GRollID = C.GRollID
                     WHERE C.YDDBatchID = {id};
 
                     ----for YDDyeingBatchRecipe
                     ;WITH M AS (
                         SELECT	BM.*,RD.YDRecipeDInfoID
-						FROM YDDyeingBatchRecipe BM
-						LEFT JOIN YDRecipeDefinitionChild RD ON RD.YDRecipeChildID = BM.YDRecipeChildID
+						FROM {TableNames.YD_DYEING_BATCH_RECIPE} BM
+						LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} RD ON RD.YDRecipeChildID = BM.YDRecipeChildID
 						WHERE BM.YDDBatchID = {id}
                     )
                     SELECT M.YDDBatchID, M.YDRecipeID, M.TempIn, M.ProcessTime,
 					DI.YDRecipeDInfoID, EV.ValueName FiberPart,ISV.SegmentValue ColorName
 					FROM M
-					LEFT JOIN YDRecipeDefinitionDyeingInfo DI ON DI.YDRecipeDInfoID = M.YDRecipeDInfoID
+					LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_DYEING_INFO} DI ON DI.YDRecipeDInfoID = M.YDRecipeDInfoID
 					INNER JOIN {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = DI.FiberPartID
 					INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = DI.ColorID
 					GROUP BY M.YDDBatchID, M.YDRecipeID, M.TempIn, M.ProcessTime,
@@ -516,14 +516,14 @@ namespace EPYSLTEXCore.Application.Services.RND
                     SELECT B.YDDBRID, B.YDDBatchID, B.YDRecipeChildID, B.YDDBatchID, B.YDRecipeChildID, B.ProcessID, B.ParticularsID, B.RawItemID, B.Qty, B.UnitID, B.TempIn,
 					B.TempOut, B.ProcessTime, C.YDRecipeID,I.ItemName, P.ValueName ProcessName,PL.ValueName ParticularsName,R.ItemName RawItemName,
 					UU.DisplayUnitDesc Unit, C.IsPercentage, C.YDRecipeDInfoID, C.Temperature, EV.ValueName FiberPart, ISV.SegmentValue ColorName
-					FROM YDDyeingBatchRecipe B
-					LEFT JOIN YDRecipeDefinitionChild C ON C.YDRecipeChildID = B.YDRecipeChildID
+					FROM {TableNames.YD_DYEING_BATCH_RECIPE} B
+					LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} C ON C.YDRecipeChildID = B.YDRecipeChildID
 					LEFT JOIN {DbNames.EPYSL}..ItemMaster I ON I.ItemMasterID=C.RawItemID
 					LEFT JOIN {DbNames.EPYSL}..EntityTypeValue P ON P.ValueID = C.ProcessID
 					LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PL ON PL.ValueID = C.ParticularsID
 					LEFT JOIN {DbNames.EPYSL}..ItemMaster R ON R.ItemMasterID = C.RawItemID
 					LEFT JOIN {DbNames.EPYSL}..Unit UU ON UU.UnitID = C.UnitID
-					LEFT JOIN YDRecipeDefinitionDyeingInfo DI ON DI.YDRecipeDInfoID = C.YDRecipeDInfoID
+					LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_DYEING_INFO} DI ON DI.YDRecipeDInfoID = C.YDRecipeDInfoID
 					INNER JOIN {DbNames.EPYSL}..EntityTypeValue EV ON EV.ValueID = DI.FiberPartID
 					INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = DI.ColorID
 					WHERE B.YDDBatchID = {id};
@@ -555,14 +555,14 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"WITH M AS (
                         SELECT	*
-                        FROM YDBatchMaster BM WHERE BM.YDBatchID NOT IN (SELECT YDBatchID FROM {TableNames.YD_DYEING_BATCH_WITH_BATCH_MASTER})
+                        FROM {TableNames.YD_BATCH_MASTER} BM WHERE BM.YDBatchID NOT IN (SELECT YDBatchID FROM {TableNames.YD_DYEING_BATCH_WITH_BATCH_MASTER})
                         AND BM.YDBatchID NOT IN ({batchIds}) --BM.IsApproved = 1 AND
                     )
                     SELECT M.YDBatchID, M.YDBatchNo, M.YDBatchDate, M.YDRecipeID, M.GroupConceptNo, BookingID = 0, M.ColorID, M.BatchWeightKG, M.BatchWeightPcs BatchQtyPcs, M.Remarks,
                     M.ExportOrderID, M.BuyerID, M.BuyerTeamID, RDM.YDRecipeNo, YDRecipeDate = RDM.RecipeDate, YDRecipeFor = RDM.RecipeFor, COL.SegmentValue ColorName,
 					FR.ValueName YDRecipeForName, Count(*) Over() TotalRows
                     FROM M
-                    LEFT JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeID = M.YDRecipeID
+                    LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeID = M.YDRecipeID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 					LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor";
 
@@ -573,20 +573,20 @@ namespace EPYSLTEXCore.Application.Services.RND
             var sql = $@"
                     ;WITH M AS (
                         SELECT	*
-                        FROM YDBatchMaster BM WHERE BM.YDBatchID IN ({batchIds})
+                        FROM {TableNames.YD_BATCH_MASTER} BM WHERE BM.YDBatchID IN ({batchIds})
                     )
                     SELECT M.YDBatchID, M.YDBatchNo, M.YDBatchDate, M.YDRecipeID, M.ConceptID, M.ColorID, M.CCColorID, M.BatchWeightKG, M.BatchWeightPcs BatchQtyPcs, M.Remarks,
                     M.ExportOrderID, M.BuyerID, M.BuyerTeamID, RDM.YDRecipeNo, YDRecipeDate = RDM.RecipeDate, YDRecipeFor = RDM.RecipeFor, COL.SegmentValue ColorName,
 					FR.ValueName YDRecipeForName, Count(*) Over() TotalRows
                     FROM M
-                    LEFT JOIN YDRecipeDefinitionMaster RDM ON RDM.YDRecipeID = M.YDRecipeID
+                    LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_MASTER} RDM ON RDM.YDRecipeID = M.YDRecipeID
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = M.ColorID
 					LEFT JOIN {DbNames.EPYSL}..EntityTypeValue FR ON FR.ValueID = RDM.RecipeFor;
 
                     -----for YDDyeingBatchItem
                     ;WITH M AS (
-                        SELECT BM.*, YDBC.YarnCategory FROM YDBatchItemRequirement BM 
-						INNER JOIN YDBookingChild YDBC ON YDBC.YDBookingChildID = BM.YDBookingChildID
+                        SELECT BM.*, YDBC.YarnCategory FROM {TableNames.YD_BATCH_ITEM_REQUIREMENT} BM 
+						INNER JOIN {TableNames.YDBookingChild} YDBC ON YDBC.YDBookingChildID = BM.YDBookingChildID
                         WHERE BM.YDBatchID IN ({batchIds})
                     ),
                     ItemSegment As
@@ -600,30 +600,30 @@ namespace EPYSLTEXCore.Application.Services.RND
                     B.YDBatchNo, B.BuyerID, B.BuyerTeamID, B.ExportOrderID, KnittingType.TypeName KnittingType,Composition.text FabricComposition, Construction.text FabricConstruction,
                     Technical.TechnicalName,Gsm.text FabricGsm, SG.SubGroupName ItemSubGroup, M.YarnCategory
                     FROM M
-                    LEFT JOIN YDRecipeDefinitionItemInfo RDM ON RDM.YDRecipeItemInfoID = M.YDRecipeItemInfoID
-                    INNER JOIN YDBatchMaster B ON B.YDBatchID = M.YDBatchID
-                    LEFT JOIN FreeConceptMaster CM ON CM.ConceptID = B.ConceptID
-                    LEFT JOIN KnittingMachineType KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
+                    LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_ITEM_INFO} RDM ON RDM.YDRecipeItemInfoID = M.YDRecipeItemInfoID
+                    INNER JOIN {TableNames.YD_BATCH_MASTER} B ON B.YDBatchID = M.YDBatchID
+                    LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} CM ON CM.ConceptID = B.ConceptID
+                    LEFT JOIN {TableNames.KNITTING_MACHINE_TYPE} KnittingType ON KnittingType.TypeID=CM.KnittingTypeID
                     LEFT JOIN ItemSegment Composition ON Composition.id=CM.CompositionID
                     LEFT JOIN ItemSegment Construction ON Construction.id=CM.ConstructionID
                     LEFT JOIN ItemSegment Gsm ON Gsm.id=CM.GSMID
                     LEFT JOIN {DbNames.EPYSL}..ItemSubGroup SG ON SG.SubGroupID = CM.SubGroupID
-                    LEFT JOIN FabricTechnicalName Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
+                    LEFT JOIN {TableNames.FabricTechnicalName} Technical ON Technical.TechnicalNameId=CM.TechnicalNameId;
 
                     ----for YDDyeingBatchItemRoll
                     ;SELECT C.BItemReqID, C.YDBatchID, C.GRollID, C.ItemMasterID, C.RollQty, C.RollQtyPcs, KP.RollNo
-                    FROM YDBatchChild C
-                    INNER JOIN KnittingProduction KP ON KP.GRollID = C.GRollID
+                    FROM {TableNames.YD_BATCH_CHILD} C
+                    INNER JOIN {TableNames.RND_KNITTING_PRODUCTION} KP ON KP.GRollID = C.GRollID
                     WHERE C.YDBatchID IN ({batchIds});
 
                     ----for YDDyeingBatchRecipe
                     ;WITH M AS (
-                        SELECT	* FROM YDBatchWiseRecipeChild BM WHERE BM.YDBatchID IN ({batchIds})
+                        SELECT	* FROM {TableNames.YD_BATCH_WISE_RECIPE_CHILD} BM WHERE BM.YDBatchID IN ({batchIds})
                     )
                     SELECT M.YDRecipeChildID, M.ProcessID, M.ParticularsID, M.RawItemID, M.Qty, M.UnitID, M.TempIn, M.TempOut, M.ProcessTime, RDM.YDRecipeID,
 					P.ValueName ProcessName,PL.ValueName ParticularsName,R.ItemName RawItemName, UU.DisplayUnitDesc Unit
                     FROM M
-                    LEFT JOIN YDRecipeDefinitionChild RDM ON RDM.YDRecipeChildID = M.YDRecipeChildID
+                    LEFT JOIN {TableNames.YD_RECIPE_DEFINITION_CHILD} RDM ON RDM.YDRecipeChildID = M.YDRecipeChildID
 					LEFT JOIN {DbNames.EPYSL}..EntityTypeValue P ON P.ValueID = M.ProcessID
 					LEFT JOIN {DbNames.EPYSL}..EntityTypeValue PL ON PL.ValueID = M.ParticularsID
 					LEFT JOIN {DbNames.EPYSL}..ItemMaster R ON R.ItemMasterID = M.RawItemID
@@ -666,14 +666,14 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@"WITH FC AS (
 	                SELECT FCM.ConceptID
-	                FROM FreeConceptMaster FC
-	                INNER JOIN FreeConceptMaster FCM ON FCM.GroupConceptNo = FC.GroupConceptNo
+	                FROM {TableNames.RND_FREE_CONCEPT_MASTER} FC
+	                INNER JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.GroupConceptNo = FC.GroupConceptNo
 	                WHERE FC.ConceptID = {conceptId}
                     ),
                     FPC AS (
                     SELECT FPC.*, FP.ConceptID
-                    FROM FinishingProcessChild FPC
-                    INNER JOIN FinishingProcessMaster FP ON FP.FPMasterID = FPC.FPMasterID
+                    FROM {TableNames.FINISHING_PROCESS_CHILD} FPC
+                    INNER JOIN {TableNames.FINISHING_PROCESS_MASTER} FP ON FP.FPMasterID = FPC.FPMasterID
 	                INNER JOIN FC ON FC.ConceptID = FP.ConceptID
                     WHERE FPC.ColorID = {colorID} AND FPC.IsPreProcess = 0
                     )
@@ -684,12 +684,12 @@ namespace EPYSLTEXCore.Application.Services.RND
                     FPC.Param14Value, FPC.Param15Value, FPC.Param16Value, FPC.Param17Value, FPC.Param18Value,
                     FPC.Param19Value, FPC.Param20Value, FMS.UnitID, FMS.BrandID
                     FROM FPC
-                    INNER JOIN FinishingMachineProcess_HK FMP On FMP.FMProcessID = FPC.ProcessID
-                    INNER JOIN FinishingMachineConfigurationMaster FMC ON FMC.FMCMasterID = FMP.FMCMasterID
+                    INNER JOIN {TableNames.FinishingMachineProcess_HK} FMP On FMP.FMProcessID = FPC.ProcessID
+                    INNER JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} FMC ON FMC.FMCMasterID = FMP.FMCMasterID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = FPC.ProcessTypeID
-                    LEFT JOIN FinishingMachineSetup FMS On FMS.FMSID = FPC.FMSID
+                    LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} FMS On FMS.FMSID = FPC.FMSID
                     Left Join {DbNames.EPYSL}..EntityTypeValue b on b.ValueID = FMS.BrandID
-                    Left Join KnittingUnit c on c.KnittingUnitID = FMS.UnitID
+                    Left JOIN {TableNames.KNITTING_UNIT} c on c.KnittingUnitID = FMS.UnitID
                     GROUP BY FPC.FPChildID, FPC.ConceptID, FPC.FPMasterID, FPC.ProcessID, FPC.SeqNo, FMP.ProcessName, C.ShortName,b.ValueName, FPC.ProcessTypeID, ET.ValueName,
                     FPC.IsPreProcess, FPC.FMSID,FMC.FMCMasterID, FMS.MachineNo, FMC.ProcessName, FPC.Remarks, FPC.Param1Value, FPC.Param2Value, FPC.Param3Value,
                     FPC.Param4Value, FPC.Param5Value, FPC.Param6Value, FPC.Param7Value, FPC.Param8Value, FPC.Param9Value, FPC.Param10Value, FPC.Param11Value,
@@ -703,14 +703,14 @@ namespace EPYSLTEXCore.Application.Services.RND
         {
             var sql = $@";With A As(
 							Select DBM.YDDBatchID, DBI.ConceptID, DBM.ColorID
-							From YDDyeingBatchItem DBI
-							Inner Join YDDyeingBatchMaster DBM ON DBM.YDDBatchID = DBI.YDDBatchID
+							FROM {TableNames.YD_DYEING_BATCH_ITEM} DBI
+							Inner JOIN {TableNames.YD_DYEING_BATCH_MASTER} DBM ON DBM.YDDBatchID = DBI.YDDBatchID
 							WHERE DBM.YDDBatchID = {dBatchID} And DBM.colorID = {colorID}
 							Group By DBM.YDDBatchID, DBI.ConceptID, DBM.ColorID
 						),FPC AS (
                     SELECT FPC.*, FP.ConceptID
-                    FROM FinishingProcessChild FPC
-                    INNER JOIN FinishingProcessMaster FP ON FP.FPMasterID = FPC.FPMasterID
+                    FROM {TableNames.FINISHING_PROCESS_CHILD} FPC
+                    INNER JOIN {TableNames.FINISHING_PROCESS_MASTER} FP ON FP.FPMasterID = FPC.FPMasterID
                     Inner Join A On A.ConceptID = FP.ConceptID And A.ColorID = FPC.ColorID
                     WHERE FPC.IsPreProcess = 0
                     )
@@ -721,12 +721,12 @@ namespace EPYSLTEXCore.Application.Services.RND
                     FPC.Param14Value, FPC.Param15Value, FPC.Param16Value, FPC.Param17Value, FPC.Param18Value,
                     FPC.Param19Value, FPC.Param20Value, FMS.UnitID, FMS.BrandID
                     FROM FPC
-                    INNER JOIN FinishingMachineProcess_HK FMP On FMP.FMProcessID = FPC.ProcessID
-                    INNER JOIN FinishingMachineConfigurationMaster FMC ON FMC.FMCMasterID = FMP.FMCMasterID
+                    INNER JOIN {TableNames.FinishingMachineProcess_HK} FMP On FMP.FMProcessID = FPC.ProcessID
+                    INNER JOIN {TableNames.FINISHING_MACHINE_CONFIGURATION_MASTER} FMC ON FMC.FMCMasterID = FMP.FMCMasterID
                     LEFT JOIN {DbNames.EPYSL}..EntityTypeValue ET ON ET.ValueID = FPC.ProcessTypeID
-                    LEFT JOIN FinishingMachineSetup FMS On FMS.FMSID = FPC.FMSID
+                    LEFT JOIN {TableNames.FINISHING_MACHINE_SETUP} FMS On FMS.FMSID = FPC.FMSID
                     Left Join {DbNames.EPYSL}..EntityTypeValue b on b.ValueID = FMS.BrandID
-                    Left Join KnittingUnit c on c.KnittingUnitID = FMS.UnitID
+                    Left JOIN {TableNames.KNITTING_UNIT} c on c.KnittingUnitID = FMS.UnitID
                     GROUP BY FPC.FPChildID, FPC.ConceptID, FPC.FPMasterID, FPC.ProcessID, FPC.SeqNo, FMP.ProcessName, C.ShortName,b.ValueName, FPC.ProcessTypeID, ET.ValueName,
                     FPC.IsPreProcess, FPC.FMSID,FMC.FMCMasterID, FMS.MachineNo, FMC.ProcessName, FPC.Remarks, FPC.Param1Value, FPC.Param2Value, FPC.Param3Value,
                     FPC.Param4Value, FPC.Param5Value, FPC.Param6Value, FPC.Param7Value, FPC.Param8Value, FPC.Param9Value, FPC.Param10Value, FPC.Param11Value,
@@ -743,10 +743,10 @@ namespace EPYSLTEXCore.Application.Services.RND
             paginationInfo.OrderBy = string.IsNullOrEmpty(paginationInfo.OrderBy) ? "ORDER BY ConceptNo, ColorName, DBatchNo" : paginationInfo.OrderBy;
             var sql = $@"
                 SELECT DB.YDDBatchID, DB.YDDBatchNo, DB.YDDBatchDate, DB.CCColorID, DB.ColorID, COL.SegmentValue ColorName,FCM.GroupConceptNo [ConceptNo]
-                FROM YDDyeingBatchMaster DB 
+                FROM {TableNames.YD_DYEING_BATCH_MASTER} DB 
                 LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue COL ON COL.SegmentValueID = DB.ColorID
-                LEFT JOIN FreeConceptChildColor FCC ON FCC.CCColorID = DB.CCColorID
-                LEFT JOIN FreeConceptMaster FCM ON FCM.ConceptID = FCC.ConceptID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_CHILD_COLOR} FCC ON FCC.CCColorID = DB.CCColorID
+                LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM ON FCM.ConceptID = FCC.ConceptID
                 WHERE DB.YDRecipeID = 0 AND FCM.GroupConceptNo LIKE '%{conceptNo}%' AND FCC.ColorName LIKE '%{colorName}%'
                 {paginationInfo.FilterBy}
                 {paginationInfo.OrderBy}
@@ -850,7 +850,7 @@ namespace EPYSLTEXCore.Application.Services.RND
             //entity.DBatchNo = await _signatureRepository.GetMaxNoAsync(TableNames.DYEING_BATCH_NO);
 
             int paddingValue = 3;
-            int maxNo = await _service.GetMaxNoAsync(TableNames.YD_DYEING_BATCH_MASTER, "YDDBatchNo", entity.SLNo, entity.SLNo.Length + paddingValue, _connectionGmt);
+            int maxNo = await _service.GetMaxNoAsync(TableNames.YD_DYEING_BATCH_MASTER, "YDDBatchNo", entity.SLNo, entity.SLNo.Length + paddingValue, _connection);
             entity.YDDBatchNo = entity.SLNo + maxNo.ToString().PadLeft(paddingValue, '0');
 
             var maxChildId = await _service.GetMaxIdAsync(TableNames.YD_DYEING_BATCH_WITH_BATCH_MASTER, entity.YDDyeingBatchWithBatchMasters.Count, RepeatAfterEnum.NoRepeat, transactionGmt, _connectionGmt);
@@ -1053,19 +1053,19 @@ namespace EPYSLTEXCore.Application.Services.RND
         public async Task<YDDyeingBatchMaster> GetAllByIDAsync(int id)
         {
             string sql = $@"
-            ;Select * From YDDyeingBatchMaster Where YDDBatchID = {id}
+            ;Select * FROM {TableNames.YD_DYEING_BATCH_MASTER} Where YDDBatchID = {id}
 
             ;Select * FROM {TableNames.YD_DYEING_BATCH_WITH_BATCH_MASTER} Where YDDBatchID = {id}
 
-            ;Select * From YDDyeingBatchRecipe Where YDDBatchID = {id}
+            ;Select * FROM {TableNames.YD_DYEING_BATCH_RECIPE} Where YDDBatchID = {id}
 
-            ;Select * From YDDyeingBatchItem Where YDDBatchID = {id}
+            ;Select * FROM {TableNames.YD_DYEING_BATCH_ITEM} Where YDDBatchID = {id}
 
-            ;Select * From YDDyeingBatchItemRoll Where YDDBatchID = {id}
+            ;Select * FROM {TableNames.YD_DYEING_BATCH_ITEM_ROLL} Where YDDBatchID = {id}
 
-            ;SELECT * FROM YDDyeingBatchChildFinishingProcess WHERE YDDBatchID = {id}
+            ;SELECT * FROM {TableNames.YD_DYEING_BATCH_CHILD_FINISHING_PROCESS} WHERE YDDBatchID = {id}
 
-            ;Select * From YDDyeingBatchMergeBatch Where YDDBatchID = {id}";
+            ;Select * From {TableNames.YD_DYEING_BATCH_MERGE_BATCH} Where YDDBatchID = {id}";
 
             try
             {

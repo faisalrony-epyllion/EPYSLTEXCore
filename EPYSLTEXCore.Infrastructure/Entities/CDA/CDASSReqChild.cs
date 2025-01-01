@@ -1,6 +1,7 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {
 
     [Table("CDASSReqChild")]

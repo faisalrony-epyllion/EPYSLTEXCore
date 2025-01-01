@@ -1,32 +1,31 @@
 using Dapper;
-using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.GuardClauses;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
-using EPYSLTEX.Infrastrucure.Entities;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.CDA;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using EPYSLTEXCore.Application.Services;
+using EPYSLTEXCore.Infrastructure.Exceptions;
 public class CDALoanReturnService : ICDALoanReturnService
 {
 	private readonly IDapperCRUDService<CDALoanReturnMaster> _service;
-	private readonly ISignatureRepository _signatureRepository;
+	
 	private readonly SqlConnection _connection;
-	private SqlTransaction transaction;
-	public CDALoanReturnService(IDapperCRUDService<CDALoanReturnMaster> service, ISignatureRepository signatureRepository)
+    private readonly SqlConnection _gmtConnection;
+    private SqlTransaction transaction;
+	private SqlTransaction transactionGmt;
+
+    public CDALoanReturnService(IDapperCRUDService<CDALoanReturnMaster> service)
 	{
-		_service = service; ;
-		_signatureRepository = signatureRepository;
-		_connection = service.Connection;
-	}
+        _service = service;
+        _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
+        _connection = service.Connection;
+        _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
+    }
 
 	public async Task<List<CDALoanReturnMaster>> GetPagedAsync(Status status, PaginationInfo paginationInfo, string Flag)
 	{
@@ -392,18 +391,21 @@ public class CDALoanReturnService : ICDALoanReturnService
 	{
 		try
 		{
-			await _connection.OpenAsync();
-			transaction = _connection.BeginTransaction();
 
-			int maxChildId = 0, maxChildAdjId = 0;
+            await _connection.OpenAsync();
+            transaction = _connection.BeginTransaction();
+            await _gmtConnection.OpenAsync();
+            transactionGmt = _gmtConnection.BeginTransaction();
+
+            int maxChildId = 0, maxChildAdjId = 0;
 			switch (entity.EntityState)
 			{
 				case EntityState.Added:
-					entity.CDALRetuenMasterID = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_MASTER);
-					entity.LReturnNo = _signatureRepository.GetMaxNo(TableNames.CDA_LOAN_RETURN_NO);
-					entity.ChallanNo = _signatureRepository.GetMaxNo(TableNames.CDA_LOAN_RETURN_CHALLAN_NO); 
-					maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD, entity.Childs.Count);
-					maxChildAdjId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD_ADJUTMENT, entity.Childs.Sum(x => x.ChildAdjutment.Count)); 
+					entity.CDALRetuenMasterID = await _service.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_MASTER);
+					entity.LReturnNo = await _service.GetMaxNoAsync(TableNames.CDA_LOAN_RETURN_NO,1, RepeatAfterEnum.NoRepeat,"00000", transactionGmt, _gmtConnection);
+					entity.ChallanNo = await _service.GetMaxNoAsync(TableNames.CDA_LOAN_RETURN_CHALLAN_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _gmtConnection); 
+					maxChildId = await _service.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD, entity.Childs.Count);
+					maxChildAdjId = await _service.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD_ADJUTMENT, entity.Childs.Sum(x => x.ChildAdjutment.Count)); 
 					 
 					foreach (var item in entity.Childs)
 					{
@@ -421,18 +423,14 @@ public class CDALoanReturnService : ICDALoanReturnService
 					break;
 
 				case EntityState.Modified:
-					//var addedChilds = entity.Childs.FindAll(x => x.EntityState == EntityState.Added);
-					//maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD, addedChilds.Count);
 
-					//var addedChildsAdj = entity.Childs.FindAll(x => x.EntityState == EntityState.Added);
-					//maxChildAdjId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD_ADJUTMENT, addedChilds.Count);
 
-					maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD, entity.Childs.Count(x => x.EntityState == EntityState.Added));
-					maxChildAdjId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD_ADJUTMENT, entity.Childs.Sum(x => x.ChildAdjutment.Where(y => y.EntityState == EntityState.Added).ToList().Count));
+					maxChildId = await _service.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD, entity.Childs.Count(x => x.EntityState == EntityState.Added));
+					maxChildAdjId = await _service.GetMaxIdAsync(TableNames.CDA_LOAN_RETURN_CHILD_ADJUTMENT, entity.Childs.Sum(x => x.ChildAdjutment.Where(y => y.EntityState == EntityState.Added).ToList().Count));
 
 					if (entity.GPFlag)
 					{
-						entity.GPNo = _signatureRepository.GetMaxNo(TableNames.CDA_LOAN_RETURN_GATE_PASS_NO);
+						entity.GPNo = await _service.GetMaxNoAsync(TableNames.CDA_LOAN_RETURN_GATE_PASS_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _gmtConnection);
 					}
 					else
 					{

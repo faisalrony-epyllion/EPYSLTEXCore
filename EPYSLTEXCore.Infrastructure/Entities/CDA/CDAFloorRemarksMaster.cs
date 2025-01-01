@@ -1,8 +1,7 @@
 using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {
     [Table("CDAFloorRemarksMaster")]
     public class CDAFloorRemarksMaster : DapperBaseEntity

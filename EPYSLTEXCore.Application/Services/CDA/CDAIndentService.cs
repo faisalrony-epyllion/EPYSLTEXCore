@@ -1,31 +1,30 @@
 ﻿using Dapper;
-using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.GuardClauses;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEX.Core.Statics;
-using System;
-using System.Collections.Generic;
+using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.CDA;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.Data.SqlClient;
 using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Linq; 
-using System.Threading.Tasks;
 
-namespace EPYSLTEX.Infrastructure.Services
+namespace EPYSLTEXCore.Application.Services.CDA
 {
     public class CDAIndentService : ICDAIndentService
     {
         private readonly IDapperCRUDService<CDAIndentMaster> _service;
-        private readonly ISignatureRepository _signatureRepository;
         private readonly SqlConnection _connection;
+        private readonly SqlConnection _gmtConnection;
+        private SqlTransaction transaction;
+        private SqlTransaction transactionGmt;
 
-        public CDAIndentService(IDapperCRUDService<CDAIndentMaster> service
-            , ISignatureRepository signatureRepository)
+        public CDAIndentService(IDapperCRUDService<CDAIndentMaster> service)
         {
             _service = service;
-            _signatureRepository = signatureRepository;
+            _service.Connection = _service.GetConnection(AppConstants.TEXTILE_CONNECTION);
             _connection = service.Connection;
+            _gmtConnection = service.GetConnection(AppConstants.GMT_CONNECTION);
         }
 
         public async Task<CDAIndentMaster> GetDyesChemicalsAsync()
@@ -375,16 +374,18 @@ namespace EPYSLTEX.Infrastructure.Services
             {
                 await _connection.OpenAsync();
                 transaction = _connection.BeginTransaction();
+                await _gmtConnection.OpenAsync();
+                transactionGmt = _gmtConnection.BeginTransaction();
 
                 int maxChildId = 0, maxChildDetailsId = 0, maxCompanyId = 0;
                 switch (entity.EntityState)
                 {
                     case EntityState.Added:
-                        entity.CDAIndentMasterID = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_INDENT_MASTER);
-                        entity.IndentNo = _signatureRepository.GetMaxNo(TableNames.CDA_INDENT_NO);
-                        maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD, entity.Childs.Count);
-                        maxChildDetailsId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_DETAILS, entity.Childs.Sum(x => x.ChildItems.Count));
-                        maxCompanyId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_COMPANY, entity.Childs.Sum(x => x.CDAIndentCompanies.Count()));
+                        entity.CDAIndentMasterID = await _service.GetMaxIdAsync(TableNames.CDA_INDENT_MASTER);
+                        entity.IndentNo = await _service.GetMaxNoAsync(TableNames.CDA_INDENT_NO, 1, RepeatAfterEnum.NoRepeat, "00000", transactionGmt, _gmtConnection);
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD, entity.Childs.Count);
+                        maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_DETAILS, entity.Childs.Sum(x => x.ChildItems.Count));
+                        maxCompanyId = await _service.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_COMPANY, entity.Childs.Sum(x => x.CDAIndentCompanies.Count()));
 
                         foreach (CDAIndentChild child in entity.Childs)
                         {
@@ -408,9 +409,9 @@ namespace EPYSLTEX.Infrastructure.Services
                         break;
 
                     case EntityState.Modified:
-                        maxChildId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD, entity.Childs.Count(x => x.EntityState == EntityState.Added));
-                        maxChildDetailsId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_DETAILS, entity.Childs.Sum(x => x.ChildItems.Where(y => y.EntityState == EntityState.Added).ToList().Count));
-                        maxCompanyId = await _signatureRepository.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_COMPANY, entity.Childs.Sum(x => x.CDAIndentCompanies.Where(y => y.EntityState == EntityState.Added).Count()));
+                        maxChildId = await _service.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD, entity.Childs.Count(x => x.EntityState == EntityState.Added));
+                        maxChildDetailsId = await _service.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_DETAILS, entity.Childs.Sum(x => x.ChildItems.Where(y => y.EntityState == EntityState.Added).ToList().Count));
+                        maxCompanyId = await _service.GetMaxIdAsync(TableNames.CDA_INDENT_CHILD_COMPANY, entity.Childs.Sum(x => x.CDAIndentCompanies.Where(y => y.EntityState == EntityState.Added).Count()));
 
                         foreach (CDAIndentChild child in entity.Childs)
                         {

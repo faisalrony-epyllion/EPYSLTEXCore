@@ -1,11 +1,7 @@
 using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.Statics;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {
     [Table("CDAFloorReturnMaster")]
     public class CDAFloorReturnMaster : DapperBaseEntity
@@ -100,18 +96,6 @@ namespace EPYSLTEX.Core.Entities.Tex
     }
 
 
-    public class CDAFloorReturnMasterValidator : AbstractValidator<CDAFloorReturnMaster>
-    {
-        public CDAFloorReturnMasterValidator()
-        {
-            RuleFor(x => x.FloorRemarksMasterID).NotEmpty();
-            RuleFor(x => x.FloorReturnNo).NotEmpty();
-            RuleFor(x => x.Childs).Must(x => x.Count() > 0).WithMessage("You must add at least one Child Item.");
-            When(x => x.Childs.Any(), () =>
-            {
-                RuleForEach(x => x.Childs).SetValidator(new CDAFloorReturnChildValidator());
-            });
-        }
-    }
+
 
 }

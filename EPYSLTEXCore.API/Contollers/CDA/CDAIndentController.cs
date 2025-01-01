@@ -1,42 +1,38 @@
-﻿using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.GuardClauses;
-using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Core.Statics;
-using EPYSLTEX.Infrastructure.Data.Repositories;
-using EPYSLTEX.Web.Extends.Filters;
-using EPYSLTEX.Web.Models;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Services;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.CDA;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
-using System.Linq; 
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-
 namespace EPYSLTEX.Web.Controllers.Apis.CDA
 {
-    [AuthorizeJwt]
-    [RoutePrefix("api/cda-indent")]
+    [Authorize]
+    [Route("api/cda-indent")]
     public class CDAIndentController : ApiBaseController
     {
         private readonly ICDAIndentService _service;
-        private readonly ItemMasterRepository<CDAIndentChild> _itemMasterRepository;
+        private readonly IItemMasterService<CDAIndentChild> _itemMasterService;
 
-        public CDAIndentController(ICDAIndentService service, ItemMasterRepository<CDAIndentChild> itemMasterRepository)
+        public CDAIndentController(IUserService userService, ICDAIndentService service, IItemMasterService<CDAIndentChild> itemMasterRepository) : base(userService)
         {
             _service = service;
-            _itemMasterRepository = itemMasterRepository;
+            _itemMasterService = itemMasterRepository;
         }
 
         [Route("cda-dyes-chemical")]
-        public async Task<IHttpActionResult> GetDyesChemicalLists()
+        public async Task<IActionResult> GetDyesChemicalLists()
         {
             return Ok(await _service.GetDyesChemicalsAsync());
         }
 
         [Route("list")]
-        public async Task<IHttpActionResult> GetList(Status status, string pageName)
+        public async Task<IActionResult> GetList(Status status, string pageName)
         {
             var paginationInfo = Request.GetPaginationInfo();
             List<CDAIndentMaster> records = await _service.GetPagedAsync(status, pageName, paginationInfo);
@@ -45,16 +41,16 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpGet]
         [Route("new/{SubGroupName}")]
-        public async Task<IHttpActionResult> GetNew(string SubGroupName)
+        public async Task<IActionResult> GetNew(string SubGroupName)
         {
             var obj = await _service.GetNewAsync(SubGroupName);
-            obj.CIndentBy = UserId;
+            obj.CIndentBy = AppUser.UserCode;
             return Ok(obj);
         }
 
         [Route("{id}/{SubGroupName}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id, string SubGroupName)
+        public async Task<IActionResult> Get(int id, string SubGroupName)
         {
             var record = await _service.GetAsync(id, SubGroupName);
             Guard.Against.NullObject(id, record);
@@ -63,9 +59,9 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [Route("save")]
         [HttpPost]
-        public async Task<IHttpActionResult> Save(CDAIndentMaster model)
+        public async Task<IActionResult> Save(CDAIndentMaster model)
         {
-            //_itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW,ref childs);
+            //_itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW,ref childs);
             //Set ItemMasterID
 
             List<CDAIndentChild> childs = model.Childs;
@@ -74,16 +70,16 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
             if (!model.IsModified)
             {
                 entity = CommonFunction.DeepClone(model);
-                entity.AddedBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
 
                 if (model.IsSendForApprove)
                 {
                     entity.SendForApproval = true;
-                    entity.SendForApproveBy = UserId;
+                    entity.SendForApproveBy = AppUser.UserCode;
                     entity.SendForApproveDate = DateTime.Now;
                     entity.SendForCheck = true;
-                    entity.SendForCheckBy = UserId;
+                    entity.SendForCheckBy = AppUser.UserCode;
                     entity.SendForCheckDate = DateTime.Now;
                 }
 
@@ -121,7 +117,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
                     }
                     if (!model.IsAck)
                     {
-                        entity.UpdatedBy = UserId;
+                        entity.UpdatedBy = AppUser.UserCode;
                         entity.DateUpdated = DateTime.Now;
 
                         entity.IsCIndent = true;
@@ -223,38 +219,38 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
                 if (model.IsSendForApprove)
                 {
                     entity.SendForApproval = true;
-                    entity.SendForApproveBy = UserId;
+                    entity.SendForApproveBy = AppUser.UserCode;
                     entity.SendForApproveDate = DateTime.Now;
                     entity.SendForCheck = true;
-                    entity.SendForCheckBy = UserId;
+                    entity.SendForCheckBy = AppUser.UserCode;
                     entity.SendForCheckDate = DateTime.Now;
                 }
                 else if (model.IsApporve)
                 {
                     entity.Approve = true;
-                    entity.ApproveBy = UserId;
+                    entity.ApproveBy = AppUser.UserCode;
                     entity.ApproveDate = DateTime.Now;
 
                     entity.SendForAcknowledge = true;
-                    entity.SendForAcknowledgeBy = UserId;
+                    entity.SendForAcknowledgeBy = AppUser.UserCode;
                     entity.SendForAcknowledgeDate = DateTime.Now;
                 }
                 else if (model.IsAck)
                 {
                     entity.Acknowledge = true;
-                    entity.AcknowledgeBy = UserId;
+                    entity.AcknowledgeBy = AppUser.UserCode;
                     entity.AcknowledgeDate = DateTime.Now;
                 }
                 else if (model.IsTexAck)
                 {
                     entity.TexAcknowledge = true;
-                    entity.TexAcknowledgeBy = UserId;
+                    entity.TexAcknowledgeBy = AppUser.UserCode;
                     entity.AcknowledgeDate = DateTime.Now;
                 }
                 else if (model.IsCheck)
                 {
                     entity.IsCheck = true;
-                    entity.CheckBy = UserId;
+                    entity.CheckBy = AppUser.UserCode;
                     entity.CheckDate = DateTime.Now;
                 }
             }
@@ -264,11 +260,11 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpPost]
         [Route("approve/{id}")]
-        public async Task<IHttpActionResult> Approve(int id)
+        public async Task<IActionResult> Approve(int id)
         {
             CDAIndentMaster entity = await _service.GetAllAsync(id);
             entity.Approve = true;
-            entity.ApproveBy = UserId;
+            entity.ApproveBy = AppUser.UserCode;
             entity.ApproveDate = DateTime.Now;
             entity.EntityState = EntityState.Modified;
             await _service.UpdateEntityAsync(entity);
@@ -277,11 +273,11 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpPost]
         [Route("acknowledge/{id}")]
-        public async Task<IHttpActionResult> Acknowledge(int id)
+        public async Task<IActionResult> Acknowledge(int id)
         {
             CDAIndentMaster entity = await _service.GetAllAsync(id);
             entity.Acknowledge = true;
-            entity.AcknowledgeBy = UserId;
+            entity.AcknowledgeBy = AppUser.UserCode;
             entity.AcknowledgeDate = DateTime.Now;
             entity.EntityState = EntityState.Modified;
             await _service.UpdateEntityAsync(entity);
@@ -290,11 +286,11 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpPost]
         [Route("texAcknowledge/{id}")]
-        public async Task<IHttpActionResult> TexAcknowledge(int id)
+        public async Task<IActionResult> TexAcknowledge(int id)
         {
             CDAIndentMaster entity = await _service.GetAllAsync(id);
             entity.TexAcknowledge = true;
-            entity.TexAcknowledgeBy = UserId;
+            entity.TexAcknowledgeBy = AppUser.UserCode;
             entity.TexAcknowledgeDate = DateTime.Now;
             entity.EntityState = EntityState.Modified;
             await _service.UpdateEntityAsync(entity);
@@ -303,13 +299,13 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpPost]
         [Route("reject/{id}/{reason}")]
-        public async Task<IHttpActionResult> Reject(int id, string reason)
+        public async Task<IActionResult> Reject(int id, string reason)
         {
             CDAIndentMaster entity = await _service.GetAllAsync(id);
             entity.Reject = true;
             entity.RejectDate = DateTime.Now;
             entity.RejectReason = reason;
-            entity.RejectBy = UserId;
+            entity.RejectBy = AppUser.UserCode;
             entity.EntityState = EntityState.Modified;
             await _service.UpdateEntityAsync(entity);
             return Ok();

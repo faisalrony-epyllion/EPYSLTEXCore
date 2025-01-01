@@ -1,5 +1,6 @@
 using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Data;
+using EPYSLTEXCore.Infrastructure.Static;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {

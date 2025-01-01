@@ -1,39 +1,31 @@
-﻿using AutoMapper;
-using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.GuardClauses;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Core.Statics;
-using EPYSLTEX.Infrastructure.Data.Repositories;
-using EPYSLTEX.Web.Extends.Filters;
-using EPYSLTEX.Web.Extends.Helpers;
-using EPYSLTEX.Web.Models;
-using System;
-using System.Collections.Generic;
+﻿using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.CDA;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-
 namespace EPYSLTEX.Web.Controllers.Apis.CDA
 {
-    [AuthorizeJwt]
-    [RoutePrefix("api/cda-loan-receive")]
+    [Authorize]
+    [Route("api/cda-loan-receive")]
     public class CDALoanReceiveController : ApiBaseController
     {
         private readonly ICDALoanReceiveService _service;
-        private readonly ItemMasterRepository<CDALoanReceiveChild> _itemMasterRepository;
-        public CDALoanReceiveController(ICDALoanReceiveService service, ItemMasterRepository<CDALoanReceiveChild> itemMasterRepository)
+        private readonly IItemMasterService<CDALoanReceiveChild> _itemMasterService;
+        public CDALoanReceiveController(IUserService userService, ICDALoanReceiveService service, IItemMasterService<CDALoanReceiveChild> itemMasterRepository) : base(userService)
         {
             _service = service;
-            _itemMasterRepository = itemMasterRepository;
+            _itemMasterService = itemMasterRepository;
         }
 
         [Route("list")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetList(Status status)
+        public async Task<IActionResult> GetList(Status status)
         { 
             var paginationInfo = Request.GetPaginationInfo();
             var records = await _service.GetPagedAsync(status, paginationInfo);
@@ -42,14 +34,14 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpGet]
         [Route("new")]
-        public async Task<IHttpActionResult> GetNew()
+        public async Task<IActionResult> GetNew()
         {
             return Ok(await _service.GetNewAsync()); 
         } 
         
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             CDALoanReceiveMaster record = await _service.GetAsync(id);
             Guard.Against.NullObject(id, record);
@@ -59,11 +51,11 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
         [Route("save")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IHttpActionResult> Save(CDALoanReceiveMaster model)
+        public async Task<IActionResult> Save(CDALoanReceiveMaster model)
         {
             // Set Item master Id.
             List<CDALoanReceiveChild> childRecords = model.Childs;
-            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
 
             CDALoanReceiveMaster entity;
             if (model.IsModified)
@@ -88,7 +80,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
                 entity.InspSend = model.InspSend;
                 entity.InspSendDate = DateTime.Now; 
                 entity.ACompanyInvoice = model.ACompanyInvoice;
-                entity.UpdatedBy = UserId;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;  
                 entity.EntityState = EntityState.Modified; 
 
@@ -121,7 +113,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
             else
             { 
                 entity = model;
-                entity.AddedBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
                 entity.InspSend = model.InspSend;
                 entity.InspSendDate = DateTime.Now;
@@ -139,12 +131,12 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpPost]
         [Route("acknowledge/{id}")]
-        public async Task<IHttpActionResult> Acknowledge(int id)
+        public async Task<IActionResult> Acknowledge(int id)
         {
             CDALoanReceiveMaster entity = await _service.GetAllAsync(id); 
             entity.InspAck = true;
             entity.InspAckDate = DateTime.Now; 
-            entity.InspAckBy = UserId;
+            entity.InspAckBy = AppUser.UserCode;
             entity.EntityState = EntityState.Modified; 
             await _service.UpdateEntityAsync(entity); 
             return Ok();

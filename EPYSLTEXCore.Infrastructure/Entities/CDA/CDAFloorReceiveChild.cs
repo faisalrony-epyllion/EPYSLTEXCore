@@ -2,7 +2,7 @@ using Dapper.Contrib.Extensions;
 using EPYSLTEXCore.Infrastructure.Entities;
 using System.Data.Entity;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {
     [Table("CDAFloorReceiveChild")]
     public class CDAFloorReceiveChild : YarnItemMaster, IDapperBaseEntity

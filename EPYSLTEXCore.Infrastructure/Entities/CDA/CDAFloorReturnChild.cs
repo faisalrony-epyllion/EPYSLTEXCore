@@ -55,13 +55,6 @@ namespace EPYSLTEXCore.Infrastructure.Entities.CDA
         #endregion
     }
 
-    public class CDAFloorReturnChildValidator : AbstractValidator<CDAFloorReturnChild>
-    {
-        public CDAFloorReturnChildValidator()
-        {
-            RuleFor(x => x.FloorRemarksMasterID).NotEmpty();
-            RuleFor(x => x.ReturnQty).NotEmpty();
-        }
-    }
+   
 
 }

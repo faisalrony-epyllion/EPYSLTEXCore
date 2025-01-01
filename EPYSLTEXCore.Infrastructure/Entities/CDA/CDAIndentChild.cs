@@ -1,11 +1,8 @@
 ﻿using Dapper.Contrib.Extensions;
-using EPYSLTEX.Core.DTOs;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 
-namespace EPYSLTEX.Core.Entities.Tex
-{ 
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
+{
     [Table("CDAIndentChild")]
     public class CDAIndentChild : YarnItemMaster, IDapperBaseEntity
     {

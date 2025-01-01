@@ -1,41 +1,33 @@
-﻿using AutoMapper;
-using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.GuardClauses;
-using EPYSLTEX.Core.Interfaces.Repositories;
-using EPYSLTEX.Core.Interfaces.Services;
-using EPYSLTEX.Core.Statics;
-using EPYSLTEX.Infrastructure.Data.Repositories;
-using EPYSLTEX.Infrastrucure.Entities;
-using EPYSLTEX.Web.Extends.Filters;
-using EPYSLTEX.Web.Extends.Helpers;
-using EPYSLTEX.Web.Models;
-using System;
-using System.Collections.Generic;
+﻿using EPYSLTEX.Core.Interfaces.Services;
+using EPYSLTEXCore.API.Contollers.APIBaseController;
+using EPYSLTEXCore.Application.Interfaces;
+using EPYSLTEXCore.Application.Services;
+using EPYSLTEXCore.Infrastructure.DTOs;
+using EPYSLTEXCore.Infrastructure.Entities.CDA;
+using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Static;
+using EPYSLTEXCore.Infrastructure.Statics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-
 namespace EPYSLTEX.Web.Controllers.Apis.CDA
 {
-    [AuthorizeJwt]
-    [RoutePrefix("api/cda-loan-return")]
+    [Authorize]
+    [Route("api/cda-loan-return")]
     public class CDALoanReturnController : ApiBaseController
     {
         private readonly ICDALoanReturnService _service;
-        private readonly ItemMasterRepository<CDALoanReturnChild> _itemMasterRepository;
-        public CDALoanReturnController(ICDALoanReturnService service, 
-            ItemMasterRepository<CDALoanReturnChild> itemMasterRepository)
+        private readonly IItemMasterService<CDALoanReturnChild> _itemMasterService;
+        public CDALoanReturnController(IUserService userService, ICDALoanReturnService service, 
+            IItemMasterService<CDALoanReturnChild> itemMasterService) : base(userService)
         {
             _service = service;
-            _itemMasterRepository = itemMasterRepository;
+            _itemMasterService = itemMasterService;
         }
 
         [Route("list")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetList(Status status, string Flag)
+        public async Task<IActionResult> GetList(Status status, string Flag)
         { 
             var paginationInfo = Request.GetPaginationInfo();
             var records = await _service.GetPagedAsync(status, paginationInfo, Flag);
@@ -44,14 +36,14 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpGet]
         [Route("new")]
-        public async Task<IHttpActionResult> GetNew()
+        public async Task<IActionResult> GetNew()
         {
             return Ok(await _service.GetNewAsync()); 
         } 
         
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             CDALoanReturnMaster record = await _service.GetAsync(id);
             Guard.Against.NullObject(id, record);
@@ -61,11 +53,11 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
         [Route("save")]
         [HttpPost]
         //[ValidateModel]
-        public async Task<IHttpActionResult> Save(CDALoanReturnMaster model)
+        public async Task<IActionResult> Save(CDALoanReturnMaster model)
         {
             // Set Item master Id.
             List<CDALoanReturnChild> childRecords = model.Childs;
-            _itemMasterRepository.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
+            _itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW, ref childRecords);
 
             CDALoanReturnMaster entity;
             List<CDALoanReturnChildAdjutment> cAdjRecords = new List<CDALoanReturnChildAdjutment>();
@@ -79,7 +71,7 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
                     entity.GPDate = model.GPDate;
                     //GP
                     entity.GPSendForApproval = model.GPSendForApproval;
-                    entity.GPPrepareBy = UserId;
+                    entity.GPPrepareBy = AppUser.UserCode;
                     entity.GPPrepareDate = DateTime.Now;
                     entity.GPFlag = model.GPFlag;
                 }
@@ -104,18 +96,18 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
                     //DC
                     entity.DCSendForApproval = model.DCSendForApproval;
-                    entity.DCPrepareBy = UserId;
+                    entity.DCPrepareBy = AppUser.UserCode;
                     entity.DCPrepareDate = DateTime.Now;
 
                     //GP
                     //entity.GPSendForApproval = model.GPSendForApproval;
-                    //entity.GPPrepareBy = UserId;
+                    //entity.GPPrepareBy = AppUser.UserCode;
                     //entity.GPPrepareDate = DateTime.Now;
 
                     entity.EstimatedReleaseTime = model.EstimatedReleaseTime;
                     entity.MushakChallanNo = model.MushakChallanNo;
                 }
-                entity.UpdatedBy = UserId;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;
                 
                 entity.EntityState = EntityState.Modified; 
@@ -182,10 +174,10 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
             else
             { 
                 entity = model;
-                entity.AddedBy = UserId;
+                entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
                 entity.DCSendForApproval = model.DCSendForApproval;
-                entity.DCPrepareBy = UserId;
+                entity.DCPrepareBy = AppUser.UserCode;
                 entity.DCPrepareDate = DateTime.Now; 
 
                 foreach (var child in entity.Childs)
@@ -201,36 +193,36 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [HttpPost]
         [Route("dcapproval/{id}")]
-        public async Task<IHttpActionResult> DCApproval(int id)
+        public async Task<IActionResult> DCApproval(int id)
         {
             CDALoanReturnMaster entity = await _service.GetAllAsync(id); 
             entity.DCApprove = true;
             entity.DCApproveDate = DateTime.Now; 
-            entity.DCApproveBy = UserId;
+            entity.DCApproveBy = AppUser.UserCode;
             entity.EntityState = EntityState.Modified; 
             await _service.UpdateEntityAsync(entity); 
             return Ok();
         }
         [HttpPost]
         [Route("gpapproval/{id}")]
-        public async Task<IHttpActionResult> GPApproval(int id)
+        public async Task<IActionResult> GPApproval(int id)
         { 
             CDALoanReturnMaster entity = await _service.GetAllAsync(id);
             entity.GPApprove = true;
             entity.GPApproveDate = DateTime.Now;
-            entity.GPApproveBy = UserId;
+            entity.GPApproveBy = AppUser.UserCode;
             entity.EntityState = EntityState.Modified;
             await _service.UpdateEntityAsync(entity);
             return Ok();
         }
         [HttpPost]
         [Route("chkapproval/{id}")]
-        public async Task<IHttpActionResult> CheckApproval(int id)
+        public async Task<IActionResult> CheckApproval(int id)
         { 
             CDALoanReturnMaster entity = await _service.GetAllAsync(id);
             entity.DCCheckOut = true;
             entity.DCCheckOutDate = DateTime.Now;
-            entity.DCCheckOutBy = UserId;
+            entity.DCCheckOutBy = AppUser.UserCode;
             entity.EntityState = EntityState.Modified;
             await _service.UpdateEntityAsync(entity);
             return Ok();

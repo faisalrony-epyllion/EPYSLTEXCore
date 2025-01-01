@@ -1,7 +1,7 @@
 using Dapper.Contrib.Extensions;
-using System;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {
     [Table("CDAQCRemarksChild")]
     public class CDAQCRemarksChild : DapperBaseEntity

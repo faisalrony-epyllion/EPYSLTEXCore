@@ -1,10 +1,8 @@
-﻿using EPYSLTEX.Core.DTOs;
-using EPYSLTEX.Core.Entities.Tex;
-using EPYSLTEX.Core.Statics;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using EPYSLTEXCore.Infrastructure.Entities;
+using EPYSLTEXCore.Infrastructure.Entities.CDA;
+using EPYSLTEXCore.Infrastructure.Statics;
 
-namespace EPYSLTEX.Core.Interfaces.Services
+namespace EPYSLTEXCore.Application.Services
 {
     public interface ICDAIndentService 
     {

@@ -1,7 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
-using FluentValidation;
+using EPYSLTEXCore.Infrastructure.Data;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {
     [Table("CDAQCReturnChild")]
     public class CDAQCReturnChild : DapperBaseEntity
@@ -73,12 +73,5 @@ namespace EPYSLTEX.Core.Entities.Tex
             UnitID = 28;
         }
     }
-    public class CDAQCReturnChildValidator : AbstractValidator<CDAQCReturnChild>
-    {
-        public CDAQCReturnChildValidator()
-        {
-            RuleFor(x => x.QCRemarksMasterID).NotEmpty();
-            RuleFor(x => x.ReturnQty).NotEmpty();
-        }
-    }
+
 }

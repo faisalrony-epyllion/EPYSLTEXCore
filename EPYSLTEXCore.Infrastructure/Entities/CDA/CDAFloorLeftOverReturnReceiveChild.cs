@@ -1,8 +1,7 @@
 using Dapper.Contrib.Extensions;
-using EPYSLTEXCore.Infrastructure.Entities;
 using System.Data.Entity;
 
-namespace EPYSLTEX.Core.Entities.Tex
+namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 {
     [Table("CDAFloorLeftOverReturnReceiveChild")]
     public class CDAFloorLeftOverReturnReceiveChild : YarnItemMaster, IDapperBaseEntity

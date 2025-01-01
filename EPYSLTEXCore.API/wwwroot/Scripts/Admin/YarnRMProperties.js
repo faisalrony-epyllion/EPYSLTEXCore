@@ -285,6 +285,30 @@
         data.YarnCountID = getDefaultValueWhenInvalidN($formEl.find('#YarnCountID').val());
         data.Childs = DeepClone($tblChildEl.getCurrentViewRecords());
         var childs = DeepClone(data.Childs);
+        if (data.ManufacturingLineID == 0) {
+            toastr.error('Select Manufacturing Line !!!');
+            return false;
+        }
+        if (data.ManufacturingProcessID == 0) {
+            toastr.error('Select Manufacturing Process !!!');
+            return false;
+        }
+        if (data.ManufacturingSubProcessID == 0) {
+            toastr.error('Select Manufacturing Sub-Process !!!');
+            return false;
+        }
+        if (data.TechnicalParameterID == 0) {
+            toastr.error('Select Technical Parameter !!!');
+            return false;
+        }
+        if (data.ColorID == 0) {
+            toastr.error('Select Color !!!');
+            return false;
+        }
+        if (data.ColorGradeID == 0) {
+            toastr.error('Select Color Grade !!!');
+            return false;
+        }
         if (data.YarnCountID == 0) {
             toastr.error('Select Yarn Count !!!');
             return false;
@@ -294,9 +318,17 @@
                 toastr.success("Saved successfully.");
                 backToList();
             })
-            .catch(function (error) {
-                toastr.error(error.response.data.Message);
+            .catch(error => {
+                if (error.response.data.Message === undefined) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+                args.cancel = true;
             });
+        //.catch(function (error) {
+        //    toastr.error(error.response.data.Message);
+        //});
     }
 })();
 

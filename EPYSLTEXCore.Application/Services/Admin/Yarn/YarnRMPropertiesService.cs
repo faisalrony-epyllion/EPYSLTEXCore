@@ -574,16 +574,8 @@ namespace EPYSLTEXCore.Application.Services.General
             var sql = $@"SELECT *
 			                FROM {TableNames.YarnRMProperties} 
 							WHERE 
-                            --FiberTypeID = {model.FiberTypeID} 
-                            --AND BlendTypeID = {model.BlendTypeID}
-                            --AND YarnTypeID = {model.YarnTypeID} 
-                            --AND ProgramID = {model.ProgramID} 
-                            --AND SubProgramID = {model.SubProgramID} 
-                            --AND CertificationID = {model.CertificationID} 
-                            AND TechnicalParameterID = {model.TechnicalParameterID} 
-                            --AND YarnCompositionID = {model.YarnCompositionID} 
-                            --AND 
-                            ShadeReferenceID = {model.ShadeReferenceID} 
+                            TechnicalParameterID = {model.TechnicalParameterID}  
+                            AND ShadeReferenceID = {model.ShadeReferenceID} 
                             AND ManufacturingLineID = {model.ManufacturingLineID} 
                             AND ManufacturingProcessID = {model.ManufacturingProcessID} 
                             AND ManufacturingSubProcessID = {model.ManufacturingSubProcessID} 

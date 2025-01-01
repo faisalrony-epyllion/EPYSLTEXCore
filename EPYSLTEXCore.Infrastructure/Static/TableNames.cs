@@ -942,6 +942,9 @@
         public const string SizeWiseWeight_HK = "SizeWiseWeight_HK";
         public const string YDBookingRef = "YDBookingRef";
         public const string YarnDyeingFor_HK = "T_YarnDyeingFor_HK";
+        public const string HardWindingMaster = "T_HardWindingMaster";
+        public const string HardWindingChild = "T_HardWindingChild";
+        public const string HardWindingNo = "HardWindingNo";
     }
 
 }

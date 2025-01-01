@@ -38,6 +38,7 @@ namespace EPYSLTEXCore.Application.Interfaces
         Task<List<CT>> GetDataDapperAsync<CT>(string query) where CT : class;
         Task<bool> ExistsAsync(int SegmentNameID, string SegmentValue);
         Task<ItemSegmentName> FindAsync(string SegmentName);
+        Task AddAsync(ItemSegmentValue entity, string iTEM_SEGMENT_VALUE);
         //Task<ItemSegmentName> FindAsync(Func<object, bool> value);
     }
 }

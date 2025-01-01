@@ -9,14 +9,14 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
     {
         [ExplicitKey]
         public int YRMPID { get; set; } = 0;
-        public int FiberTypeID { get; set; } = 0;
-        public int BlendTypeID { get; set; } = 0;
-        public int YarnTypeID { get; set; } = 0;
-        public int ProgramID { get; set; } = 0;
-        public int SubProgramID { get; set; } = 0;
-        public int CertificationID { get; set; } = 0;
+        //public int FiberTypeID { get; set; } = 0;
+        //public int BlendTypeID { get; set; } = 0;
+        //public int YarnTypeID { get; set; } = 0;
+        //public int ProgramID { get; set; } = 0;
+        //public int SubProgramID { get; set; } = 0;
+        //public int CertificationID { get; set; } = 0;
         public int TechnicalParameterID { get; set; } = 0;
-        public int YarnCompositionID { get; set; } = 0;
+        //public int YarnCompositionID { get; set; } = 0;
         public int ShadeReferenceID { get; set; } = 0;
         public int ManufacturingLineID { get; set; } = 0;
         public int ManufacturingProcessID { get; set; } = 0;
@@ -43,24 +43,24 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         public string Supplier { get; set; } = ""; 
         [Write(false)]
         public string Spinner { get; set; } = ""; 
-        [Write(false)]
-        public string FiberType { get; set; } = "";
-        [Write(false)]
-        public string BlendType { get; set; } = "";
-        [Write(false)]
-        public string YarnType { get; set; } = "";
-        [Write(false)]
-        public string Program { get; set; } = "";
-        [Write(false)]
-        public string SubProgram { get; set; } = "";
-        [Write(false)]
-        public string Certification { get; set; } = "";
+        //[Write(false)]
+        //public string FiberType { get; set; } = "";
+        //[Write(false)]
+        //public string BlendType { get; set; } = "";
+        //[Write(false)]
+        //public string YarnType { get; set; } = "";
+        //[Write(false)]
+        //public string Program { get; set; } = "";
+        //[Write(false)]
+        //public string SubProgram { get; set; } = "";
+        //[Write(false)]
+        //public string Certification { get; set; } = "";
         //[Write(false)]
         //public string Certifications { get; set; } = "";
         [Write(false)]
         public string TechnicalParameter { get; set; } = "";
-        [Write(false)]
-        public string YarnComposition { get; set; } = "";
+        //[Write(false)]
+        //public string YarnComposition { get; set; } = "";
         [Write(false)]
         public string ShadeReference { get; set; } = "";
         [Write(false)]

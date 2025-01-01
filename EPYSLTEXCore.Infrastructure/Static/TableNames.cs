@@ -414,7 +414,6 @@
         public const string RETURN_CHALLAN_NO_ESL = "ESLReturnChallanNo";
 
         #endregion
-
         #region RND
         public const string RND_CONCEPTNO = "ConceptNo";
         public const string RND_GROUP_CONCEPTNO = "GroupConceptNo";
@@ -941,7 +940,10 @@
         public const string DyeingMCStatusSetup = "DyeingMCStatusSetup";
         public const string SizeWiseWeight_HK = "SizeWiseWeight_HK";
         public const string YDBookingRef = "YDBookingRef";
-        public const string YarnDyeingFor_HK = "YarnDyeingFor_HK";
+        public const string YarnDyeingFor_HK = "T_YarnDyeingFor_HK";
+        public const string HardWindingMaster = "T_HardWindingMaster";
+        public const string HardWindingChild = "T_HardWindingChild";
+        public const string HardWindingNo = "HardWindingNo";
     }
 
 }

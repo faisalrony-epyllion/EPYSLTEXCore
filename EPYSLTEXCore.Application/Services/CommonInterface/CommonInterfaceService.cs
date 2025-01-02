@@ -164,6 +164,12 @@ namespace EPYSLTEX.Infrastructure.Services
         public async Task<dynamic> GetFinderData(string sqlQuery, string conKey, string primaryKeyColumn, PaginationInfo paginationInfo)
         {
             var query = sqlQuery;
+            // The query fragment to find and replace
+            string searchString = "(SELECT COUNT(*) FROM FinalList) AS TotalRows ";
+            string replaceString = $@"(SELECT COUNT(*) FROM FinalList   {paginationInfo.FilterBy}) AS TotalRows ";
+
+            // Replace the old query part with the new one
+            sqlQuery = query.Replace(searchString, replaceString);
             string orderBy = paginationInfo.OrderBy.NullOrEmpty() ? $@"Order By  {primaryKeyColumn} DESC" : paginationInfo.OrderBy;
             var isSp = sqlQuery.ToLower().Contains("sp_");
             query = isSp ? sqlQuery : $@"

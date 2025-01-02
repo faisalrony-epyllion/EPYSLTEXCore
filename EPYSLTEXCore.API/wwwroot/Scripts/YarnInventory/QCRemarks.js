@@ -1029,30 +1029,98 @@
     }
 
     function saveComposition() {
-        var fibers = $tblCreateCompositionEl.getCurrentViewRecords();
-        if (fibers.length > 0) {
-            var totalComponents = fibers.map(x => x.ComponentID);
-            var uniqueComponents = [...new Set(totalComponents)];
-            if (totalComponents.length != uniqueComponents.length) {
-                toastr.warning("Duplicate data detected. Please enter unique values for Component.");
-                return false;
-            }
-            var totalPer = 0;
-            fibers.map(x => {
-                var perValue = parseFloat(x.PercentageValue);
-                if (isNaN(perValue)) perValue = 0;
-                totalPer += perValue;
-            });
-            if (totalPer != parseFloat(100)) {
-                toastr.warning("Composition percent must be equal 100.");
-                return false;
-            }
-            var indexF = masterData.YarnQCRemarksChilds.findIndex(x => x.QCRemarksChildID == fibers[0].QCRemarksChildID);
+
+        var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
+        if (totalPercent != 100) return toastr.error("Sum of compostion percent must be 100");
+        compositionComponents.reverse();
+
+        var composition = "";
+        var blendTypeNames = [];
+        var programTypeNames = [];
+        //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
+        compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
+
+        var manufacturingLines = [];
+        var yarnTypes = []; //Fibers
+
+        compositionComponents.forEach(function (component) {
+            composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
+
+            yarnTypes.push(component.Fiber);
+            var indexF = masterData.FabricComponentsNew.findIndex(x => x.text == component.Fiber);
             if (indexF > -1) {
-                masterData.YarnQCRemarksChilds[indexF].YarnQCRemarksChildFibers = fibers;
+                var manufacturingLine = masterData.FabricComponentsNew[indexF].desc;
+
+                var indexG = manufacturingLines.findIndex(x => x == manufacturingLine);
+                if (indexG == -1) {
+                    manufacturingLines.push(manufacturingLine);
+                }
             }
+
+            if (component.YarnSubProgramNew) {
+                if (component.YarnSubProgramNew != 'N/A') {
+                    composition += ` ${component.YarnSubProgramNew}`;
+                }
+            }
+            //if (component.Certification) composition += ` ${component.Certification}`;
+            if (component.Certification) {
+                if (component.Certification != 'N/A') {
+                    composition += ` ${component.Certification}`;
+                }
+            }
+            composition += ` ${component.Fiber}`;
+
+            console.log(compositionComponents);
+            component.FiberTypeName = getDefaultValueWhenInvalidS(component.FiberTypeName);
+            if (component.FiberTypeName.length > 0) {
+                blendTypeNames.push(component.FiberTypeName);
+            }
+            component.ProgramTypeName = getDefaultValueWhenInvalidS(component.ProgramTypeName);
+            if (component.ProgramTypeName.length > 0) {
+                programTypeNames.push(component.ProgramTypeName);
+            }
+
+        });
+        yarnTypes = yarnTypes.join(",");
+        manufacturingLines = manufacturingLines.join(",");
+
+        blendTypeNames = [...new Set(blendTypeNames)];
+        var blendTypeName = blendTypeNames.join(" + ");
+
+        programTypeNames = [...new Set(programTypeNames)];
+        var programTypeName = "Conventional";
+        var indexF = programTypeNames.findIndex(x => x == "Sustainable");
+        if (indexF > -1) {
+            programTypeName = "Sustainable";
         }
-        $pageEl.find(`#modal-new-composition-${pageId}`).modal("hide");
+
+        //var data = {
+        //    SegmentValue: composition
+        //};
+        var data = {
+            SegmentValue: composition,
+            BlendTypeName: blendTypeName,
+            ProgramTypeName: programTypeName,
+            ManufacturingLines: manufacturingLines,
+            YarnTypes: yarnTypes
+        }
+
+        axios.post("/api/rnd-free-concept-mr/save-yarn-composition", data)
+            .then(function () {
+                $pageEl.find(`#modal-new-composition-${pageId}`).modal("hide");
+                toastr.success("Composition added successfully.");
+                //masterData.CompositionList.unshift({ id: response.data.Id, text: response.data.SegmentValue });
+                // initChildTable(masterData.Childs);
+            })
+            .catch(error => {
+                if (error.response) {
+                    toastr.error(error.response.data);
+                } else {
+                    toastr.error('Error message:', error.response.data.Message);
+                }
+                args.cancel = true;
+            });
+        //.catch(showResponseError)
     }
     function DeepClone(obj) {
         return JSON.parse(JSON.stringify(obj));

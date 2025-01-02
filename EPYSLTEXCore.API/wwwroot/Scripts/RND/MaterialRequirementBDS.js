@@ -637,6 +637,9 @@
             {
                 field: 'ProgramTypeName', headerText: 'Program', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
             },
+            {
+                field: 'ManufacturingLine', headerText: 'Manufacturing Line', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
         ];
 
         var gridOptions = {
@@ -696,9 +699,11 @@
                         }
                     }
 
+
                     //fiberTypeName, programTypeName
                     var fiberTypeName = "";
                     var programTypeName = "";
+                    var manufacturingLine = "";
 
                     var obj = masterData.FabricComponentMappingSetupList.find(x => x.FiberID == fiberID);
                     if (typeof obj !== "undefined") {
@@ -708,13 +713,27 @@
                     if (typeof obj !== "undefined") {
                         programTypeName = obj.ProgramTypeName;
                     }
+                    debugger;
+                    obj = masterData.FabricComponentsNew.find(x => x.id == fiberID);
+                    if (typeof obj !== "undefined") {
+                        manufacturingLine = obj.desc;
+                    }
+
 
                     args.rowData.FiberTypeName = fiberTypeName;
                     args.data.FiberTypeName = fiberTypeName;
+                    args.data.ManufacturingLine = manufacturingLine;
 
                     args.rowData.ProgramTypeName = programTypeName;
                     args.data.ProgramTypeName = programTypeName;
+                    args.data.ManufacturingLine = manufacturingLine;
+
                     //fiberTypeName, programTypeName
+
+
+
+
+                    //masterData.FabricComponentsNew
 
                     if (args.action === "edit") {
                         if (!args.data.Fiber) {
@@ -2706,7 +2725,7 @@
     }
 
     function saveComposition() {
-        debugger;
+
         var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
         if (totalPercent != 100) return toastr.error("Sum of compostion percent must be 100");
         compositionComponents.reverse();
@@ -2727,7 +2746,11 @@
             var indexF = masterData.FabricComponentsNew.findIndex(x => x.text == component.Fiber);
             if (indexF > -1) {
                 var manufacturingLine = masterData.FabricComponentsNew[indexF].desc;
-                manufacturingLines.push(manufacturingLine);
+
+                var indexG = manufacturingLines.findIndex(x => x == manufacturingLine);
+                if (indexG == -1) {
+                    manufacturingLines.push(manufacturingLine);
+                }
             }
 
             if (component.YarnSubProgramNew) {

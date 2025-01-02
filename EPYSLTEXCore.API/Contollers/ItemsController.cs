@@ -13,6 +13,8 @@ using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using NLog.Filters;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EPYSLTEX.Web.Controllers.Apis
 {
@@ -194,8 +196,9 @@ namespace EPYSLTEX.Web.Controllers.Apis
 #endif
 
             var itemSegmentValueList = _itemMasterService.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetItemSegmentValuesBySegmentNamesWithMapping(), DB_TYPE.textile).ToList();
+            var TechnicalParameterList = _itemMasterService.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetQualityParameterIDs(), DB_TYPE.textile).ToList();
 
-                itemSegmenValues = new ItemSegmentMappingValuesDTO
+            itemSegmenValues = new ItemSegmentMappingValuesDTO
                 {
                     Segment1ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COMPOSITION),
                     Segment2ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_LINE),
@@ -209,9 +212,19 @@ namespace EPYSLTEX.Web.Controllers.Apis
                     //YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
 
                 };
+            foreach(Select2MappingOptionModel item in itemSegmenValues.Segment1ValueList)
+            {
+                //var filterValues = item.YarnTypes.Split(',').Select(f => f.Trim()).ToList();
+                var filterValues = item.YarnTypes != null
+                        ? item.YarnTypes.Split(',').Select(f => f.Trim()).ToList()
+                        : new List<string>();
+                var filteredData = TechnicalParameterList.Where(row => filterValues.Contains(row.text)).ToList();
+                string commaSeparatedString = string.Join(",", filteredData.Select(row => row.desc));
+                item.QualityParameterIDs = commaSeparatedString;
 
+            }
 
-                _memoryCache.Set(cacheKey, CommonFunction.DeepClone(itemSegmenValues), TimeSpan.FromDays(1));
+            _memoryCache.Set(cacheKey, CommonFunction.DeepClone(itemSegmenValues), TimeSpan.FromDays(1));
 
 
 

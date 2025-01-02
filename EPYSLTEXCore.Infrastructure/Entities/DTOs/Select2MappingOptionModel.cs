@@ -13,6 +13,8 @@
         public int YarnCountID { get; set; }
         public int ShadeReferenceID { get; set; }
         public string ManufacturingLines { get; set; }
+        public string YarnTypes { get; set; }
+        public string QualityParameterIDs { get; set; }
         public bool IsInactive { get; set; }
         public string ManufacturingLine { get; set; }
         public string ManufacturingProcess { get; set; }

@@ -34,6 +34,9 @@
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
 
+        if (menuParam == "Ack") isAcknowledgePage = true;
+        else if (menuParam == "A") isApprovePage = true;
+
         isCDAPage = convertToBoolean($(`#${pageId}`).find("#CDAIndentPage").val());
         isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
         isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());

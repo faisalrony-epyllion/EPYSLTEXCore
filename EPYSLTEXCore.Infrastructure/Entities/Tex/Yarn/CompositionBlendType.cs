@@ -17,6 +17,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex
         public int CompositionID { get; set; } = 0;
         public string BlendTypeName { get; set; } = "";
         public string ProgramTypeName { get; set; } = "";
+        public string ManufacturingLines { get; set; } = "";
+        public string YarnTypes { get; set; } = "";
 
         [Write(false)]
         public override bool IsModified => EntityState == System.Data.Entity.EntityState.Modified || CompositionID > 0;

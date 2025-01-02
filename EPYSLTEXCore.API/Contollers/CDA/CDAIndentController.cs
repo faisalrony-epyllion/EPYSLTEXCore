@@ -4,11 +4,13 @@ using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.CDA;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Exceptions;
 using EPYSLTEXCore.Infrastructure.Static;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
 namespace EPYSLTEX.Web.Controllers.Apis.CDA
 {
@@ -59,11 +61,16 @@ namespace EPYSLTEX.Web.Controllers.Apis.CDA
 
         [Route("save")]
         [HttpPost]
-        public async Task<IActionResult> Save(CDAIndentMaster model)
+        public async Task<IActionResult> Save(dynamic jsnString)
         {
             //_itemMasterService.GenerateItem(AppConstants.ITEM_SUB_GROUP_YARN_NEW,ref childs);
             //Set ItemMasterID
-
+            CDAIndentMaster model = JsonConvert.DeserializeObject<CDAIndentMaster>(
+                 Convert.ToString(jsnString),
+                 new JsonSerializerSettings
+                 {
+                     DateTimeZoneHandling = DateTimeZoneHandling.Local // Ensures the date is interpreted as local time
+                 });
             List<CDAIndentChild> childs = model.Childs;
             CDAIndentMaster entity;
 

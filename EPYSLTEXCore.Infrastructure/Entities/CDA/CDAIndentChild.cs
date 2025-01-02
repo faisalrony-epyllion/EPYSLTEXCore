@@ -55,8 +55,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.CDA
 
         [Write(false)]
         public int CDAPRChildID { get; set; }
-        [Write(false)]
-        public int SubGroupID { get; set; }
+        
         [Write(false)]
         public string SubGroupName { get; set; }
         [Write(false)]

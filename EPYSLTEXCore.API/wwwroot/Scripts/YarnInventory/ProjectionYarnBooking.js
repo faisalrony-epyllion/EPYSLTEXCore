@@ -609,14 +609,25 @@
                         }
                     }
 
-                    debugger;
-                    if (cnt.length > 0) {
-                        args.rowData.FiberTypeName = cnt[0].FiberTypeName;
-                        args.data.FiberTypeName = cnt[0].FiberTypeName;
+                    //fiberTypeName, programTypeName
+                    var fiberTypeName = "";
+                    var programTypeName = "";
 
-                        args.rowData.ProgramTypeName = cnt[0].ProgramTypeName;
-                        args.data.ProgramTypeName = cnt[0].ProgramTypeName;
+                    var obj = masterData.FabricComponentMappingSetupList.find(x => x.FiberID == fiberID);
+                    if (typeof obj !== "undefined") {
+                        fiberTypeName = obj.FiberTypeName;
                     }
+                    obj = masterData.FabricComponentMappingSetupList.find(x => x.CertificationsID == certificationsID);
+                    if (typeof obj !== "undefined") {
+                        programTypeName = obj.ProgramTypeName;
+                    }
+
+                    args.rowData.FiberTypeName = fiberTypeName;
+                    args.data.FiberTypeName = fiberTypeName;
+
+                    args.rowData.ProgramTypeName = programTypeName;
+                    args.data.ProgramTypeName = programTypeName;
+                    //fiberTypeName, programTypeName
 
                     if (args.action === "edit") {
                         if (!args.data.Fiber) {

@@ -23,13 +23,21 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 Inner Join ContactCategoryHK CC ON CC.ContactCategoryID = CCC.ContactCategoryID
                 Where CC.ContactCategoryName IN ('{categoryName}')";
         }
+        public static string GetQualityParameterIDs()
+        {
+            return $@"Select id = a.FiberID, [text] = b.ValueName, [desc] = a.QualityParameterID
+                From FiberAndFiberTypeMapping a
+                Inner join EPYSL..EntityTypeValue b on b.ValueID = a.FiberID
+                Group by a.FiberID, a.QualityParameterID, b.ValueName";
+        }
         public static string GetItemSegmentValuesBySegmentNamesWithMapping()
         {
             //if (countIds.IsNotNullOrEmpty()) countSQL += $@" OR ISV.SegmentValueID IN ({countIds})";
             //if (compositionIds.IsNotNullOrEmpty()) compositionSQL += $@" OR ISV.SegmentValueID IN ({compositionIds})";
 
-            string sql = $@";With YCO as(
-                    select 0 ManufacturingLineID,0 ManufacturingProcessID,0 ManufacturingSubProcessID,0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, CBT.ManufacturingLines, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
+            string sql = $@"
+                ;With YCO as(
+                    select 0 ManufacturingLineID,0 ManufacturingProcessID,0 ManufacturingSubProcessID,0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, CBT.ManufacturingLines, CBT.YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
                     from {DbNames.EPYSL}..ItemSegmentValue ISV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
                     LEFT JOIN {TableNames.YarnCompositionBasicSetup} YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
@@ -38,7 +46,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 ),
                 YT as (
                     select distinct SV.ManufacturingLineID,0 ManufacturingProcessID,0 ManufacturingSubProcessID,0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID,
-					0 ShadeReferenceID, '' ManufacturingLines, CAST(SV.ManufacturingLineID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+					0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(SV.ManufacturingLineID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingLineID    
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
@@ -47,7 +55,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 ),
                 MP as (
                     select distinct SV.ManufacturingLineID, SV.ManufacturingProcessID,0 ManufacturingSubProcessID,
-					0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines,CAST(SV.ManufacturingProcessID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+					0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(SV.ManufacturingProcessID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingProcessID    
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
@@ -56,7 +64,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 ),
                 SP as (
                     select distinct SV.ManufacturingLineID, SV.ManufacturingProcessID,SV.ManufacturingSubProcessID,
-					0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines,CAST(SV.ManufacturingSubProcessID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+					0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(SV.ManufacturingSubProcessID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingSubProcessID    
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
@@ -64,11 +72,10 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     --ORDER BY ISV.SegmentValue
                 ),
                 YQP as (
-                    select distinct SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines,CAST(SV.TechnicalParameterID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
-                    from {TableNames.YarnRMProperties} SV
-                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.TechnicalParameterID    
+                    select distinct ManufacturingLineID = 0, ManufacturingProcessID = 0, ManufacturingSubProcessID = 0, TechnicalParameterID = 0,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {DbNames.EPYSL}..ItemSegmentValue ISV   
                     LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}')                
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}')                 
                     --ORDER BY ISV.SegmentValue
                 ),/*
                 YCM as (
@@ -80,24 +87,24 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 ) A
                 ),*/
 				CLR as(
-                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID, SV.ColorID, 
-					0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, TechnicalParameterID = 0, SV.ColorID, 
+					0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ColorID    
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
                     WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COLOR}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
 				),
 				CLGR as(
-                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID, SV.ColorID, 
-					SV.ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, TechnicalParameterID = 0, SV.ColorID, 
+					SV.ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ColorGradeID    
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
                     WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COLOR_GRADE}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
 				),
                 YC as(
-                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID,SV.ColorID, 
-					SV.ColorGradeID, SV.YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, TechnicalParameterID = 0,SV.ColorID, 
+					SV.ColorGradeID, SV.YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.YarnCountID    
                     LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
@@ -105,8 +112,8 @@ namespace EPYSLTEXCore.Infrastructure.Static
                     WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COUNT}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
 				),
                 SC AS(
-                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID, SV.ColorID, 
-                    SV.ColorGradeID, SV.YarnCountID, ShadeReferenceID = YSB.YSCID, '' ManufacturingLines, CAST(YSB.YSCID As varchar) [id], YSB.ShadeCode [text], [desc] = '{ItemSegmentNameConstants.SHADE}', IsInactive = 0
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, TechnicalParameterID = 0, SV.ColorID, 
+                    SV.ColorGradeID, SV.YarnCountID, ShadeReferenceID = YSB.YSCID, '' ManufacturingLines, '' YarnTypes, CAST(YSB.YSCID As varchar) [id], YSB.ShadeCode [text], [desc] = '{ItemSegmentNameConstants.SHADE}', IsInactive = 0
                     from {TableNames.YarnRMProperties} SV
                     INNER JOIN {TableNames.YARN_SHADE_BOOK} YSB ON YSB.YSCID = SV.ShadeReferenceID
                 )
@@ -131,6 +138,111 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 Select * from SC
 
                 ORDER BY [desc],[text];
+
+
+                    /*;With YCO as(
+                    select 0 ManufacturingLineID,0 ManufacturingProcessID,0 ManufacturingSubProcessID,0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, CBT.ManufacturingLines, CBT.YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
+                    from {DbNames.EPYSL}..ItemSegmentValue ISV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+                    LEFT JOIN {TableNames.YarnCompositionBasicSetup} YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
+					LEFT JOIN {TableNames.CompositionBlendType} CBT ON CBT.CompositionID = ISV.SegmentValueID
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COMPOSITION}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+                ),
+                YT as (
+                    select distinct SV.ManufacturingLineID,0 ManufacturingProcessID,0 ManufacturingSubProcessID,0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID,
+					0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(SV.ManufacturingLineID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingLineID    
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_LINE}')                
+                    --ORDER BY ISV.SegmentValue
+                ),
+                MP as (
+                    select distinct SV.ManufacturingLineID, SV.ManufacturingProcessID,0 ManufacturingSubProcessID,
+					0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(SV.ManufacturingProcessID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingProcessID    
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS}')                
+                    --ORDER BY ISV.SegmentValue
+                ),
+                SP as (
+                    select distinct SV.ManufacturingLineID, SV.ManufacturingProcessID,SV.ManufacturingSubProcessID,
+					0 TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(SV.ManufacturingSubProcessID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ManufacturingSubProcessID    
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS}')                
+                    --ORDER BY ISV.SegmentValue
+                ),
+                YQP as (
+                    select distinct SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID,0 ColorID, 0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(SV.TechnicalParameterID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.TechnicalParameterID    
+                    LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}')                
+                    --ORDER BY ISV.SegmentValue
+                ),/*
+                YCM as (
+                    Select YarnTypeSVID,ManufacturingProcessSVID,SubProcessSVID,QualityParameterSVID,0 CountSVID,CAST(0 As varchar) [id],CountUnit [text],'Yarn Count Master' [desc], IsInactive = 0
+				    from (
+                    select SV.YarnTypeSVID,SV.ManufacturingProcessSVID,SV.SubProcessSVID,SV.QualityParameterSVID,CountUnit 
+					from {TableNames.YarnRMProperties} SV
+                    INNER JOIN YQP on SV.YarnTypeSVID=YQP.YarnTypeSVID  AND SV.ManufacturingProcessSVID=YQP.ManufacturingProcessSVID AND SV.SubProcessSVID=YQP.SubProcessSVID AND SV.QualityParameterSVID=YQP.QualityParameterSVID
+                ) A
+                ),*/
+				CLR as(
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID, SV.ColorID, 
+					0 ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ColorID    
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COLOR}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+				),
+				CLGR as(
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID, SV.ColorID, 
+					SV.ColorGradeID,0 YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = 0
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.ColorGradeID    
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COLOR_GRADE}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+				),
+                YC as(
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID,SV.ColorID, 
+					SV.ColorGradeID, SV.YarnCountID, 0 ShadeReferenceID, '' ManufacturingLines, '' YarnTypes, CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc], IsInactive = ISNULL(YCBS.IsInactive,0)
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID=SV.YarnCountID    
+                    LEFT JOIN {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID
+                    LEFT JOIN {TableNames.YarnCountBasicSetup} YCBS ON YCBS.SegmentValueId = ISV.SegmentValueID
+                    WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_COUNT}') --AND (ISNULL(YCBS.IsInactive,0) = 0)
+				),
+                SC AS(
+                    select SV.ManufacturingLineID, SV.ManufacturingProcessID, SV.ManufacturingSubProcessID, SV.TechnicalParameterID, SV.ColorID, 
+                    SV.ColorGradeID, SV.YarnCountID, ShadeReferenceID = YSB.YSCID, '' ManufacturingLines, '' YarnTypes, CAST(YSB.YSCID As varchar) [id], YSB.ShadeCode [text], [desc] = '{ItemSegmentNameConstants.SHADE}', IsInactive = 0
+                    from {TableNames.YarnRMProperties} SV
+                    INNER JOIN {TableNames.YARN_SHADE_BOOK} YSB ON YSB.YSCID = SV.ShadeReferenceID
+                )
+                Select * from YCO
+                Union All
+                Select * from YT
+                Union All
+                Select * from MP
+                Union All
+                Select * from SP
+                Union All
+                Select * from YQP
+				--Union All
+    --            Select * from YCM
+				Union All
+                Select * from CLR
+				Union All
+                Select * from CLGR
+				Union All
+                Select * from YC
+				Union All
+                Select * from SC
+
+                ORDER BY [desc],[text];*/
 
                 /*
                 ;With YCO as(

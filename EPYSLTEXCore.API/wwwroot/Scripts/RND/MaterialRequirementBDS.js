@@ -1949,7 +1949,7 @@
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
                 masterData = response.data;
-                debugger;
+                
                 masterData.CollarSizeID = masterData.CollarSizeList[0].text;
                 masterData.CollarWeightInGm = masterData.CollarSizeList[0].desc;
                 masterData.CuffSizeID = masterData.CuffSizeList[0].text;

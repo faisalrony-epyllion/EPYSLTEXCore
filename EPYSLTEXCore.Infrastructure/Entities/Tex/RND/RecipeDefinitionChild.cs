@@ -1,9 +1,10 @@
 using Dapper.Contrib.Extensions;
+using EPYSLTEX.Core.Statics;
 using EPYSLTEXCore.Infrastructure.Data;
 
 namespace EPYSLTEXCore.Infrastructure.Entities.Tex.RND
 {
-    [Table("RecipeDefinitionChild")]
+    [Table(TableNames.RND_RECIPE_DEFINITION_CHILD)]
     public class RecipeDefinitionChild : DapperBaseEntity
     {
         public RecipeDefinitionChild()

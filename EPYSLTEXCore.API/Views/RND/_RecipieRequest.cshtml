@@ -1,0 +1,229 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var tblChildFabricId = "tblChildFabricId" + pageId;
+    var tblDefDyeingInfoId = "tblDefDyeingInfoId" + pageId;
+}
+
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <input type="hidden" id="AcknowledgePage" value="@ViewBag.AcknowledgePage" />
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;Pending
+                </button>
+                <button id="btnRequestForRecipie" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Request List
+                </button>
+                <button id="btnRequestForAcknowledge" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;Acknowledged List
+                </button>
+                <button id="btnRequestForUnAcknowledge" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-list"></i>&nbsp;UnAcknowledged List
+                </button>
+                <br />
+                <button id="btnCreate" class="btn btn-default btn-sm" style="margin: 5px 0 5px 0;">
+                    <i class="fa fa-plus"></i>&nbsp;Create
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="RecipeReqMasterID" name="RecipeReqMasterID" />
+            <input type="hidden" id="ConceptID" name="ConceptID" />
+            <input type="hidden" id="BookingID" name="BookingID" />
+            <input type="hidden" id="ItemMasterID" name="ItemMasterID" />
+            <input type="hidden" id="CCColorID" name="CCColorID" />
+            <input type="hidden" id="ColorID" name="ColorID" />
+            <input type="hidden" id="RecipeFor" name="RecipeFor" />
+            <input type="hidden" id="IsBDS" name="IsBDS" />
+            <input type="hidden" id="DBatchID" name="DBatchID" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-6">
+                                    <div class="form-group" id="divDPID" style="display:none;">
+                                        <label class="control-label col-sm-4 small">Dyeing Process</label>
+                                        <div class="col-sm-8">
+                                            <select id="DPID" name="DPID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divDPName" style="display:none;">
+                                        <label class="control-label col-sm-4 small">Dyeing Process</label>
+                                        <div class="col-sm-8">
+                                            <input id="DPName" name="DPName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divProcessInfo" style="display:none">
+                                        <label class="control-label col-sm-4 small">Process Info</label>
+                                        <div class="col-sm-8">
+                                            <input id="DPProcessInfo" name="DPProcessInfo" class="form-control input-sm" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Recipe Req. No</label>
+                                        <div class="col-sm-8">
+                                            <input id="RecipeReqNo" name="RecipeReqNo" class="form-control input-sm" readonly />
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Concept No</label>
+                                        <div class="col-sm-8">
+                                            <input id="ConceptNo" name="ConceptNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer</label>
+                                        <div class="col-sm-8">
+                                            <input id="Buyer" name="Buyer" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Buyer Team</label>
+                                        <div class="col-sm-8">
+                                            <input id="BuyerTeam" name="BuyerTeam" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="UnAckReasonAreaID">
+                                        <label class="control-label col-sm-4 small" id="ConceptFor">UnAck Reason</label>
+                                        <div class="col-sm-8">
+                                            <input id="UnAcknowledgeReason" name="UnAcknowledgeReason" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Recipe No</label>
+                                        <div class="col-sm-8">
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <input id="RecipeNo" name="RecipeNo" class="form-control input-sm" readonly />
+                                                    &nbsp; &nbsp;
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button type="button" id="btnCopyRecipe" class="btn btn-success btn-xs">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Color Name</label>
+                                        <div class="col-sm-8">
+                                            <input id="ColorName" name="ColorName" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Color Code</label>
+                                        <div class="col-sm-8">
+                                            <input id="ColorCode" name="ColorCode" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Lab Dip No</label>
+                                        <div class="col-sm-8">
+                                            <input id="LabDipNo" name="LabDipNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small" id="ConceptFor">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <textarea id="Remarks" name="Remarks" rows="2" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="revReasonId">
+                                        <label class="control-label col-sm-4 small" id="ConceptFor">Revision Reason</label>
+                                        <div class="col-sm-8">
+                                            <textarea id="RevisionReason" name="RevisionReason" rows="2" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                            <button type="button" id="btnAddChild" class="btn btn-success btn-xs" style="left:10%;">
+                                <i class="fa fa-plus"></i>&nbsp;Add Item
+                            </button> &nbsp; &nbsp;
+                            <button type="button" id="btnAddBatch" class="btn btn-success btn-xs" style="left:10%;">
+                                <i class="fa fa-plus"></i>&nbsp;Add Batch
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildFabricId" class="table table-sm"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12" id="tblDefDyeingInfoArea">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Dyeing Information
+                            <button type="button" id="btnAddItem" class="btn btn-success btn-xs" style="left:10%;">
+                                <i class="fa fa-plus"></i>&nbsp;Add Item
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblDefDyeingInfoId" class="table table-sm"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                        <div class="pull-right pull-right-mb">
+                            <button type="button" class="btn btn-default btn-sm w-150" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnSaveNMail"><i class="fa fa-save"></i>&nbsp;&nbsp;Save & Send to Mail</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;Acknowledge</button>
+                            <button type="button" class="btn btn-danger btn-sm w-150" id="btnUnAcknowledge"><i class="fa fa-save"></i>&nbsp;&nbsp;UnAcknowledge</button>
+                            <button type="button" class="btn btn-primary btn-sm w-150" id="btnRevise"><i class="fa fa-save"></i>&nbsp;&nbsp;Revise</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

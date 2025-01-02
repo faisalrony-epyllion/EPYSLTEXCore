@@ -110,6 +110,16 @@ namespace EPYSLTEXCore.Infrastructure.Entities
         /// </summary>
         public string FinderSql { get; set; }
 
+        ///<summary>
+        /// ParameterValue (length: 500)
+        ///</summary>
+        public string MinRange { get; set; }
+
+        ///<summary>
+        /// ParameterValue (length: 500)
+        ///</summary>
+        public string MaxRange { get; set; }
+
         [Write(false)]
         public override bool IsModified => ChildID > 0 || EntityState == System.Data.Entity.EntityState.Modified;
 

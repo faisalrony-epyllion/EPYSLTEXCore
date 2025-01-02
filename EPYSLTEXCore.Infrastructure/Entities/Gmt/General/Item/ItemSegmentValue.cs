@@ -73,4 +73,11 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         public string BlendTypeName { get; set; } = "";
         public string ProgramTypeName { get; set; } = "";
     }
+
+    public class ItemSegmentDTO
+    {
+        public string SegmentValue { get; set; }
+        public string BlendTypeName { get; set; } = "";
+        public string ProgramTypeName { get; set; } = "";
+    }
 }

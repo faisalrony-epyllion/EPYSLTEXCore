@@ -1471,7 +1471,7 @@
     //check
     async function initChildTable(data) {
         if ($tblChildEl) $tblChildEl.destroy();
-        
+        var sourcingModeElem, sourcingModeObj;
         var columns = [{ field: 'YarnPRChildID', isPrimaryKey: true, visible: false }];
         if (status == statusConstants.AWAITING_PROPOSE || status == statusConstants.ADDITIONAL || status == statusConstants.APPROVED) {
             columns.push.apply(columns,
@@ -1500,7 +1500,16 @@
         columns.push.apply(columns, getYarnItemColumnsForDisplayOnly());
         columns.push.apply(columns, [
             { field: 'ShadeCode', headerText: 'Shade Code', allowEditing: false },
-            { field: 'DayValidDurationName', headerText: 'Yarn Sourcing Mode', allowEditing: false },
+            { field: 'DayValidDurationName', headerText: 'Yarn Sourcing Mode', allowEditing: false, visible: status != statusConstants.ROL_BASE_PENDING },
+            {
+                field: 'DayValidDurationId', headerText: 'Yarn Sourcing Mode', width: 120, visible: status == statusConstants.ROL_BASE_PENDING, 
+                valueAccessor: ej2GridDisplayFormatter,
+                dataSource: masterData.DayValidDurations,
+                displayField: "text",
+                edit: ej2GridDropDownObj({
+                })
+            },
+
             { field: 'FPRCompanyName', headerText: 'Company', visible: !isCPRPage, allowEditing: false },
             {
                 field: 'FPRCompanyID', headerText: 'Company', visible: isCPRPage, allowEditing: isCPRPage, valueAccessor: ej2GridDisplayFormatter, dataSource: masterData.CompanyList,
@@ -1587,10 +1596,38 @@
                     args.data.AllocationQty = args.data.ReqQty - args.data.PurchaseQty;
                     args.data.AllocationQty = args.data.AllocationQty.toFixed(2);
                     args.rowData.AllocationQty = args.data.AllocationQty;
+                    
+                    args.data.DayValidDurationName = masterData.DayValidDurations.find(item => item.id == args.data.DayValidDurationId).text;
 
                     if (status == statusConstants.ROL_BASE_PENDING) {
-                        if (args.data.ReqQty + args.data.StockQty > args.data.MOQ) {
-                            toastr.error(`Maximum Req Qty is ${args.data.MOQ - args.data.StockQty}`);
+
+                        var balanceQty = args.data.ReOrderQty - args.data.StockQty - args.data.PRQty;
+
+                        if (args.data.ReqQty > balanceQty) {
+                            toastr.error(`PR Qty can not greater than Balance Qty: ${balanceQty}`);
+                            args.data.ReqQty = 0;
+                            args.data.ReqCone = 0;
+                            return false;
+                        }
+
+                        if (args.data.DayValidDurationName.includes("Local")) {
+                            if (args.data.ReqQty > args.data.MaximumPRQtyLP) {
+                                toastr.error(`PR Qty can not greater than maximum Local PR Qty: ${args.data.MaximumPRQtyLP}`);
+                                args.data.ReqQty = 0;
+                                args.data.ReqCone = 0;
+                                return false;
+                            }
+                        }
+                        else if (args.data.DayValidDurationName.includes("Import")) {
+                            if (args.data.ReqQty > args.data.MaximumPRQtyFP) {
+                                toastr.error(`PR Qty can not greater than maximum Import PR Qty: ${args.data.MaximumPRQtyFP}`);
+                                args.data.ReqQty = 0;
+                                args.data.ReqCone = 0;
+                                return false;
+                            }
+                        }
+                        else {
+                            toastr.error(`Sourcing Mode Required !`);
                             args.data.ReqQty = 0;
                             args.data.ReqCone = 0;
                             return false;

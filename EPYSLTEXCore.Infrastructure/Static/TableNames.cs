@@ -244,6 +244,7 @@
         public const string YarnBookingReason_New = "T_YarnBookingReason_New";
         //public const string YarnBookingMaster_18_05_17 = "YarnBookingMaster_18_05_17";
         public const string YarnBookingMaster_Bk = "T_YarnBookingMaster_Bk";
+        public const string YarnBookingChild_New_Bk = "T_YarnBookingChild_New_Bk";
         public const string YarnBookingQuery = "T_YarnBookingQuery";
         public const string YarnBookingQuery_Bk = "T_YarnBookingQuery_Bk";
         public const string YarnBookingReason = "T_YarnBookingReason";
@@ -258,6 +259,7 @@
         public const string YarnItemApprovalReason = "T_YarnItemApprovalReason";
         public const string YarnItemPrice = "T_YarnItemPrice";
         public const string YarnItemPrice_Bk = "T_YarnItemPrice_Bk";
+        public const string YarnItemPriceDetails = "T_YarnItemPriceDetails";
         //public const string YarnItemPrice_temp = "YarnItemPrice_temp";
         public const string YarnPIChild = "T_YarnPIChild";
         public const string YarnPIFor = "T_YarnPIFor";
@@ -412,7 +414,6 @@
         public const string RETURN_CHALLAN_NO_ESL = "ESLReturnChallanNo";
 
         #endregion
-
         #region RND
         public const string RND_CONCEPTNO = "ConceptNo";
         public const string RND_GROUP_CONCEPTNO = "GroupConceptNo";
@@ -793,7 +794,7 @@
         public const string YARN_YD_REQ_CHILD = "T_YarnYDReqChild";
         public const string YARN_SHADE_BOOK = "T_YarnShadeBook";
         public const string SEGMENT_FILTER_SETUP = "SegmentValueYarnTypeMappingSetup";
-        public const string FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP = "T_FabricComponentMappingSetup";
+        public const string FIBER_SUBPROGRAM_CERTIFICATIONS_FILTER_SETUP = "FabricComponentMappingSetup";
 
         public const string MACHINE_GAUGE_SETUP = "T_MachineGaugeSetup";
         public const string FABRIC_TECHNICAL_NAME = "T_FabricTechnicalName";
@@ -895,7 +896,6 @@
         public const string YarnQCReceiveMaster = "T_YarnQCReceiveMaster";
         public const string YarnQCRemarksChild = "T_YarnQCRemarksChild";
         public const string YarnQCRemarksMaster = "T_YarnQCRemarksMaster";
-        public const string YarnPRChild = "T_YarnPRChild";
         public const string YarnMRIRChild = "T_YarnMRIRChild";
         public const string YarnMRIRMaster = "T_YarnMRIRMaster";
         public const string YarnBookingChildItem_New_Bk = "T_YarnBookingChildItem_New_Bk";
@@ -923,22 +923,30 @@
         public const string YarnStockMaster_New = "YarnStockMaster_New";
 
         public const string FabricConstructionSubClassTechnicalName = "T_FabricConstructionSubClassTechnicalName";
-        public const string CertificationsBasicSetup = "T_CertificationsBasicSetup";
-        public const string FiberBasicSetup = "T_FiberBasicSetup";
-        public const string SubProgramBasicSetup = "T_SubProgramBasicSetup";
+        public const string CertificationsBasicSetup = "CertificationsBasicSetup";
+        public const string FiberBasicSetup = "FiberBasicSetup";
+        public const string SubProgramBasicSetup = "SubProgramBasicSetup";
         public const string DayValidDuration = "T_DayValidDuration";
         public const string YarnPRFrom_HK = "YarnPRFrom_HK";
         public const string ItemMasterReOrderStatus = "ItemMasterReOrderStatus";
         public const string YarnRMProperties = "YarnRMProperties";
         public const string YarnRMPropertiesChild = "YarnRMPropertiesChild";
 
-        public const string CompositionBlendType = "T_CompositionBlendType";
+        public const string CompositionBlendType = "CompositionBlendType";
         public const string YarnCompositionBasicSetup = "YarnCompositionBasicSetup";
         public const string YarnCountBasicSetup = "YarnCountBasicSetup";
         public const string YDBookingChild = "T_YDBookingChild";
         public const string JobCardStatus = "JobCardStatus";
         public const string DyeingMCStatusSetup = "DyeingMCStatusSetup";
         public const string SizeWiseWeight_HK = "SizeWiseWeight_HK";
+        public const string YDBookingRef = "YDBookingRef";
+        public const string YarnDyeingFor_HK = "T_YarnDyeingFor_HK";
+        public const string HardWindingMaster = "T_HardWindingMaster";
+        public const string HardWindingChild = "T_HardWindingChild";
+        public const string HardWindingNo = "HardWindingNo";
+        public const string SendToYDStoreMaster = "T_SendToYDStoreMaster";
+        public const string SendToYDStoreChild = "T_SendToYDStoreChild";
+        public const string SendToYDStoreNo = "SendToYDStoreNo";
     }
 
 }

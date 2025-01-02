@@ -2152,6 +2152,7 @@
         $tblCreateCompositionEl = new initEJ2Grid(gridOptions);
     }
     function saveComposition() {
+
         var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
         if (totalPercent != 100) return toastr.error("Sum of compostion percent must be 100");
         compositionComponents.reverse();
@@ -2176,7 +2177,7 @@
             }
             composition += ` ${component.Fiber}`;
 
-
+            console.log(compositionComponents);
             component.FiberTypeName = getDefaultValueWhenInvalidS(component.FiberTypeName);
             if (component.FiberTypeName.length > 0) {
                 blendTypeNames.push(component.FiberTypeName);
@@ -2202,10 +2203,9 @@
         //    SegmentValue: composition
         //};
         var data = {
-            ItemSegmentValue: {
-                SegmentValue: composition
-            },
-            BlendTypeName: blendTypeName,
+            
+             SegmentValue: composition,
+            BlendTypeName: "blendTypeName",
             ProgramTypeName: programTypeName
         }
 

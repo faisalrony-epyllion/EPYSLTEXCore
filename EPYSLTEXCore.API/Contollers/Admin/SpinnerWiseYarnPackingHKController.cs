@@ -35,8 +35,10 @@ namespace EPYSLTEXCore.API.Contollers.Admin
             List<SpinnerWiseYarnPackingHK> records = await _service.GetPagedAsync(paginationInfo);
             return Ok(new TableResponseModel(records, paginationInfo.GridType));
         }
-        [Route("list/{id}")]
-        [HttpDelete]
+        //[Route("list/{id}")]
+        //[HttpDelete]
+        [Route("delete/{id}")]
+        [HttpPost]
         public async Task<IActionResult> GetList(int id)
         {
 
@@ -50,8 +52,10 @@ namespace EPYSLTEXCore.API.Contollers.Admin
             await _service.SaveAsync(entity);
             return Ok();
         }
-        [Route("list")]
-        [HttpPut]
+        //[Route("list")]
+        //[HttpPut]
+        [Route("update")]
+        [HttpPost]
         public async Task<IActionResult> Update(dynamic jsonString)
         {
             SpinnerWiseYarnPackingHK model = JsonConvert.DeserializeObject<SpinnerWiseYarnPackingHK>(Convert.ToString(jsonString));

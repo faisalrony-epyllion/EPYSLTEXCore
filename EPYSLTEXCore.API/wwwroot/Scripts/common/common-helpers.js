@@ -2517,6 +2517,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
         
         var response = await axios.get(getYarnItemsApiUrl(dataList));
         itemSegmentValues = response.data;
+        
         var compositionElem, yarnTypeElem, manufacturingProcessElem, subProcessElem, qualityParameterElem, countElem, colorElem, colorGradeElem, shadeElem;
         var compositionObj, yarnTypeObj, manufacturingProcessObj, subProcessObj, qualityParameterObj, countObj, colorObj, colorGradeObj, shadeObj;
         var YarnTypeFilteredList = itemSegmentValues.Segment2ValueList;
@@ -2680,8 +2681,17 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     if (!f.isInteracted || !f.itemData) return false;
                                     e.rowData.Segment1ValueId = f.itemData.id;
                                     e.rowData.Segment1ValueDesc = f.itemData.text;
+                                    
+                                    var ManufacturingLines = itemSegmentValues.Segment1ValueList.find(y => y.id == e.rowData.Segment1ValueId).ManufacturingLines;
+                                    //var text = '';
+                                    //const manufacturingLinesArray = ManufacturingLines.split(',').map(x => x.trim().toLowerCase());
+                                    const manufacturingLinesArray = ManufacturingLines && ManufacturingLines.trim() !== ''
+                                        ? ManufacturingLines.split(',').map(x => x.trim().toLowerCase())
+                                        : [];
 
-                                    YarnTypeFilteredList = itemSegmentValues.Segment2ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId);
+                                    YarnTypeFilteredList = itemSegmentValues.Segment2ValueList.filter(item =>
+                                        manufacturingLinesArray.includes(item.text.trim().toLowerCase())
+                                    );
 
                                     if (YarnTypeFilteredList.length > 0) {
                                         if (typeof yarnTypeObj != 'undefined') {
@@ -2713,8 +2723,8 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                             yarnTypeObj.text = e.rowData.Segment2ValueDesc;
                                         }
                                     }
-
-                                    ManufacturingProcessFilteredList = itemSegmentValues.Segment3ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId);
+                                    /*
+                                    ManufacturingProcessFilteredList = itemSegmentValues.Segment3ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId);
 
                                     if (ManufacturingProcessFilteredList.length > 0) {
                                         if (typeof manufacturingProcessObj != 'undefined') {
@@ -2747,7 +2757,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                         }
                                     }
 
-                                    SubProcessFilteredList = itemSegmentValues.Segment4ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId);
+                                    SubProcessFilteredList = itemSegmentValues.Segment4ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId);
                                     if (SubProcessFilteredList.length > 0) {
                                         if (typeof subProcessObj != 'undefined') {
                                             subProcessObj.dataSource = SubProcessFilteredList;
@@ -2780,7 +2790,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
 
 
-                                    QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                    QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
                                     if (QualityParameterFilteredList.length > 0) {
                                         if (typeof qualityParameterObj != 'undefined') {
                                             qualityParameterObj.dataSource = QualityParameterFilteredList;
@@ -2814,7 +2824,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
 
 
-                                    ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
+                                    ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                     if (ColorFilteredList.length > 0) {
                                         if (typeof colorObj != 'undefined') {
                                             colorObj.dataSource = ColorFilteredList;
@@ -2848,7 +2858,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
 
 
-                                    ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                    ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
                                     if (ColorGradeFilteredList.length > 0) {
                                         if (typeof colorGradeObj != 'undefined') {
                                             colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -2884,7 +2894,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     //var MasterCountList = itemSegmentValues.YarnCountMaster.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                     //const searchStrings = MasterCountList.map(item => item.text);
                                     //CountFilteredList = itemSegmentValues.Segment6ValueList.filter(item => searchStrings.some(searchString => item.text.toLowerCase().includes(searchString.toLowerCase())));
-                                    CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
+                                    CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
 
                                     if (CountFilteredList.length > 0) {
                                         if (typeof countObj != 'undefined') {
@@ -2917,7 +2927,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                             countObj.text = e.rowData.Segment8ValueDesc;
                                         }
                                     }
-
+                                    */
                                 }
                             }
                         });
@@ -2964,7 +2974,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     e.rowData.Segment2ValueId = f.itemData.id;
                                     e.rowData.Segment2ValueDesc = f.itemData.text;
 
-                                    ManufacturingProcessFilteredList = itemSegmentValues.Segment3ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId);
+                                    ManufacturingProcessFilteredList = itemSegmentValues.Segment3ValueList.filter(y =>  y.ManufacturingLineID == e.rowData.Segment2ValueId);
 
                                     if (ManufacturingProcessFilteredList.length > 0) {
                                         if (typeof manufacturingProcessObj != 'undefined') {
@@ -2997,7 +3007,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                         }
                                     }
 
-                                    SubProcessFilteredList = itemSegmentValues.Segment4ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId);
+                                    SubProcessFilteredList = itemSegmentValues.Segment4ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId);
                                     if (SubProcessFilteredList.length > 0) {
                                         if (typeof subProcessObj != 'undefined') {
                                             subProcessObj.dataSource = SubProcessFilteredList;
@@ -3030,7 +3040,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
 
 
-                                    QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                    QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
                                     if (QualityParameterFilteredList.length > 0) {
                                         if (typeof qualityParameterObj != 'undefined') {
                                             qualityParameterObj.dataSource = QualityParameterFilteredList;
@@ -3064,7 +3074,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
 
 
-                                    ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
+                                    ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                     if (ColorFilteredList.length > 0) {
                                         if (typeof colorObj != 'undefined') {
                                             colorObj.dataSource = ColorFilteredList;
@@ -3098,7 +3108,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
 
 
-                                    ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                    ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
                                     if (ColorGradeFilteredList.length > 0) {
                                         if (typeof colorGradeObj != 'undefined') {
                                             colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3134,7 +3144,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     //var MasterCountList = itemSegmentValues.YarnCountMaster.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                     //const searchStrings = MasterCountList.map(item => item.text);
                                     //CountFilteredList = itemSegmentValues.Segment6ValueList.filter(item => searchStrings.some(searchString => item.text.toLowerCase().includes(searchString.toLowerCase())));
-                                    CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
+                                    CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
 
                                     if (CountFilteredList.length > 0) {
                                         if (typeof countObj != 'undefined') {
@@ -3219,7 +3229,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 e.rowData.Segment3ValueId = f.itemData.id;
                                 e.rowData.Segment3ValueDesc = f.itemData.text;
 
-                                SubProcessFilteredList = itemSegmentValues.Segment4ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId);
+                                SubProcessFilteredList = itemSegmentValues.Segment4ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId);
                                 if (SubProcessFilteredList.length > 0) {
                                     if (typeof subProcessObj != 'undefined') {
                                         subProcessObj.dataSource = SubProcessFilteredList;
@@ -3253,7 +3263,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
 
 
 
-                                QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
                                 if (QualityParameterFilteredList.length > 0) {
                                     if (typeof qualityParameterObj != 'undefined') {
                                         qualityParameterObj.dataSource = QualityParameterFilteredList;
@@ -3286,7 +3296,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
 
 
-                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
+                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 if (ColorFilteredList.length > 0) {
                                     if (typeof colorObj != 'undefined') {
                                         colorObj.dataSource = ColorFilteredList;
@@ -3320,7 +3330,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
 
 
-                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
                                 if (ColorGradeFilteredList.length > 0) {
                                     if (typeof colorGradeObj != 'undefined') {
                                         colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3356,7 +3366,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 //var MasterCountList = itemSegmentValues.YarnCountMaster.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 //const searchStrings = MasterCountList.map(item => item.text);
                                 //CountFilteredList = itemSegmentValues.Segment6ValueList.filter(item => searchStrings.some(searchString => item.text.toLowerCase().includes(searchString.toLowerCase())));
-                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
+                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
 
                                 if (CountFilteredList.length > 0) {
                                     if (typeof countObj != 'undefined') {
@@ -3442,7 +3452,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 e.rowData.Segment4ValueId = f.itemData.id;
                                 e.rowData.Segment4ValueDesc = f.itemData.text;
 
-                                QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                QualityParameterFilteredList = itemSegmentValues.Segment5ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
                                 if (QualityParameterFilteredList.length > 0) {
                                     if (typeof qualityParameterObj != 'undefined') {
                                         qualityParameterObj.dataSource = QualityParameterFilteredList;
@@ -3475,7 +3485,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
 
 
-                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
+                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 if (ColorFilteredList.length > 0) {
                                     if (typeof colorObj != 'undefined') {
                                         colorObj.dataSource = ColorFilteredList;
@@ -3509,7 +3519,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
 
 
-                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
                                 if (ColorGradeFilteredList.length > 0) {
                                     if (typeof colorGradeObj != 'undefined') {
                                         colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3545,7 +3555,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 //var MasterCountList = itemSegmentValues.YarnCountMaster.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 //const searchStrings = MasterCountList.map(item => item.text);
                                 //CountFilteredList = itemSegmentValues.Segment6ValueList.filter(item => searchStrings.some(searchString => item.text.toLowerCase().includes(searchString.toLowerCase())));
-                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
+                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
 
                                 if (CountFilteredList.length > 0) {
                                     if (typeof countObj != 'undefined') {
@@ -3630,7 +3640,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 e.rowData.Segment5ValueDesc = f.itemData.text;
 
 
-                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
+                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 if (ColorFilteredList.length > 0) {
                                     if (typeof colorObj != 'undefined') {
                                         colorObj.dataSource = ColorFilteredList;
@@ -3664,7 +3674,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
 
 
-                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
                                 if (ColorGradeFilteredList.length > 0) {
                                     if (typeof colorGradeObj != 'undefined') {
                                         colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3700,7 +3710,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 //var MasterCountList = itemSegmentValues.YarnCountMaster.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 //const searchStrings = MasterCountList.map(item => item.text);
                                 //CountFilteredList = itemSegmentValues.Segment6ValueList.filter(item => searchStrings.some(searchString => item.text.toLowerCase().includes(searchString.toLowerCase())));
-                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
+                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
 
                                 if (CountFilteredList.length > 0) {
                                     if (typeof countObj != 'undefined') {
@@ -3784,7 +3794,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 e.rowData.Segment6ValueId = f.itemData.id;
                                 e.rowData.Segment6ValueDesc = f.itemData.text;
 
-                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId);
                                 if (ColorGradeFilteredList.length > 0) {
                                     if (typeof colorGradeObj != 'undefined') {
                                         colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3820,7 +3830,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 //var MasterCountList = itemSegmentValues.YarnCountMaster.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 //const searchStrings = MasterCountList.map(item => item.text);
                                 //CountFilteredList = itemSegmentValues.Segment6ValueList.filter(item => searchStrings.some(searchString => item.text.toLowerCase().includes(searchString.toLowerCase())));
-                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
+                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
 
                                 if (CountFilteredList.length > 0) {
                                     if (typeof countObj != 'undefined') {
@@ -3907,7 +3917,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 //var MasterCountList = itemSegmentValues.YarnCountMaster.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId);
                                 //const searchStrings = MasterCountList.map(item => item.text);
                                 //CountFilteredList = itemSegmentValues.Segment6ValueList.filter(item => searchStrings.some(searchString => item.text.toLowerCase().includes(searchString.toLowerCase())));
-                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId && y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
+                                CountFilteredList = itemSegmentValues.Segment8ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.TechnicalParameterID == e.rowData.Segment5ValueId && y.ColorID == e.rowData.Segment6ValueId && y.ColorGradeID == e.rowData.Segment7ValueId);
 
                                 if (CountFilteredList.length > 0) {
                                     if (typeof countObj != 'undefined') {

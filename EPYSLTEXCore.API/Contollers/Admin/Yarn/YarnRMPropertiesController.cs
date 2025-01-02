@@ -110,7 +110,17 @@ namespace EPYSLTEXCore.API.Contollers.Admin
                     item.EntityState = EntityState.Added;
                 }
             }
-            await _service.SaveAsync(entity);
+            var checkDuplicate = await _service.CheckDuplicateValue(entity);
+            if (!checkDuplicate)
+            {
+                await _service.SaveAsync(entity);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Duplicate data found!!!");
+            }
+            //await _service.SaveAsync(entity);
 
             return Ok();
         }

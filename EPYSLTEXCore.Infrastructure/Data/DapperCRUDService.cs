@@ -15,6 +15,7 @@ using static Dapper.SqlMapper;
 using System.Data.Common;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography.Xml;
+using System.Linq.Expressions;
 namespace EPYSLTEXCore.Infrastructure.Data
 {
     public class DapperCRUDService<T> : IDapperCRUDService<T> where T : class, IDapperBaseEntity
@@ -1289,7 +1290,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
         }
         public int GetMaxId(string field, int increment, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
-            if (increment == 0) return 0;
+            //if (increment == 0) return 0;
             var signature = GetSignature(field, 1, 1, repeatAfter, transaction, connectionGmt);
             //var signature = await GetSignatureCmdAsync(field, 1, 1, repeatAfter);
 
@@ -1893,27 +1894,6 @@ namespace EPYSLTEXCore.Infrastructure.Data
         #endregion
 
         #region Check validtion by SP
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-        public async Task ValidationSingleAsync<CT>(CT entity, SqlTransaction transaction, string validationStoreProcedureName, EntityState entityState, int userId, int primaryKeyValue, int secondParamValue, int thirdParamValue, int forthParamValue, int fifthParamValue) where CT : class, IDapperBaseEntity
-        {
-            await Connection.ExecuteAsync(validationStoreProcedureName, new { PrimaryKeyId = primaryKeyValue, SecondParamValue = secondParamValue, ThirdParamValue = thirdParamValue, ForthParamValue = forthParamValue, FifthParamValue = fifthParamValue, UserId = userId, EntityState = entityState }, transaction, 30, CommandType.StoredProcedure);
-        }
-
         public async Task<string> GetMaxNoAsync(string field, int companyId = 1, RepeatAfterEnum repeatAfter = RepeatAfterEnum.NoRepeat, string padWith = "00000", SqlTransaction transaction = null, SqlConnection connectionGmt = null)
         {
             var signature = await GetSignatureAsync(field, companyId, 1, repeatAfter, transaction, connectionGmt);
@@ -1941,6 +1921,34 @@ namespace EPYSLTEXCore.Infrastructure.Data
             var numberPart = signature.LastNumber.ToString(padWith);
             var comId = companyId.ToString("00");
             var maxNo = $@"{comId}{datePart}{numberPart}";
+
+            return maxNo;
+        }
+        public async Task<int> GetMaxNoAsync(string tableName, string columnName, string replacedValue, int length, SqlConnection connection)
+        {
+            var queryString = $"SELECT MaxValue = (ISNULL(MAX(CONVERT(int, REPLACE({columnName}, '{replacedValue}', ''))), 0) + 1) " +
+                              $"FROM {tableName} WHERE {columnName} LIKE '{replacedValue}%'";
+
+            if (length > 0)
+            {
+                queryString += $" AND LEN({columnName}) = {length}";
+            }
+
+            int maxNo = 0;
+
+            if (connection.State != System.Data.ConnectionState.Open)
+            {
+                await connection.OpenAsync();
+            }
+
+            using (SqlCommand command = new SqlCommand(queryString, connection))
+            using (SqlDataReader reader = await command.ExecuteReaderAsync())
+            {
+                if (await reader.ReadAsync())
+                {
+                    maxNo = Convert.ToInt32(reader["MaxValue"]);
+                }
+            }
 
             return maxNo;
         }
@@ -2036,6 +2044,8 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 return result.HasValue;
             }
         }
+
+        
         public async Task AddAsync<T>(T entity, string tableName, bool isPrimaryKeyUpdated = false)
         {
             //var query = GenerateInsertQuery(entity, tableName);

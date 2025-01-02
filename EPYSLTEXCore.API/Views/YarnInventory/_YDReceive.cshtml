@@ -1,0 +1,135 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+    localStorage.setItem("menuParam", "@ViewBag.MenuParam");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+    var modalPlanningId = "modalPlanning" + pageId;
+}
+<div id="@pageId">
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm btnToolBar">
+                    <i class="fa fa-list"></i>&nbsp;Pending
+                </button>
+                <button id="btnDraft" class="btn btn-default text-grey btn-sm btnToolBar">
+                    <i class="fa fa-list"></i>&nbsp;List
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YDReceiveMasterID" name="YDReceiveMasterID" value="-1111" />
+            <input type="hidden" id="YDReqIssueMasterID" name="YDReqIssueMasterID" />
+            <input type="hidden" id="YDReqMasterID" name="YDReqMasterID" />
+            <input type="hidden" id="EntityState" name="EntityState" value="4" />
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Receive No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDReceiveNo" name="YDReceiveNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Receive Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDReceiveDate" name="YDReceiveDate" class="form-control input-sm ej2-datepicker" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Company</label>
+                                        <div class="col-sm-8">
+                                            <select id="CompanyID" name="CompanyID" class="form-control input-sm" style="width:100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <textarea rows="2" class="form-control editField" id="Remarks" name="Remarks"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Issue No</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDReqIssueNo" name="YDReqIssueNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Issue Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="YDReqIssueDate" name="YDReqIssueDate" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Challan No</label>
+                                        <div class="col-sm-8">
+                                            <input id="ChallanNo" name="ChallanNo" class="form-control input-sm" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4 small">Challan Date</label>
+                                        <div class="col-sm-8">
+                                            <input id="ChallanDate" name="ChallanDate" class="form-control input-sm" value="" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Yarn Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-12">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120 btnAction" id="btnCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-success m-w-120 btnAction" id="btnSave"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+

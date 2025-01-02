@@ -69,6 +69,7 @@ namespace EPYSLTEX.Core.Statics
         public const string sp_Validation_YarnBookingChildItem_1 = "T_sp_Validation_YarnBookingChildItem_1";
         public const string spBackupFBookingAcknowledge_Full = "T_spBackupFBookingAcknowledge_Full";
         public const string spBackupYarnBookingChildItem = "T_spBackupYarnBookingChildItem";
+        public const string spBackupYDBooking = "T_spBackupYDBooking";
     }
 }
 

@@ -1,5 +1,5 @@
 ﻿(function () {
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $formEl;
     var filterBy = {};
@@ -22,6 +22,10 @@
             menuId = localStorage.getItem("menuId");
         if (!pageName)
             pageName = localStorage.getItem("pageName");
+        if (!menuParam) menuParam = localStorage.getItem("menuParam");
+
+        if (menuParam == "Ack") isAcknowledgePage = true;
+        else if (menuParam == "A") isApprovePage = true;
 
         var pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -33,8 +37,7 @@
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
         tblImageId = "#tblImage" + pageId
 
-        isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
-        isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
+
 
         if (isApprovePage) {
             status = statusConstants.PROPOSED;
@@ -344,29 +347,29 @@
                             btnResultReport = "";
                         if (row.LabTestStatus == 'Production') {
                             btnFormReport = `<a class="btn btn-xs btn-danger" href="/reports/InlinePdfView?ReportName=LabTestTestingRequirementFormProduction.rdl&ReqID=${row.LTReqMasterID}&BuyerId=${row.BuyerID}" target="_blank" title="Lab Test Form Report" style='margin:2px;'>
-                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                <i class="fas fa-file-pdf" aria-hidden="true"></i>
                                             </a>`;
                         } else {
                             if (row.TestNatureName == 'China') {
                                 btnFormReport = `<a class="btn btn-xs btn-danger" href="/reports/InlinePdfView?ReportName=LabTestTestingRequirementFormChina.rdl&ReqID=${row.LTReqMasterID}&BuyerId=${row.BuyerID}" target="_blank" title="Lab Test Form Report" style='margin:2px;'>
-                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                <i class="fas fa-file-pdf" aria-hidden="true"></i>
                                             </a>`;
                             }
                             else {
                                 btnFormReport = `<a class="btn btn-xs btn-danger" href="/reports/InlinePdfView?ReportName=LabTestTestingRequirementForm.rdl&ReqID=${row.LTReqMasterID}&BuyerId=${row.BuyerID}" target="_blank" title="Lab Test Form Report" style='margin:2px;'>
-                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                <i class="fas fa-file-pdf" aria-hidden="true"></i>
                                             </a>`;
                             }
                         }
                         if (status != statusConstants.COMPLETED) {
                             if (row.LabTestStatus == 'Production') {
                                 btnResultReport = `<a class="btn btn-xs btn-primary" href="/reports/InlinePdfView?ReportName=LabTestReportProduction.rdl&LTReqMasterID=${row.LTReqMasterID}&BuyerId=${row.BuyerID}" target="_blank" title="Lab Test Result Report" style='margin:2px;'>
-                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
                                     </a>`;
                             }
                             else {
                                 btnResultReport = `<a class="btn btn-xs btn-primary" href="${getReportName(row.LTReqMasterID, row.BuyerID, row.TestNatureName)}" target="_blank" title="Lab Test Result Report" style='margin:2px;'>
-                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
                                     </a>`;
                             }
                             if (row.ImagePath != null && row.ImagePath.length > 0) {

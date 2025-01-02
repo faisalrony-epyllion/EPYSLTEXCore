@@ -3084,7 +3084,16 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
                                     */
 
-                                    ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                    //ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                    ColorFilteredList = itemSegmentValues.Segment6ValueList
+                                        .filter(y =>
+                                            y.ManufacturingLineID == e.rowData.Segment2ValueId &&
+                                            y.ManufacturingProcessID == e.rowData.Segment3ValueId &&
+                                            y.ManufacturingSubProcessID == e.rowData.Segment4ValueId
+                                        )
+                                        .filter((value, index, self) =>
+                                            index === self.findIndex(v => v.id === value.id && v.text === value.text)
+                                        );
                                     if (ColorFilteredList.length > 0) {
                                         if (typeof colorObj != 'undefined') {
                                             colorObj.dataSource = ColorFilteredList;
@@ -3118,7 +3127,17 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
 
 
-                                    ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                    //ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                    ColorGradeFilteredList = itemSegmentValues.Segment7ValueList
+                                        .filter(y =>
+                                            y.ManufacturingLineID == e.rowData.Segment2ValueId &&
+                                            y.ManufacturingProcessID == e.rowData.Segment3ValueId &&
+                                            y.ManufacturingSubProcessID == e.rowData.Segment4ValueId &&
+                                            y.ColorID == e.rowData.Segment6ValueId
+                                        )
+                                        .filter((value, index, self) =>
+                                            index === self.findIndex(v => v.id === value.id && v.text === value.text)
+                                        );
                                     if (ColorGradeFilteredList.length > 0) {
                                         if (typeof colorGradeObj != 'undefined') {
                                             colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3306,7 +3325,16 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
                                 */
 
-                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                //ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                ColorFilteredList = itemSegmentValues.Segment6ValueList
+                                    .filter(y =>
+                                        y.ManufacturingLineID == e.rowData.Segment2ValueId &&
+                                        y.ManufacturingProcessID == e.rowData.Segment3ValueId &&
+                                        y.ManufacturingSubProcessID == e.rowData.Segment4ValueId
+                                    )
+                                    .filter((value, index, self) =>
+                                        index === self.findIndex(v => v.id === value.id && v.text === value.text)
+                                    );
                                 if (ColorFilteredList.length > 0) {
                                     if (typeof colorObj != 'undefined') {
                                         colorObj.dataSource = ColorFilteredList;
@@ -3340,7 +3368,17 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
 
 
-                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                //ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList
+                                    .filter(y =>
+                                        y.ManufacturingLineID == e.rowData.Segment2ValueId &&
+                                        y.ManufacturingProcessID == e.rowData.Segment3ValueId &&
+                                        y.ManufacturingSubProcessID == e.rowData.Segment4ValueId &&
+                                        y.ColorID == e.rowData.Segment6ValueId
+                                    )
+                                    .filter((value, index, self) =>
+                                        index === self.findIndex(v => v.id === value.id && v.text === value.text)
+                                    );
                                 if (ColorGradeFilteredList.length > 0) {
                                     if (typeof colorGradeObj != 'undefined') {
                                         colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3494,8 +3532,16 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
                                 }
                                 */
-                                debugger;
-                                ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                //ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
+                                ColorFilteredList = itemSegmentValues.Segment6ValueList
+                                    .filter(y =>
+                                        y.ManufacturingLineID == e.rowData.Segment2ValueId &&
+                                        y.ManufacturingProcessID == e.rowData.Segment3ValueId &&
+                                        y.ManufacturingSubProcessID == e.rowData.Segment4ValueId
+                                    )
+                                    .filter((value, index, self) =>
+                                        index === self.findIndex(v => v.id === value.id && v.text === value.text)
+                                    );
                                 if (ColorFilteredList.length > 0) {
                                     if (typeof colorObj != 'undefined') {
                                         colorObj.dataSource = ColorFilteredList;
@@ -3529,7 +3575,17 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 }
 
 
-                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                //ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList
+                                    .filter(y =>
+                                        y.ManufacturingLineID == e.rowData.Segment2ValueId &&
+                                        y.ManufacturingProcessID == e.rowData.Segment3ValueId &&
+                                        y.ManufacturingSubProcessID == e.rowData.Segment4ValueId &&
+                                        y.ColorID == e.rowData.Segment6ValueId
+                                    )
+                                    .filter((value, index, self) =>
+                                        index === self.findIndex(v => v.id === value.id && v.text === value.text)
+                                    );
                                 if (ColorGradeFilteredList.length > 0) {
                                     if (typeof colorGradeObj != 'undefined') {
                                         colorGradeObj.dataSource = ColorGradeFilteredList;
@@ -3649,7 +3705,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 e.rowData.Segment5ValueId = f.itemData.id;
                                 e.rowData.Segment5ValueDesc = f.itemData.text;
 
-
+                                /*
                                 ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
                                 if (ColorFilteredList.length > 0) {
                                     if (typeof colorObj != 'undefined') {
@@ -3752,7 +3808,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                         countObj.text = e.rowData.Segment8ValueDesc;
                                     }
                                 }
-
+                                */
                                 //$tblChildEl.updateRow(e.row.rowIndex, e.rowData);
                             }
                         });
@@ -3804,7 +3860,17 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                 e.rowData.Segment6ValueId = f.itemData.id;
                                 e.rowData.Segment6ValueDesc = f.itemData.text;
 
-                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                //ColorGradeFilteredList = itemSegmentValues.Segment7ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId && y.ColorID == e.rowData.Segment6ValueId);
+                                ColorGradeFilteredList = itemSegmentValues.Segment7ValueList
+                                    .filter(y =>
+                                        y.ManufacturingLineID == e.rowData.Segment2ValueId &&
+                                        y.ManufacturingProcessID == e.rowData.Segment3ValueId &&
+                                        y.ManufacturingSubProcessID == e.rowData.Segment4ValueId &&
+                                        y.ColorID == e.rowData.Segment6ValueId
+                                    )
+                                    .filter((value, index, self) =>
+                                        index === self.findIndex(v => v.id === value.id && v.text === value.text)
+                                    );
                                 if (ColorGradeFilteredList.length > 0) {
                                     if (typeof colorGradeObj != 'undefined') {
                                         colorGradeObj.dataSource = ColorGradeFilteredList;

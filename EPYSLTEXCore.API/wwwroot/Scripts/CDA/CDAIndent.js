@@ -36,12 +36,16 @@
 
         if (menuParam == "Ack") isAcknowledgePage = true;
         else if (menuParam == "A") isApprovePage = true;
+        else if (menuParam == "TexAck") isTexAcknowledgePage = true;
+        else if (menuParam == "Check") isCheckPage = true;
+        else if (menuParam == "Indent") isCDAPage = true;
 
-        isCDAPage = convertToBoolean($(`#${pageId}`).find("#CDAIndentPage").val());
-        isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
-        isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
-        isTexAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#TexAcknowledgePage").val());
-        isCheckPage = convertToBoolean($(`#${pageId}`).find("#CheckPage").val());
+
+        //isCDAPage = convertToBoolean($(`#${pageId}`).find("#CDAIndentPage").val());
+        //isApprovePage = convertToBoolean($(`#${pageId}`).find("#ApprovePage").val());
+        //isAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#AcknowledgePage").val());
+        //isTexAcknowledgePage = convertToBoolean($(`#${pageId}`).find("#TexAcknowledgePage").val());
+        //isCheckPage = convertToBoolean($(`#${pageId}`).find("#CheckPage").val());
 
         //Hide All Buttons
         $toolbarEl.find("#btnNew,#btnIndentList,#btnPendingForApproval,#btnApprovalList,#btnPendingForAcknowledge,#btnAcknowledgeList,#btnPendingForTexAcknowledge,#btnTexAcknowledgeList,#btnPendingCheckList,#btnCheckList").hide();

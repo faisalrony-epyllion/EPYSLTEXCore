@@ -253,11 +253,12 @@ namespace EPYSLTEXCore.Infrastructure.Static
         public static string GetFabricComponentMappingSetup()
         {
             return $@"
-                SELECT A.*, FiberTypeName = BT.SegmentValue,ProgramTypeName = CASE WHEN ISNULL(ISV3.SegmentValue,'N/A') = 'N/A' THEN 'Conventional' ELSE 'Sustainable' END
-                FROM FiberAndFiberTypeMapping A
-                INNER JOIN FiberAndFiberTypeMapping B ON B.FiberID = A.FiberID
-                LEFT join {DbNames.EPYSL}..ItemSegmentValue BT on BT.SegmentValueID=B.FiberTypeID
-                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID = A.CertificationsID;";
+            SELECT A.FFTMID, A.FiberTypeID, A.FiberID, A.ProgramID,A.SubProgramID,A.CertificationsID,A.ManufacturingLineID,A.QualityParameterID, FiberTypeName = BT.SegmentValue,ProgramTypeName = CASE WHEN ISNULL(ISV3.SegmentValue,'N/A') = 'N/A' THEN 'Conventional' ELSE 'Sustainable' END
+            FROM FiberAndFiberTypeMapping A
+            INNER JOIN FiberAndFiberTypeMapping B ON B.FiberID = A.FiberID
+            LEFT join {DbNames.EPYSL}..ItemSegmentValue BT on BT.SegmentValueID=B.FiberTypeID
+            LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID = A.CertificationsID
+            GROUP BY A.FFTMID, A.FiberTypeID, A.FiberID, A.ProgramID,A.SubProgramID,A.CertificationsID,A.ManufacturingLineID,A.QualityParameterID, BT.SegmentValue,CASE WHEN ISNULL(ISV3.SegmentValue,'N/A') = 'N/A' THEN 'Conventional' ELSE 'Sustainable' END;";
         }
         public static string GetYarnShadeBooks()
         {

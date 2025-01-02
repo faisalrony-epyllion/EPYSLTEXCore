@@ -234,21 +234,46 @@ namespace EPYSLTEXCore.Infrastructure.Static
 
 
         }
+    //    public static string GetFabricComponentsWithManufactureLine(string entityTypeName)
+    //    {
+    //        return $@"
+    //             Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text],STRING_AGG(isv.SegmentValue,',') [desc], STRING_AGG(BT.SegmentValue,',') [additionalValue]
+    //            From {DbNames.EPYSL}..EntityTypeValue EV
+    //            Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+		  //      LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
+    //            LEFT join FiberAndFiberTypeMapping map on map.FiberID=ev.ValueID
+				//LEFT join {DbNames.EPYSL}..ItemSegmentValue isv on isv.SegmentValueID=map.ManufacturingLineID  
+    //            LEFT join {DbNames.EPYSL}..ItemSegmentValue BT on BT.SegmentValueID=map.FiberTypeID
+    //            Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
+    //            Group By EV.ValueID,EV.ValueName
+    //            order by EV.ValueName";
+
+
+    //    }
         public static string GetFabricComponentsWithManufactureLine(string entityTypeName)
         {
             return $@"
-                 Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text],isv.SegmentValue [desc], BT.SegmentValue [additionalValue]
+               WITH 
+                AA AS
+                (
+	                SELECT FF.FiberID, ISV.SegmentValue
+	                FROM FiberAndFiberTypeMapping FF
+	                INNER JOIN EPYSL..ItemSegmentValue ISV ON ISV.SegmentValueID = FF.ManufacturingLineID 
+	                GROUP BY FF.FiberID, ISV.SegmentValue
+                ),
+                FF AS
+                (
+	                SELECT AA.FiberID, SegmentValue = STRING_AGG(AA.SegmentValue,',')
+	                FROM AA 
+	                GROUP BY AA.FiberID
+                )
+                Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text], FF.SegmentValue [desc]
                 From {DbNames.EPYSL}..EntityTypeValue EV
                 Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-		        LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
-                LEFT join FiberAndFiberTypeMapping map on map.FiberID=ev.ValueID
-				LEFT join {DbNames.EPYSL}..ItemSegmentValue isv on isv.SegmentValueID=map.ManufacturingLineID  
-                LEFT join {DbNames.EPYSL}..ItemSegmentValue BT on BT.SegmentValueID=map.FiberTypeID
-                Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
-                Group By EV.ValueID,EV.ValueName,isv.SegmentValue,BT.SegmentValue
+                LEFT JOIN FF ON FF.FiberID = EV.ValueID
+                Where ET.EntityTypeName = '{entityTypeName}'
+                Group By EV.ValueID,EV.ValueName,FF.SegmentValue
                 order by EV.ValueName";
-
-
         }
         public static string GetFabricComponentMappingSetup()
         {
@@ -728,6 +753,19 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 		        	AND ISNULL(CBS.IsInactive,0) = 0
                 ORDER BY ISV.SegmentValue";
+        }
+        public static string GetCertifications(string yarnTypeId, string yarnSubProgranNewId) //yarnTypeId=FiberId
+        {
+            return $@"SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc],isnull(CAST(FCMS.SubProgramID As varchar),'0')additionalValue, isnull(CAST(FCMS.FiberID As varchar),'0')additionalValue2
+                    FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                    Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                    INNER JOIN FiberAndFiberTypeMapping FCMS on FCMS.CertificationsID=ISV.SegmentValueID
+                    LEFT JOIN {TableNames.CertificationsBasicSetup} CBS ON CBS.SegmentValueID = ISV.SegmentValueID
+                    WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_CERTIFICATIONS}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                    AND ISNULL(CBS.IsInactive,0) = 0
+                    AND FCMS.FiberID IN ({yarnTypeId}) AND FCMS.SubProgramID IN ({yarnSubProgranNewId})
+                    ORDER BY ISV.SegmentValue";
 
         }
         public static string GetSubPrograms()
@@ -741,7 +779,19 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
 			        AND ISNULL(SBS.IsInactive,0) = 0 
                 ORDER BY ISV.SegmentValue";
-
+        }
+        public static string GetSubPrograms(string yarnTypeId) //yarnTypeId=FiberId
+        {
+            return $@"SELECT distinct CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], ISN.SegmentName [desc],isnull(CAST(FF.FiberID As varchar),'0')additionalValue
+                    FROM {DbNames.EPYSL}..ItemSegmentName ISN
+                    INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISN.SegmentNameID = ISV.SegmentNameID
+                    Left Join {DbNames.EPYSL}..YarnCountHiddenSetup YCH On YCH.YarnCountID = ISV.SegmentValueID
+                    LEFT JOIN {TableNames.SubProgramBasicSetup} SBS ON SBS.SegmentValueID = ISV.SegmentValueID
+                    INNER JOIN FiberAndFiberTypeMapping FF ON FF.SubProgramID = ISV.SegmentValueID
+                    WHERE ISN.SegmentName = '{ItemSegmentNameConstants.YARN_SUBPROGRAM_NEW}' And ISNULL(ISV.SegmentValue, '') <> '' And YCH.YarnCountID IS NULL
+                    AND ISNULL(SBS.IsInactive,0) = 0 
+                    AND FF.FiberID IN ({yarnTypeId})
+                    ORDER BY ISV.SegmentValue";
         }
         public static string GetYarnDyeingFor()
         {

@@ -40,5 +40,12 @@ namespace EPYSLTEXCore.Application.Interfaces
         Task<ItemSegmentName> FindAsync(string SegmentName);
         Task AddAsync(ItemSegmentValue entity, string iTEM_SEGMENT_VALUE);
         //Task<ItemSegmentName> FindAsync(Func<object, bool> value);
+
+
+        #region Composition Part
+        Task<List<Select2OptionModel>> GetYarnTypes();
+        Task<List<Select2OptionModel>> GetYarnSubProgramNews(string yarnTypeId);
+        Task<List<Select2OptionModel>> GetCertifications(string yarnTypeId, string yarnSubProgranNewId);
+        #endregion
     }
 }

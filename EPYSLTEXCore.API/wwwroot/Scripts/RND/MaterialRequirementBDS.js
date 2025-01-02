@@ -485,12 +485,11 @@
     var subProgramElem, certificationElem, fiberElem;
     var subProgramObj, certificationObj, fiberObj;
     //var YarnSubProgramNewsFilteredList, CertificationsFilteredList;
-    async function initTblCreateComposition() {
+    function initTblCreateComposition() {
+
         var YarnSubProgramNewsFilteredList = [];//masterData.YarnSubProgramNews;
         var CertificationsFilteredList = [];//masterData.Certifications;
-
         compositionComponents = [];
-
         var columns = [
             {
                 field: 'Id', isPrimaryKey: true, visible: false
@@ -506,10 +505,10 @@
                 field: 'Percent', headerText: 'Percent(%)', width: 120, editType: "numericedit", params: { decimals: 0, format: "N", min: 1, validateDecimalOnType: true }, allowEditing: isBlended
             },
             //{
-            //    field: 'Fiber', headerText: 'Component', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.FabricComponentsNew, field: "Fiber" })
+            //    field: 'Fiber', headerText: 'Component', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.FabricComponents, field: "Fiber" })
             //}
             {
-                field: 'Fiber', headerText: 'Fiber', valueAccessor: ej2GridDisplayFormatterV2, edit: {
+                field: 'Fiber', headerText: 'Yarn Type', valueAccessor: ej2GridDisplayFormatterV2, edit: {
                     create: function () {
                         fiberElem = document.createElement('input');
                         return fiberElem;
@@ -525,15 +524,19 @@
                             dataSource: masterData.FabricComponentsNew,
                             fields: { value: 'id', text: 'text' },
                             //enabled: false,
-                            placeholder: 'Select Component',
+                            placeholder: 'Select Yarn Type',
                             floatLabelType: 'Never',
-                            change: function (f) {
+                            change: async function (f) {
 
                                 if (!f.isInteracted || !f.itemData) return false;
                                 e.rowData.Fiber = f.itemData.id;
                                 e.rowData.Fiber = f.itemData.text;
 
-                                YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews.filter(y => y.additionalValue == f.itemData.id);
+                                //YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews.filter(y => y.additionalValue == f.itemData.id);
+
+                                var list = await axios.get(`/api/rnd-free-concept-mr/yarn-sub-progran-new/${f.itemData.id}`);
+                                var YarnSubProgramNewsFilteredList = list.data;
+
                                 subProgramObj.dataSource = YarnSubProgramNewsFilteredList;
                                 subProgramObj.dataBind();
 
@@ -551,7 +554,6 @@
             //{
             //    field: 'YarnSubProgramNew', headerText: 'Yarn Sub Program New', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.YarnSubProgramNews, field: "YarnSubProgramNew" })
             //},
-
             {
                 field: 'YarnSubProgramNew', headerText: 'Yarn Sub Program New', valueAccessor: ej2GridDisplayFormatterV2, edit: {
                     create: function () {
@@ -571,13 +573,19 @@
                             //enabled: false,
                             placeholder: 'Select Yarn Sub Program',
                             floatLabelType: 'Never',
-                            change: function (f) {
+                            change: async function (f) {
+
                                 if (!f.isInteracted || !f.itemData) return false;
                                 e.rowData.YarnSubProgramNew = f.itemData.id;
                                 e.rowData.YarnSubProgramNew = f.itemData.text;
 
                                 //CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id);
-                                CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id && y.additionalValue2 == f.itemData.additionalValue);
+                                //CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id && y.additionalValue2 == f.itemData.additionalValue);
+
+                                var list = await axios.get(`/api/rnd-free-concept-mr/certification/${f.itemData.additionalValue}/${f.itemData.id}`);
+                                var CertificationsFilteredList = list.data;
+
+
                                 certificationObj.dataSource = CertificationsFilteredList;
                                 certificationObj.dataBind();
 
@@ -636,7 +644,6 @@
             data: compositionComponents,
             columns: columns,
             actionBegin: function (args) {
-
                 if (args.requestType === "add") {
                     if (isBlended) {
                         if (compositionComponents.length === 5) {
@@ -689,7 +696,6 @@
                         }
                     }
 
-
                     //fiberTypeName, programTypeName
                     var fiberTypeName = "";
                     var programTypeName = "";
@@ -724,7 +730,6 @@
                     }
                 }
             },
-
             autofitColumns: false,
             showDefaultToolbar: false,
             allowFiltering: false,

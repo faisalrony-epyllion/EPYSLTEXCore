@@ -2517,6 +2517,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
         
         var response = await axios.get(getYarnItemsApiUrl(dataList));
         itemSegmentValues = response.data;
+        
         var compositionElem, yarnTypeElem, manufacturingProcessElem, subProcessElem, qualityParameterElem, countElem, colorElem, colorGradeElem, shadeElem;
         var compositionObj, yarnTypeObj, manufacturingProcessObj, subProcessObj, qualityParameterObj, countObj, colorObj, colorGradeObj, shadeObj;
         var YarnTypeFilteredList = itemSegmentValues.Segment2ValueList;
@@ -2680,8 +2681,17 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     if (!f.isInteracted || !f.itemData) return false;
                                     e.rowData.Segment1ValueId = f.itemData.id;
                                     e.rowData.Segment1ValueDesc = f.itemData.text;
-                                    /*
-                                    YarnTypeFilteredList = itemSegmentValues.Segment2ValueList.filter(y => y.YarnCompositionID == e.rowData.Segment1ValueId);
+                                    
+                                    var ManufacturingLines = itemSegmentValues.Segment1ValueList.find(y => y.id == e.rowData.Segment1ValueId).ManufacturingLines;
+                                    //var text = '';
+                                    //const manufacturingLinesArray = ManufacturingLines.split(',').map(x => x.trim().toLowerCase());
+                                    const manufacturingLinesArray = ManufacturingLines && ManufacturingLines.trim() !== ''
+                                        ? ManufacturingLines.split(',').map(x => x.trim().toLowerCase())
+                                        : [];
+
+                                    YarnTypeFilteredList = itemSegmentValues.Segment2ValueList.filter(item =>
+                                        manufacturingLinesArray.includes(item.text.trim().toLowerCase())
+                                    );
 
                                     if (YarnTypeFilteredList.length > 0) {
                                         if (typeof yarnTypeObj != 'undefined') {
@@ -2713,7 +2723,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                             yarnTypeObj.text = e.rowData.Segment2ValueDesc;
                                         }
                                     }
-
+                                    /*
                                     ManufacturingProcessFilteredList = itemSegmentValues.Segment3ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId);
 
                                     if (ManufacturingProcessFilteredList.length > 0) {

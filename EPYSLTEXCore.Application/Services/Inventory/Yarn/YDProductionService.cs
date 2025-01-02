@@ -9,6 +9,8 @@ using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Statics;
 using System.Data.Entity;
 using EPYSLTEXCore.Infrastructure.Exceptions;
+using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
+using System.Drawing;
 
 
 namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
@@ -633,7 +635,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 {paginationInfo.FilterBy}
                 {orderBy}
                 {paginationInfo.PageBy}";
-
+          
             return await _service.GetDataAsync<YDProductionMaster>(sql);
         }
 

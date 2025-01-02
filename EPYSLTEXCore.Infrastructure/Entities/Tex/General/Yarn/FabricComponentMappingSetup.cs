@@ -26,6 +26,10 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         public string SubProgram { get; set; } = "";
         [Write(false)]
         public string Certifications { get; set; } = "";
+        [Write(false)]
+        public string FiberTypeName { get; set; } = "";
+        [Write(false)]
+        public string ProgramTypeName { get; set; } = "";
 
         public FabricComponentMappingSetup()
         {

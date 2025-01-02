@@ -2967,7 +2967,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                             dataSource: itemSegmentValues.Segment2ValueList,
                             fields: { value: 'id', text: 'text' },
                             //enabled: false,
-                            placeholder: 'Select Yarn Type',
+                            placeholder: 'Select Manufacturing Line',
                             floatLabelType: 'Never',
                             allowFiltering: true,
                             popupWidth: 'auto',

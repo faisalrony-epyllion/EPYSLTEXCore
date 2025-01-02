@@ -3494,6 +3494,7 @@ async function getYarnItemColumnsWithSearchDDLAsync(dataList, isEditable = true)
                                     }
                                 }
                                 */
+                                debugger;
                                 ColorFilteredList = itemSegmentValues.Segment6ValueList.filter(y => y.ManufacturingLineID == e.rowData.Segment2ValueId && y.ManufacturingProcessID == e.rowData.Segment3ValueId && y.ManufacturingSubProcessID == e.rowData.Segment4ValueId);
                                 if (ColorFilteredList.length > 0) {
                                     if (typeof colorObj != 'undefined') {

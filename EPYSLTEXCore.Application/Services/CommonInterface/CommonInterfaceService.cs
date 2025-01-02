@@ -91,7 +91,7 @@ namespace EPYSLTEX.Infrastructure.Services
                     SELECT C.*
                     FROM CommonInterfaceChild C
                     INNER JOIN CommonInterfaceMaster M ON C.ParentID = M.MasterID
-                    INNER JOIN #MenuIds M2 ON M.MenuId = M2.MenuId;
+                    INNER JOIN #MenuIds M2 ON M.MenuId = M2.MenuId order by Seq;
 
                     -- Select from CommonInterfaceChildGrid
                     SELECT C.*

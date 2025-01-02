@@ -44,7 +44,7 @@
             //$formEl.find('#ProgramID').prop('disabled', false);
             //$formEl.find('#SubProgramID').prop('disabled', false);
             //$formEl.find('#CertificationID').prop('disabled', false);
-            $formEl.find('#TechnicalParameterID').prop('disabled', false);
+            //$formEl.find('#TechnicalParameterID').prop('disabled', false);
             //$formEl.find('#YarnCompositionID').prop('disabled', false);
             $formEl.find('#ShadeReferenceID').prop('disabled', false);
             $formEl.find('#ManufacturingLineID').prop('disabled', false);
@@ -140,9 +140,9 @@
             {
                 field: 'ManufacturingSubProcess', headerText: 'Manufacturing Sub-Process'
             },
-            {
-                field: 'TechnicalParameter', headerText: 'Technical Parameter'
-            },
+            //{
+            //    field: 'TechnicalParameter', headerText: 'Technical Parameter'
+            //},
             {
                 field: 'Color', headerText: 'Color'
             },
@@ -182,7 +182,7 @@
             //$formEl.find('#ProgramID').prop('disabled', true);
             //$formEl.find('#SubProgramID').prop('disabled', true);
             //$formEl.find('#CertificationID').prop('disabled', true);
-            $formEl.find('#TechnicalParameterID').prop('disabled', true);
+            //$formEl.find('#TechnicalParameterID').prop('disabled', true);
             //$formEl.find('#YarnCompositionID').prop('disabled', true);
             $formEl.find('#ShadeReferenceID').prop('disabled', true);
             $formEl.find('#ManufacturingLineID').prop('disabled', true);
@@ -274,7 +274,7 @@
         //data.ProgramID = getDefaultValueWhenInvalidN($formEl.find('#ProgramID').val());
         //data.SubProgramID = getDefaultValueWhenInvalidN($formEl.find('#SubProgramID').val());
         //data.CertificationID = getDefaultValueWhenInvalidN($formEl.find('#CertificationID').val());
-        data.TechnicalParameterID = getDefaultValueWhenInvalidN($formEl.find('#TechnicalParameterID').val());
+        //data.TechnicalParameterID = getDefaultValueWhenInvalidN($formEl.find('#TechnicalParameterID').val());
         //data.YarnCompositionID = getDefaultValueWhenInvalidN($formEl.find('#YarnCompositionID').val());
         data.ShadeReferenceID = getDefaultValueWhenInvalidN($formEl.find('#ShadeReferenceID').val());
         data.ManufacturingLineID = getDefaultValueWhenInvalidN($formEl.find('#ManufacturingLineID').val());
@@ -297,10 +297,10 @@
             toastr.error('Select Manufacturing Sub-Process !!!');
             return false;
         }
-        if (data.TechnicalParameterID == 0) {
-            toastr.error('Select Technical Parameter !!!');
-            return false;
-        }
+        //if (data.TechnicalParameterID == 0) {
+        //    toastr.error('Select Technical Parameter !!!');
+        //    return false;
+        //}
         if (data.ColorID == 0) {
             toastr.error('Select Color !!!');
             return false;

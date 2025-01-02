@@ -98,7 +98,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
 			   YDRC AS 
 			   (
 			   Select IR.YDBatchID,ProducedQty = SUM(ISNULL(PC.ProducedQty,0)) FROM {TableNames.YD_BATCH_ITEM_REQUIREMENT} IR
-			   INNER join {TableNames.YD_DYEING_BATCH_ITEM} BI ON BI.YDBItemReqID = IR.YDBItemReqID
+			   INNER JOIN {TableNames.YD_DYEING_BATCH_ITEM} BI ON BI.YDBItemReqID = IR.YDBItemReqID
 			   INNER JOIN {TableNames.YD_PRODUCTION_CHILD} PC ON PC.YDDBIID = BI.YDDBIID
 			   GROUP BY IR.YDBatchID
 			   ),
@@ -106,11 +106,11 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 ( 
                     Select YBM.YDBookingMasterID, YBM.YDBookingNo, YBM.YDBookingDate, YDBM.YDBatchID, YDBM.YDBatchNo, YDBM.YDBatchDate, BatchQty = SUM(IR.Qty), YBM.Remarks, 
                     TotalBookingQty = ISNULL(YDBC.TotalBookingQty,0), ProducedQty = ISNULL(YDRC.ProducedQty,0), Qty= SUM(ISNULL(FC.Qty,0))
-                    FROM {TableNames.YD_BOOKING_MASTER} YDBM
+                    FROM {TableNames.YD_BATCH_MASTER} YDBM
 					INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} IR ON IR.YDBatchID = YDBM.YDBatchID
-					INNER join {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
+					INNER JOIN {TableNames.YD_BOOKING_MASTER} YBM ON YBM.YDBookingMasterID = YDBM.YDBookingMasterID
 					INNER JOIN YDBC ON YDBC.YDBookingMasterID = YBM.YDBookingMasterID 
-					--INNER join {TableNames.YD_DYEING_BATCH_ITEM} BI ON BI.YDBItemReqID = YDBC.BItemReqID
+					--INNER JOIN {TableNames.YD_DYEING_BATCH_ITEM} BI ON BI.YDBItemReqID = YDBC.BItemReqID
 					--INNER JOIN {TableNames.YD_PRODUCTION_MASTER} YDPM ON YDPM.YDBookingMasterID = YBM.YDBookingMasterID 
 					INNER JOIN YDRC ON YDRC.YDBatchID = YDBM.YDBatchID
 					Left JOIN {TableNames.YD_DRYER_FINISHING_CHILD} FC ON FC.YDBItemReqID = IR.YDBItemReqID
@@ -148,9 +148,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 Inner JOIN {TableNames.YD_DRYER_FINISHING_CHILD} YRC ON YRC.YDDryerFinishingMasterID = YRM.YDDryerFinishingMasterID 
 				INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} IR ON IR.YDBItemReqID = YRC.YDBItemReqID
 				INNER JOIN {TableNames.YD_BATCH_MASTER} BM ON BM.YDBatchID = IR.YDBatchID
-				INNER join {TableNames.YD_DYEING_BATCH_ITEM} BI ON BI.YDBItemReqID = YRC.YDBItemReqID
+				INNER JOIN {TableNames.YD_DYEING_BATCH_ITEM} BI ON BI.YDBItemReqID = YRC.YDBItemReqID
 				INNER JOIN {TableNames.YD_PRODUCTION_CHILD} PC ON PC.YDDBIID = BI.YDDBIID
-				Inner join {TableNames.YD_BOOKING_MASTER} YDBM ON YDBM.YDBookingMasterID = YRM.YDBookingMasterID 
+				Inner JOIN {TableNames.YD_BOOKING_MASTER} YDBM ON YDBM.YDBookingMasterID = YRM.YDBookingMasterID 
                 Left join  {DbNames.EPYSL}..Contacts C ON c.ContactID = YDBM.BuyerID 
                 LEFT Join  {DbNames.EPYSL}..LoginUser RL On RL.UserCode = YRM.SendForApproveBy 
                 LEFT Join  {DbNames.EPYSL}..LoginUser A On A.UserCode = YRM.ApproveBy
@@ -173,7 +173,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
             var sql =
                 $@"
                 SELECT DISTINCT YDBM.YDBookingMasterID, YDBM.YDBookingDate, YDBM.YDBookingNo, BM.YDBatchID, BM.YDBatchNo, BM.YDBatchDate, YDBM.BuyerID, C.ShortName BuyerName, FCM.CompanyID As ReqFromID, CE.ShortName As Company
-                FROM {TableNames.YD_BOOKING_MASTER} BM 
+                FROM {TableNames.YD_BATCH_MASTER} BM 
 				LEFT join {TableNames.YD_BOOKING_MASTER} YDBM ON YDBM.YDBookingMasterID = BM.YDBookingMasterID
 				LEFT JOIN {DbNames.EPYSL}..Contacts C ON YDBM.BuyerID=C.ContactID
                 LEFT JOIN {TableNames.RND_FREE_CONCEPT_MASTER} FCM on FCM.ConceptID = YDBM.ConceptID 

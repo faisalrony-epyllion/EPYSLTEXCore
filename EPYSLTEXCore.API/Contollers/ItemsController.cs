@@ -187,14 +187,14 @@ namespace EPYSLTEX.Web.Controllers.Apis
             string cacheKey = CacheKeys.Yarn_Item_Segments;
             ItemSegmentMappingValuesDTO itemSegmenValues =null ;
             _memoryCache.TryGetValue(cacheKey, out itemSegmenValues);
-
+/*
 #if DEBUG
 
 #else
             if (itemSegmenValues is null)
             {         
 #endif
-
+*/
             var itemSegmentValueList = _itemMasterService.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetItemSegmentValuesBySegmentNamesWithMapping(), DB_TYPE.textile).ToList();
             var TechnicalParameterList = _itemMasterService.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetQualityParameterIDs(), DB_TYPE.textile).ToList();
 
@@ -227,13 +227,13 @@ namespace EPYSLTEX.Web.Controllers.Apis
             _memoryCache.Set(cacheKey, CommonFunction.DeepClone(itemSegmenValues), TimeSpan.FromDays(1));
 
 
-
+/*
 #if DEBUG
 
 #else
         }          
 #endif
-
+*/
                     ItemSegmentMappingValuesDTO itemSegmenValuesFinal = CommonFunction.DeepClone(itemSegmenValues);
             if (!compositionIds.IsNullOrEmpty())
             {

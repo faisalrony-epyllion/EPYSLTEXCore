@@ -1,6 +1,5 @@
 ﻿using EPYSLTEXCore.Infrastructure.Entities;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.SCD;
 using EPYSLTEXCore.Infrastructure.Statics;
 
 namespace EPYSLTEXCore.Application.Interfaces.Inventory.Yarn

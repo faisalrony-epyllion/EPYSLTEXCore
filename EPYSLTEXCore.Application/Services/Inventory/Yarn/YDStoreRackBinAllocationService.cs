@@ -38,7 +38,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 sql += $@"With M AS(
                 SELECT RM.YDStoreReceiveMasterID, RM.YDStoreReceiveDate, RM.YDStoreReceiveNo, RM.LocationID, RM.CompanyID, RM.SupplierID, 
                 RM.Remarks, SpinnerID = 0, RM.YDStoreReceiveBy
-                FROM YDStoreReceiveMaster RM Where RM.PartialAllocation = 0 AND RM.CompleteAllocation=0
+                FROM {TableNames.YDStoreReceiveMaster} RM Where RM.PartialAllocation = 0 AND RM.CompleteAllocation=0
                 )
                 SELECT M.YDStoreReceiveMasterID, M.YDStoreReceiveDate, M.YDStoreReceiveNo, M.LocationID, M.CompanyID, M.SupplierID, M.Remarks, M.SpinnerID, 
                 M.YDStoreReceiveBy, CC.[Name] SupplierName, COM.CompanyName CompanyName,
@@ -53,7 +53,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 sql += $@"With M AS(
                 SELECT RM.YDStoreReceiveMasterID, RM.YDStoreReceiveDate, RM.YDStoreReceiveNo, RM.LocationID, RM.CompanyID, RM.SupplierID,
 				RM.Remarks, SpinnerID = 0, RM.YDStoreReceiveBy
-                FROM YDStoreReceiveMaster RM WHERE RM.PartialAllocation = 1 AND RM.CompleteAllocation=0
+                FROM {TableNames.YDStoreReceiveMaster} RM WHERE RM.PartialAllocation = 1 AND RM.CompleteAllocation=0
                 )
                 SELECT M.YDStoreReceiveMasterID, M.YDStoreReceiveDate, M.YDStoreReceiveNo, M.LocationID, M.CompanyID, M.SupplierID, M.Remarks, M.SpinnerID, 
                 M.YDStoreReceiveBy, CC.[Name] SupplierName, COM.CompanyName CompanyName,
@@ -67,7 +67,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 sql += $@"With M AS(
                 SELECT RM.YDStoreReceiveMasterID, RM.YDStoreReceiveDate, RM.YDStoreReceiveNo, RM.LocationID, RM.CompanyID, RM.SupplierID,
 				RM.Remarks, SpinnerID = 0, RM.YDStoreReceiveBy
-                FROM YDStoreReceiveMaster RM WHERE RM.PartialAllocation = 0 AND RM.CompleteAllocation = 1
+                FROM {TableNames.YDStoreReceiveMaster} RM WHERE RM.PartialAllocation = 0 AND RM.CompleteAllocation = 1
                 )
                 SELECT M.YDStoreReceiveMasterID, M.YDStoreReceiveDate, M.YDStoreReceiveNo, M.LocationID, M.CompanyID, M.SupplierID, M.Remarks, M.SpinnerID, 
                 M.YDStoreReceiveBy, CC.[Name] SupplierName, COM.CompanyName CompanyName,
@@ -90,7 +90,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;WITH M AS (
 	                SELECT RM.YDStoreReceiveMasterID, RM.YDStoreReceiveDate, RM.YDStoreReceiveNo, RM.LocationID, RM.CompanyID, RM.SupplierID,
 	                RM.Remarks, SpinnerID = 0,RM.YDStoreReceiveBy
-	                FROM YDStoreReceiveMaster RM WHERE RM.YDStoreReceiveMasterID = {id}
+	                FROM {TableNames.YDStoreReceiveMaster} RM WHERE RM.YDStoreReceiveMasterID = {id}
                 )
                 SELECT	M.YDStoreReceiveMasterID, M.YDStoreReceiveDate, M.YDStoreReceiveNo, M.CompanyID, M.SupplierID,
                 M.Remarks, M.SpinnerID, M.YDStoreReceiveBy,
@@ -108,17 +108,17 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 ;WITH X AS (
 	                SELECT RC.YDStoreReceiveChildID, RC.YDStoreReceiveMasterID, RC.ItemMasterID, RC.UnitID,
 					RC.ReceiveQty, RC.Remarks, RC.ReceiveCarton, RC.ReceiveCone, RC.SupplierID, RC.SpinnerID, RC.LotNo, RC.PhysicalCount, RC.ShadeCode, RC.BookingID, RC.YarnCategory
-	                FROM YDStoreReceiveChild RC 
-					INNER JOIN YDBatchItemRequirement IR ON IR.YDBItemReqID = RC.YDBItemReqID
-					INNER JOIN YDBookingChild YDBC ON YDBC.YDBookingChildID = IR.YDBookingChildID 
-					INNER JOIN YDReqChild YDRC ON YDRC.YDBookingChildID = YDBC.YDBookingChildID
-					INNER JOIN YDReqIssueChild IC ON IC.YDReqChildID = YDRC.YDReqChildID
+	                FROM {TableNames.YDStoreReceiveChild} RC 
+					INNER JOIN {TableNames.YD_BATCH_ITEM_REQUIREMENT} IR ON IR.YDBItemReqID = RC.YDBItemReqID
+					INNER JOIN {TableNames.YDBookingChild} YDBC ON YDBC.YDBookingChildID = IR.YDBookingChildID 
+					INNER JOIN {TableNames.YD_REQ_CHILD} YDRC ON YDRC.YDBookingChildID = YDBC.YDBookingChildID
+					INNER JOIN {TableNames.YD_REQ_ISSUE_CHILD} IC ON IC.YDReqChildID = YDRC.YDReqChildID
                     WHERE RC.YDStoreReceiveMasterID = {id}
                 ), Spiner As(
 					Select RC.YDStoreReceiveChildID,
 					SpinnerName = C.ShortName
 					From {DbNames.EPYSL}..ContactSpinnerSetup CS
-					Inner Join YDStoreReceiveChild RC On RC.SpinnerID = CS.SpinnerID
+					Inner JOIN {TableNames.YDStoreReceiveChild} RC On RC.SpinnerID = CS.SpinnerID
 					Inner Join {DbNames.EPYSL}..Contacts C ON C.ContactID = CS.SpinnerID
 					 WHERE RC.YDStoreReceiveMasterID = {id}
 
@@ -146,9 +146,9 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
                 --Rack
                 SELECT RB.*, MinNoOfCartoon = RB.NoOfCartoon, MinNoOfCone = RB.NoOfCone, MinReceiveQty = RB.ReceiveQty,RC.RackNo 
-                FROM YDStoreReceiveChildRackBin RB
-                INNER JOIN YDStoreReceiveChild YRC ON YRC.YDStoreReceiveChildID = RB.ChildID
-                INNER JOIN YDStoreReceiveMaster YRM ON YRM.YDStoreReceiveMasterID = YRC.YDStoreReceiveMasterID
+                FROM {TableNames.YDStoreReceiveChildRackBin} RB
+                INNER JOIN {TableNames.YDStoreReceiveChild} YRC ON YRC.YDStoreReceiveChildID = RB.ChildID
+                INNER JOIN {TableNames.YDStoreReceiveMaster} YRM ON YRM.YDStoreReceiveMasterID = YRC.YDStoreReceiveMasterID
                 LEFT JOIN {DbNames.EPYSL}..Rack RC ON RC.RackID = RB.RackID
                 WHERE YRM.YDStoreReceiveMasterID = {id}
 
@@ -194,7 +194,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
             var sql = string.Empty;
             sql += $@"
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, a.Remarks, a.EmployeeID--, Rack.RackNo, RackBin.BinNo
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 --LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 --LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 WHERE ChildID={childId}";
@@ -213,8 +213,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-	                FROM YDStoreReceiveChildRackBin a
-                    LEFT JOIN YDStoreReceiveChild YRC ON YRC.YDStoreReceiveChildID = a.ChildID
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
+                    LEFT JOIN {TableNames.YDStoreReceiveChild} YRC ON YRC.YDStoreReceiveChildID = a.ChildID
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -229,8 +229,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
-                LEFT JOIN YDStoreReceiveChild YRC ON YRC.YDStoreReceiveChildID = a.ChildID
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
+                LEFT JOIN {TableNames.YDStoreReceiveChild} YRC ON YRC.YDStoreReceiveChildID = a.ChildID
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -252,7 +252,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -264,12 +264,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN KYLOReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.KYLO_RETURN_RECEIVE_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.KYLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=1 AND ML.ChildRackBinID IS NULL
                 ),
@@ -287,7 +287,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -309,7 +309,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -321,12 +321,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN YDLeftOverReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.YD_Left_Over_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.YDLeftOverReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=1 AND ML.ChildRackBinID IS NULL
                 ),
@@ -344,7 +344,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -366,17 +366,17 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					Rate = ISNULL(YSC.Rate,ISNULL(POC.Rate,0)),
 					SpinnerName = C.ShortName, YRC.YarnControlNo, RackQty = a.ReceiveQty,
 					AvgCartoonWeight = Cast(ROUND(YRC.ReceiveQty/YRC.NoOfCartoon,2) AS DECIMAL(18, 2))
-	                FROM YDStoreReceiveChildRackBin a
-					INNER JOIN KSCLOReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-					INNER JOIN YDStoreReceiveChild YRC ON YRC.ChildID = a.ChildID
-					INNER JOIN YDStoreReceiveMaster YRM ON YRM.ReceiveID = YRC.ReceiveID
-	                LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
-					LEFT JOIN YarnStockChild YSC ON YSC.YarnStockSetId = M.YarnStockSetId AND YSC.StockFromTableId = 2 AND YSC.StockFromPKId = YRC.ChildID
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
+					INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+					INNER JOIN {TableNames.YDStoreReceiveChild} YRC ON YRC.ChildID = a.ChildID
+					INNER JOIN {TableNames.YDStoreReceiveMaster} YRM ON YRM.ReceiveID = YRC.ReceiveID
+	                LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
+					LEFT JOIN {TableNames.YarnStockChild} YSC ON YSC.YarnStockSetId = M.YarnStockSetId AND YSC.StockFromTableId = 2 AND YSC.StockFromPKId = YRC.ChildID
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
-					INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = M.YarnStockSetId
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+					INNER JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = M.YarnStockSetId
 					LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YSS.SpinnerId
 	                WHERE M.KSCLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=1
 					ORDER BY ChildID DESC;
@@ -388,7 +388,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -400,12 +400,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN KSCLOReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.KSCLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=1 AND ML.ChildRackBinID IS NULL
                 ),
@@ -423,7 +423,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -445,7 +445,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -457,12 +457,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN YarnRNDReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.YARN_RND_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.RNDLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=1 AND ML.ChildRackBinID IS NULL
                 ),
@@ -480,7 +480,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -502,7 +502,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -514,12 +514,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty,  
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN KYLOReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.KYLO_RETURN_RECEIVE_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.KYLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=0 AND ML.ChildRackBinID IS NULL
                 ),
@@ -537,7 +537,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -559,7 +559,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -571,12 +571,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty,  
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN YDLeftOverReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.YD_Left_Over_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.YDLeftOverReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=0 AND ML.ChildRackBinID IS NULL
                 ),
@@ -594,7 +594,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -616,17 +616,17 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 					Rate = ISNULL(YSC.Rate,ISNULL(POC.Rate,0)),
 					SpinnerName = C.ShortName, YRC.YarnControlNo, RackQty = a.ReceiveQty,
 					AvgCartoonWeight = Cast(ROUND(YRC.ReceiveQty/YRC.NoOfCartoon,2) AS DECIMAL(18, 2))
-	                FROM YDStoreReceiveChildRackBin a
-					INNER JOIN KSCLOReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-					INNER JOIN YDStoreReceiveChild YRC ON YRC.ChildID = a.ChildID
-					INNER JOIN YDStoreReceiveMaster YRM ON YRM.ReceiveID = YRC.ReceiveID
-	                LEFT JOIN YarnPOChild POC ON POC.YPOChildID = YRC.POChildID
-					LEFT JOIN YarnStockChild YSC ON YSC.YarnStockSetId = M.YarnStockSetId AND YSC.StockFromTableId = 2 AND YSC.StockFromPKId = YRC.ChildID
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
+					INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+					INNER JOIN {TableNames.YDStoreReceiveChild} YRC ON YRC.ChildID = a.ChildID
+					INNER JOIN {TableNames.YDStoreReceiveMaster} YRM ON YRM.ReceiveID = YRC.ReceiveID
+	                LEFT JOIN {TableNames.YarnPOChild} POC ON POC.YPOChildID = YRC.POChildID
+					LEFT JOIN {TableNames.YarnStockChild} YSC ON YSC.YarnStockSetId = M.YarnStockSetId AND YSC.StockFromTableId = 2 AND YSC.StockFromPKId = YRC.ChildID
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
-					INNER JOIN YarnStockSet YSS ON YSS.YarnStockSetId = M.YarnStockSetId
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+					INNER JOIN {TableNames.YarnStockSet} YSS ON YSS.YarnStockSetId = M.YarnStockSetId
 					LEFT JOIN {DbNames.EPYSL}..Contacts C ON C.ContactID = YSS.SpinnerId
 	                WHERE M.KSCLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=0 
 				   ORDER BY LocationName, RackNo
@@ -638,7 +638,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -650,12 +650,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN KSCLOReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.KNITTING_SUB_CONTRACT_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.KSCLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=0 AND ML.ChildRackBinID IS NULL
                 ),
@@ -673,7 +673,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -695,7 +695,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     YarnStockSetId = 0
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -707,12 +707,12 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 	                a.NoOfCartoon, a.NoOfCone, ReceiveQty = YSM.AllocatedStockQty, 
 	                Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName,
                     M.YarnStockSetId
-	                FROM YDStoreReceiveChildRackBin a
+	                FROM {TableNames.YDStoreReceiveChildRackBin} a
 	                LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
 	                LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
 	                LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
-	                INNER JOIN YarnRNDReturnReceiveChildRackBinMapping M ON M.ChildRackBinID = a.ChildRackBinID
-                    LEFT JOIN YarnStockMaster YSM ON YSM.YarnStockSetId = M.YarnStockSetId
+	                INNER JOIN {TableNames.YARN_RND_Return_Receive_CHILD_RACK_BIN_MAPPING} M ON M.ChildRackBinID = a.ChildRackBinID
+                    LEFT JOIN {TableNames.YarnStockMaster} YSM ON YSM.YarnStockSetId = M.YarnStockSetId
 	                LEFT JOIN MailList ML ON ML.ChildRackBinID = M.ChildRackBinID
 	                WHERE M.RNDLOReturnReceiveChildId = {kReturnReceivedChildId} AND M.IsUsable=0 AND ML.ChildRackBinID IS NULL
                 ),
@@ -730,7 +730,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                 SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, a.BinID, 
                 a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                 Rack.RackNo, RackBin.BinNo, LocationName = L.ShortName
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 LEFT JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                 LEFT JOIN {DbNames.EPYSL}..RackBin ON RackBin.BinID = a.BinID
                 LEFT JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
@@ -748,8 +748,8 @@ namespace EPYSLTEXCore.Application.Services.Inventory
                     SELECT a.ChildRackBinID, a.ChildID, a.LocationID, a.RackID, 
                     a.NoOfCartoon, a.NoOfCone, a.ReceiveQty, 
                     Rack.RackNo, LocationName = L.ShortName, YRC.YarnStockSetId
-                    FROM YDStoreReceiveChildRackBin a
-					INNER JOIN YDStoreReceiveChild YRC ON YRC.ChildID=a.ChildID
+                    FROM {TableNames.YDStoreReceiveChildRackBin} a
+					INNER JOIN {TableNames.YDStoreReceiveChild} YRC ON YRC.ChildID=a.ChildID
                     INNER JOIN {DbNames.EPYSL}..Rack ON Rack.RackID = a.RackID
                     INNER JOIN {DbNames.EPYSL}..Location L ON L.LocationID = a.LocationID
                     WHERE a.LocationID > 0 AND Rack.RackNo IS NOT NULL
@@ -767,16 +767,16 @@ namespace EPYSLTEXCore.Application.Services.Inventory
 
             string sql = $@"
                 SELECT a.*
-                FROM YDStoreReceiveChildRackBin a
+                FROM {TableNames.YDStoreReceiveChildRackBin} a
                 WHERE a.ChildRackBinID IN ({childRackBinIDs})";
             return await _service.GetDataAsync<YDStoreReceiveChildRackBin>(sql);
         }
         public async Task<YDStoreReceiveMaster> GetAllAsync(int id)
         {
             var sql = $@"
-            ;Select * From YDStoreReceiveMaster Where YDStoreReceiveMasterID = {id}
-            ; Select * From YDStoreReceiveChild Where YDStoreReceiveMasterID = {id}
-            ; Select * From YDStoreReceiveChildRackBin Where ChildID In(Select YDStoreReceiveChildID From YDStoreReceiveChild Where YDStoreReceiveMasterID = {id}) ";
+            ;Select * FROM {TableNames.YDStoreReceiveMaster} Where YDStoreReceiveMasterID = {id}
+            ; Select * FROM {TableNames.YDStoreReceiveChild} Where YDStoreReceiveMasterID = {id}
+            ; Select * FROM {TableNames.YDStoreReceiveChildRackBin} Where ChildID In(Select YDStoreReceiveChildID FROM {TableNames.YDStoreReceiveChild} Where YDStoreReceiveMasterID = {id}) ";
 
             try
             {

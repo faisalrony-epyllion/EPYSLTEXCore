@@ -327,16 +327,26 @@ namespace EPYSLTEXCore.Infrastructure.Static
         public static string GetFabricComponentsWithManufactureLine(string entityTypeName)
         {
             return $@"
-                 Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text],isv.SegmentValue [desc]
+                 Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text],isv.SegmentValue [desc], BT.SegmentValue [additionalValue]
                 From {DbNames.EPYSL}..EntityTypeValue EV
                 Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
 		        LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
                 LEFT join FiberAndFiberTypeMapping map on map.FiberID=ev.ValueID
-				LEFT join  {DbNames.EPYSL}..ItemSegmentValue isv on isv.SegmentValueID=map.ManufacturingLineID
+				LEFT join {DbNames.EPYSL}..ItemSegmentValue isv on isv.SegmentValueID=map.ManufacturingLineID  
+                LEFT join {DbNames.EPYSL}..ItemSegmentValue BT on BT.SegmentValueID=map.FiberTypeID
                 Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
-                Group By EV.ValueID,EV.ValueName,isv.SegmentValue";
+                Group By EV.ValueID,EV.ValueName,isv.SegmentValue,BT.SegmentValue";
 
 
+        }
+        public static string GetFabricComponentMappingSetup()
+        {
+            return $@"
+                SELECT A.*, FiberTypeName = BT.SegmentValue,ProgramTypeName = CASE WHEN ISNULL(ISV3.SegmentValue,'N/A') = 'N/A' THEN 'Conventional' ELSE 'Sustainable' END
+                FROM FiberAndFiberTypeMapping A
+                INNER JOIN FiberAndFiberTypeMapping B ON B.FiberID = A.FiberID
+                LEFT join {DbNames.EPYSL}..ItemSegmentValue BT on BT.SegmentValueID=B.FiberTypeID
+                LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ISV3 ON ISV3.SegmentValueID = A.CertificationsID;";
         }
         public static string GetYarnShadeBooks()
         {

@@ -1971,7 +1971,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
                 // Assign new IDs and insert entities
                 foreach (var entity in entities)
                 {
-                    typeof(T).GetProperty("Id")?.SetValue(entity, ++maxId); // Set new ID
+                    typeof(T).GetProperty("Id")?.SetValue(entity, maxId); // Set new ID
                     await Connection.ExecuteAsync(insertQuery, entity, transaction: transaction);
                 }
 

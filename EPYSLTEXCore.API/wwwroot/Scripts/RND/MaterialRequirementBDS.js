@@ -705,6 +705,8 @@
                     var programTypeName = "";
                     var manufacturingLine = "";
 
+
+
                     var obj = masterData.FabricComponentMappingSetupList.find(x => x.FiberID == fiberID);
                     if (typeof obj !== "undefined") {
                         fiberTypeName = obj.FiberTypeName;
@@ -713,7 +715,8 @@
                     if (typeof obj !== "undefined") {
                         programTypeName = obj.ProgramTypeName;
                     }
-                    debugger;
+
+                    
                     obj = masterData.FabricComponentsNew.find(x => x.id == fiberID);
                     if (typeof obj !== "undefined") {
                         manufacturingLine = obj.desc;

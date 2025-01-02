@@ -350,13 +350,39 @@ namespace EPYSLTEXCore.Infrastructure.Static
 
         public static string GetFabricComponents(string entityTypeName)
         {
+          //  return $@"
+          //       Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text]
+          //      From {DbNames.EPYSL}..EntityTypeValue EV
+          //      Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
+		        //LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
+          //      Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
+          //      Group By EV.ValueID,EV.ValueName";
+
+
             return $@"
-                 Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text]
+                WITH 
+                AA AS
+                (
+	                SELECT FF.FiberID, ISV.SegmentValue
+	                FROM FiberAndFiberTypeMapping FF
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FF.ManufacturingLineID 
+	                GROUP BY FF.FiberID, ISV.SegmentValue
+                ),
+                FF AS
+                (
+	                SELECT AA.FiberID, SegmentValue = STRING_AGG(AA.SegmentValue,',')
+	                FROM AA 
+	                GROUP BY AA.FiberID
+                )
+                Select CAST(EV.ValueID As varchar) [id], EV.ValueName [text], FF.SegmentValue [desc]
                 From {DbNames.EPYSL}..EntityTypeValue EV
                 Inner Join {DbNames.EPYSL}..EntityType ET On EV.EntityTypeID = ET.EntityTypeID
-		        LEFT JOIN {TableNames.FiberBasicSetup} FBS ON FBS.ValueID = EV.ValueID
-                Where ET.EntityTypeName = '{entityTypeName}' AND ISNULL(FBS.IsInactive,0) = 0
-                Group By EV.ValueID,EV.ValueName";
+                LEFT JOIN FF ON FF.FiberID = EV.ValueID
+                Where ET.EntityTypeName = '{entityTypeName}'
+                Group By EV.ValueID,EV.ValueName,FF.SegmentValue
+                order by EV.ValueName
+
+";
 
 
         }
@@ -384,7 +410,7 @@ namespace EPYSLTEXCore.Infrastructure.Static
                 (
 	                SELECT FF.FiberID, ISV.SegmentValue
 	                FROM FiberAndFiberTypeMapping FF
-	                INNER JOIN EPYSL..ItemSegmentValue ISV ON ISV.SegmentValueID = FF.ManufacturingLineID 
+	                INNER JOIN {DbNames.EPYSL}..ItemSegmentValue ISV ON ISV.SegmentValueID = FF.ManufacturingLineID 
 	                GROUP BY FF.FiberID, ISV.SegmentValue
                 ),
                 FF AS

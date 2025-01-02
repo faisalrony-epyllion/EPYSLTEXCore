@@ -476,7 +476,7 @@ namespace EPYSLTEX.Core.Interfaces.Services
 
 
                 --Fiber-SubProgram-Certifications Mapping Setup
-                Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup";
+                {CommonQueries.GetFabricComponentMappingSetup()}";
 
             try
             {

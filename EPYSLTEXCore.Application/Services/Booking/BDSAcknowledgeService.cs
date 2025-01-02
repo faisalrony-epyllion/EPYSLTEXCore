@@ -12277,7 +12277,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     ORDER BY EV.ValueName;
 
                     --Fiber-SubProgram-Certifications Mapping Setup
-                    Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup";
+                    {CommonQueries.GetFabricComponentMappingSetup()}";
 
             try
             {
@@ -13942,7 +13942,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
                     Order By ED.DepertmentID;
 
                     --Fiber-SubProgram-Certifications Mapping Setup
-                    Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup";
+                    {CommonQueries.GetFabricComponentMappingSetup()}";
 
 
             try

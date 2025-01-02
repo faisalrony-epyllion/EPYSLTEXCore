@@ -8264,7 +8264,7 @@ namespace EPYSLTEXCore.Application.Services.Booking
             ORDER BY EV.ValueName;
 
             --Fiber-SubProgram-Certifications Mapping Setup
-            Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup
+            {CommonQueries.GetFabricComponentMappingSetup()}
             ";
             try
             {//--

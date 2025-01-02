@@ -2232,6 +2232,7 @@
     var subProgramElem, certificationElem, fiberElem;
     var subProgramObj, certificationObj, fiberObj;
     function initTblCreateComposition() {
+
         var YarnSubProgramNewsFilteredList = [];//masterData.YarnSubProgramNews;
         var CertificationsFilteredList = [];//masterData.Certifications;
         compositionComponents = [];
@@ -2253,7 +2254,7 @@
             //    field: 'Fiber', headerText: 'Component', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.FabricComponents, field: "Fiber" })
             //}
             {
-                field: 'Fiber', headerText: 'Fiber', valueAccessor: ej2GridDisplayFormatterV2, edit: {
+                field: 'Fiber', headerText: 'Yarn Type', valueAccessor: ej2GridDisplayFormatterV2, edit: {
                     create: function () {
                         fiberElem = document.createElement('input');
                         return fiberElem;
@@ -2269,15 +2270,19 @@
                             dataSource: masterData.FabricComponentsNew,
                             fields: { value: 'id', text: 'text' },
                             //enabled: false,
-                            placeholder: 'Select Component',
+                            placeholder: 'Select Yarn Type',
                             floatLabelType: 'Never',
-                            change: function (f) {
+                            change: async function (f) {
 
                                 if (!f.isInteracted || !f.itemData) return false;
                                 e.rowData.Fiber = f.itemData.id;
                                 e.rowData.Fiber = f.itemData.text;
 
-                                YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews.filter(y => y.additionalValue == f.itemData.id);
+                                //YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews.filter(y => y.additionalValue == f.itemData.id);
+
+                                var list = await axios.get(`/api/rnd-free-concept-mr/yarn-sub-progran-new/${f.itemData.id}`);
+                                var YarnSubProgramNewsFilteredList = list.data;
+
                                 subProgramObj.dataSource = YarnSubProgramNewsFilteredList;
                                 subProgramObj.dataBind();
 
@@ -2314,14 +2319,19 @@
                             //enabled: false,
                             placeholder: 'Select Yarn Sub Program',
                             floatLabelType: 'Never',
-                            change: function (f) {
+                            change: async function (f) {
 
                                 if (!f.isInteracted || !f.itemData) return false;
                                 e.rowData.YarnSubProgramNew = f.itemData.id;
                                 e.rowData.YarnSubProgramNew = f.itemData.text;
 
                                 //CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id);
-                                CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id && y.additionalValue2 == f.itemData.additionalValue);
+                                //CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id && y.additionalValue2 == f.itemData.additionalValue);
+
+                                var list = await axios.get(`/api/rnd-free-concept-mr/certification/${f.itemData.additionalValue}/${f.itemData.id}`);
+                                var CertificationsFilteredList = list.data;
+
+
                                 certificationObj.dataSource = CertificationsFilteredList;
                                 certificationObj.dataBind();
 
@@ -2366,8 +2376,16 @@
                         certificationObj.appendTo(certificationElem);
                     }
                 }
-            }
-
+            },
+            {
+                field: 'FiberTypeName', headerText: 'Fiber Type', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
+            {
+                field: 'ProgramTypeName', headerText: 'Program', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
+            {
+                field: 'ManufacturingLine', headerText: 'Manufacturing Line', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
         ];
 
         var gridOptions = {
@@ -2375,7 +2393,6 @@
             data: compositionComponents,
             columns: columns,
             actionBegin: function (args) {
-
                 if (args.requestType === "add") {
                     if (isBlended) {
                         if (compositionComponents.length === 5) {
@@ -2396,7 +2413,6 @@
                     args.data.Id = getMaxIdForArray(compositionComponents, "Id");
                 }
                 else if (args.requestType === "save") {
-
                     var fiberID = 0;
                     var subProgramID = 0;
                     var certificationsID = 0;
@@ -2429,8 +2445,43 @@
                         }
                     }
 
-                    if (args.action === "edit") {
 
+                    //fiberTypeName, programTypeName
+                    var fiberTypeName = "";
+                    var programTypeName = "";
+                    var manufacturingLine = "";
+
+                    var obj = masterData.FabricComponentMappingSetupList.find(x => x.FiberID == fiberID);
+                    if (typeof obj !== "undefined") {
+                        fiberTypeName = obj.FiberTypeName;
+                    }
+                    obj = masterData.FabricComponentMappingSetupList.find(x => x.CertificationsID == certificationsID);
+                    if (typeof obj !== "undefined") {
+                        programTypeName = obj.ProgramTypeName;
+                    }
+                    debugger;
+                    obj = masterData.FabricComponentsNew.find(x => x.id == fiberID);
+                    if (typeof obj !== "undefined") {
+                        manufacturingLine = obj.desc;
+                    }
+
+
+                    args.rowData.FiberTypeName = fiberTypeName;
+                    args.data.FiberTypeName = fiberTypeName;
+                    args.data.ManufacturingLine = manufacturingLine;
+
+                    args.rowData.ProgramTypeName = programTypeName;
+                    args.data.ProgramTypeName = programTypeName;
+                    args.data.ManufacturingLine = manufacturingLine;
+
+                    //fiberTypeName, programTypeName
+
+
+
+
+                    //masterData.FabricComponentsNew
+
+                    if (args.action === "edit") {
                         if (!args.data.Fiber) {
                             toastr.warning("Fabric component is required.");
                             args.cancel = true;
@@ -2462,11 +2513,28 @@
         compositionComponents.reverse();
 
         var composition = "";
+        var blendTypeNames = [];
+        var programTypeNames = [];
         //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
         compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
-        compositionComponents.forEach(function (component) {
 
+        var manufacturingLines = [];
+        var yarnTypes = []; //Fibers
+
+        compositionComponents.forEach(function (component) {
             composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
+
+            yarnTypes.push(component.Fiber);
+            var indexF = masterData.FabricComponentsNew.findIndex(x => x.text == component.Fiber);
+            if (indexF > -1) {
+                var manufacturingLine = masterData.FabricComponentsNew[indexF].desc;
+
+                var indexG = manufacturingLines.findIndex(x => x == manufacturingLine);
+                if (indexG == -1) {
+                    manufacturingLines.push(manufacturingLine);
+                }
+            }
+
             if (component.YarnSubProgramNew) {
                 if (component.YarnSubProgramNew != 'N/A') {
                     composition += ` ${component.YarnSubProgramNew}`;
@@ -2479,11 +2547,42 @@
                 }
             }
             composition += ` ${component.Fiber}`;
-        });
 
+            console.log(compositionComponents);
+            component.FiberTypeName = getDefaultValueWhenInvalidS(component.FiberTypeName);
+            if (component.FiberTypeName.length > 0) {
+                blendTypeNames.push(component.FiberTypeName);
+            }
+            component.ProgramTypeName = getDefaultValueWhenInvalidS(component.ProgramTypeName);
+            if (component.ProgramTypeName.length > 0) {
+                programTypeNames.push(component.ProgramTypeName);
+            }
+
+        });
+        yarnTypes = yarnTypes.join(",");
+        manufacturingLines = manufacturingLines.join(",");
+
+        blendTypeNames = [...new Set(blendTypeNames)];
+        var blendTypeName = blendTypeNames.join(" + ");
+
+        programTypeNames = [...new Set(programTypeNames)];
+        var programTypeName = "Conventional";
+        var indexF = programTypeNames.findIndex(x => x == "Sustainable");
+        if (indexF > -1) {
+            programTypeName = "Sustainable";
+        }
+
+        //var data = {
+        //    SegmentValue: composition
+        //};
         var data = {
-            SegmentValue: composition
-        };
+            SegmentValue: composition,
+            BlendTypeName: blendTypeName,
+            ProgramTypeName: programTypeName,
+            ManufacturingLines: manufacturingLines,
+            YarnTypes: yarnTypes
+        }
+
         axios.post("/api/rnd-free-concept-mr/save-yarn-composition", data)
             .then(function () {
                 $pageEl.find(`#modal-new-composition-${pageId}`).modal("hide");
@@ -2499,7 +2598,7 @@
                 }
                 args.cancel = true;
             });
-            //.catch(showResponseError)
+        //.catch(showResponseError)
     }
     function initCommonFinderFP() {
         if (isBulkBookingKnittingInfoMenu() || isAdditionBulkBooking()) {

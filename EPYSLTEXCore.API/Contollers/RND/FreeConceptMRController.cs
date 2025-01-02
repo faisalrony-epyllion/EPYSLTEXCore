@@ -379,6 +379,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             obj.BlendTypeName = model.BlendTypeName;
             obj.ProgramTypeName = model.ProgramTypeName;
             obj.ManufacturingLines = model.ManufacturingLines;
+            obj.YarnTypes = model.YarnTypes;
             if (obj.BlendTypeName.IsNotNullOrEmpty())
             {
                 await _service.SaveBlendTypeName(obj);

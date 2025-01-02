@@ -237,7 +237,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
                 List<KnittingPlanYarn> kpYarnsFCMR = await _service.GetYarnsForFCMRChild(entity.ConceptID.ToString(), false, false, "");
 
                 entity.ReqDeliveryDate = model.ReqDeliveryDate;
-                entity.UpdatedBy = AppUser.UserCode;;
+                entity.UpdatedBy = AppUser.UserCode;
                 entity.DateUpdated = DateTime.Now;
                 entity.FilePath = filePath;
                 entity.AttachmentPreviewTemplate = previewTemplate;
@@ -249,7 +249,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
                 {
                     entity.RevisionNo = entity.RevisionNo + 1;
                     entity.RevisionDate = DateTime.Now;
-                    entity.RevisionBy = AppUser.UserCode;;
+                    entity.RevisionBy = AppUser.UserCode;
                     entity.RevisionReason = "";
                 }
 
@@ -339,7 +339,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
                                 jobCardMaster.KJobCardQty = jobCard.KJobCardQty;
                                 jobCardMaster.Remarks = jobCard.Remarks;
-                                jobCardMaster.UpdatedBy = AppUser.UserCode;;
+                                jobCardMaster.UpdatedBy = AppUser.UserCode;
                                 jobCardMaster.DateUpdated = DateTime.Now;
                                 if (jobCardMaster.SubGroupID != 1) jobCardMaster.UnitID = 1; //Pcs
                                 jobCardMaster.EntityState = EntityState.Modified;
@@ -504,13 +504,13 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
                 if (entity.KPGroup.GroupID > 0)
                 {
-                    entity.KPGroup.UpdatedBy = AppUser.UserCode;;
+                    entity.KPGroup.UpdatedBy = AppUser.UserCode;
                     entity.KPGroup.DateUpdated = DateTime.Now;
                     entity.KPGroup.EntityState = EntityState.Modified;
                 }
                 else
                 {
-                    entity.KPGroup.AddedBy = AppUser.UserCode;;
+                    entity.KPGroup.AddedBy = AppUser.UserCode;
                     entity.KPGroup.DateAdded = DateTime.Now;
                     entity.KPGroup.EntityState = EntityState.Added;
                 }
@@ -536,7 +536,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             else
             {
                 entity = model;
-                entity.AddedBy = AppUser.UserCode;;
+                entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
                 entity.FilePath = filePath;
                 entity.AttachmentPreviewTemplate = previewTemplate;
@@ -557,7 +557,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
                         jobCard.KnittingMachineID = child.KnittingMachineID;
                         jobCard.MachineDia = child.MachineDia;
                         jobCard.MachineGauge = child.MachineGauge;
-                        jobCard.AddedBy = AppUser.UserCode;;
+                        jobCard.AddedBy = AppUser.UserCode;
                         jobCard.DateAdded = DateTime.Now;
 
                         jobCard.Childs = new List<KJobCardChild>();
@@ -661,7 +661,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             List<KnittingPlanYarn> kpYarnsFCMR = await _service.GetYarnsForFCMRChild(entity.ConceptID.ToString(), false, false, "");
 
             entity.ReqDeliveryDate = model.ReqDeliveryDate;
-            entity.UpdatedBy = AppUser.UserCode;;
+            entity.UpdatedBy = AppUser.UserCode;
             entity.DateUpdated = DateTime.Now;
 
             entity.PreProcessRevNo = model.PreProcessRevNo;
@@ -722,7 +722,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
                         if (jobCardMaster == null)
                         {
                             jobCardMaster = jobCard;
-                            jobCard.AddedBy = AppUser.UserCode;;
+                            jobCard.AddedBy = AppUser.UserCode;
                             jobCard.DateAdded = DateTime.Now;
                             if (jobCardMaster.SubGroupID != 1) jobCardMaster.UnitID = 1; //Pcs
                             knittingPlanChild.KJobCardMasters.Add(jobCardMaster);
@@ -744,7 +744,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
                             jobCardMaster.KJobCardQty = jobCard.KJobCardQty;
                             jobCardMaster.Remarks = jobCard.Remarks;
                             jobCardMaster.GroupID = entity.PlanNo;
-                            jobCardMaster.UpdatedBy = AppUser.UserCode;;
+                            jobCardMaster.UpdatedBy = AppUser.UserCode;
                             jobCardMaster.DateUpdated = DateTime.Now;
                             if (jobCardMaster.SubGroupID != 1) jobCardMaster.UnitID = 1; //Pcs
                             jobCardMaster.EntityState = EntityState.Modified;
@@ -1157,7 +1157,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             else
             {
                 entity = model;
-                entity.AddedBy = AppUser.UserCode;;
+                entity.AddedBy = AppUser.UserCode;
                 entity.DateAdded = DateTime.Now;
 
                 string conceptIds = string.Join(",", model.KnittingPlans.Select(x => x.ConceptID));
@@ -1252,7 +1252,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
             entity.EntityState = EntityState.Modified;
             entity.DateUpdated = DateTime.Now;
-            entity.UpdatedBy = AppUser.UserCode; ;
+            entity.UpdatedBy = AppUser.UserCode; 
             entity.CPI = model.CPI;
             entity.Needle = model.Needle;
             entity.KnittingTypeID = model.KnittingTypeID;

@@ -1740,7 +1740,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 //{
                 //    await _connection.ExecuteAsync(SPNames.sp_Validation_YarnRnDReqChild, new { PrimaryKeyId = item.RnDReqChildID, SecondParamValue = item.KPYarnID, ThirdParamValue = item.ItemMasterID, UserId = userId, EntityState = item.EntityState }, transaction, 30, CommandType.StoredProcedure);
                 //}
-                
+
                 //if (entity.IsApprove && entity.IsAcknowledge == false)
                 //{
                 //    if (entity.ApproveBy.IsNull()) entity.ApproveBy = 0;
@@ -1748,7 +1748,7 @@ namespace EPYSLTEXCore.Application.Services.Inventory.Yarn
                 //    await _connection.ExecuteAsync(SPNames.spYarnStockOperation , new { MasterID = entity.RnDReqMasterID, FromMenuType = EnumFromMenuType.RnDYarnRequisitionApp, UserId = userId }, transaction, 30, CommandType.StoredProcedure);
                 //}
 
-                #endregion pendingwork
+                #endregion PendingWork
                 transaction.Commit();
                 transactionGmt.Commit();
             }

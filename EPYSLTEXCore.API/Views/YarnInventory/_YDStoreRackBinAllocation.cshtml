@@ -1,0 +1,300 @@
+﻿<script type="text/javascript">
+    localStorage.setItem("pageName", "@ViewBag.PageName");
+    localStorage.setItem("menuId", "@ViewBag.MenuId");
+</script>
+
+@{
+    var pageId = ViewBag.PageName + "-" + ViewBag.MenuId;
+    var divTblId = "divtbl" + pageId;
+    var toolbarId = "toolbar" + pageId;
+    var tblMasterId = "tbl" + pageId;
+    var tblChildId = "tblChild" + pageId;
+    var formId = "form" + pageId;
+    var divDetailsId = "divDetails" + pageId;
+}
+
+<div id="@pageId">
+    <input type="hidden" id="CDAPage" value="@ViewBag.CDAPage" />
+    <div class="row" id="@divTblId">
+        <div class="col-sm-12">
+            <div id="@toolbarId">
+                <button id="btnPending" class="btn btn-success text-white btn-sm">
+                    <i class="fa fa-hourglass"></i>&nbsp;Pending Allocation
+                </button>
+                <button id="btnPartialLists" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-bell"></i>&nbsp;Partial Allocation Lists
+                </button>
+                <button id="btnCompleteLists" class="btn btn-default text-grey btn-sm">
+                    <i class="fa fa-bell"></i>&nbsp;Complete Allocation Lists
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="font-size:12px">
+
+            <table id="@tblMasterId"></table>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" id="@formId">
+            <input type="hidden" id="YDStoreReceiveMasterID" name="YDStoreReceiveMasterID" value="-1111" />
+            <input type="hidden" name="SupplierId" id="SupplierId" />
+            <input type="hidden" name="CompanyId" id="CompanyId" />
+
+
+            <div class="box-body" id="@divDetailsId" style="display:none">
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            General/Commercial Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Receive No</label>
+                                            <div class="col-sm-7">
+                                                <input id="YDStoreReceiveNo" name="YDStoreReceiveNo" class="form-control input-sm" value="**<< NEW >>**" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Receive Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="YDStoreReceiveDate" name="YDStoreReceiveDate" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+
+                                        @*<div class="form-group CI">
+                                            <label class="control-label col-sm-5 small">L/C No</label>
+                                            <div class="col-sm-7">
+                                                <input id="LCNo" name="LCNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group CI">
+                                            <label class="control-label col-sm-5 small">L/C Date</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="LCDate" name="LCDate" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>*@
+                                    </div>
+
+                                    @*<div class="col-sm-4">
+                                        <div class="form-group PO">
+                                            <label class="control-label col-sm-5 small">PO No</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="PONo" name="PONo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group PO">
+                                            <label class="control-label col-sm-5 small">PO Date</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="PODate" name="PODate" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group CI">
+                                            <label class="control-label col-sm-5 small">Invoice No</label>
+                                            <div class="col-sm-7">
+                                                <input id="InvoiceNo" name="InvoiceNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group CI">
+                                            <label class="control-label col-sm-5 small">Invoice Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="InvoiceDate" name="InvoiceDate" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Tolerance</label>
+                                            <div class="col-sm-7" style="text-align:right">
+                                                <input id="Tolerance" name="Tolerance" class="form-control input-sm" value="0" readonly />
+                                            </div>
+                                        </div>
+                                    </div>*@
+
+
+                                    @*<div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Supplier</label>
+                                            <div class="col-sm-7">
+                                                <input id="SupplierName" name="SupplierName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Spinner</label>
+                                            <div class="col-sm-7">
+                                                <input id="SpinnerName" name="SpinnerName" class="form-control input-sm" style="width:100%" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group CI">
+                                            <label class="control-label col-sm-5 small">Bank-Branch</label>
+                                            <div class="col-sm-7">
+                                                <input id="BankBranchName" name="BankBranchName" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                    </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Receive Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    @*<div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Acompanied Invoice</label>
+                                            <div class="col-sm-7">
+                                                <input id="ACompanyInvoice" name="ACompanyInvoice" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Challan No</label>
+                                            <div class="col-sm-7">
+                                                <input id="ChallanNo" name="ChallanNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Challan Date</label>
+                                            <div class="col-sm-7">
+                                                <input id="ChallanDate" name="ChallanDate" class="form-control input-sm ej2-datepicker" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">PL No</label>
+                                            <div class="col-sm-7">
+                                                <input id="PLNo" name="PLNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" hidden>
+                                            <label class="control-label col-sm-5 small">Gate In Time</label>
+                                            <div class="col-sm-7">
+                                                <div class="input-group clockpicker">
+                                                    <input id="GPTime" name="GPTime" type="text" class="form-control" placeholder="Now">
+                                                    <span class="input-group-addon">
+                                                        <span class="fa fa-clock-o"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group d-none">
+                                            <label class="control-label col-sm-5 small">Mode of Transport</label>
+                                            <div class="col-sm-7">
+                                                <input id="TransportModeName" name="TransportModeName" class="form-control input-sm" style="width:100%" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Transport Type</label>
+                                            <div class="col-sm-7">
+                                                <input id="TransportTypeName" name="TransportTypeName" class="form-control input-sm" style="width:100%" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Transport Agency</label>
+                                            <div class="col-sm-7">
+                                                <input id="TransportAgencyName" name="TransportAgencyName" class="form-control input-sm" style="width:100%" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group CI">
+                                            <label class="control-label col-sm-5 small">BL No</label>
+                                            <div class="col-sm-7">
+                                                <input id="BLNo" name="BLNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Received By</label>
+                                            <div class="col-sm-7">
+                                                <input id="ReceivedBy" name="ReceivedBy" class="form-control input-sm" style="width:100%" readonly />
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                    <div class="col-sm-4">
+                                        @*<div class="form-group">
+                                            <label class="control-label col-sm-5 small">Vehicle No</label>
+                                            <div class="col-sm-7">
+                                                <input id="VehicalNo" name="VehicalNo" class="form-control input-sm" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Shipment Status</label>
+                                            <div class="col-sm-7">
+                                                <input id="ShipmentStatusName" name="ShipmentStatusName" class="form-control input-sm" style="width:100%" readonly />
+                                            </div>
+                                        </div>*@
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Store Location</label>
+                                            <div class="col-sm-7">
+                                                <input id="LocationName" name="LocationName" class="form-control input-sm" style="width:100%" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-5 small">Remarks</label>
+                                            <div class="col-sm-7">
+                                                <textarea rows="2" id="Remarks" name="Remarks" class="form-control" placeholder="Enter additional notes" readonly></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="panel panel-success" style="border-color:transparent; border-style:none;">
+                        <div class="panel-heading">
+                            Item Information
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-horizontal">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <table id="@tblChildId"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer btn-e-float-margin" id="divFormButtons">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default m-w-120" id="btnYREditCancel"><i class="fa fa-angle-double-left"></i>&nbsp;Back to List</button>
+                            <button type="button" class="btn btn-primary m-w-120" id="btnSaveYR"><i class="fa fa-save"></i>&nbsp;&nbsp;Save</button>
+                            <button type="button" class="btn btn-success m-w-120" id="btnYRAcceptance" style="display:none"><i class="fa fa-angle-double-right"></i>&nbsp;Accept</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+

@@ -53,7 +53,7 @@ namespace EPYSLTEXCore.API.Contollers.Inventory.Yarn
         [ValidateModel]
         public async Task<IActionResult> Save(dynamic jsonString)
         {
-            SendToYDStoreMaster model= JsonConvert.DeserializeObject<SendToYDStoreMaster>(Convert.ToString(jsonString));
+            SendToYDStoreMaster model = JsonConvert.DeserializeObject<SendToYDStoreMaster>(Convert.ToString(jsonString));
             SendToYDStoreMaster entity;
             if (model.IsModified)
             {

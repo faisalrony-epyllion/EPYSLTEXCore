@@ -2089,7 +2089,7 @@ namespace EPYSLTEXCore.Infrastructure.Data
 
                     if (idProperty != null)
                     {
-                        idProperty.SetValue(entity, ++maxId);
+                        idProperty.SetValue(entity, maxId);
                     }
                 }
                 // Execute insert query

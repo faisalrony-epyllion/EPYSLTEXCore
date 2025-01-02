@@ -15,6 +15,8 @@ using Microsoft.Data.SqlClient;
 using EPYSLTEXCore.Infrastructure.Entities.Tex;
 using System.Linq.Expressions;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
+using EPYSLTEXCore.Infrastructure.Entities.Tex.Booking;
+using System.Collections.Generic;
 
 namespace EPYSLTEX.Core.Interfaces.Services
 {
@@ -1645,9 +1647,28 @@ namespace EPYSLTEX.Core.Interfaces.Services
            await  _service.AddAsync(entity, table);
         }
 
-        //public Task<ItemSegmentName> FindAsync(Func<object, bool> value)
-        //{
-        //    throw new NotImplementedException();
-        //}
+
+        #region Composition Part
+        public async Task<List<Select2OptionModel>> GetYarnTypes()
+        {
+            string sql = CommonQueries.GetFabricComponentsWithManufactureLine(EntityTypeNameConstants.FABRIC_TYPE);
+            var list = await _service.GetDataAsync<Select2OptionModel>(sql);
+            return list;
+        }
+
+        public async Task<List<Select2OptionModel>> GetYarnSubProgramNews(string yarnTypeId)
+        {
+            string sql = CommonQueries.GetSubPrograms(yarnTypeId);
+            var list = await _service.GetDataAsync<Select2OptionModel>(sql);
+            return list;
+        }
+
+        public async Task<List<Select2OptionModel>> GetCertifications(string yarnTypeId, string yarnSubProgranNewId)
+        {
+            string sql = CommonQueries.GetCertifications(yarnTypeId, yarnSubProgranNewId);
+            var list = await _service.GetDataAsync<Select2OptionModel>(sql);
+            return list;
+        }
+        #endregion
     }
 }

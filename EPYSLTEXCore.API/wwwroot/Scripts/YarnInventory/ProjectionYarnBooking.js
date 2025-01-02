@@ -226,7 +226,7 @@
                 modalSize: "modal-lg",
                 apiEndPoint: `/api/mr-bds/get-complete-mr-childs/${buyerIds}/${buyerTeamIDs}`,
                 fields: "BookingNo,Segment1ValueDesc,Segment2ValueDesc,Segment3ValueDesc,Segment4ValueDesc,Segment5ValueDesc,Segment6ValueDesc,ShadeCode,DisplayUnitDesc,BookingQty,ReqCone,Remarks",
-                headerTexts: "Booking No,Composition,Yarn Type,Manufacturing Process,Sub Process,Quality Parameter,Count,Shade Code,Unit,Qty,Req Cone,Remarks",
+                headerTexts: "Booking No,Composition,Manufacturing Line,Manufacturing Process,Sub Process,Quality Parameter,Count,Shade Code,Unit,Qty,Req Cone,Remarks",
                 isMultiselect: true,
                 primaryKeyColumn: "FCMRChildID",
                 onMultiselect: function (selectedRecords) {
@@ -448,13 +448,17 @@
                             //enabled: false,
                             placeholder: 'Select Yarn Type',
                             floatLabelType: 'Never',
-                            change: function (f) {
+                            change: async function (f) {
 
                                 if (!f.isInteracted || !f.itemData) return false;
                                 e.rowData.Fiber = f.itemData.id;
                                 e.rowData.Fiber = f.itemData.text;
 
-                                YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews.filter(y => y.additionalValue == f.itemData.id);
+                                //YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews.filter(y => y.additionalValue == f.itemData.id);
+
+                                var list = await axios.get(`/api/rnd-free-concept-mr/yarn-sub-progran-new/${f.itemData.id}`);
+                                var YarnSubProgramNewsFilteredList = list.data;
+
                                 subProgramObj.dataSource = YarnSubProgramNewsFilteredList;
                                 subProgramObj.dataBind();
 
@@ -491,14 +495,19 @@
                             //enabled: false,
                             placeholder: 'Select Yarn Sub Program',
                             floatLabelType: 'Never',
-                            change: function (f) {
+                            change: async function (f) {
 
                                 if (!f.isInteracted || !f.itemData) return false;
                                 e.rowData.YarnSubProgramNew = f.itemData.id;
                                 e.rowData.YarnSubProgramNew = f.itemData.text;
 
                                 //CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id);
-                                CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id && y.additionalValue2 == f.itemData.additionalValue);
+                                //CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id && y.additionalValue2 == f.itemData.additionalValue);
+
+                                var list = await axios.get(`/api/rnd-free-concept-mr/certification/${f.itemData.additionalValue}/${f.itemData.id}`);
+                                var CertificationsFilteredList = list.data;
+
+
                                 certificationObj.dataSource = CertificationsFilteredList;
                                 certificationObj.dataBind();
 
@@ -549,6 +558,9 @@
             },
             {
                 field: 'ProgramTypeName', headerText: 'Program', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
+            {
+                field: 'ManufacturingLine', headerText: 'Manufacturing Line', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
             },
         ];
 
@@ -609,9 +621,11 @@
                         }
                     }
 
+
                     //fiberTypeName, programTypeName
                     var fiberTypeName = "";
                     var programTypeName = "";
+                    var manufacturingLine = "";
 
                     var obj = masterData.FabricComponentMappingSetupList.find(x => x.FiberID == fiberID);
                     if (typeof obj !== "undefined") {
@@ -621,13 +635,27 @@
                     if (typeof obj !== "undefined") {
                         programTypeName = obj.ProgramTypeName;
                     }
+                    debugger;
+                    obj = masterData.FabricComponentsNew.find(x => x.id == fiberID);
+                    if (typeof obj !== "undefined") {
+                        manufacturingLine = obj.desc;
+                    }
+
 
                     args.rowData.FiberTypeName = fiberTypeName;
                     args.data.FiberTypeName = fiberTypeName;
+                    args.data.ManufacturingLine = manufacturingLine;
 
                     args.rowData.ProgramTypeName = programTypeName;
                     args.data.ProgramTypeName = programTypeName;
+                    args.data.ManufacturingLine = manufacturingLine;
+
                     //fiberTypeName, programTypeName
+
+
+
+
+                    //masterData.FabricComponentsNew
 
                     if (args.action === "edit") {
                         if (!args.data.Fiber) {
@@ -1493,7 +1521,7 @@
             }
             if (isInvalidValue(pYBookingChild[j].Segment2ValueId)) {
                 hasError = true;
-                toastr.error(`Select yarn type at row ${currentRow}`);
+                toastr.error(`Select manufacturing line at row ${currentRow}`);
                 break;
             }
             else if (isInvalidValue(pYBookingChild[j].Segment3ValueId)) {
@@ -1661,7 +1689,7 @@
             }
             if (isInvalidValue(pYBookingChild[j].Segment2ValueId)) {
                 hasError = true;
-                toastr.error(`Select yarn type at row ${currentRow}`);
+                toastr.error(`Select manufacturing line at row ${currentRow}`);
                 break;
             }
             else if (isInvalidValue(pYBookingChild[j].Segment3ValueId)) {
@@ -1974,7 +2002,11 @@
             var indexF = masterData.FabricComponentsNew.findIndex(x => x.text == component.Fiber);
             if (indexF > -1) {
                 var manufacturingLine = masterData.FabricComponentsNew[indexF].desc;
-                manufacturingLines.push(manufacturingLine);
+
+                var indexG = manufacturingLines.findIndex(x => x == manufacturingLine);
+                if (indexG == -1) {
+                    manufacturingLines.push(manufacturingLine);
+                }
             }
 
             if (component.YarnSubProgramNew) {

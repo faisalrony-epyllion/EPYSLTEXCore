@@ -318,6 +318,7 @@ namespace EPYSLTEXCore.API.Contollers.RND
             return Ok();
         }
 
+        #region Composition Part
         [Route("save-yarn-composition")]
         [HttpPost]
         [ValidateModel]
@@ -389,6 +390,27 @@ namespace EPYSLTEXCore.API.Contollers.RND
             //return Ok(responseData);
             return Ok();
         }
+        [Route("yarn-type")]
+        [HttpGet]
+        public async Task<IActionResult> GetYarnTypes()
+        {
+            return Ok(await _service.GetYarnTypes());
+        }
+        [Route("yarn-sub-progran-new/{yarnTypeId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetYarnSubProgramNews(string yarnTypeId) //yarnTypeId = FiberId
+        {
+            var list = await _service.GetYarnSubProgramNews(yarnTypeId);
+            return Ok(list);
+        }
+        [Route("certification/{yarnTypeId}/{yarnSubProgranNewId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetCertifications(string yarnTypeId, string yarnSubProgranNewId) //yarnTypeId = FiberId
+        {
+            var list = await _service.GetCertifications(yarnTypeId, yarnSubProgranNewId);
+            return Ok(list);
+        }
+        #endregion
 
         [HttpPost]
         [Route("acknowledge/{id}")]

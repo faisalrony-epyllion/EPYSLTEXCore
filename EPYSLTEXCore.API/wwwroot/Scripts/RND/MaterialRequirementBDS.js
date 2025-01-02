@@ -622,8 +622,13 @@
                         certificationObj.appendTo(certificationElem);
                     }
                 }
-            }
-
+            },
+            {
+                field: 'FiberTypeName', headerText: 'Fiber Type', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
+            {
+                field: 'ProgramTypeName', headerText: 'Program', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
         ];
 
         var gridOptions = {
@@ -684,6 +689,27 @@
                         }
                     }
 
+
+                    //fiberTypeName, programTypeName
+                    var fiberTypeName = "";
+                    var programTypeName = "";
+
+                    var obj = masterData.FabricComponentMappingSetupList.find(x => x.FiberID == fiberID);
+                    if (typeof obj !== "undefined") {
+                        fiberTypeName = obj.FiberTypeName;
+                    }
+                    obj = masterData.FabricComponentMappingSetupList.find(x => x.CertificationsID == certificationsID);
+                    if (typeof obj !== "undefined") {
+                        programTypeName = obj.ProgramTypeName;
+                    }
+
+                    args.rowData.FiberTypeName = fiberTypeName;
+                    args.data.FiberTypeName = fiberTypeName;
+
+                    args.rowData.ProgramTypeName = programTypeName;
+                    args.data.ProgramTypeName = programTypeName;
+                    //fiberTypeName, programTypeName
+
                     if (args.action === "edit") {
                         if (!args.data.Fiber) {
                             toastr.warning("Fabric component is required.");
@@ -696,7 +722,6 @@
                             return;
                         }
                     }
-
                 }
             },
 
@@ -2676,17 +2701,30 @@
     }
 
     function saveComposition() {
+        debugger;
         var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
         if (totalPercent != 100) return toastr.error("Sum of compostion percent must be 100");
         compositionComponents.reverse();
-        
+
         var composition = "";
         var blendTypeNames = [];
         var programTypeNames = [];
-
+        //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
         compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
+
+        var manufacturingLines = [];
+        var yarnTypes = []; //Fibers
+
         compositionComponents.forEach(function (component) {
             composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
+
+            yarnTypes.push(component.Fiber);
+            var indexF = masterData.FabricComponentsNew.findIndex(x => x.text == component.Fiber);
+            if (indexF > -1) {
+                var manufacturingLine = masterData.FabricComponentsNew[indexF].desc;
+                manufacturingLines.push(manufacturingLine);
+            }
+
             if (component.YarnSubProgramNew) {
                 if (component.YarnSubProgramNew != 'N/A') {
                     composition += ` ${component.YarnSubProgramNew}`;
@@ -2700,6 +2738,7 @@
             }
             composition += ` ${component.Fiber}`;
 
+            console.log(compositionComponents);
             component.FiberTypeName = getDefaultValueWhenInvalidS(component.FiberTypeName);
             if (component.FiberTypeName.length > 0) {
                 blendTypeNames.push(component.FiberTypeName);
@@ -2708,7 +2747,10 @@
             if (component.ProgramTypeName.length > 0) {
                 programTypeNames.push(component.ProgramTypeName);
             }
+
         });
+        yarnTypes = yarnTypes.join(",");
+        manufacturingLines = manufacturingLines.join(",");
 
         blendTypeNames = [...new Set(blendTypeNames)];
         var blendTypeName = blendTypeNames.join(" + ");
@@ -2724,11 +2766,11 @@
         //    SegmentValue: composition
         //};
         var data = {
-            ItemSegmentValue: {
-                SegmentValue: composition
-            },
+            SegmentValue: composition,
             BlendTypeName: blendTypeName,
-            ProgramTypeName: programTypeName
+            ProgramTypeName: programTypeName,
+            ManufacturingLines: manufacturingLines,
+            YarnTypes: yarnTypes
         }
 
         axios.post("/api/rnd-free-concept-mr/save-yarn-composition", data)
@@ -2746,8 +2788,7 @@
                 }
                 args.cancel = true;
             });
-
-            //.catch(showResponseError)
+        //.catch(showResponseError)
     }
     /*
     function saveComposition() {

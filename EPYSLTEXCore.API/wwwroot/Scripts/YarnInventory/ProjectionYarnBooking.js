@@ -24,6 +24,7 @@
     var _segments = [];
 
     $(function () {
+
         if (!menuId)
             menuId = localStorage.getItem("menuId");
         if (!pageName)
@@ -44,7 +45,7 @@
         $formEl = $(pageConstants.FORM_ID_PREFIX + pageId);
         $divDetailsEl = $(pageConstants.DIV_DETAILS_ID_PREFIX + pageId);
         tblCreateCompositionId = `#tblCreateComposition-${pageId}`;
-        
+
         isAcknowledgePage = false;
         isApprovePage = false;
         isPendingMnMPage = false;
@@ -87,7 +88,7 @@
         else {
             isPendingPYBPage = false;
         }
-        
+
         $formEl.find("#divRevisionNo").fadeOut();
         $formEl.find("#divRevisionDate").fadeOut();
         $formEl.find("#divRevisionReason").fadeOut();
@@ -110,7 +111,7 @@
 
         $toolbarEl.find("#btnPendingList").on("click", function (e) {
             e.preventDefault();
-            
+
             toggleActiveToolbarBtn(this, $toolbarEl);
             status = statusConstants.ADDITIONAL;
             $toolbarEl.find("#divAddPRForMR").fadeIn();
@@ -127,7 +128,7 @@
 
         $toolbarEl.find("#btnPendingApprovalList").on("click", function (e) {
             e.preventDefault();
-            
+
             //$formEl.find("#btnRevise").fadeOut();
             toggleActiveToolbarBtn(this, $toolbarEl);
             status = statusConstants.PROPOSED;
@@ -185,7 +186,7 @@
         });
 
         $formEl.find("#DepartmentID").change(function () {
-            
+
             var selectedDep = $formEl.find("#DepartmentID option:selected").text();
             var isMer = selectedDep.toUpperCase().includes("MERCHANDISING");
             if (isMer) {
@@ -407,6 +408,7 @@
     var subProgramElem, certificationElem, fiberElem;
     var subProgramObj, certificationObj, fiberObj;
     function initTblCreateComposition() {
+
         var YarnSubProgramNewsFilteredList = [];//masterData.YarnSubProgramNews;
         var CertificationsFilteredList = [];//masterData.Certifications;
         compositionComponents = [];
@@ -428,7 +430,7 @@
             //    field: 'Fiber', headerText: 'Component', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.FabricComponents, field: "Fiber" })
             //}
             {
-                field: 'Fiber', headerText: 'Fiber', valueAccessor: ej2GridDisplayFormatterV2, edit: {
+                field: 'Fiber', headerText: 'Yarn Type', valueAccessor: ej2GridDisplayFormatterV2, edit: {
                     create: function () {
                         fiberElem = document.createElement('input');
                         return fiberElem;
@@ -444,7 +446,7 @@
                             dataSource: masterData.FabricComponentsNew,
                             fields: { value: 'id', text: 'text' },
                             //enabled: false,
-                            placeholder: 'Select Component',
+                            placeholder: 'Select Yarn Type',
                             floatLabelType: 'Never',
                             change: function (f) {
 
@@ -541,8 +543,13 @@
                         certificationObj.appendTo(certificationElem);
                     }
                 }
-            }
-
+            },
+            {
+                field: 'FiberTypeName', headerText: 'Fiber Type', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
+            {
+                field: 'ProgramTypeName', headerText: 'Program', width: 150, allowEditing: false //, visible: !$formEl.find('#blended').is(':checked')
+            },
         ];
 
         var gridOptions = {
@@ -570,7 +577,6 @@
                     args.data.Id = getMaxIdForArray(compositionComponents, "Id");
                 }
                 else if (args.requestType === "save") {
-
                     var fiberID = 0;
                     var subProgramID = 0;
                     var certificationsID = 0;
@@ -603,6 +609,26 @@
                         }
                     }
 
+                    //fiberTypeName, programTypeName
+                    var fiberTypeName = "";
+                    var programTypeName = "";
+
+                    var obj = masterData.FabricComponentMappingSetupList.find(x => x.FiberID == fiberID);
+                    if (typeof obj !== "undefined") {
+                        fiberTypeName = obj.FiberTypeName;
+                    }
+                    obj = masterData.FabricComponentMappingSetupList.find(x => x.CertificationsID == certificationsID);
+                    if (typeof obj !== "undefined") {
+                        programTypeName = obj.ProgramTypeName;
+                    }
+
+                    args.rowData.FiberTypeName = fiberTypeName;
+                    args.data.FiberTypeName = fiberTypeName;
+
+                    args.rowData.ProgramTypeName = programTypeName;
+                    args.data.ProgramTypeName = programTypeName;
+                    //fiberTypeName, programTypeName
+
                     if (args.action === "edit") {
                         if (!args.data.Fiber) {
                             toastr.warning("Fabric component is required.");
@@ -615,7 +641,6 @@
                             return;
                         }
                     }
-
                 }
             },
             autofitColumns: false,
@@ -631,7 +656,7 @@
     }
 
     function copyButtonHideShow() {
-        
+
         $formEl.find(".divCopyFromExistingBooking").hide();
 
         var selectedDep = $formEl.find("#DepartmentID option:selected").text();
@@ -1020,7 +1045,7 @@
     }
 
     async function initChildTable(data) {
-        
+
         if ($tblChildEl) $tblChildEl.destroy();
 
         var columns = [];
@@ -1114,7 +1139,7 @@
                 },
                 columns: childDetailscolumns,
                 actionBegin: function (args) {
-                    
+
                     if (args.requestType === "add") {
                         var totalDis = 0, remainDis = 0, maxDate;
 
@@ -1228,7 +1253,7 @@
                 status = statusConstants.NEW;
                 $divDetailsEl.fadeIn();
                 $divTblEl.fadeOut();
-                
+
                 masterData = response.data;
                 $formEl.find(".divReject").hide();
                 masterData.PYBookingDate = formatDateToDefault(masterData.PYBookingDate);
@@ -1417,7 +1442,7 @@
         return false;
     }
     function save(SendToApprover) {
-        
+
         $formEl.find("#BuyerIDsList").val($formEl.find("#BuyerIDs").val().map(function (el) {
             return el
         }).toString());
@@ -1515,7 +1540,7 @@
 
             var totalQty = 0;
             for (var i = 0; i < pYBookingChild[j].PYBItemChildDetails.length; i++) {
-                
+
                 //const bookingDate = pYBookingChild[j].PYBItemChildDetails[i].BookingDate;
                 //pYBookingChild[j].PYBItemChildDetails[i].BookingDate = new Date(bookingDate).toISOString().split('Z')[0];
                 totalQty += parseInt(pYBookingChild[j].PYBItemChildDetails[i].DetailsQTY);
@@ -1534,7 +1559,7 @@
             }
 
             if (hasError) break;
-            
+
             if (totalQty != pYBookingChild[j].QTY) {
                 hasError = true;
                 toastr.error(`Sum of booking date qty (${totalQty}) must be ${pYBookingChild[j].QTY} (row ${currentRow})`);
@@ -1548,7 +1573,7 @@
         } else {
             data.isMarketingFlag = isMarketingFlag;
         }
-        
+
         data.ProjectionYarnBookingItemChilds = pYBookingChild;
         data.BookingByID = $formEl.find("#BookingByID").val();
         data.DepartmentID = $formEl.find("#DepartmentID").val();
@@ -1572,13 +1597,13 @@
         if (hasError) return false;
 
         //Validation
-        
+
         if (isPendingMnMPage) {
             initializeValidation($formEl, validationConstraints);
             if (!isValidForm($formEl, validationConstraints)) return toastr.error("Please correct all validation errors!");
             else hideValidationErrors($formEl);
         }
-   
+
         if (isValidChildForm(data)) return;
 
         axios.post("/api/projection-yarn-booking/save", data)
@@ -1927,230 +1952,6 @@
         }
     }
     //Composition related function
-    function initTblCreateComposition() {
-        var YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews;
-        var CertificationsFilteredList = masterData.Certifications;
-        compositionComponents = [];
-        var columns = [
-            {
-                field: 'Id', isPrimaryKey: true, visible: false
-            },
-            {
-                headerText: '', width: 70, commands: [
-                    { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-edit' } },
-                    { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-delete' } },
-                    { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-update' } },
-                    { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-icons e-cancel-icon' } }]
-            },
-            {
-                field: 'Percent', headerText: 'Percent(%)', width: 120, editType: "numericedit", params: { decimals: 0, format: "N", min: 1, validateDecimalOnType: true }, allowEditing: isBlended
-            },
-            //{
-            //    field: 'Fiber', headerText: 'Component', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.FabricComponents, field: "Fiber" })
-            //}
-            {
-                field: 'Fiber', headerText: 'Fiber', valueAccessor: ej2GridDisplayFormatterV2, edit: {
-                    create: function () {
-                        fiberElem = document.createElement('input');
-                        return fiberElem;
-                    },
-                    read: function () {
-                        return fiberObj.text;
-                    },
-                    destroy: function () {
-                        fiberObj.destroy();
-                    },
-                    write: function (e) {
-                        fiberObj = new ej.dropdowns.DropDownList({
-                            dataSource: masterData.FabricComponentsNew,
-                            fields: { value: 'id', text: 'text' },
-                            //enabled: false,
-                            placeholder: 'Select Component',
-                            floatLabelType: 'Never',
-                            change: function (f) {
-
-                                if (!f.isInteracted || !f.itemData) return false;
-                                e.rowData.Fiber = f.itemData.id;
-                                e.rowData.Fiber = f.itemData.text;
-
-                                YarnSubProgramNewsFilteredList = masterData.YarnSubProgramNews.filter(y => y.additionalValue == f.itemData.id);
-                                subProgramObj.dataSource = YarnSubProgramNewsFilteredList;
-                                subProgramObj.dataBind();
-
-                                certificationObj.dataSource = [];
-                                certificationObj.dataBind();
-
-                                $tblChildEl.updateRow(e.row.rowIndex, e.rowData);
-                            }
-                        });
-                        fiberObj.appendTo(fiberElem);
-
-                    }
-                }
-            },
-            //{
-            //    field: 'YarnSubProgramNew', headerText: 'Yarn Sub Program New', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.YarnSubProgramNews, field: "YarnSubProgramNew" })
-            //},
-            {
-                field: 'YarnSubProgramNew', headerText: 'Yarn Sub Program New', valueAccessor: ej2GridDisplayFormatterV2, edit: {
-                    create: function () {
-                        subProgramElem = document.createElement('input');
-                        return subProgramElem;
-                    },
-                    read: function () {
-                        return subProgramObj.text;
-                    },
-                    destroy: function () {
-                        subProgramObj.destroy();
-                    },
-                    write: function (e) {
-                        subProgramObj = new ej.dropdowns.DropDownList({
-                            //dataSource: YarnSubProgramNewsFilteredList,
-                            dataSource: [],
-                            fields: { value: 'id', text: 'text' },
-                            //enabled: false,
-                            placeholder: 'Select Yarn Sub Program',
-                            floatLabelType: 'Never',
-                            change: function (f) {
-
-                                if (!f.isInteracted || !f.itemData) return false;
-                                e.rowData.YarnSubProgramNew = f.itemData.id;
-                                e.rowData.YarnSubProgramNew = f.itemData.text;
-
-                                //CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id);
-                                CertificationsFilteredList = masterData.Certifications.filter(y => y.additionalValue == f.itemData.id && y.additionalValue2 == f.itemData.additionalValue);
-                                certificationObj.dataSource = CertificationsFilteredList;
-                                certificationObj.dataBind();
-
-                                $tblChildEl.updateRow(e.row.rowIndex, e.rowData);
-                            }
-                        });
-                        subProgramObj.appendTo(subProgramElem);
-                    }
-                }
-            },
-            //{
-            //    field: 'Certification', headerText: 'Certification', editType: 'dropdownedit', edit: new ej2DropdownParams({ dataSource: masterData.Certifications, field: "Certification" })
-            //},
-            {
-                field: 'Certification', headerText: 'Certification', valueAccessor: ej2GridDisplayFormatterV2, edit: {
-                    create: function () {
-                        certificationElem = document.createElement('input');
-                        return certificationElem;
-                    },
-                    read: function () {
-                        return certificationObj.text;
-                    },
-                    destroy: function () {
-                        certificationObj.destroy();
-                    },
-                    write: function (e) {
-                        certificationObj = new ej.dropdowns.DropDownList({
-                            //dataSource: CertificationsFilteredList,
-                            dataSource: [],
-                            fields: { value: 'id', text: 'text' },
-                            //enabled: false,
-                            placeholder: 'Select Certification',
-                            floatLabelType: 'Never',
-                            change: function (f) {
-
-                                if (!f.isInteracted || !f.itemData) return false;
-                                e.rowData.Certification = f.itemData.id;
-                                e.rowData.Certification = f.itemData.text;
-
-                                $tblChildEl.updateRow(e.row.rowIndex, e.rowData);
-                            }
-                        });
-                        certificationObj.appendTo(certificationElem);
-                    }
-                }
-            }
-        ];
-
-        var gridOptions = {
-            tableId: tblCreateCompositionId,
-            data: compositionComponents,
-            columns: columns,
-            actionBegin: function (args) {
-                if (args.requestType === "add") {
-
-                    if (isBlended) {
-                        if (compositionComponents.length === 5) {
-                            toastr.info("You can only add 5 components.");
-                            args.cancel = true;
-                            return;
-                        }
-                    }
-                    else {
-                        if (compositionComponents.length === 1) {
-                            toastr.info("You can only add 1 component.");
-                            args.cancel = true;
-                            return;
-                        }
-                        else args.data.Percent = 100;
-                    }
-
-                    args.data.Id = getMaxIdForArray(compositionComponents, "Id");
-                }
-                else if (args.requestType === "save") {
-
-                    var fiberID = 0;
-                    var subProgramID = 0;
-                    var certificationsID = 0;
-                    if (typeof args.rowData.Fiber != 'undefined') {
-                        fiberID = masterData.FabricComponentsNew.find(y => y.text == args.rowData.Fiber).id;
-                    }
-                    if (typeof args.rowData.YarnSubProgramNew != 'undefined') {
-                        subProgramID = masterData.YarnSubProgramNews.find(y => y.text == args.rowData.YarnSubProgramNew).id;
-                    }
-                    if (typeof args.rowData.Certification != 'undefined') {
-                        certificationsID = masterData.Certifications.find(y => y.text == args.rowData.Certification).id;
-                    }
-
-                    var cnt = masterData.FabricComponentMappingSetupList.filter(y => y.FiberID == fiberID && y.SubProgramID == subProgramID && y.CertificationsID == certificationsID);
-                    if (cnt == 0) {
-                        if (fiberID == 0) {
-                            toastr.warning("Fiber is required.");
-                            args.cancel = true;
-                            return;
-                        }
-                        if (subProgramID == 0) {
-                            toastr.warning("Sub Program is required.");
-                            args.cancel = true;
-                            return;
-                        }
-                        if (certificationsID == 0) {
-                            toastr.warning("certifications is required.");
-                            args.cancel = true;
-                            return;
-                        }
-                    }
-
-                    if (args.action === "edit") {
-                        if (!args.data.Fiber) {
-                            toastr.warning("Fabric component is required.");
-                            args.cancel = true;
-                            return;
-                        }
-                        else if (!args.data.Percent || args.data.Percent <= 0 || args.data.Percent > 100) {
-                            toastr.warning("Composition percent must be greater than 0 and less than or equal 100.");
-                            args.cancel = true;
-                            return;
-                        }
-                    }
-                }
-            },
-            autofitColumns: false,
-            showDefaultToolbar: false,
-            allowFiltering: false,
-            allowPaging: false,
-            toolbar: ['Add'],
-            editSettings: { allowAdding: true, allowEditing: true, allowDeleting: true, mode: "Normal", showDeleteConfirmDialog: true }
-        };
-
-        if ($tblCreateCompositionEl) $tblCreateCompositionEl.destroy();
-        $tblCreateCompositionEl = new initEJ2Grid(gridOptions);
-    }
     function saveComposition() {
 
         var totalPercent = sumOfArrayItem(compositionComponents, "Percent");
@@ -2162,8 +1963,20 @@
         var programTypeNames = [];
         //compositionComponents = _.sortBy(compositionComponents, "Percent").reverse();
         compositionComponents = compositionComponents.sort((a, b) => b.Percent - a.Percent);
+
+        var manufacturingLines = [];
+        var yarnTypes = []; //Fibers
+
         compositionComponents.forEach(function (component) {
             composition += composition ? ` ${component.Percent}%` : `${component.Percent}%`;
+
+            yarnTypes.push(component.Fiber);
+            var indexF = masterData.FabricComponentsNew.findIndex(x => x.text == component.Fiber);
+            if (indexF > -1) {
+                var manufacturingLine = masterData.FabricComponentsNew[indexF].desc;
+                manufacturingLines.push(manufacturingLine);
+            }
+
             if (component.YarnSubProgramNew) {
                 if (component.YarnSubProgramNew != 'N/A') {
                     composition += ` ${component.YarnSubProgramNew}`;
@@ -2188,6 +2001,8 @@
             }
 
         });
+        yarnTypes = yarnTypes.join(",");
+        manufacturingLines = manufacturingLines.join(",");
 
         blendTypeNames = [...new Set(blendTypeNames)];
         var blendTypeName = blendTypeNames.join(" + ");
@@ -2203,10 +2018,11 @@
         //    SegmentValue: composition
         //};
         var data = {
-            
-             SegmentValue: composition,
-            BlendTypeName: "blendTypeName",
-            ProgramTypeName: programTypeName
+            SegmentValue: composition,
+            BlendTypeName: blendTypeName,
+            ProgramTypeName: programTypeName,
+            ManufacturingLines: manufacturingLines,
+            YarnTypes: yarnTypes
         }
 
         axios.post("/api/rnd-free-concept-mr/save-yarn-composition", data)
@@ -2224,12 +2040,9 @@
                 }
                 args.cancel = true;
             });
-            //.catch(showResponseError)
+        //.catch(showResponseError)
     }
-    function showAddComposition() {
-        initTblCreateComposition();
-        $pageEl.find(`#modal-new-composition-${pageId}`).modal("show");
-    }
+
     function sendMail(pyBookingID) {
         var url = `/api/projection-yarn-booking/sendMail/${pyBookingID}`;
         axios.get(url)

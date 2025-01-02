@@ -46,7 +46,7 @@ namespace EPYSLTEXCore.Application.Services.General
                             --YPM.ProgramID, Program = P.SegmentValue,
                             --YPM.SubProgramID, SubProgram = SP.SegmentValue,
                             --YPM.CertificationID, Certification = C.SegmentValue,
-                            YPM.TechnicalParameterID, TechnicalParameter = TP.SegmentValue,
+                            --YPM.TechnicalParameterID, TechnicalParameter = TP.SegmentValue,
                             --YPM.YarnCompositionID, YarnComposition = YC.SegmentValue,
                             YPM.ShadeReferenceID, ShadeReference = YSB.ShadeCode,
                             YPM.ManufacturingLineID, ManufacturingLine=ML.SegmentValue,
@@ -62,7 +62,7 @@ namespace EPYSLTEXCore.Application.Services.General
                             --LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue P ON P.SegmentValueID=YPM.ProgramID
                             --LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue SP ON SP.SegmentValueID=YPM.SubProgramID
                             --LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue C ON C.SegmentValueID=YPM.CertificationID
-                            LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue TP ON TP.SegmentValueID=YPM.TechnicalParameterID
+                            --LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue TP ON TP.SegmentValueID=YPM.TechnicalParameterID
                             --LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue YC ON YC.SegmentValueID=YPM.YarnCompositionID
                             LEFT JOIN {TableNames.YARN_SHADE_BOOK} YSB ON YSB.YSCID=YPM.ShadeReferenceID
                             LEFT JOIN {DbNames.EPYSL}..ItemSegmentValue ML ON ML.SegmentValueID=YPM.ManufacturingLineID
@@ -170,11 +170,11 @@ namespace EPYSLTEXCore.Application.Services.General
 	                --AND ISNULL(CBS.IsInactive,0) = 0 ORDER BY ISV.SegmentValue;
 
                     --Technical Parameter
-                    SELECT distinct 
-	                CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
-	                from {DbNames.EPYSL}..ItemSegmentValue ISV    
-	                LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}') ORDER BY ISV.SegmentValue ;
+                    --SELECT distinct 
+	                --CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
+	                --from {DbNames.EPYSL}..ItemSegmentValue ISV    
+	                --LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+	                --WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}') ORDER BY ISV.SegmentValue ;
 
                     --Yarn Composition
 
@@ -251,7 +251,7 @@ namespace EPYSLTEXCore.Application.Services.General
                 //data.ProgramList = records.Read<Select2OptionModel>().ToList();
                 //data.SubProgramList = records.Read<Select2OptionModel>().ToList();
                 //data.CertificationList = records.Read<Select2OptionModel>().ToList();
-                data.TechnicalParameterList = records.Read<Select2OptionModel>().ToList();
+                //data.TechnicalParameterList = records.Read<Select2OptionModel>().ToList();
                 //data.YarnCompositionList = records.Read<Select2OptionModel>().ToList();
                 data.ShadeReferenceList = records.Read<Select2OptionModel>().ToList();
                 data.ManufacturingLineList = records.Read<Select2OptionModel>().ToList();
@@ -333,11 +333,11 @@ namespace EPYSLTEXCore.Application.Services.General
 	                --AND ISNULL(CBS.IsInactive,0) = 0 ORDER BY ISV.SegmentValue;
 
                     --Technical Parameter
-                    SELECT distinct 
-	                CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
-	                from {DbNames.EPYSL}..ItemSegmentValue ISV    
-	                LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
-	                WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}') ORDER BY ISV.SegmentValue ;
+                    --SELECT distinct 
+	                --CAST(ISV.SegmentValueID As varchar) [id], ISV.SegmentValue [text], Sequence = 2
+	                --from {DbNames.EPYSL}..ItemSegmentValue ISV    
+	                --LEFT JOIN  {DbNames.EPYSL}..ItemSegmentName ISN ON ISN.SegmentNameID = ISV.SegmentNameID 
+	                --WHERE ISN.SegmentName In ('{ItemSegmentNameConstants.YARN_QUALITY_PARAMETER}') ORDER BY ISV.SegmentValue ;
 
                     --Yarn Composition
 
@@ -416,7 +416,7 @@ namespace EPYSLTEXCore.Application.Services.General
                 //data.ProgramList = records.Read<Select2OptionModel>().ToList();
                 //data.SubProgramList = records.Read<Select2OptionModel>().ToList();
                 //data.CertificationList = records.Read<Select2OptionModel>().ToList();
-                data.TechnicalParameterList = records.Read<Select2OptionModel>().ToList();
+                //data.TechnicalParameterList = records.Read<Select2OptionModel>().ToList();
                 //data.YarnCompositionList = records.Read<Select2OptionModel>().ToList();
                 data.ShadeReferenceList = records.Read<Select2OptionModel>().ToList();
                 data.ManufacturingLineList = records.Read<Select2OptionModel>().ToList();
@@ -574,8 +574,7 @@ namespace EPYSLTEXCore.Application.Services.General
             var sql = $@"SELECT *
 			                FROM {TableNames.YarnRMProperties} 
 							WHERE 
-                            TechnicalParameterID = {model.TechnicalParameterID}  
-                            AND ShadeReferenceID = {model.ShadeReferenceID} 
+                            ShadeReferenceID = {model.ShadeReferenceID} 
                             AND ManufacturingLineID = {model.ManufacturingLineID} 
                             AND ManufacturingProcessID = {model.ManufacturingProcessID} 
                             AND ManufacturingSubProcessID = {model.ManufacturingSubProcessID} 

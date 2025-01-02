@@ -79,5 +79,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item
         public string SegmentValue { get; set; }
         public string BlendTypeName { get; set; } = "";
         public string ProgramTypeName { get; set; } = "";
+        public string ManufacturingLines { get; set; } = "";
+        public string YarnTypes { get; set; } = "";
     }
 }

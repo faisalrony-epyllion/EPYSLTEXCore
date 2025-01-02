@@ -1237,7 +1237,7 @@
                     toastr.error(`Stock quantity unavailable at row ${i + 1}`);
                     hasError = true;
                     break;
-                //}
+                }
             }
             if (child.ReqQty <= 0) {
                 toastr.error(`Give Req qty at row ${i + 1}`);

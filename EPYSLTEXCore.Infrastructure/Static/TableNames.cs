@@ -947,6 +947,9 @@
         public const string SendToYDStoreMaster = "T_SendToYDStoreMaster";
         public const string SendToYDStoreChild = "T_SendToYDStoreChild";
         public const string SendToYDStoreNo = "SendToYDStoreNo";
+        public const string YDStoreReceiveMaster = "T_YDStoreReceiveMaster";
+        public const string YDStoreReceiveChild = "T_YDStoreReceiveChild";
+        public const string YDStoreReceiveChildRackBin = "T_YDStoreReceiveChildRackBin";
     }
 
 }

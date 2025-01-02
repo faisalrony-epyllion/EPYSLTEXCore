@@ -2,7 +2,7 @@
     var menuId, pageName, menuParam;
     var toolbarId;
     var $divTblEl, $divDetailsEl, $toolbarEl, $tblMasterEl, $tblChildEl, $formEl, tblMasterId, tblChildId, $modalPlanningEl;
-    var status;
+    var status = statusConstants.PENDING;
     var pageIdWithHash;
     var masterData;
     var selectedIndex;

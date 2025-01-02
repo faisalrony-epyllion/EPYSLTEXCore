@@ -15,7 +15,7 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         //public int ProgramID { get; set; } = 0;
         //public int SubProgramID { get; set; } = 0;
         //public int CertificationID { get; set; } = 0;
-        public int TechnicalParameterID { get; set; } = 0;
+        //public int TechnicalParameterID { get; set; } = 0;
         //public int YarnCompositionID { get; set; } = 0;
         public int ShadeReferenceID { get; set; } = 0;
         public int ManufacturingLineID { get; set; } = 0;
@@ -57,8 +57,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         //public string Certification { get; set; } = "";
         //[Write(false)]
         //public string Certifications { get; set; } = "";
-        [Write(false)]
-        public string TechnicalParameter { get; set; } = "";
+        //[Write(false)]
+        //public string TechnicalParameter { get; set; } = "";
         //[Write(false)]
         //public string YarnComposition { get; set; } = "";
         [Write(false)]
@@ -90,8 +90,8 @@ namespace EPYSLTEXCore.Infrastructure.Entities.Tex.General.Yarn
         public List<Select2OptionModel> SubProgramList { get; set; } = new List<Select2OptionModel>();
         [Write(false)]
         public List<Select2OptionModel> CertificationList { get; set; } = new List<Select2OptionModel>();
-        [Write(false)]
-        public List<Select2OptionModel> TechnicalParameterList { get; set; } = new List<Select2OptionModel>();
+        //[Write(false)]
+        //public List<Select2OptionModel> TechnicalParameterList { get; set; } = new List<Select2OptionModel>();
         [Write(false)]
         public List<Select2OptionModel> YarnCompositionList { get; set; } = new List<Select2OptionModel>();
         [Write(false)]

@@ -348,7 +348,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                 {CommonQueries.GetDayValidDurations()};
 
                 --Fiber-SubProgram-Certifications Mapping Setup
-                Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup
+                {CommonQueries.GetFabricComponentMappingSetup()};
 
                 /*
                 --Color Wise Size Collar
@@ -1292,7 +1292,7 @@ namespace EPYSLTEXCore.Application.Services.RND
                         {CommonQueries.GetDayValidDurations()};
 
                         --Fiber-SubProgram-Certifications Mapping Setup
-                        Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup;
+                       {CommonQueries.GetFabricComponentMappingSetup()};
 
                         /*
                         --Color Wise Size Collar
@@ -1861,7 +1861,7 @@ namespace EPYSLTEXCore.Application.Services.RND
 
 
                 --Fiber-SubProgram-Certifications Mapping Setup
-                Select * FROM {DbNames.EPYSL}..FabricComponentMappingSetup";
+                {CommonQueries.GetFabricComponentMappingSetup()};";
 
             try
             {

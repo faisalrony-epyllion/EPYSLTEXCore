@@ -1,6 +1,6 @@
 ﻿(function () {
     // #region variables
-    var menuId, pageName;
+    var menuId, pageName, menuParam;
     var toolbarId;
 
     var isCDAPage = false;
@@ -21,6 +21,8 @@
     $(function () {
         if (!menuId) menuId = localStorage.getItem("menuId");
         if (!pageName) pageName = localStorage.getItem("pageName");
+        if (!menuParam) menuParam = localStorage.getItem("menuParam");
+
 
         var pageId = pageName + "-" + menuId;
         $divTblEl = $(pageConstants.DIV_TBL_ID_PREFIX + pageId);
@@ -229,6 +231,7 @@
     }
 
     function initMasterTable() {
+        
         $formEl.find("#btnChangeSubGroup").hide();
         var showAck = false, showTexAck = false;
         if (status == statusConstants.ACKNOWLEDGE || status == statusConstants.PROPOSED_FOR_ACKNOWLEDGE_ACCEPTENCE) { showAck = true; }

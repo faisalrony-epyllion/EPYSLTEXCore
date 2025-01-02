@@ -29,7 +29,7 @@
             isApprovePage = false;
             isRequisitionPage = true;
         }
-        else if (menuParam == 'A') { isRequisitionPage = true; isApprovePage = true; }
+        else if (menuParam == 'A') { isRequisitionPage = false; isApprovePage = true; }
             
         else {
             isRequisitionPage = false;

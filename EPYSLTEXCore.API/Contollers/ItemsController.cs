@@ -234,7 +234,7 @@ namespace EPYSLTEX.Web.Controllers.Apis
         }          
 #endif
 */
-                    ItemSegmentMappingValuesDTO itemSegmenValuesFinal = CommonFunction.DeepClone(itemSegmenValues);
+            ItemSegmentMappingValuesDTO itemSegmenValuesFinal = CommonFunction.DeepClone(itemSegmenValues);
             if (!compositionIds.IsNullOrEmpty())
             {
                 List<int> compositionList = compositionIds.Split(',')

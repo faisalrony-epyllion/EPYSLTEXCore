@@ -5,6 +5,7 @@ using EPYSLTEXCore.API.Contollers.APIBaseController;
 using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces;
 using EPYSLTEXCore.Application.Interfaces.RND;
+using EPYSLTEXCore.Application.Services;
 using EPYSLTEXCore.Infrastructure.Data;
 using EPYSLTEXCore.Infrastructure.DTOs;
 using EPYSLTEXCore.Infrastructure.Entities.Gmt.General.Item;
@@ -349,7 +350,9 @@ namespace EPYSLTEXCore.API.Contollers.RND
 
             _memoryCache.Remove(cacheKey);
 
-            var itemSegmentValueList = await _service.GetDataDapperAsync<Select2MappingOptionModel>(CommonQueries.GetItemSegmentValuesBySegmentNamesWithMapping());
+            //var itemSegmentValueList = await _service.GetDataDapperAsync<Select2MappingOptionModel>(CommonQueries.GetItemSegmentValuesBySegmentNamesWithMapping());
+            var itemSegmentValueList = _itemMasterRepository.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetItemSegmentValuesBySegmentNamesWithMapping(), DB_TYPE.textile).ToList();
+            var TechnicalParameterList = _itemMasterRepository.GetDataAsync<Select2MappingOptionModel>(CommonQueries.GetQualityParameterIDs(), DB_TYPE.textile).ToList();
 
             var itemSegmenValues = new ItemSegmentMappingValuesDTO
             {
@@ -358,11 +361,25 @@ namespace EPYSLTEXCore.API.Contollers.RND
                 Segment3ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_PROCESS),
                 Segment4ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_MANUFACTURING_SUB_PROCESS),
                 Segment5ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_QUALITY_PARAMETER),
-                Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
-                YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
-                //Segment7ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.NO_OF_PLY)
+                Segment6ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR),
+                Segment7ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COLOR_GRADE),
+                Segment8ValueList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT),
+                ShadeReferenceList = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.SHADE)
+                //YarnCountMaster = itemSegmentValueList.FindAll(x => x.desc == ItemSegmentNameConstants.YARN_COUNT_MASTER)
             };
-            //HttpContext.Current.Cache.Insert(cacheKey, itemSegmenValues, null, DateTime.Now.AddDays(1), Cache.NoSlidingExpiration);
+
+            foreach (Select2MappingOptionModel item in itemSegmenValues.Segment1ValueList)
+            {
+                //var filterValues = item.YarnTypes.Split(',').Select(f => f.Trim()).ToList();
+                var filterValues = item.YarnTypes != null
+                        ? item.YarnTypes.Split(',').Select(f => f.Trim()).ToList()
+                        : new List<string>();
+                var filteredData = TechnicalParameterList.Where(row => filterValues.Contains(row.text)).ToList();
+                string commaSeparatedString = string.Join(",", filteredData.Select(row => row.desc));
+                item.QualityParameterIDs = commaSeparatedString;
+
+            }
+
 
             _memoryCache.Set(cacheKey, CommonFunction.DeepClone(itemSegmenValues), TimeSpan.FromDays(1));
             //#if DEBUG

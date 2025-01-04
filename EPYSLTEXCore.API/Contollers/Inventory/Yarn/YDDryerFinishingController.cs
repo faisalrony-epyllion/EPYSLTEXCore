@@ -1,9 +1,7 @@
 ﻿using EPYSLTEX.Core.Interfaces.Services;
 using EPYSLTEXCore.API.Contollers.APIBaseController;
-using EPYSLTEXCore.API.Extends.Filters;
 using EPYSLTEXCore.Application.Interfaces.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.DTOs;
-using EPYSLTEXCore.Infrastructure.Entities.Tex.General;
 using EPYSLTEXCore.Infrastructure.Entities.Tex.Inventory.Yarn;
 using EPYSLTEXCore.Infrastructure.Statics;
 using Microsoft.AspNetCore.Mvc;
